@@ -1,4 +1,4 @@
-## What is Cyborg?
+# What is Cyborg?
 
 If you are an Android developer then you must know the pain of an Android Application birth, the logs, the screens, the lists, view pagers, recyclers, adapters, activities, fragments, services, intents and just the thought about all this code you need to write(or copy) AGAIN, is simply depressing! (Boiler plate anyone)
 
@@ -7,7 +7,7 @@ The amount of code required to use Cyborg in comparison to Android, or other And
 The module based architecture allows Cyborg to wrap any business logic you need for your application, and any function of Android, with already dozens of modules implemented(Which are currently not a part of this package), e.g. Ads, Bluetooth, Automation recording, Crash report, Google Analytics, In-App purchases, Location, Share/Feedback/Rate, and planty more.
 
 
-# Cyborg has real MVC
+### Cyborg has real MVC
 Cyborg defines things a bit differently to overcome some of Android design flaws:
  - Module driven development as the Model.
  - Views are the only UI components.
