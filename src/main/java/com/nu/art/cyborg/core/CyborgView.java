@@ -24,7 +24,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.modules.AttributeModule;

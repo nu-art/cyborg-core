@@ -20,15 +20,15 @@ package com.nu.art.cyborg.core.more;
 
 import android.os.Bundle;
 
-import com.nu.art.software.core.exceptions.runtime.ImplementationMissingException;
-import com.nu.art.software.core.exceptions.runtime.NotImplementedYetException;
-import com.nu.art.software.core.tools.ArrayTools;
+import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.exceptions.runtime.NotImplementedYetException;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.more.CyborgStateInjector.TypeParser;
-import com.nu.art.software.reflection.extractor.AnnotatbleExtractor;
-import com.nu.art.software.reflection.tools.ART_Tools;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.extractor.AnnotatbleExtractor;
+import com.nu.art.reflection.tools.ART_Tools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.io.File;
 import java.lang.reflect.Field;

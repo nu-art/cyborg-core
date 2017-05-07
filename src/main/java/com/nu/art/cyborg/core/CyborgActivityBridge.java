@@ -30,7 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
 

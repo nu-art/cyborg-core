@@ -39,8 +39,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nu.art.belogged.Logger;
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.belog.Logger;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.common.beans.ModelEvent;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
@@ -49,7 +49,7 @@ import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs.CyborgDelegator;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.more.UserActionsDelegatorImpl;
-import com.nu.art.software.modular.core.Module;
+import com.nu.art.modular.core.Module;
 
 import java.io.IOException;
 import java.io.InputStream;

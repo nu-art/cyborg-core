@@ -24,7 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;

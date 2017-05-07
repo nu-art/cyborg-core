@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.common.utils;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.abs.Cyborg;
 

@@ -30,7 +30,7 @@ import com.nu.art.cyborg.core.animations.transitions.ScaleTransition;
 import com.nu.art.cyborg.core.animations.transitions.SlideTransition;
 import com.nu.art.cyborg.core.animations.transitions.SquashTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 /**
  * Created by TacB0sS on 24-Jul 2015.

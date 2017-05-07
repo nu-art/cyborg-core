@@ -32,7 +32,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Base64;
 
-import com.nu.art.software.core.tools.FileTools;
+import com.nu.art.core.tools.FileTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;

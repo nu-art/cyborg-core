@@ -38,10 +38,10 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.widget.FrameLayout;
 
-import com.nu.art.belogged.Logger;
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.software.core.generics.Processor;
-import com.nu.art.software.core.tools.ArrayTools;
+import com.nu.art.belog.Logger;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.generics.Processor;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;

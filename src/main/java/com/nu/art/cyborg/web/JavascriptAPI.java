@@ -21,11 +21,11 @@ package com.nu.art.cyborg.web;
 import android.annotation.SuppressLint;
 import android.webkit.WebView;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.software.core.interfaces.Obfuscation_KeepMethods;
-import com.nu.art.software.core.interfaces.Obfuscation_KeepMethodsNames;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.interfaces.Obfuscation_KeepMethods;
+import com.nu.art.core.interfaces.Obfuscation_KeepMethodsNames;
 import com.nu.art.cyborg.annotations.JavascriptBridgeMethod;
-import com.nu.art.software.reflection.tools.ART_Tools;
+import com.nu.art.reflection.tools.ART_Tools;
 
 import java.lang.reflect.Method;
 
@@ -34,7 +34,7 @@ import java.lang.reflect.Method;
  * in order to use with Proguard, one MUSt add the following lines to the '<b>proguard-project.txt</b>' project file: <br>
  * <br>
  * <i># Generic keep Methods</i><br>
- * <code>-keep class ** implements com.nu.art.software.core.interfaces.Obfuscation_KeepMethods {<br>
+ * <code>-keep class ** implements Obfuscation_KeepMethods {<br>
  * &lt;methods>;<br>
  * }</code><br>
  * <br>

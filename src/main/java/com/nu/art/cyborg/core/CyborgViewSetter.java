@@ -21,10 +21,10 @@ package com.nu.art.cyborg.core;
 import android.content.res.TypedArray;
 
 import com.nu.art.cyborg.R;
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
-import com.nu.art.software.reflection.annotations.ReflectiveInitialization;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.annotations.ReflectiveInitialization;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 /**
  * Setting the xml attributes onto a {@link CyborgView} instance. in this case creates the {@link CyborgController}'s  instance.

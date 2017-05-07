@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.modules;
 
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;

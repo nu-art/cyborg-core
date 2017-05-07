@@ -26,9 +26,9 @@ import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.ui.StartActivityForResultActivity.StartActivityType;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 public class StartActivityForResultActivity
 		extends Activity

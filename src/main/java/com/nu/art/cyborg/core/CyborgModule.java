@@ -27,16 +27,16 @@ import android.os.Handler;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs.CyborgDelegator;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
-import com.nu.art.software.modular.core.Module;
-import com.nu.art.software.modular.core.ModuleItem;
-import com.nu.art.software.modular.core.ValidationResult;
+import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleItem;
+import com.nu.art.modular.core.ValidationResult;
 
 import java.io.IOException;
 import java.io.InputStream;

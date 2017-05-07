@@ -50,11 +50,11 @@ import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.nu.art.software.core.generics.Processor;
-import com.nu.art.software.core.interfaces.ILogger;
-import com.nu.art.software.core.interfaces.ProgressNotifier;
-import com.nu.art.software.core.tools.FileTools;
-import com.nu.art.software.core.tools.StreamTools;
+import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
+import com.nu.art.core.interfaces.ProgressNotifier;
+import com.nu.art.core.tools.FileTools;
+import com.nu.art.core.tools.StreamTools;
 import com.nu.art.cyborg.common.utils.Storage;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.abs.Cyborg;

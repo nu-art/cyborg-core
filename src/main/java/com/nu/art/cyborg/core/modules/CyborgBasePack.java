@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.core.modules;
 
-import com.nu.art.belogged.BeLogged;
+import com.nu.art.belog.BeLogged;
 import com.nu.art.cyborg.core.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgViewSetter;
@@ -28,8 +28,8 @@ import com.nu.art.cyborg.modules.ImageUtilsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.cyborg.modules.custom.FontTypeSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
-import com.nu.art.software.modular.core.Module;
-import com.nu.art.software.modular.core.ModulesPack;
+import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModulesPack;
 
 /**
  * Created by tacb0ss on 4/16/15.

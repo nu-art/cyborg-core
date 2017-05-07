@@ -24,10 +24,10 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
-import com.nu.art.belogged.Logger;
-import com.nu.art.software.core.exceptions.runtime.ClassInstantiationRuntimeException;
+import com.nu.art.belog.Logger;
+import com.nu.art.core.exceptions.runtime.ClassInstantiationRuntimeException;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.util.HashMap;
 

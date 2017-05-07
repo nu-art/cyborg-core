@@ -22,7 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-import com.nu.art.belogged.Logger;
+import com.nu.art.belog.Logger;
 import com.nu.art.cyborg.core.CyborgBuilder;
 
 import java.util.Vector;

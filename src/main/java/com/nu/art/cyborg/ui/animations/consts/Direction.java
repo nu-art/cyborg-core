@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.ui.animations.consts;
 
-import com.nu.art.software.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 
 /**
  * Created by TacB0sS on 28-Jul 2015.

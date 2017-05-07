@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.web.api;
 
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 
 public abstract class WebViewGeoLocationImplementor
 		implements WebViewGeoLocationHandler {

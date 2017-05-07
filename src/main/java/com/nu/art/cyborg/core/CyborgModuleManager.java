@@ -18,15 +18,15 @@
 
 package com.nu.art.cyborg.core;
 
-import com.nu.art.belogged.BeLogged;
-import com.nu.art.software.core.exceptions.runtime.ImplementationMissingException;
-import com.nu.art.software.core.generics.Processor;
-import com.nu.art.software.core.interfaces.ILogger;
-import com.nu.art.software.core.tools.ArrayTools;
-import com.nu.art.software.modular.core.Module;
-import com.nu.art.software.modular.core.ModuleManager;
-import com.nu.art.software.reflection.injector.Injector;
-import com.nu.art.software.reflection.tools.ART_Tools;
+import com.nu.art.belog.BeLogged;
+import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
+import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManager;
+import com.nu.art.reflection.injector.Injector;
+import com.nu.art.reflection.tools.ART_Tools;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

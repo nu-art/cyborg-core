@@ -18,8 +18,8 @@
 
 package com.nu.art.cyborg.core.modules;
 
-import com.nu.art.belogged.BeLogged.LogEntry;
-import com.nu.art.belogged.BeLoggedClient;
+import com.nu.art.belog.BeLogged.LogEntry;
+import com.nu.art.belog.BeLoggedClient;
 
 /**
  * Created by TacB0sS on 28-Feb 2017.

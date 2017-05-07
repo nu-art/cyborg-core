@@ -19,7 +19,7 @@
 package com.nu.art.cyborg.common.interfaces;
 
 import com.nu.art.cyborg.core.abs.CyborgDelegator;
-import com.nu.art.software.modular.interfaces.ModuleManagerDelegator;
+import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface CyborgComponentDelegator
 		extends CyborgDelegator, ModuleManagerDelegator {}

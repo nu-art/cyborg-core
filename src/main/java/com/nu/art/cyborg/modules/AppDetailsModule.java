@@ -22,15 +22,15 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build.VERSION;
 
-import com.nu.art.software.core.exceptions.runtime.MUST_NeverHappenedException;
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.StringPreference;
 import com.nu.art.cyborg.ui.BootStarterReceiver.OnBootCompletedListener;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.io.ByteArrayInputStream;
 import java.security.MessageDigest;

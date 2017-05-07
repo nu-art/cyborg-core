@@ -23,7 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
-import com.nu.art.software.reflection.annotations.ReflectiveInitialization;
+import com.nu.art.reflection.annotations.ReflectiveInitialization;
 
 /**
  * Setting the xml attributes onto a {@link CyborgRecycler} instance.

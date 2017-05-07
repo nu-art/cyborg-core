@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.core.dataModels;
 
-import com.nu.art.software.core.tools.ArrayTools;
+import com.nu.art.core.tools.ArrayTools;
 
 /**
  * Created by TacB0sS on 22-Jun 2015.

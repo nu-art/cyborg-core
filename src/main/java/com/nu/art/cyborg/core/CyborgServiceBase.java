@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.nu.art.software.core.interfaces.ILogger;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
 /**

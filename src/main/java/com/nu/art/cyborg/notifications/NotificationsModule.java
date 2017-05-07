@@ -30,8 +30,8 @@ import android.support.v4.app.NotificationCompat.Builder;
 
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.software.core.exceptions.runtime.MUST_NeverHappenedException;
-import com.nu.art.software.core.utils.GenericMap;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.utils.GenericMap;
 
 @ModuleDescriptor(
 		usesPermissions = {})

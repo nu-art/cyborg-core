@@ -22,18 +22,18 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.software.core.exceptions.runtime.ThisShouldNotHappenedException;
-import com.nu.art.software.core.interfaces.ILogger;
-import com.nu.art.software.core.tools.ArrayTools;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.ThisShouldNotHappenedException;
+import com.nu.art.core.interfaces.ILogger;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ViewListener;
 import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgAdapter;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
-import com.nu.art.software.reflection.injector.AnnotatbleInjector;
-import com.nu.art.software.reflection.tools.ART_Tools;
+import com.nu.art.reflection.injector.AnnotatbleInjector;
+import com.nu.art.reflection.tools.ART_Tools;
 
 import java.lang.reflect.Field;
 

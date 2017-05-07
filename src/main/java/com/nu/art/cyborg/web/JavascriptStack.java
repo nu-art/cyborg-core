@@ -21,9 +21,9 @@ package com.nu.art.cyborg.web;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.nu.art.software.core.interfaces.Condition;
-import com.nu.art.software.core.interfaces.ILogger;
-import com.nu.art.software.core.utils.PoolQueue;
+import com.nu.art.core.interfaces.Condition;
+import com.nu.art.core.interfaces.ILogger;
+import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._Analytics;

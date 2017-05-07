@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;

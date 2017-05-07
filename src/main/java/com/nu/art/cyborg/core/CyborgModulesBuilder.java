@@ -20,13 +20,13 @@ package com.nu.art.cyborg.core;
 
 import android.content.pm.FeatureInfo;
 
-import com.nu.art.belogged.BeLogged;
+import com.nu.art.belog.BeLogged;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AppDetailsModule;
-import com.nu.art.software.modular.core.Module;
-import com.nu.art.software.modular.core.ModuleManagerBuilder;
-import com.nu.art.software.modular.core.ModulesPack;
+import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManagerBuilder;
+import com.nu.art.modular.core.ModulesPack;
 
 /**
  * This is an internal object.

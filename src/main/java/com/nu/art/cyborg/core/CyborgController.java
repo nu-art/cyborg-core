@@ -33,8 +33,8 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.software.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;

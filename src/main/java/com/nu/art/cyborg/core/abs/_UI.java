@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core.abs;
 import android.os.Handler;
 import android.view.animation.Animation;
 
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 
 public interface _UI {

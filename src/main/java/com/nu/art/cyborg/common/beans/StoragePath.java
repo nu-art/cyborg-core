@@ -21,7 +21,7 @@ package com.nu.art.cyborg.common.beans;
 import java.io.File;
 import java.io.IOException;
 
-import com.nu.art.software.core.tools.FileTools;
+import com.nu.art.core.tools.FileTools;
 import com.nu.art.cyborg.common.utils.Storage;
 
 public final class StoragePath {

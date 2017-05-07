@@ -18,9 +18,9 @@
 
 package com.nu.art.cyborg.core;
 
-import com.nu.art.belogged.BeLogged;
-import com.nu.art.belogged.Logger;
-import com.nu.art.software.core.utils.PoolQueue;
+import com.nu.art.belog.BeLogged;
+import com.nu.art.belog.Logger;
+import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
 public final class ActivityStack

@@ -33,7 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.nu.art.software.core.generics.Function;
+import com.nu.art.core.generics.Function;
 import com.nu.art.cyborg.common.utils.AnimatorListenerImpl;
 import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayer;

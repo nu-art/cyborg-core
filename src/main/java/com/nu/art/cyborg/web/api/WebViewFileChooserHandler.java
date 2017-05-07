@@ -20,7 +20,7 @@ package com.nu.art.cyborg.web.api;
 
 import android.net.Uri;
 
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 
 public interface WebViewFileChooserHandler {
 

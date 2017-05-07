@@ -32,8 +32,8 @@ import android.os.Build;
 import android.provider.MediaStore;
 
 import com.nu.art.cyborg.R;
-import com.nu.art.software.core.exceptions.runtime.MUST_NeverHappenedException;
-import com.nu.art.software.core.tools.ExceptionTools;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.beans.FullComponentName;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;

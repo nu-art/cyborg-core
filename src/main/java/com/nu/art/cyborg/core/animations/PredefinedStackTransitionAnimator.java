@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayer;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;

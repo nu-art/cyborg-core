@@ -20,7 +20,7 @@ package com.nu.art.cyborg.core.dataModels;
 
 import android.database.Cursor;
 
-import com.nu.art.software.core.generics.Function;
+import com.nu.art.core.generics.Function;
 
 /**
  * Created by TacB0sS on 22-Jun 2015.

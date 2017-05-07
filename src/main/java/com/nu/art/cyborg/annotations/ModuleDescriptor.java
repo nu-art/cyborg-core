@@ -20,8 +20,8 @@ package com.nu.art.cyborg.annotations;
 
 import android.Manifest.permission;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.software.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.core.CyborgModule;
 
 import java.lang.annotation.Retention;

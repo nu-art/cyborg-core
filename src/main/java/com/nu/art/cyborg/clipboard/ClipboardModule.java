@@ -25,7 +25,7 @@ import android.os.Handler;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
-import com.nu.art.software.core.generics.Processor;
+import com.nu.art.core.generics.Processor;
 
 @ModuleDescriptor(usesPermissions = {})
 public class ClipboardModule

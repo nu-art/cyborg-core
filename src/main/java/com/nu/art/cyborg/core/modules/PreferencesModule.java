@@ -22,8 +22,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.support.annotation.NonNull;
 
-import com.nu.art.software.core.generics.Function;
-import com.nu.art.software.core.interfaces.Getter;
+import com.nu.art.core.generics.Function;
+import com.nu.art.core.interfaces.Getter;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 

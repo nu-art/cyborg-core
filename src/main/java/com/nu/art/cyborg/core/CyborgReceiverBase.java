@@ -22,10 +22,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.nu.art.software.core.interfaces.ILogger;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.software.modular.core.Module;
-import com.nu.art.software.modular.interfaces.ModuleManagerDelegator;
+import com.nu.art.modular.core.Module;
+import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 /**
  * A convenience receiver with access to everything a receiver might need from Cyborg.

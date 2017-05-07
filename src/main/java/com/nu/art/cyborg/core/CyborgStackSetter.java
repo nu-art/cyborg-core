@@ -24,7 +24,7 @@ import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
-import com.nu.art.software.reflection.annotations.ReflectiveInitialization;
+import com.nu.art.reflection.annotations.ReflectiveInitialization;
 
 /**
  * Setting the xml attributes onto a {@link CyborgStackController} instance.

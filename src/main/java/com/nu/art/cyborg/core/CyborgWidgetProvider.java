@@ -30,13 +30,13 @@ import android.os.IBinder;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
-import com.nu.art.software.core.generics.Processor;
-import com.nu.art.software.core.interfaces.ILogger;
+import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.common.interfaces.CyborgComponentDelegator;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.software.modular.core.Module;
+import com.nu.art.modular.core.Module;
 
 import java.io.IOException;
 import java.io.InputStream;

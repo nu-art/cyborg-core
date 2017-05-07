@@ -21,7 +21,7 @@ package com.nu.art.cyborg.ui;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.core.CyborgActivityBridgeImpl;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;

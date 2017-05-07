@@ -21,13 +21,13 @@ package com.nu.art.cyborg.core;
 import android.content.Context;
 import android.os.Looper;
 
-import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.software.core.generics.Processor;
-import com.nu.art.software.core.tools.ArrayTools;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.generics.Processor;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.modules.CyborgBasePack;
 import com.nu.art.cyborg.core.modules.CyborgEditModePack;
-import com.nu.art.software.modular.core.ModulesPack;
+import com.nu.art.modular.core.ModulesPack;
 
 import java.util.ArrayList;
 

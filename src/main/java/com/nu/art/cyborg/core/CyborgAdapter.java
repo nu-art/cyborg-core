@@ -29,13 +29,13 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.nu.art.belogged.Logger;
-import com.nu.art.software.core.interfaces.Getter;
+import com.nu.art.belog.Logger;
+import com.nu.art.core.interfaces.Getter;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.cyborg.core.dataModels.DataModel.DataModelListener;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.util.HashMap;
 

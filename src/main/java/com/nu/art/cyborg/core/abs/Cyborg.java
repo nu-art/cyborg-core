@@ -26,14 +26,14 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.IBinder;
 
-import com.nu.art.belogged.Logger;
-import com.nu.art.software.core.interfaces.ILogger;
+import com.nu.art.belog.Logger;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.CyborgModuleManager.CyborgModuleInjector;
 import com.nu.art.cyborg.core.CyborgReceiver;
-import com.nu.art.software.modular.interfaces.ModuleManagerDelegator;
+import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface Cyborg
 		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, ModuleManagerDelegator {

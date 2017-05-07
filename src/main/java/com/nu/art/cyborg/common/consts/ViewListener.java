@@ -43,12 +43,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.nu.art.software.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgRecycler;
 import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemClickListener;
 import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemLongClickListener;
-import com.nu.art.software.reflection.tools.ReflectiveTools;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
