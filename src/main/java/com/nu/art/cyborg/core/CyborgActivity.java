@@ -1,0 +1,194 @@
+/*
+ * cyborg-core is an extendable  module based framework for Android.
+ *
+ * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.nu.art.cyborg.core;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+
+/**
+ * If I could completely remove Activities I would, but Android needs a some rubbish to govern the views, so this a one type activity for the entire
+ * application, any other UI feature would be created as {@CyborgView}.
+ * <p/>
+ * The only reason I can see to extend this object is to create a Cyborg activity with another theme that would be defined in the manifest, but this can also
+ * be
+ * done programmatically.
+ */
+@SuppressWarnings("unused")
+public class CyborgActivity
+		extends Activity {
+
+	protected final String TAG = getClass().getSimpleName();
+
+	private final CyborgActivityBridge bridge;
+
+	private LayoutInflater layoutInflater;
+
+	public final CyborgActivityBridge getBridge() {
+		return bridge;
+	}
+
+	protected CyborgActivity(String screenName) {
+		super();
+		bridge = new CyborgActivityBridgeImpl(screenName, this);
+	}
+
+	public CyborgActivity() {
+		super();
+		bridge = new CyborgActivityBridgeImpl("NoName", this);
+	}
+
+	public void reCreateScreen() {
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		boolean toRet = bridge.onCreateOptionsMenu(menu);
+		return toRet | super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		boolean toRet = bridge.onKeyDown(keyCode, event);
+		return toRet | super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		boolean toRet = bridge.onKeyUp(keyCode, event);
+		return toRet | super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+		boolean toRet = bridge.onKeyLongPress(keyCode, event);
+		return toRet | super.onKeyLongPress(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+		boolean toRet = bridge.onKeyShortcut(keyCode, event);
+		return toRet | super.onKeyShortcut(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+		boolean toRet = bridge.onKeyMultiple(keyCode, repeatCount, event);
+		return toRet | super.onKeyMultiple(keyCode, repeatCount, event);
+	}
+
+	@Override
+	public void onBackPressed() {
+		boolean toRet = bridge.onBackPressed();
+		if (toRet)
+			return;
+		super.onBackPressed();
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		boolean toRet = bridge.onMenuItemSelected(featureId, item);
+		return toRet | super.onMenuItemSelected(featureId, item);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		bridge.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle inState) {
+		super.onRestoreInstanceState(inState);
+		bridge.onRestoreInstanceState(inState);
+	}
+
+	@Override
+	protected final void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		onCreateImpl();
+		bridge.onCreate(savedInstanceState);
+	}
+
+	protected void onCreateImpl() {}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		bridge.onNewIntent(intent);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		bridge.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		bridge.onPause();
+		super.onPause();
+	}
+
+	@Override
+	protected void onDestroy() {
+		bridge.onDestroy();
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		bridge.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@SuppressWarnings( {"rawtypes", "unchecked"})
+	public final <ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType) {
+		return bridge.getModule(moduleType);
+	}
+
+	public final void postOnUI(int delay, Runnable action) {
+		bridge.postOnUI(delay, action);
+	}
+
+	public final void postOnUI(Runnable action) {
+		bridge.postOnUI(action);
+	}
+
+	public final void removeAndPostOnUI(int delay, Runnable action) {
+		bridge.removeAndPostOnUI(delay, action);
+	}
+
+	public final void removeAndPostOnUI(Runnable action) {
+		bridge.removeAndPostOnUI(action);
+	}
+
+	public final void removeActionFromUI(Runnable action) {
+		bridge.removeActionFromUI(action);
+	}
+
+	public final Handler getUI_Handler() {
+		return bridge.getUI_Handler();
+	}
+}

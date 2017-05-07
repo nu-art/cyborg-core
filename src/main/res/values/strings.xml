@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ cyborg-core is an extendable  module based framework for Android.
+  ~
+  ~ Copyright (C) 2017  Adam van der Kruk aka TacB0sS
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <string name="Resolution" ignore="true">UNKNOWN</string>
+    <string name="UtilsModule_IntentResolverDefaultTitle">Complete Action Using:</string>
+
+    <!-- Numeric -->
+    <string name="_0">0</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
+    <string name="_6">6</string>
+    <string name="_7">7</string>
+    <string name="_8">8</string>
+    <string name="_9">9</string>
+
+    <!-- Time -->
+    <string name="Time_JustNow">Just now</string>
+    <string name="Time_Seconds">Seconds</string>
+    <string name="Time_Minute">Minute</string>
+    <string name="Time_Minutes">Minutes</string>
+    <string name="Time_Hour">Hour</string>
+    <string name="Time_Hours">Hours</string>
+    <string name="Time_Day">Day</string>
+    <string name="Time_Days">Days</string>
+    <string name="Time_Yesterday">Yesterday</string>
+    <string name="Time_Today">Today</string>
+    <string name="Time_Tomorrow">Tomorrow</string>
+    <string name="Time_Week">Week</string>
+    <string name="Time_Weeks">Weeks</string>
+    <string name="Time_Month">Month</string>
+    <string name="Time_Months">Months</string>
+    <string name="Time_Year">Year</string>
+    <string name="Time_Years">Years</string>
+    <string name="Time_LongTimeAgo">A Long Time Ago</string>
+
+</resources>

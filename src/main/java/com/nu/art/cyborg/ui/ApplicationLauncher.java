@@ -1,0 +1,85 @@
+/*
+ * cyborg-core is an extendable  module based framework for Android.
+ *
+ * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.nu.art.cyborg.ui;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+import com.nu.art.software.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.cyborg.core.CyborgActivityBridgeImpl;
+import com.nu.art.cyborg.core.CyborgBuilder;
+import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
+
+/**
+ * As I'm trying to eliminate the need to define activities in an application,but I'm forced by Android to add a launcher, so I've defined one.
+ * In order to use this {@link ApplicationLauncher} you <b>MUST</b> have a custom application object, and you <b>MUST</b> specify a launching layout when
+ * creating Cyborg, something like this:
+ * <pre>{@code
+ *
+ * public class MyApplication
+ *             extends Application {
+ *
+ *     @literal @Override
+ *     @literal @SuppressWarnings("unchecked")
+ *      public void onCreate() {
+ *          super.onCreate();
+ *          CyborgBuilder.startCyborg(new CyborgConfiguration("My Screen Name", R.layout.v1_activity__injection_example));
+ *      }
+ * }}
+ * </pre>
+ * <br>
+ * This launcher is added by default to Cyborg's library with the following format:
+ * <pre>
+ * {@code
+ *
+ * &lt;activity
+ *     android:name="com.nu.art.cyborg.ui.ApplicationLauncher"
+ *     android:label="MyAppName" &gt;
+ *     &lt;intent-filter&gt;
+ *         &lt;action android:name="android.intent.action.MAIN" /&gt;
+ *
+ *         &lt;category android:name="android.intent.category.DEFAULT" /&gt;
+ *         &lt;category android:name="android.intent.category.LAUNCHER" /&gt;
+ *     &lt;/intent-filter&gt;
+ * &lt;/activity&gt;}
+ * </pre>
+ * <br>
+ * If you want to have your own custom launching activity, simply disable this activity in your project manifest:
+ * <pre>
+ * {@code
+ *
+ * &lt;activity
+ *     android:name="com.nu.art.cyborg.ui.ApplicationLauncher"
+ *     android:enabled="false" /&gt;}
+ * </pre>
+ */
+public final class ApplicationLauncher
+		extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		LaunchConfiguration launchConfiguration = CyborgBuilder.getInstance().getLaunchConfiguration();
+		if (launchConfiguration == null)
+			throw new BadImplementationException("If you want to use the launching configuration feature, you must specify a layout when creating Cyborg, see documentation of this class");
+		startActivity(CyborgActivityBridgeImpl.composeIntent(launchConfiguration));
+		finish();
+	}
+}
