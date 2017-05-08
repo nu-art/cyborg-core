@@ -57,7 +57,7 @@ final class ReceiversManager
 			receiversInManifest.put(receiverType, isInManifest);
 		}
 
-		if (isInManifest == true) {
+		if (isInManifest) {
 			logWarning("Receiver type '" + receiverType.getSimpleName() + "' is already declared in the manifest, " + "and would NOT be added again!!!");
 			return;
 		}

@@ -191,6 +191,7 @@ public class CyborgRecycler
 			itemDecoration.set(verticalSpacing, horizontalSpacing);
 		else
 			itemDecoration.set(horizontalSpacing, verticalSpacing);
+
 	}
 
 	//	@Override
