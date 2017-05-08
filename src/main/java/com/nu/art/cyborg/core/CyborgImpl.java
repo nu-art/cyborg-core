@@ -422,10 +422,8 @@ final class CyborgImpl
 	}
 
 	@Override
-	@SuppressWarnings( {
-			"unchecked",
-			"ResourceType"
-	})
+	@SuppressWarnings( {"unchecked", "ResourceType"
+					   })
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
 		return (Service) getApplication().getSystemService(service.getKey());
 	}
@@ -514,7 +512,7 @@ final class CyborgImpl
 	public void assertMainThread() {
 		if (!isMainThread())
 			throw new BadImplementationException("---- MUST BE CALLED ON A UI THREAD ----  Method was called on the '" + Thread.currentThread()
-					.getName() + "'");
+																															   .getName() + "'");
 	}
 
 	@Override
@@ -601,7 +599,7 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final <ListenerType> void dispatchEvent(final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+	public final <ListenerType> void dispatchEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
 		postActivityAction(new ActivityStackAction() {
 
 			@Override

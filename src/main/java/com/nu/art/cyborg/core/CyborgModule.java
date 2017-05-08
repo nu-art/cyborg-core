@@ -374,10 +374,8 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	@SuppressWarnings( {
-			"rawtypes",
-			"unchecked"
-	})
+	@SuppressWarnings( {"rawtypes", "unchecked"
+					   })
 	public final <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
 		return (ModuleType) cyborg.getModule((Class<CyborgModule>) moduleType);
 	}
@@ -444,7 +442,8 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	public final <ListenerType> void dispatchEvent(final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		cyborg.dispatchEvent(listenerType, processor);
+	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		logDebug("Dispatching UI Event: " + message);
+		cyborg.dispatchEvent(message, listenerType, processor);
 	}
 }

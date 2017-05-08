@@ -40,7 +40,7 @@ public interface _UI {
 
 	void postActivityAction(ActivityStackAction action);
 
-	<ListenerType> void dispatchEvent(final Class<ListenerType> listenerType, final Processor<ListenerType> processor);
+	<ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor);
 
 	Animation loadAnimation(int animationId);
 }

@@ -285,7 +285,8 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	public final <ListenerType> void dispatchEvent(Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		logDebug("Dispatching UI Event: " + message);
 		activityBridge.dispatchEvent(listenerType, processor);
 	}
 
@@ -640,10 +641,8 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	@SuppressWarnings( {
-			"unchecked",
-			"ResourceType"
-	})
+	@SuppressWarnings( {"unchecked", "ResourceType"
+					   })
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
 		return cyborg.getSystemService(service);
 	}

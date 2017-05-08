@@ -47,6 +47,7 @@ public abstract class CyborgModuleItem
 	private final String TAG = getClass().getSimpleName();
 
 	protected Cyborg cyborg;
+
 	private ILogger logger;
 
 	final void setCyborg(Cyborg cyborg) {
@@ -246,9 +247,11 @@ public abstract class CyborgModuleItem
 	}
 
 	@Override
-	public final <ListenerType> void dispatchEvent(final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		cyborg.dispatchEvent(listenerType, processor);
+	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		logDebug("Dispatching UI Event: " + message);
+		cyborg.dispatchEvent(message, listenerType, processor);
 	}
+
 	@Override
 	public void logVerbose(String verbose) {
 		if (logger != null)
@@ -367,4 +370,5 @@ public abstract class CyborgModuleItem
 	public void logError(String error, Throwable e) {
 		if (logger != null)
 			logger.logError(error, e);
-	}}
+	}
+}
