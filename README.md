@@ -26,7 +26,7 @@ Cyborg defines things a bit differently to overcome some of Android design flaws
  - Minimize the use of Activities.
  - Minimize the use of Services.
  - Logs made so........ simple.
- - Controller stacks can live in parallel.
+ - Controller stacks can live in parallel (This is not clear I know!).
  - Preferences are now one liners, to set and get.
  - Communication between components without overhead (This is not clear I know!).
  - Save instance state just got simple.
