@@ -33,6 +33,8 @@ Cyborg defines things a bit differently to overcome some of Android design flaws
  - Notifications posting and interaction handling encpsulated.
  - Crash report data collection built-in.
  - User scenario recording is a feature!
+ - WebView simlified.
+ - Print logs to file as a feature.
  - I can probably go on a while longer...
 
 
