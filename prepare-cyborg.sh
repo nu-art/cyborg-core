@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "--------------- Prepare for Cyborg ----------------"
+echo
+
 gradleSettingsFile="settings.gradle"
 gradleBuildFile="build.gradle"
 
@@ -17,11 +20,20 @@ do
         modulesToAdd[${#modulesToAdd[*]}]=${repoName}
     fi
 
+    if [ -e "${repoName}/.git" ]; then
+        echo "Repo ${repoName} already exists... skipping"
+        continue
+    fi
+
     git clone "git@github.com:nu-art/${repoName}.git"
 done
+
+echo "Adding modules to ${gradleSettingsFile}"
 
 for moduleName in "${modulesToAdd[@]}"
 do
     echo "include ':${moduleName}'" >> ${gradleSettingsFile}
 done
 
+echo
+echo "---------------------- DONE -----------------------"
