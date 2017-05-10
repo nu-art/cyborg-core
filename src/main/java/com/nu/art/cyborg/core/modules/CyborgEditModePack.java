@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.core.modules;
 
+import com.nu.art.belog.BeLogged;
 import com.nu.art.cyborg.core.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgViewSetter;
@@ -33,7 +34,7 @@ import com.nu.art.modular.core.ModulesPack;
 public class CyborgEditModePack
 		extends ModulesPack {
 
-	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{AttributeModule.class};
+	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{AttributeModule.class, BeLogged.class};
 
 	private CyborgEditModePack() {
 		super(modulesTypes);

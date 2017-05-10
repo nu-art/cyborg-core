@@ -67,7 +67,9 @@ final class CyborgModulesBuilder
 		if (!(module instanceof CyborgModule))
 			return;
 
-		setLogger(module, getModule(BeLogged.class).getLogger(module));
+		BeLogged beLogged = getModule(BeLogged.class);
+		if (beLogged != null)
+			setLogger(module, beLogged.getLogger(module));
 		((CyborgModule) module).setCyborg(cyborgImpl);
 	}
 
