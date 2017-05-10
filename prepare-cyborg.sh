@@ -8,7 +8,7 @@ gradleBuildFile="build.gradle"
 
 if ! ([ -e ${gradleBuildFile} ] && [ -e ${gradleSettingsFile} ]); then
     _pwd=`pwd`
-    echo "Folder '$_pwd' doesn't seem like an Android project..."
+    echo "--- Folder '$_pwd' doesn't seem like an Android project..."
     exit 1
 fi
 
@@ -21,14 +21,15 @@ do
     fi
 
     if [ -e "${repoName}/.git" ]; then
-        echo "Repo ${repoName} already exists... skipping"
+        echo 
+        echo "--- Repo ${repoName} already exists... skipping"
         continue
     fi
 
     git clone "git@github.com:nu-art/${repoName}.git"
 done
 
-echo "Adding modules to ${gradleSettingsFile}"
+echo "--- Adding modules to ${gradleSettingsFile}"
 
 for moduleName in "${modulesToAdd[@]}"
 do
