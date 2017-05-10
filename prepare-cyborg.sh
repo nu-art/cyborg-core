@@ -21,20 +21,21 @@ do
     fi
 
     if [ -e "${repoName}/.git" ]; then
-        echo 
         echo "--- Repo ${repoName} already exists... skipping"
+        echo
         continue
     fi
 
     git clone "git@github.com:nu-art/${repoName}.git"
+    echo
 done
 
 echo "--- Adding modules to ${gradleSettingsFile}"
+echo
 
 for moduleName in "${modulesToAdd[@]}"
 do
     echo "include ':${moduleName}'" >> ${gradleSettingsFile}
 done
 
-echo
 echo "---------------------- DONE -----------------------"
