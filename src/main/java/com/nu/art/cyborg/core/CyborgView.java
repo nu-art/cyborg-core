@@ -110,7 +110,9 @@ public class CyborgView
 		// set the state tag
 		if (stateTag == null)
 			stateTag = controller.getClass().getSimpleName();
-		controller.setStateTag(stateTag);
+
+		if (!isInEditMode())
+			controller.setStateTag(stateTag);
 
 		// inflating views
 		controller._createView(LayoutInflater.from(context), this);
