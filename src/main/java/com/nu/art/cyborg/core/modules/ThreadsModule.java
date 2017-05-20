@@ -28,8 +28,7 @@ import com.nu.art.cyborg.core.CyborgModule;
 import java.util.HashMap;
 import java.util.Map;
 
-@ModuleDescriptor(
-		usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {})
 public class ThreadsModule
 		extends CyborgModule {
 
@@ -53,14 +52,10 @@ public class ThreadsModule
 		loopers.put(MainThread, Looper.getMainLooper());
 	}
 
-	public final Handler getNewHandler(String threadName) {
-		return new Handler(getLooper(threadName));
-	}
-
 	public final Handler getDefaultHandler(String threadName) {
 		Handler handler = defaultHandlers.get(threadName);
 		if (handler == null || !handler.getLooper().getThread().isAlive()) {
-			handler = getNewHandler(threadName);
+			handler = new Handler(getLooper(threadName));
 			defaultHandlers.put(threadName, handler);
 		}
 		return handler;
