@@ -121,13 +121,6 @@ public final class CyborgBuilder {
 
 		instance = new CyborgImpl(configuration.application, configuration.launchConfiguration);
 		instance.init(configuration.modulesPacks);
-		// Thread t = new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// }
-		// }, "Cyborg Creator");
-		// t.onStart();
 	}
 
 	public synchronized static void addCompletionProcessor(Processor<Cyborg> processor) {
