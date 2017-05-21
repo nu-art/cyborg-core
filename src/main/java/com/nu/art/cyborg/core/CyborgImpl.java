@@ -57,6 +57,7 @@ import com.nu.art.cyborg.core.modules.IAnalyticsModule;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManager.OnModuleInitializedListener;
 import com.nu.art.modular.core.ModulesPack;
 
 import java.io.File;
@@ -171,13 +172,22 @@ final class CyborgImpl
 
 		CyborgModulesBuilder builder = new CyborgModulesBuilder(modulesPacks);
 		builder.setCyborg(this);
+
 		moduleManager = builder.getCyborgModuleManager();
+
+		moduleManager.setModuleListener(new OnModuleInitializedListener() {
+			public void onModuleInitialized(Module module) {
+				if (!(module instanceof BeLogged))
+					return;
+
+				setBeLogged(CyborgImpl.this);
+				activityStackHandler = new ActivityStack(CyborgImpl.this);
+				receiversManager = new ReceiversManager(CyborgImpl.this);
+			}
+		});
+
 		builder.buildMainManager();
 
-		receiversManager = new ReceiversManager(this);
-		setBeLogged(this);
-
-		this.activityStackHandler = new ActivityStack(this);
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
 		}
@@ -422,8 +432,10 @@ final class CyborgImpl
 	}
 
 	@Override
-	@SuppressWarnings( {"unchecked", "ResourceType"
-					   })
+	@SuppressWarnings( {
+												 "unchecked",
+												 "ResourceType"
+										 })
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
 		return (Service) getApplication().getSystemService(service.getKey());
 	}
@@ -451,7 +463,7 @@ final class CyborgImpl
 	@Override
 	public final void hideKeyboard(IBinder windowToken) {
 		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
-		inputServiceManager.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS);
+		inputServiceManager.hideSoftInputFromWindow(windowToken, 0);
 	}
 
 	@Override
@@ -511,8 +523,7 @@ final class CyborgImpl
 	@Override
 	public void assertMainThread() {
 		if (!isMainThread())
-			throw new BadImplementationException("---- MUST BE CALLED ON A UI THREAD ----  Method was called on the '" + Thread.currentThread()
-																															   .getName() + "'");
+			throw new BadImplementationException("---- MUST BE CALLED ON A UI THREAD ----  Method was called on the '" + Thread.currentThread().getName() + "'");
 	}
 
 	@Override

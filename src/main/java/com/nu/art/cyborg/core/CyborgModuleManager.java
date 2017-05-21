@@ -51,6 +51,7 @@ public final class CyborgModuleManager
 		return ArrayTools.asArray(toRet, moduleType);
 	}
 
+
 	public final class CyborgModuleInjector
 			extends Injector<CyborgModule, Object> {
 

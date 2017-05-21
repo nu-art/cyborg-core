@@ -133,6 +133,7 @@ public abstract class CyborgModule
 			result.addEntry(this, "MISSING " + ModuleDescriptor.class.getName());
 			return;
 		}
+
 		Class<? extends CyborgModule>[] dependencies = descriptor.dependencies();
 		for (Class<? extends CyborgModule> dependencyModuleType : dependencies) {
 			if (getModule(dependencyModuleType) == null) {
@@ -140,29 +141,29 @@ public abstract class CyborgModule
 			}
 		}
 
-		String[] usesPermissions = descriptor.usesPermissions();
-		for (String permission : usesPermissions) {
-			boolean optional = false;
-			if (permission.startsWith("?")) {
-				optional = true;
-				permission = permission.replace("?", "");
-			}
+//		String[] usesPermissions = descriptor.usesPermissions();
+//		for (String permission : usesPermissions) {
+//			boolean optional = false;
+//			if (permission.startsWith("?")) {
+//				optional = true;
+//				permission = permission.replace("?", "");
+//			}
+//
+//			permission = replaceRuntimeVariables(permission);
+//			if (!checkUsesPermission(permission)) {
+//				logWarning("Permissions check returned NEGATIVE: " + permission);
+//				if (!optional)
+//					result.addEntry(this, "<uses-permission android:name=\"" + permission + "\" />");
+//			}
+//		}
 
-			permission = replaceRuntimeVariables(permission);
-			if (!checkUsesPermission(permission)) {
-				logWarning("Permissions check returned NEGATIVE: " + permission);
-				if (!optional)
-					result.addEntry(this, "<uses-permission android:name=\"" + permission + "\" />");
-			}
-		}
-
-		String[] definedPermissions = descriptor.definedPermissions();
-		for (String permission : definedPermissions) {
-			permission = replaceRuntimeVariables(permission);
-			if (!checkDefinedPermission(permission)) {
-				result.addEntry(this, "<permission android:name=\"" + permission + "\"android:protectionLevel=${level} />");
-			}
-		}
+//		String[] definedPermissions = descriptor.definedPermissions();
+//		for (String permission : definedPermissions) {
+//			permission = replaceRuntimeVariables(permission);
+//			if (!checkDefinedPermission(permission)) {
+//				result.addEntry(this, "<permission android:name=\"" + permission + "\"android:protectionLevel=${level} />");
+//			}
+//		}
 	}
 
 	private boolean checkDefinedPermission(String permission) {

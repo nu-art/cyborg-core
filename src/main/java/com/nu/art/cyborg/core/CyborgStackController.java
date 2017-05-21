@@ -440,7 +440,7 @@ public final class CyborgStackController
 		}
 	}
 
-	public final StackLayerBuilder createLayerBuilder() {
+	final StackLayerBuilder createLayerBuilder() {
 		return new StackLayerBuilder();
 	}
 
@@ -505,8 +505,8 @@ public final class CyborgStackController
 
 				for (StackTransitionAnimator animator : transitionAnimators) {
 					// All Animations are performed together, the listener MUST be called only once
-					animator
-							.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
+							animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		});
@@ -574,8 +574,8 @@ public final class CyborgStackController
 
 				for (StackTransitionAnimator animator : transitionAnimators) {
 					// All Animations are performed together, the listener MUST be called only once
-					animator
-							.animateOut(originLayerToBeRestored, targetLayerToBeRemove, duration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					animator.animateOut(originLayerToBeRestored, targetLayerToBeRemove, duration,
+							animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		};

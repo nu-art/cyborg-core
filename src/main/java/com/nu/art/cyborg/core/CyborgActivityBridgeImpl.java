@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,6 +50,7 @@ import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
 import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
+import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,9 +91,11 @@ public class CyborgActivityBridgeImpl
 
 	private final Cyborg cyborg;
 
-	private final Vector<OnActivityResultListener> activityResultListeners = new Vector<OnActivityResultListener>();
+	private OnSystemPermissionsResultListener[] permissionsResultListeners = {};
 
-	private final Vector<OnKeyboardVisibilityListener> keyboardListenerListeners = new Vector<OnKeyboardVisibilityListener>();
+	private OnActivityResultListener[] activityResultListeners = {};
+
+	private KeyboardChangeListener keyboardChangeListener;
 
 	private CyborgController[] controllerList = {};
 
@@ -116,6 +120,7 @@ public class CyborgActivityBridgeImpl
 		this.screenName = screenName;
 		cyborg = CyborgBuilder.getInstance();
 		cyborg.setBeLogged(this);
+		keyboardChangeListener = new KeyboardChangeListener(cyborg, activity);
 	}
 
 	@Override
@@ -160,7 +165,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public final FrameLayout addContentLayer(int v2_dialog_controller__upgrade_to_add_site) {
+	public final FrameLayout addContentLayer(int layoutId) {
 		return (FrameLayout) activity.findViewById(android.R.id.content);
 	}
 
@@ -344,14 +349,33 @@ public class CyborgActivityBridgeImpl
 	/* ********************************
 		Listeners
  	 **********************************/
+
+	public final void addKeyboardListener(OnKeyboardVisibilityListener listener) {
+		keyboardChangeListener.addKeyboardListener(listener);
+	}
+
+	public final void removeKeyboardListener(OnKeyboardVisibilityListener listener) {
+		keyboardChangeListener.removeKeyboardListener(listener);
+	}
+
 	@Override
 	public void removeResultListener(OnActivityResultListener onActivityResultListener) {
-		activityResultListeners.remove(onActivityResultListener);
+		activityResultListeners = ArrayTools.removeElement(activityResultListeners, onActivityResultListener);
 	}
 
 	@Override
 	public void addResultListener(OnActivityResultListener onActivityResultListener) {
-		activityResultListeners.add(onActivityResultListener);
+		activityResultListeners = ArrayTools.appendElement(activityResultListeners, onActivityResultListener);
+	}
+
+	@Override
+	public final void addPermissionResultListener(OnSystemPermissionsResultListener onPermissionResultListener) {
+		permissionsResultListeners = ArrayTools.appendElement(permissionsResultListeners, onPermissionResultListener);
+	}
+
+	@Override
+	public final void removePermissionResultListener(OnSystemPermissionsResultListener onPermissionResultListener) {
+		permissionsResultListeners = ArrayTools.removeElement(permissionsResultListeners, onPermissionResultListener);
 	}
 
 	@Override
@@ -359,6 +383,7 @@ public class CyborgActivityBridgeImpl
 		if (Arrays.asList(controllerList).contains(controller)) {
 			removeController(controller.getStateTag());
 		}
+
 		controllerList = ArrayTools.appendElement(controllerList, controller);
 		CyborgController previousController = controllersTagMap.put(newStateTag, controller);
 
@@ -381,14 +406,24 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		logLifeCycle(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode);
-		OnActivityResultListener[] listeners = ArrayTools.asArray(activityResultListeners, OnActivityResultListener.class);
-		for (OnActivityResultListener listener : listeners) {
+		for (OnActivityResultListener listener : activityResultListeners) {
 			if (listener.onActivityResult(requestCode, resultCode, data)) {
 				removeResultListener(listener);
 				return;
 			}
 		}
 	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		for (OnSystemPermissionsResultListener listener : permissionsResultListeners) {
+			if (listener.onPermissionsResult(requestCode, permissions, grantResults)) {
+				removePermissionResultListener(listener);
+				return;
+			}
+		}
+	}
+
 	// need to make sure the only lifecycles called on the controllers are the same ones as in the activity lifecycle state
 	//	including onCreate, which is now has an abnormal behavior
 
@@ -440,7 +475,8 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	@SuppressWarnings( {"rawtypes",
+	@SuppressWarnings( {
+												 "rawtypes",
 												 "unchecked"
 										 })
 	public <ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType) {
@@ -499,74 +535,6 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
 		return cyborg.getSystemService(service);
-	}
-
-	private class KeyboardListener
-			implements OnGlobalLayoutListener {
-
-		private final View activityRootView;
-
-		private boolean wasOpened;
-
-		private final int DefaultKeyboardDP = 100;
-
-		// From @nathanielwolf answer...  Lollipop includes button bar in the root. Add height of button bar (48dp) to maxDiff
-		private final int EstimatedKeyboardDP = DefaultKeyboardDP + (VERSION.SDK_INT >= 20 ? 48 : 0);
-
-		private final Rect r = new Rect();
-
-		public KeyboardListener(View activityRootView) {
-			this.activityRootView = activityRootView;
-		}
-
-		@Override
-		public void onGlobalLayout() {
-			// Convert the dp to pixels.
-			int estimatedKeyboardHeight = cyborg.dpToPx(EstimatedKeyboardDP);
-
-			// Conclude whether the keyboard is shown or not.
-			activityRootView.getWindowVisibleDisplayFrame(r);
-			int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
-			boolean isShown = heightDiff >= estimatedKeyboardHeight;
-
-			if (isShown == wasOpened) {
-				return;
-			}
-
-			wasOpened = isShown;
-			synchronized (keyboardListenerListeners) {
-				for (OnKeyboardVisibilityListener listener : keyboardListenerListeners) {
-					listener.onVisibilityChanged(isShown);
-				}
-			}
-		}
-	}
-
-	private KeyboardListener keyboardListener;
-
-	public synchronized void addKeyboardVisibilityListener(OnKeyboardVisibilityListener listener) {
-		if (keyboardListenerListeners.size() == 0) {
-			final View activityRootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
-			activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(keyboardListener = new KeyboardListener(activityRootView));
-		}
-		synchronized (keyboardListenerListeners) {
-			keyboardListenerListeners.add(listener);
-		}
-	}
-
-	public synchronized void removeKeyboardVisibilityListener(OnKeyboardVisibilityListener listener) {
-		synchronized (keyboardListenerListeners) {
-			keyboardListenerListeners.remove(listener);
-		}
-		if (keyboardListenerListeners.size() == 0) {
-			final View activityRootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
-
-			if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN)
-				activityRootView.getViewTreeObserver().removeOnGlobalLayoutListener(keyboardListener);
-			else
-				activityRootView.getViewTreeObserver().removeGlobalOnLayoutListener(keyboardListener);
-			keyboardListener = null;
-		}
 	}
 
 	/* ********************************

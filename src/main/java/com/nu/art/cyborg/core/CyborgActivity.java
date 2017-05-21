@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -163,7 +164,16 @@ public class CyborgActivity
 		bridge.onActivityResult(requestCode, resultCode, data);
 	}
 
-	@SuppressWarnings( {"rawtypes", "unchecked"})
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
+
+	@SuppressWarnings( {
+												 "rawtypes",
+												 "unchecked"
+										 })
 	public final <ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType) {
 		return bridge.getModule(moduleType);
 	}

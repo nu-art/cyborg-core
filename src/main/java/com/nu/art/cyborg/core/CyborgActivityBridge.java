@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import android.widget.FrameLayout;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
+import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 public interface CyborgActivityBridge {
 
@@ -53,13 +55,26 @@ public interface CyborgActivityBridge {
 
 	boolean onBackPressed();
 
-	void onActivityResult(int requestCode, int resultCode, Intent data);
-
-	/* Listeners */
+	/* Activity Results */
 	void addResultListener(OnActivityResultListener onActivityResultListener);
 
 	void removeResultListener(OnActivityResultListener onActivityResultListener);
 
+	void onActivityResult(int requestCode, int resultCode, Intent data);
+
+	/* Permissions Results */
+	void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
+
+	void addPermissionResultListener(OnSystemPermissionsResultListener onPermissionResultListener);
+
+	void removePermissionResultListener(OnSystemPermissionsResultListener onPermissionResultListener);
+
+	/* Keyboard visibility listener */
+	void addKeyboardListener(OnKeyboardVisibilityListener listener);
+
+	void removeKeyboardListener(OnKeyboardVisibilityListener listener);
+
+	/* Controllers */
 	void addController(String stateTag, CyborgController controller);
 
 	void removeController(String stateTag);
@@ -99,10 +114,6 @@ public interface CyborgActivityBridge {
 	Intent getIntent();
 
 	Activity getActivity();
-
-	void addKeyboardVisibilityListener(OnKeyboardVisibilityListener listener);
-
-	void removeKeyboardVisibilityListener(OnKeyboardVisibilityListener listener);
 
 	<Type> Type getController(Class<Type> type, String tag);
 

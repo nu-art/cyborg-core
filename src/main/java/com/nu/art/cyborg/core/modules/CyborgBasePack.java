@@ -25,6 +25,7 @@ import com.nu.art.cyborg.core.CyborgViewSetter;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.ImageUtilsModule;
+import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.cyborg.modules.custom.FontTypeSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
@@ -41,6 +42,7 @@ public class CyborgBasePack
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
 			BeLogged.class,
 			PreferencesModule.class,
+			PermissionModule.class,
 			AppDetailsModule.class,
 			DeviceDetailsModule.class,
 			ImageUtilsModule.class,

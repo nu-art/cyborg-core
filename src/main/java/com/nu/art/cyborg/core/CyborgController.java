@@ -39,6 +39,7 @@ import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.core.CyborgModuleManager.CyborgModuleInjector;
+import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
@@ -60,10 +61,10 @@ import com.nu.art.cyborg.core.more.CyborgViewInjector;
  * <b>I can elaborate about the controller's magnificence for 50 more lines, but instead just explore the API, and check out the sample project!</b>
  */
 @SuppressWarnings( {
-		"unused",
-		"deprecation",
-		"unchecked"
-})
+											 "unused",
+											 "deprecation",
+											 "unchecked"
+									 })
 public abstract class CyborgController
 		extends CyborgControllerBase {
 
@@ -166,7 +167,7 @@ public abstract class CyborgController
 		});
 	}
 
-	protected CyborgStackController getStack() {
+	public final CyborgStackController getStack() {
 		View rootView = getRootView();
 		CyborgController controller;
 		while ((rootView = (View) rootView.getParent()) != null) {
@@ -178,7 +179,7 @@ public abstract class CyborgController
 				return (CyborgStackController) controller;
 		}
 
-		throw new ImplementationMissingException("In order to use the stack, this view must be a descendant of a StackController ");
+		throw new ImplementationMissingException("In order to use the stack, this view must be a contained within a StackController");
 	}
 
 	protected final View getRootView() {
@@ -334,12 +335,12 @@ public abstract class CyborgController
 		activityBridge.showKeyboard(getRootView().getWindowToken());
 	}
 
-	protected final void addKeyboardVisibilityListener(final OnKeyboardVisibilityListener listener) {
-		activityBridge.addKeyboardVisibilityListener(listener);
+	protected final void addKeyboardListener(final OnKeyboardVisibilityListener listener) {
+		activityBridge.addKeyboardListener(listener);
 	}
 
-	protected final void removeKeyboardVisibilityListener(final OnKeyboardVisibilityListener listener) {
-		activityBridge.removeKeyboardVisibilityListener(listener);
+	protected final void removeKeyboardListener(final OnKeyboardVisibilityListener listener) {
+		activityBridge.removeKeyboardListener(listener);
 	}
 
 	final void setStateTag(String stateTag) {
@@ -396,5 +397,9 @@ public abstract class CyborgController
 	final void extractMembersImpl() {
 		injectMembers();
 		extractMembers();
+	}
+
+	protected final StackLayerBuilder createNewLayerBuilder() {
+		return getStack().createLayerBuilder();
 	}
 }
