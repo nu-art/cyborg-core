@@ -21,7 +21,10 @@ do
     fi
 
     if [ -e "${repoName}/.git" ]; then
-        echo "--- Repo ${repoName} already exists... skipping"
+        echo "--- Repo ${repoName} already exists... pulling..."
+        pushd ${repoName} > /dev/null
+            git pull
+        popd > /dev/null
         echo
         continue
     fi
