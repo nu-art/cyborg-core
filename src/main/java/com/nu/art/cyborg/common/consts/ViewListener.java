@@ -57,6 +57,10 @@ public enum ViewListener {
 	OnClick(ListenersMethods._SetOnClickListener, View.class, OnClickListener.class),
 	OnLongClick(ListenersMethods._SetOnLongClickListener, View.class, OnLongClickListener.class),
 	OnTouch(ListenersMethods._SetOnTouchListener, View.class, OnTouchListener.class),
+	/**
+	 * Don't Ever use this... use the on click and get the view check state.
+	 */
+	@Deprecated
 	OnCheckChanged(ListenersMethods._SetOnCheckChangedListener, CompoundButton.class, OnCheckedChangeListener.class),
 
 	/**

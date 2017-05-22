@@ -112,12 +112,16 @@ public final class CyborgStackController
 			if (controller == null)
 				return;
 
-			dispatchLifeCycleEvent(LifeCycleState.OnPause);
-			dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
 			activityBridge.removeController(controller.getStateTag());
+
 			for (CyborgController nestedController : nestedControllers) {
+				nestedController.dispatchLifeCycleEvent(LifeCycleState.OnPause);
+				nestedController.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
 				activityBridge.removeController(nestedController.getStateTag());
 			}
+
 			controller = null;
 		}
 
@@ -317,7 +321,7 @@ public final class CyborgStackController
 		if (rootControllerType != null)
 			layerBuilder.setControllerType(rootControllerType);
 
-		layerBuilder.setSaveState(true);
+		layerBuilder.setSaveState(false);
 		withRoot = true;
 		layerBuilder.build();
 	}
@@ -441,6 +445,7 @@ public final class CyborgStackController
 
 			layerToBeAdded.setDuration(duration);
 			layerToBeAdded.setSaveState(saveState);
+
 			push(layerToBeAdded, processor);
 		}
 
@@ -484,15 +489,7 @@ public final class CyborgStackController
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();
 
-		tempLayer = targetLayerToBeAdded;
-		targetLayerToBeAdded.create();
-		tempLayer = null;
-
-		CyborgController controller = targetLayerToBeAdded.controller;
-		if (controller != null && processor != null) {
-			postCreateProcessController(processor, controller);
-		}
-		bringControllerToState(controller, LifeCycleState.OnResume);
+		createLayerToView(targetLayerToBeAdded, processor);
 
 		layers.put(targetLayerToBeAdded.refKey, targetLayerToBeAdded);
 		layersStack.add(targetLayerToBeAdded.refKey);
@@ -535,6 +532,19 @@ public final class CyborgStackController
 		});
 	}
 
+	private void createLayerToView(StackLayer targetLayerToBeAdded, Processor<?> processor) {
+		tempLayer = targetLayerToBeAdded;
+		targetLayerToBeAdded.create();
+		tempLayer = null;
+
+		CyborgController controller = targetLayerToBeAdded.controller;
+		if (controller != null && processor != null) {
+			postCreateProcessController(processor, controller);
+		}
+
+		bringControllerToState(controller, LifeCycleState.OnResume);
+	}
+
 	private void setInAnimationState(boolean animating) {
 		animatingTransition = animating;
 	}
@@ -556,12 +566,7 @@ public final class CyborgStackController
 
 		final StackLayer originLayerToBeRestored = getTopLayer();
 		if (originLayerToBeRestored != null) {
-			originLayerToBeRestored.create();
-			CyborgController controller = originLayerToBeRestored.controller;
-			if (controller != null) {
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
-			}
+			createLayerToView(originLayerToBeRestored, null);
 			originLayerToBeRestored.restoreState();
 		}
 

@@ -193,26 +193,33 @@ public abstract class CyborgController
 	protected void onDestroyView() {}
 
 	final void dispatchLifeCycleEvent(LifeCycleState newState) {
-		if (getActivityState().ordinal() < newState.ordinal())
-			return;
-
-		if (state != null && state.ordinal() >= newState.ordinal())
-			return;
-
 		switch (newState) {
 			case OnCreate:
+				if (this.state != null)
+					return;
+
 				onCreate();
 				break;
 			case OnResume:
+				if (this.state != LifeCycleState.OnPause && this.state != LifeCycleState.OnCreate)
+					return;
+
 				onResume();
 				break;
 			case OnPause:
+				if (this.state != LifeCycleState.OnResume)
+					return;
+
 				onPause();
 				break;
 			case OnDestroy:
+				if (this.state != LifeCycleState.OnPause)
+					return;
+
 				onDestroy();
 				break;
 		}
+
 		setState(newState);
 	}
 
@@ -236,6 +243,10 @@ public abstract class CyborgController
 
 	public boolean onBackPressed() {
 		return false;
+	}
+
+	protected final void setInputMode(final int inputMode) {
+		activityBridge.setInputMode(inputMode);
 	}
 
 	protected boolean createMenuOptions(Menu menu, MenuInflater menuInflater) {
@@ -328,7 +339,7 @@ public abstract class CyborgController
 	 ********************************************/
 
 	protected final void hideKeyboard() {
-		activityBridge.hideKeyboard();
+		activityBridge.hideKeyboard(rootView);
 	}
 
 	protected final void showKeyboard() {

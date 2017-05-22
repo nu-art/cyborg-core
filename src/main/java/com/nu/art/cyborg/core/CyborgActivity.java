@@ -27,6 +27,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+
+import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
 
 /**
  * If I could completely remove Activities I would, but Android needs a some rubbish to govern the views, so this a one type activity for the entire
@@ -126,10 +129,19 @@ public class CyborgActivity
 	}
 
 	@Override
-	protected final void onCreate(Bundle savedInstanceState) {
+	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		onCreateImpl();
-		bridge.onCreate(savedInstanceState);
+
+		int windowFeature = getIntent().getIntExtra(WindowFeature, Window.FEATURE_NO_TITLE);
+		requestWindowFeature(windowFeature);
+
+		postOnUI(new Runnable() {
+			@Override
+			public void run() {
+				bridge.onCreate(savedInstanceState);
+			}
+		});
 	}
 
 	protected void onCreateImpl() {}
@@ -143,18 +155,34 @@ public class CyborgActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		bridge.onResume();
+		postOnUI(new Runnable() {
+			@Override
+			public void run() {
+				bridge.onResume();
+			}
+		});
 	}
 
 	@Override
 	protected void onPause() {
-		bridge.onPause();
+		postOnUI(new Runnable() {
+			@Override
+			public void run() {
+				bridge.onPause();
+			}
+		});
 		super.onPause();
 	}
 
 	@Override
 	protected void onDestroy() {
-		bridge.onDestroy();
+		postOnUI(new Runnable() {
+			@Override
+			public void run() {
+				bridge.onDestroy();
+			}
+		});
+
 		super.onDestroy();
 	}
 

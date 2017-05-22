@@ -21,12 +21,8 @@ package com.nu.art.cyborg.core;
 import android.support.ViewServer;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Rect;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
@@ -34,9 +30,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
@@ -55,7 +51,6 @@ import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
 
 /**
  * Created by TacB0sS on 19-Jun 2015.
@@ -147,8 +142,6 @@ public class CyborgActivityBridgeImpl
 
 	private void createView() {
 		Intent intent = activity.getIntent();
-		int windowFeature = intent.getIntExtra(WindowFeature, Window.FEATURE_NO_TITLE);
-		activity.requestWindowFeature(windowFeature);
 
 		if (screenName == null)
 			screenName = intent.getStringExtra(ScreenName);
@@ -171,9 +164,9 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public final void hideKeyboard() {
+	public final void hideKeyboard(View rootView) {
 		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
-		inputServiceManager.hideSoftInputFromWindow(activity.findViewById(android.R.id.content).getWindowToken(), 0);
+		inputServiceManager.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
 	}
 
 	@Override

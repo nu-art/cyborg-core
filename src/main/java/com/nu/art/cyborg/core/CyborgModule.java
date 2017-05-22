@@ -126,6 +126,10 @@ public abstract class CyborgModule
 		return CyborgImpl.inEditMode;
 	}
 
+	public final boolean isMainThread() {
+		return cyborg.isMainThread();
+	}
+
 	protected void validateModule(ValidationResult result) {
 		Class<? extends CyborgModule> moduleType = getClass();
 		ModuleDescriptor descriptor = moduleType.getAnnotation(ModuleDescriptor.class);
@@ -141,29 +145,29 @@ public abstract class CyborgModule
 			}
 		}
 
-//		String[] usesPermissions = descriptor.usesPermissions();
-//		for (String permission : usesPermissions) {
-//			boolean optional = false;
-//			if (permission.startsWith("?")) {
-//				optional = true;
-//				permission = permission.replace("?", "");
-//			}
-//
-//			permission = replaceRuntimeVariables(permission);
-//			if (!checkUsesPermission(permission)) {
-//				logWarning("Permissions check returned NEGATIVE: " + permission);
-//				if (!optional)
-//					result.addEntry(this, "<uses-permission android:name=\"" + permission + "\" />");
-//			}
-//		}
+		//		String[] usesPermissions = descriptor.usesPermissions();
+		//		for (String permission : usesPermissions) {
+		//			boolean optional = false;
+		//			if (permission.startsWith("?")) {
+		//				optional = true;
+		//				permission = permission.replace("?", "");
+		//			}
+		//
+		//			permission = replaceRuntimeVariables(permission);
+		//			if (!checkUsesPermission(permission)) {
+		//				logWarning("Permissions check returned NEGATIVE: " + permission);
+		//				if (!optional)
+		//					result.addEntry(this, "<uses-permission android:name=\"" + permission + "\" />");
+		//			}
+		//		}
 
-//		String[] definedPermissions = descriptor.definedPermissions();
-//		for (String permission : definedPermissions) {
-//			permission = replaceRuntimeVariables(permission);
-//			if (!checkDefinedPermission(permission)) {
-//				result.addEntry(this, "<permission android:name=\"" + permission + "\"android:protectionLevel=${level} />");
-//			}
-//		}
+		//		String[] definedPermissions = descriptor.definedPermissions();
+		//		for (String permission : definedPermissions) {
+		//			permission = replaceRuntimeVariables(permission);
+		//			if (!checkDefinedPermission(permission)) {
+		//				result.addEntry(this, "<permission android:name=\"" + permission + "\"android:protectionLevel=${level} />");
+		//			}
+		//		}
 	}
 
 	private boolean checkDefinedPermission(String permission) {
@@ -375,8 +379,10 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	@SuppressWarnings( {"rawtypes", "unchecked"
-					   })
+	@SuppressWarnings( {
+												 "rawtypes",
+												 "unchecked"
+										 })
 	public final <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
 		return (ModuleType) cyborg.getModule((Class<CyborgModule>) moduleType);
 	}
