@@ -231,7 +231,7 @@ public final class CyborgStackController
 			getFrameRootView().addView(rootView, 0);
 
 			controller.extractMembersImpl();
-			bringControllerToState(controller);
+			bringControllerToState(controller, LifeCycleState.OnCreate);
 
 			// xml attribute for root controller are handled in the handleAttributes method
 		}
@@ -349,12 +349,11 @@ public final class CyborgStackController
 
 		getModule(AttributeModule.class).setAttributes(context, attrs, controller);
 		controller.extractMembers();
-		bringControllerToState(controller);
+		bringControllerToState(controller, getState());
 		controller.handleAttributes(context, attrs);
 	}
 
-	private void bringControllerToState(CyborgController controller) {
-		LifeCycleState state = getState();
+	private void bringControllerToState(CyborgController controller, LifeCycleState state) {
 		if (state == null)
 			return;
 
@@ -493,6 +492,7 @@ public final class CyborgStackController
 		if (controller != null && processor != null) {
 			postCreateProcessController(processor, controller);
 		}
+		bringControllerToState(controller, LifeCycleState.OnResume);
 
 		layers.put(targetLayerToBeAdded.refKey, targetLayerToBeAdded);
 		layersStack.add(targetLayerToBeAdded.refKey);

@@ -328,11 +328,11 @@ public abstract class CyborgController
 	 ********************************************/
 
 	protected final void hideKeyboard() {
-		activityBridge.hideKeyboard(getRootView().getWindowToken());
+		activityBridge.hideKeyboard();
 	}
 
 	protected final void showKeyboard() {
-		activityBridge.showKeyboard(getRootView().getWindowToken());
+		activityBridge.showKeyboard();
 	}
 
 	protected final void addKeyboardListener(final OnKeyboardVisibilityListener listener) {

@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import com.nu.art.belog.Logger;
@@ -170,13 +171,16 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public final void hideKeyboard(IBinder windowToken) {
-		cyborg.hideKeyboard(windowToken);
+	public final void hideKeyboard() {
+		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
+		inputServiceManager.hideSoftInputFromWindow(activity.findViewById(android.R.id.content).getWindowToken(), 0);
 	}
 
 	@Override
-	public final void showKeyboard(IBinder windowToken) {
-		cyborg.showKeyboard(windowToken);
+	public final void showKeyboard() {
+		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
+		inputServiceManager.showSoftInput(activity.getCurrentFocus(), InputMethodManager.SHOW_FORCED);
+		inputServiceManager.showSoftInput(activity.getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
 	}
 
 	/* ********************************
@@ -453,6 +457,16 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void reCreateScreen() {
 
+	}
+
+	@Override
+	public Window getWindow() {
+		return activity.getWindow();
+	}
+
+	@Override
+	public void setInputMode(int softInputMode) {
+		getWindow().setSoftInputMode(softInputMode);
 	}
 
 	@Override

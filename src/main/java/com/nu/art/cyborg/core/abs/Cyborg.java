@@ -74,10 +74,6 @@ public interface Cyborg
 
 	void unbindService(ServiceConnection serviceConnection);
 
-	void showKeyboard(IBinder windowToken);
-
-	void hideKeyboard(IBinder windowToken);
-
 	<Type> Type[] getModulesAssignableFrom(Class<Type> parentType);
 
 	ILogger getLogger(Object beLogged);

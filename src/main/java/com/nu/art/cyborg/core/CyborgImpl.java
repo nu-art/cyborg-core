@@ -461,19 +461,6 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final void hideKeyboard(IBinder windowToken) {
-		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
-		inputServiceManager.hideSoftInputFromWindow(windowToken, 0);
-	}
-
-	@Override
-	public final void showKeyboard(IBinder windowToken) {
-		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
-		inputServiceManager.showSoftInputFromInputMethod(windowToken, InputMethodManager.SHOW_FORCED);
-		inputServiceManager.showSoftInputFromInputMethod(windowToken, InputMethodManager.SHOW_IMPLICIT);
-	}
-
-	@Override
 	public final ComponentName startService(Intent serviceIntent) {
 		return getApplication().startService(serviceIntent);
 	}

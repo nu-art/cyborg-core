@@ -29,6 +29,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.FrameLayout;
 
 import com.nu.art.core.generics.Processor;
@@ -135,7 +136,11 @@ public interface CyborgActivityBridge {
 
 	FrameLayout addContentLayer(int contentLayer);
 
-	void hideKeyboard(IBinder windowToken);
+	void hideKeyboard();
 
-	void showKeyboard(IBinder windowToken);
+	void showKeyboard();
+
+	Window getWindow();
+
+	void setInputMode(int softInputMode);
 }
