@@ -141,6 +141,12 @@ public class CyborgView
 		controller.handleAttributes(context, attrs);
 	}
 
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		controller.getStack().addController(controller);
+	}
+
 	final void setController(CyborgController controller) {
 		this.controller = controller;
 	}

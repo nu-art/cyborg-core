@@ -37,6 +37,7 @@ import android.widget.RelativeLayout;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.common.utils.AnimationListenerImpl;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
@@ -69,6 +70,8 @@ public final class CyborgStackController
 
 		protected CyborgController controller;
 
+		protected CyborgController[] nestedControllers = {};
+
 		protected View rootView;
 
 		private Bundle stateBundle = new Bundle();
@@ -98,6 +101,9 @@ public final class CyborgStackController
 			if (controller == null)
 				return;
 
+			if (!saveState)
+				return;
+
 			controller.onRestoreInstanceState(stateBundle);
 		}
 
@@ -109,6 +115,9 @@ public final class CyborgStackController
 			dispatchLifeCycleEvent(LifeCycleState.OnPause);
 			dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
 			activityBridge.removeController(controller.getStateTag());
+			for (CyborgController nestedController : nestedControllers) {
+				activityBridge.removeController(nestedController.getStateTag());
+			}
 			controller = null;
 		}
 
@@ -144,6 +153,10 @@ public final class CyborgStackController
 
 		public CyborgController getController() {
 			return controller;
+		}
+
+		private void addNestedController(CyborgController controller) {
+			nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
 		}
 	}
 
@@ -224,6 +237,8 @@ public final class CyborgStackController
 		}
 	}
 
+	private StackLayer tempLayer;
+
 	private LayoutInflater inflater;
 
 	private HashMap<String, StackLayer> layers = new HashMap<String, StackLayer>();
@@ -282,6 +297,11 @@ public final class CyborgStackController
 
 	void setTransitionDuration(int transitionDuration) {
 		this.transitionDuration = transitionDuration;
+	}
+
+	void addController(CyborgController controller) {
+		if (tempLayer != null)
+			tempLayer.addNestedController(controller);
 	}
 
 	private void assignRootController() {
@@ -465,7 +485,10 @@ public final class CyborgStackController
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();
 
+		tempLayer = targetLayerToBeAdded;
 		targetLayerToBeAdded.create();
+		tempLayer = null;
+
 		CyborgController controller = targetLayerToBeAdded.controller;
 		if (controller != null && processor != null) {
 			postCreateProcessController(processor, controller);
