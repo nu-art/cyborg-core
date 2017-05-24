@@ -34,7 +34,7 @@ public final class DebugStringsResolver
 
 	@Override
 	public String getString(Cyborg cyborg) {
-		if (!cyborg.isDebuggable())
+		if (!cyborg.isDebug())
 			throw new BadImplementationException("THIS is a debug utility... DO NOT USE IN PRODUCTION! or the application would crash!");
 		return text;
 	}

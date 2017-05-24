@@ -38,9 +38,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.UUID;
 
-@ModuleDescriptor(
-		usesPermissions = {/*permission.READ_PHONE_STATE*/},
-		dependencies = {PreferencesModule.class})
+@ModuleDescriptor(usesPermissions = {/*permission.READ_PHONE_STATE*/},
+									dependencies = {PreferencesModule.class})
 public final class AppDetailsModule
 		extends CyborgModule
 		implements AnalyticsConstants {
@@ -91,7 +90,7 @@ public final class AppDetailsModule
 	/**
 	 * @return The Application <b>CURRENT</b> debug state. In general this method would be called to simulate release mode conditions.
 	 */
-	public final boolean isDebug() {
+	public final boolean isDebuggable() {
 		return getCertificate().isDebugCertificate() && debugSimulationMode;
 	}
 

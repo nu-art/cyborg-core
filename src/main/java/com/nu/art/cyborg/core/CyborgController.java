@@ -38,7 +38,6 @@ import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
-import com.nu.art.cyborg.core.CyborgModuleManager.CyborgModuleInjector;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
@@ -46,6 +45,7 @@ import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
 import com.nu.art.cyborg.core.more.CyborgStateInjector;
 import com.nu.art.cyborg.core.more.CyborgViewInjector;
+import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
@@ -103,8 +103,8 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	final void injectMembers() {
-		CyborgViewInjector viewInjector = new CyborgViewInjector(getClass().getSimpleName(), rootView, actionDelegator, isDebuggable());
-		CyborgModuleInjector moduleInjector = cyborg.getModuleInjector();
+		CyborgViewInjector viewInjector = new CyborgViewInjector(getClass().getSimpleName(), rootView, actionDelegator, isDebug());
+		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 		viewInjector.injectToInstance(this);
 		moduleInjector.injectToInstance(this);
 	}

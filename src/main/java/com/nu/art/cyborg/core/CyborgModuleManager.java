@@ -51,41 +51,10 @@ public final class CyborgModuleManager
 		return ArrayTools.asArray(toRet, moduleType);
 	}
 
-
-	public final class CyborgModuleInjector
-			extends Injector<CyborgModule, Object> {
-
-		private CyborgModuleInjector() {}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected Object getValueForField(Field field) {
-			if (field.getType() == CyborgModule.class)
-				return null;
-
-			CyborgModule module = getModule((Class<? extends CyborgModule>) field.getType());
-			if (module == null)
-				throw new ImplementationMissingException("You need to add the module of type: '" + field.getType() + "' to one of your ModulePacks");
-
-			return module;
-		}
-
-		@Override
-		protected Field[] extractFieldsFromInstance(Class<?> injecteeType) {
-			return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(injecteeType, Object.class, null, null, CyborgModule.class);
-		}
-	}
-
-	private final CyborgModuleInjector cyborgModuleInjector = new CyborgModuleInjector();
-
 	protected final String TAG = getClass().getSimpleName();
 
 	CyborgModuleManager() {
 		super();
-	}
-
-	public final CyborgModuleInjector getInjector() {
-		return cyborgModuleInjector;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -97,8 +66,8 @@ public final class CyborgModuleManager
 			try {
 				processor.process((ParentType) module);
 			} catch (Throwable t) {
-				String errorMessage = "Error while processing module event:\n   parentType: " + parentType.getSimpleName() + "\n   moduleType: " + module
-						.getClass().getSimpleName();
+				String errorMessage = "Error while processing module event:\n   parentType: " + parentType.getSimpleName() + "\n   moduleType: " + module.getClass()
+						.getSimpleName();
 				logger.logError(errorMessage, t);
 			}
 		}

@@ -22,6 +22,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -52,35 +53,37 @@ public interface _SystemServices {
 		}
 	}
 
-	ServiceType<NotificationManager> NotificationService = new ServiceType<NotificationManager>(Context.NOTIFICATION_SERVICE);
+	ServiceType<NotificationManager> NotificationService = new ServiceType<>(Context.NOTIFICATION_SERVICE);
 
-	ServiceType<KeyguardManager> KeyguardService = new ServiceType<KeyguardManager>(Context.KEYGUARD_SERVICE);
+	ServiceType<KeyguardManager> KeyguardService = new ServiceType<>(Context.KEYGUARD_SERVICE);
 
-	ServiceType<InputMethodManager> InputMethodService = new ServiceType<InputMethodManager>(Context.INPUT_METHOD_SERVICE);
+	ServiceType<InputMethodManager> InputMethodService = new ServiceType<>(Context.INPUT_METHOD_SERVICE);
 
-	ServiceType<WindowManager> WindowService = new ServiceType<WindowManager>(Context.WINDOW_SERVICE);
+	ServiceType<WindowManager> WindowService = new ServiceType<>(Context.WINDOW_SERVICE);
 
-	ServiceType<ActivityManager> ActivityService = new ServiceType<ActivityManager>(Context.ACTIVITY_SERVICE);
+	ServiceType<ActivityManager> ActivityService = new ServiceType<>(Context.ACTIVITY_SERVICE);
 
-	ServiceType<ClipboardManager> ClipboardService_Pre_11 = new ServiceType<ClipboardManager>(Context.CLIPBOARD_SERVICE);
+	ServiceType<ClipboardManager> ClipboardService_Pre_11 = new ServiceType<>(Context.CLIPBOARD_SERVICE);
 
-	ServiceType<PowerManager> PowerService = new ServiceType<PowerManager>(Context.POWER_SERVICE);
+	ServiceType<PowerManager> PowerService = new ServiceType<>(Context.POWER_SERVICE);
 
-	ServiceType<LocationManager> LocationService = new ServiceType<LocationManager>(Context.LOCATION_SERVICE);
+	ServiceType<LocationManager> LocationService = new ServiceType<>(Context.LOCATION_SERVICE);
 
-	ServiceType<TelephonyManager> TelephonyService = new ServiceType<TelephonyManager>(Context.TELEPHONY_SERVICE);
+	ServiceType<TelephonyManager> TelephonyService = new ServiceType<>(Context.TELEPHONY_SERVICE);
 
-	ServiceType<WifiManager> WifiService = new ServiceType<WifiManager>(Context.WIFI_SERVICE);
+	ServiceType<WifiManager> WifiService = new ServiceType<>(Context.WIFI_SERVICE);
 
-	ServiceType<ConnectivityManager> ConnectivityService = new ServiceType<ConnectivityManager>(Context.CONNECTIVITY_SERVICE);
+	ServiceType<ConnectivityManager> ConnectivityService = new ServiceType<>(Context.CONNECTIVITY_SERVICE);
 
-	ServiceType<AudioManager> AudioService = new ServiceType<AudioManager>(Context.AUDIO_SERVICE);
+	ServiceType<AudioManager> AudioService = new ServiceType<>(Context.AUDIO_SERVICE);
 
-	ServiceType<Vibrator> VibratorService = new ServiceType<Vibrator>(Context.VIBRATOR_SERVICE);
+	ServiceType<Vibrator> VibratorService = new ServiceType<>(Context.VIBRATOR_SERVICE);
 
-	ServiceType<LayoutInflater> LayoutInflaterService = new ServiceType<LayoutInflater>(Context.LAYOUT_INFLATER_SERVICE);
+	ServiceType<LayoutInflater> LayoutInflaterService = new ServiceType<>(Context.LAYOUT_INFLATER_SERVICE);
 
-	ServiceType<AlarmManager> AlarmService = new ServiceType<AlarmManager>(Context.ALARM_SERVICE);
+	ServiceType<AlarmManager> AlarmService = new ServiceType<>(Context.ALARM_SERVICE);
+
+	ServiceType<BluetoothManager> BluetoothService = new ServiceType<>(Context.BLUETOOTH_SERVICE);
 
 	<Service> Service getSystemService(ServiceType<Service> service);
 }

@@ -24,15 +24,13 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.IBinder;
-
 import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
-import com.nu.art.cyborg.core.CyborgModuleManager.CyborgModuleInjector;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface Cyborg
@@ -60,7 +58,7 @@ public interface Cyborg
 
 	void postActivityAction(ActivityStackAction activityStackAction);
 
-	CyborgModuleInjector getModuleInjector();
+	ModuleInjector getModuleInjector();
 
 	LaunchConfiguration getLaunchConfiguration();
 

@@ -582,8 +582,8 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	public final boolean isDebuggable() {
-		return cyborg.isDebuggable();
+	public final boolean isDebug() {
+		return cyborg.isDebug();
 	}
 
 	@Override

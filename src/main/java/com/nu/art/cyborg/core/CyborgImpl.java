@@ -32,13 +32,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Debug;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.nu.art.belog.BeLogged;
@@ -51,12 +49,12 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
-import com.nu.art.cyborg.core.CyborgModuleManager.CyborgModuleInjector;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.core.ModuleManager.OnModuleInitializedListener;
 import com.nu.art.modular.core.ModulesPack;
 
@@ -194,7 +192,7 @@ final class CyborgImpl
 	}
 
 	@Override
-	public CyborgModuleInjector getModuleInjector() {
+	public ModuleInjector getModuleInjector() {
 		return moduleManager.getInjector();
 	}
 
@@ -533,7 +531,7 @@ final class CyborgImpl
 
 	@Override
 	public final void toastDebug(String toastMessage) {
-		if (!isDebuggable())
+		if (!isDebug())
 			return;
 		toast(Toast.LENGTH_LONG, "DEBUG: " + toastMessage);
 	}
@@ -581,8 +579,8 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final boolean isDebuggable() {
-		return inEditMode || getModule(AppDetailsModule.class).isDebug();
+	public final boolean isDebug() {
+		return inEditMode || getModule(AppDetailsModule.class).isDebuggable();
 	}
 
 	@Override

@@ -20,7 +20,7 @@ package com.nu.art.cyborg.core.abs;
 
 public interface _Debug {
 
-	boolean isDebuggable();
+	boolean isDebug();
 
 	boolean isDebugCertificate();
 

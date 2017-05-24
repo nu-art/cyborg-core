@@ -429,8 +429,8 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	public final boolean isDebuggable() {
-		return cyborg.isDebuggable();
+	public final boolean isDebug() {
+		return cyborg.isDebug();
 	}
 
 	@Override
@@ -448,9 +448,14 @@ public abstract class CyborgModule
 		cyborg.postActivityAction(action);
 	}
 
+	public final <ListenerType> void dispatchGlobalEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		dispatchModuleEvent(message, listenerType, processor);
+		dispatchEvent(message, listenerType, processor);
+	}
+
 	@Override
 	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		logDebug("Dispatching UI Event: " + message);
+		logInfo("Dispatching UI Event: " + message);
 		cyborg.dispatchEvent(message, listenerType, processor);
 	}
 }
