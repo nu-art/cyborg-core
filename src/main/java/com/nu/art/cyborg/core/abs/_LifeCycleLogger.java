@@ -20,9 +20,18 @@ package com.nu.art.cyborg.core.abs;
 
 interface _LifeCycleLogger {
 
+	/**
+	 * Should webview JS Stack details be printed to the log
+	 */
+	boolean LogDebug_WebJavascriptStack = false;
+
+	/**
+	 * Should controller lifecycle be printed to the log
+	 */
 	boolean DebugControllerLifeCycle = false;
 
+	/**
+	 * Should activity lifecycle be printed to the log
+	 */
 	boolean DebugActivityLifeCycle = false;
-
-	boolean DebugFragmentLifeCycle = false;
 }

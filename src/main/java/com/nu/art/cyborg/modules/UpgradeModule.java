@@ -28,7 +28,7 @@ import com.nu.art.cyborg.core.modules.PreferencesModule.IntegerPreference;
  * Created by TacB0sS on 28-Feb 2017.
  */
 @ModuleDescriptor(
-		usesPermissions = {/*permission.READ_PHONE_STATE*/},
+		usesPermissions = {},
 		dependencies = {AppDetailsModule.class})
 
 public class UpgradeModule
@@ -39,17 +39,15 @@ public class UpgradeModule
 		void onApplicationUpgraded(int previousVersion, int newVersion);
 	}
 
-	private IntegerPreference appVersionCode;
-
 	@Override
 	protected void init() {
 		PreferencesModule preferences = getModule(PreferencesModule.class);
-		appVersionCode = preferences.new IntegerPreference("appVersionCode", 0);
+		IntegerPreference appVersionCode = preferences.new IntegerPreference("appVersionCode", 0);
 		int versionCode = cyborg.getVersionCode();
-		int previousVersionCode = this.appVersionCode.get();
+		int previousVersionCode = appVersionCode.get();
 
 		if (versionCode != previousVersionCode) {
-			this.appVersionCode.set(versionCode);
+			appVersionCode.set(versionCode);
 			dispatchOnAppUpgraded(previousVersionCode, versionCode);
 		}
 	}

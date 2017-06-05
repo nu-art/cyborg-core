@@ -20,9 +20,29 @@ package com.nu.art.cyborg.core.abs;
 
 public interface _Analytics {
 
+	/**
+	 * Will dispatch module event to handle screen viewed Analytics.
+	 *
+	 * @param screenName The screen name to send to analytics.
+	 */
 	void sendView(String screenName);
 
+	/**
+	 * Will dispatch module event to handle event Analytics.
+	 *
+	 * @param category The category to send to analytics.
+	 * @param action   The action to send to analytics.
+	 * @param label    The label to send to analytics.
+	 * @param value    The value to send to analytics.
+	 */
 	void sendEvent(String category, String action, String label, long value);
 
+	/**
+	 * Will dispatch module event to handle error Analytics.
+	 *
+	 * @param description The error description.
+	 * @param t           The exception if exists.
+	 * @param crash       Did the app crash or not due to the exception.
+	 */
 	void sendException(String description, Throwable t, boolean crash);
 }

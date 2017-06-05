@@ -85,5 +85,13 @@ public interface _SystemServices {
 
 	ServiceType<BluetoothManager> BluetoothService = new ServiceType<>(Context.BLUETOOTH_SERVICE);
 
+	/**
+	 * Get Android's Service without casting.
+	 *
+	 * @param service   The {@link ServiceType} to get.
+	 * @param <Service> A generic boundary to the service class type
+	 *
+	 * @return The instance of Android's service.
+	 */
 	<Service> Service getSystemService(ServiceType<Service> service);
 }

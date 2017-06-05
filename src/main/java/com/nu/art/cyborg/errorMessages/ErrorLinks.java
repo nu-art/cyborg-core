@@ -5,5 +5,6 @@ package com.nu.art.cyborg.errorMessages;
  */
 
 public class ErrorLinks {
+
 	public static final String ClassNameRefactoringNotAppliedToXML = "https://issuetracker.google.com/issues/62016859";
 }

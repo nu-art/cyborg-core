@@ -23,16 +23,21 @@ public interface CyborgDelegator
 
 	/**
 	 * Vibrate for the provided ms.
+	 *
 	 * @param ms the interval to vibrate.
 	 */
 	void vibrate(long ms);
 
 	/**
 	 * Vibrate for the provided pattern.
-	 * @param repeat should the pattern repeat.
+	 *
+	 * @param repeat  should the pattern repeat.
 	 * @param pattern the pattern to vibrate.
 	 */
 	void vibrate(int repeat, long... pattern);
 
+	/**
+	 * @return The time in millis since last factory reset.
+	 */
 	long elapsedTimeMillis();
 }
