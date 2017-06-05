@@ -37,7 +37,6 @@ import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
@@ -59,13 +58,14 @@ import java.util.Random;
 /**
  * This is an internal object.
  */
+//@SuppressWarnings("WeakerAccess")
 abstract class CyborgControllerBase
 		extends Logger
 		implements UserActionsDelegator, CyborgDelegator {
 
 	public static final Random UtilsRandom = new Random();
 
-	public static final short getRandomShort() {
+	public static short getRandomShort() {
 		return (short) UtilsRandom.nextInt(Short.MAX_VALUE);
 	}
 
@@ -290,7 +290,7 @@ abstract class CyborgControllerBase
 		activityBridge.dispatchEvent(listenerType, processor);
 	}
 
-	public CyborgControllerBase() {
+	CyborgControllerBase() {
 		cyborg = CyborgBuilder.getInstance();
 		cyborg.setBeLogged(this);
 		actionDelegator = new ActionDelegator(cyborg);
@@ -497,28 +497,28 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	public final void toast(int length, String text) {
-		cyborg.toast(length, text);
-	}
-
-	@Override
 	public final void toastDebug(String text) {
 		cyborg.toastDebug(text);
 	}
 
 	@Override
 	public final void toastShort(int stringId, Object... args) {
-		cyborg.toast(Toast.LENGTH_SHORT, stringId, args);
+		cyborg.toastShort(stringId, args);
 	}
 
 	@Override
 	public final void toastLong(int stringId, Object... args) {
-		cyborg.toast(Toast.LENGTH_LONG, stringId, args);
+		cyborg.toastLong(stringId, args);
 	}
 
 	@Override
-	public final void toast(int length, int stringId, Object... args) {
-		cyborg.toast(length, getString(stringId, args));
+	public final void toastShort(StringResourceResolver stringResolver) {
+		cyborg.toastShort(stringResolver);
+	}
+
+	@Override
+	public final void toastLong(StringResourceResolver stringResolver) {
+		cyborg.toastLong(stringResolver);
 	}
 
 	@Override
@@ -577,11 +577,6 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	public final void toast(StringResourceResolver stringResolver, int length) {
-		cyborg.toast(stringResolver, length);
-	}
-
-	@Override
 	public final boolean isDebug() {
 		return cyborg.isDebug();
 	}
@@ -616,8 +611,8 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	public final float getDynamicDimension(int type, float size) {
-		return cyborg.getDynamicDimension(type, size);
+	public final float dimToPx(int type, float size) {
+		return cyborg.dimToPx(type, size);
 	}
 
 	@Override
@@ -641,8 +636,10 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	@SuppressWarnings( {"unchecked", "ResourceType"
-					   })
+	@SuppressWarnings( {
+												 "unchecked",
+												 "ResourceType"
+										 })
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
 		return cyborg.getSystemService(service);
 	}

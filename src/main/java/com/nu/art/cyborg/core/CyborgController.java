@@ -45,6 +45,7 @@ import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
 import com.nu.art.cyborg.core.more.CyborgStateInjector;
 import com.nu.art.cyborg.core.more.CyborgViewInjector;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 
 /**
@@ -102,7 +103,7 @@ public abstract class CyborgController
 	 */
 	protected void extractMembers() {}
 
-	final void injectMembers() {
+	private void injectMembers() {
 		CyborgViewInjector viewInjector = new CyborgViewInjector(getClass().getSimpleName(), rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 		viewInjector.injectToInstance(this);
@@ -123,21 +124,33 @@ public abstract class CyborgController
 		return state;
 	}
 
-	/*/**
-	 * @param dialogLayoutId The layout you want to dress the dialog with.
-     * @param dialogCode     The code identifying the dialog, MUST be greater than 0.
-     */
-	protected final void showDialog(String dialogName, Class<? extends CyborgController> dialogController) {
-	}
-
 	protected final View getViewById(int id) {
 		return getViewById(View.class, id);
 	}
 
+	/**
+	 * Get view by id, class type, and parent view.
+	 *
+	 * @param viewType   The Class type of the view.
+	 * @param id         The view id of the desired view.
+	 * @param <ViewType> View Class Type
+	 *
+	 * @return The view.
+	 */
 	protected final <ViewType extends View> ViewType getViewById(Class<ViewType> viewType, int id) {
 		return getViewById(rootView, viewType, id);
 	}
 
+	/**
+	 * Get view by id, class type, and parent view.
+	 *
+	 * @param container  The view that is containing the desired view.
+	 * @param viewType   The Class type of the view.
+	 * @param id         The view id of the desired view.
+	 * @param <ViewType> View Class Type
+	 *
+	 * @return The view.
+	 */
 	protected final <ViewType extends View> ViewType getViewById(View container, Class<ViewType> viewType, int id) {
 		ViewType view = (ViewType) getView(id);
 		if (view != null) {
@@ -153,10 +166,13 @@ public abstract class CyborgController
 		return view;
 	}
 
-	protected final View getView(int id) {
+	private View getView(int id) {
 		return views.get(id);
 	}
 
+	/**
+	 * A render api that will call renderImpl on the UI thread.
+	 */
 	public final void render() {
 		postOnUI(new Runnable() {
 
@@ -167,7 +183,10 @@ public abstract class CyborgController
 		});
 	}
 
-	public final CyborgStackController getStack() {
+	/**
+	 * @return Get the stack this controller is a part of.
+	 */
+	protected final CyborgStackController getStack() {
 		View rootView = getRootView();
 		CyborgController controller;
 		while ((rootView = (View) rootView.getParent()) != null) {
@@ -182,13 +201,20 @@ public abstract class CyborgController
 		throw new ImplementationMissingException("In order to use the stack, this view must be a contained within a StackController");
 	}
 
+	/**
+	 * @return The root view of the controller.
+	 */
 	protected final View getRootView() {
 		return rootView;
 	}
 
+	/**
+	 * A callback to handle the xml attribute for internal items.
+	 *
+	 * @param context Not sure why this is needed...
+	 * @param attrs   The xml attributes
+	 */
 	public void handleAttributes(Context context, AttributeSet attrs) {}
-
-	protected void onPreCreate() {}
 
 	protected void onDestroyView() {}
 
@@ -338,18 +364,54 @@ public abstract class CyborgController
 		KEYBOARD
 	 ********************************************/
 
+	/**
+	 * Hide the soft keyboard
+	 */
 	protected final void hideKeyboard() {
-		activityBridge.hideKeyboard(rootView);
+		View view = activityBridge.getActivity().getCurrentFocus();
+
+		if (view == null)
+			view = getRootView();
+
+		activityBridge.hideKeyboard(view);
 	}
 
+	/**
+	 * Show the soft keyboard.
+	 *
+	 * @param view The view to show the keyboard for.
+	 */
+	protected final void showKeyboard(View view) {
+		if (view == null)
+			view = activityBridge.getActivity().getCurrentFocus();
+
+		if (view == null)
+			view = getRootView();
+
+		activityBridge.showKeyboard(view);
+	}
+
+	/**
+	 * Show the soft keyboard for the current focused view, if none found, then for the root view of this controller
+	 */
 	protected final void showKeyboard() {
-		activityBridge.showKeyboard();
+		showKeyboard(null);
 	}
 
+	/**
+	 * Add a keyboard visibility listener.
+	 *
+	 * @param listener The listener to be called on.
+	 */
 	protected final void addKeyboardListener(final OnKeyboardVisibilityListener listener) {
 		activityBridge.addKeyboardListener(listener);
 	}
 
+	/**
+	 * Remove the keyboard visibility listener.
+	 *
+	 * @param listener The listener to be removed.
+	 */
 	protected final void removeKeyboardListener(final OnKeyboardVisibilityListener listener) {
 		activityBridge.removeKeyboardListener(listener);
 	}
@@ -378,14 +440,31 @@ public abstract class CyborgController
 		rootView.setTag(this);
 	}
 
-	public void disposeViews() {
+	final void disposeViews() {
 		rootView = null;
 	}
 
+	/**
+	 * Get a controller instance from the stack matching the parameters
+	 *
+	 * @param type   The type of the controller.
+	 * @param tag    The tag of the controller as defined init's creation.
+	 * @param <Type> The Type of the controller.
+	 *
+	 * @return An instance of the controller, or null if does not exist.
+	 */
 	protected final <Type> Type getController(Class<Type> type, String tag) {
 		return activityBridge.getController(type, tag);
 	}
 
+	/**
+	 * Get a controller instance from the stack matching the parameters
+	 *
+	 * @param type   The type of the controller.
+	 * @param <Type> The Type of the controller.
+	 *
+	 * @return An instance of the controller, or null if does not exist.
+	 */
 	protected final <Type> Type getController(Class<Type> type) {
 		return activityBridge.getController(type, type.getSimpleName());
 	}
@@ -401,8 +480,13 @@ public abstract class CyborgController
 		}
 	}
 
+	/**
+	 * In case you don't provide a layoutId, and want to create you layout dynamically you MUST override this method
+	 *
+	 * @return Expected your controller root view to be returned.
+	 */
 	protected View createCustomView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
-		throw new BadImplementationException("MUST specify a valid layoutId in the controller constructor or override this method!");
+		throw ExceptionGenerator.didNotProvideLayoutIdOrCustomView(this);
 	}
 
 	final void extractMembersImpl() {

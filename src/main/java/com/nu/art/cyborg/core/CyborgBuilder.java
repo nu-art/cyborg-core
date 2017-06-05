@@ -27,6 +27,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.modules.CyborgBasePack;
 import com.nu.art.cyborg.core.modules.CyborgEditModePack;
+import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
 
 import java.util.ArrayList;
@@ -94,6 +95,17 @@ public final class CyborgBuilder {
 
 	private CyborgBuilder() {
 		throw new BadImplementationException("Stateless static");
+	}
+
+	public static <ModuleType extends Module> ModuleType getModule(Context context, Class<ModuleType> moduleType) {
+		return getCyborg(context).getModule(moduleType);
+	}
+
+	private static Cyborg getCyborg(Context context) {
+		if (context != null) {
+			return CyborgBuilder.getInEditMode(context);
+		}
+		return CyborgBuilder.getInstance();
 	}
 
 	public synchronized static Cyborg getInstance() {

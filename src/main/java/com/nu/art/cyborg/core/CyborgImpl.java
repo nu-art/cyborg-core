@@ -313,7 +313,7 @@ final class CyborgImpl
 	}
 
 	@Override
-	public float getDynamicDimension(int type, float size) {
+	public float dimToPx(int type, float size) {
 		return TypedValue.applyDimension(type, size, getResources().getDisplayMetrics());
 	}
 
@@ -533,26 +533,35 @@ final class CyborgImpl
 	public final void toastDebug(String toastMessage) {
 		if (!isDebug())
 			return;
-		toast(Toast.LENGTH_LONG, "DEBUG: " + toastMessage);
+		_toast(Toast.LENGTH_LONG, "DEBUG: " + toastMessage);
 	}
 
 	@Override
 	public final void toastShort(int stringId, Object... args) {
-		toast(Toast.LENGTH_SHORT, stringId, args);
+		_toast(Toast.LENGTH_SHORT, stringId, args);
 	}
 
 	@Override
 	public final void toastLong(int stringId, Object... args) {
-		toast(Toast.LENGTH_LONG, stringId, args);
+		_toast(Toast.LENGTH_LONG, stringId, args);
 	}
 
 	@Override
-	public final void toast(int length, int stringId, Object... args) {
-		toast(length, getString(stringId, args));
+	public final void toastShort(StringResourceResolver stringResolver) {
+		_toast(Toast.LENGTH_SHORT, getString(stringResolver));
 	}
 
 	@Override
-	public final void toast(final int length, final String text) {
+	public final void toastLong(StringResourceResolver stringResolver) {
+		_toast(Toast.LENGTH_LONG, getString(stringResolver));
+	}
+
+	private void _toast(final int length, int stringId, Object... args) {
+		final String text = getString(stringId, args);
+		_toast(length, text);
+	}
+
+	private void _toast(final int length, final String text) {
 		if (Thread.currentThread() == getApplication().getMainLooper().getThread()) {
 			showToast(length, text);
 		} else
@@ -563,11 +572,6 @@ final class CyborgImpl
 					showToast(length, text);
 				}
 			});
-	}
-
-	@Override
-	public final void toast(StringResourceResolver stringResolver, int length) {
-		showToast(length, getString(stringResolver));
 	}
 
 	/*

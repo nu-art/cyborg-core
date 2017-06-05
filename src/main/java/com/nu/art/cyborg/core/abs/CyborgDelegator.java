@@ -21,9 +21,18 @@ package com.nu.art.cyborg.core.abs;
 public interface CyborgDelegator
 		extends _Analytics, _Resources, _Toasts, _Debug, _UI, _SystemServices {
 
+	/**
+	 * Vibrate for the provided ms.
+	 * @param ms the interval to vibrate.
+	 */
 	void vibrate(long ms);
 
-	void vibrate(int repeat, long... interval);
+	/**
+	 * Vibrate for the provided pattern.
+	 * @param repeat should the pattern repeat.
+	 * @param pattern the pattern to vibrate.
+	 */
+	void vibrate(int repeat, long... pattern);
 
 	long elapsedTimeMillis();
 }
