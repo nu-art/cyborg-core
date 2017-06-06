@@ -257,13 +257,17 @@ public abstract class CyborgController
 	 ********************************************/
 
 	final void onSaveInstanceState(Bundle outState) {
+		View rootView = getRootView();
+		if (rootView == null)
+			return;
+
 		onPreSaveState();
 		onSaveComplexObjectState(outState);
 		CyborgStateExtractor stateInjector = new CyborgStateExtractor(stateTag, outState);
 		stateInjector.extractFromInstance(this);
 
 		SparseArray<Parcelable> viewState = new SparseArray<>();
-		getRootView().saveHierarchyState(viewState);
+		rootView.saveHierarchyState(viewState);
 		outState.putSparseParcelableArray("rootView", viewState);
 	}
 

@@ -62,6 +62,8 @@ public class CyborgAdapter<Item>
 
 	private CyborgPagerAdapter pagerAdapter;
 
+	private boolean autoAnimate;
+
 	@SafeVarargs
 	public CyborgAdapter(CyborgActivityBridge activityBridge, Class<? extends ItemRenderer<? extends Item>>... renderersTypes) {
 		this.renderersTypes = renderersTypes;
@@ -73,6 +75,12 @@ public class CyborgAdapter<Item>
 	public final void setResolver(Getter<? extends DataModel<Item>> resolver) {
 		this.resolver = resolver;
 		invalidateDataModel();
+	}
+
+	public final void setAutoAnimate(boolean autoAnimate) {
+		this.autoAnimate = autoAnimate;
+		if (recyclerAdapter != null)
+			recyclerAdapter.setHasStableIds(autoAnimate);
 	}
 
 	public final void invalidateDataModel() {
@@ -127,7 +135,9 @@ public class CyborgAdapter<Item>
 	}
 
 	public Adapter getRecyclerAdapter(CyborgRecycler cyborgRecycler) {
-		return recyclerAdapter = new CyborgRecyclerAdapter(cyborgRecycler);
+		this.recyclerAdapter = new CyborgRecyclerAdapter(cyborgRecycler);
+		this.recyclerAdapter.setHasStableIds(this.autoAnimate);
+		return this.recyclerAdapter;
 	}
 
 	private int getItemsCount() {
@@ -328,6 +338,11 @@ public class CyborgAdapter<Item>
 			return getView(position, convertView, parent);
 		}
 
+		//		@Override
+		//		public long getItemId(int position) {
+		//			return autoAnimate ? getItemForPosition(position).hashCode() : position;
+		//		}
+
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			int viewType = getItemViewType(position);
@@ -417,6 +432,11 @@ public class CyborgAdapter<Item>
 		@Override
 		public void onBindViewHolder(CyborgDefaultHolder holder, int position) {
 			_renderItem(holder.renderer, position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return autoAnimate ? getItemForPosition(position).hashCode() : super.getItemId(position);
 		}
 
 		@Override
