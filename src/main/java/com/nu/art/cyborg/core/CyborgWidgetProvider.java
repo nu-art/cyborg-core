@@ -28,7 +28,6 @@ import android.content.res.Resources;
 import android.os.Handler;
 import android.os.IBinder;
 import android.view.animation.Animation;
-import android.widget.Toast;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
@@ -168,8 +167,8 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 	}
 
 	@Override
-	public final float getDynamicDimension(int type, float size) {
-		return cyborg.getDynamicDimension(type, size);
+	public final float dimToPx(int type, float size) {
+		return cyborg.dimToPx(type, size);
 	}
 
 	@Override
@@ -213,28 +212,28 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 	}
 
 	@Override
-	public final void toast(int length, String text) {
-		cyborg.toast(length, text);
-	}
-
-	@Override
 	public final void toastDebug(String text) {
 		cyborg.toastDebug(text);
 	}
 
 	@Override
 	public final void toastShort(int stringId, Object... args) {
-		cyborg.toast(Toast.LENGTH_SHORT, stringId, args);
+		cyborg.toastShort(stringId, args);
 	}
 
 	@Override
 	public final void toastLong(int stringId, Object... args) {
-		cyborg.toast(Toast.LENGTH_LONG, stringId, args);
+		cyborg.toastLong(stringId, args);
 	}
 
 	@Override
-	public final void toast(int length, int stringId, Object... args) {
-		cyborg.toast(length, getString(stringId, args));
+	public final void toastShort(StringResourceResolver stringResolver) {
+		cyborg.toastShort(stringResolver);
+	}
+
+	@Override
+	public final void toastLong(StringResourceResolver stringResolver) {
+		cyborg.toastLong(stringResolver);
 	}
 
 	@Override
@@ -286,11 +285,6 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 	@Override
 	public final String getPackageName() {
 		return cyborg.getPackageName();
-	}
-
-	@Override
-	public final void toast(StringResourceResolver stringResolver, int length) {
-		cyborg.toast(stringResolver, length);
 	}
 
 	@Override

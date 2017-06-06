@@ -26,11 +26,11 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 
 import java.util.HashMap;
 
-@ModuleDescriptor(
-		usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {})
 public final class AttributeModule
 		extends CyborgModule {
 
@@ -85,19 +85,19 @@ public final class AttributeModule
 		protected void init() {}
 
 		@SuppressWarnings( {
-				"unchecked",
-				"UnusedParameters"
-		})
-		protected final <Type> Class<? extends Type> resolveInstance(Class<Type> type, String className) {
+													 "unchecked",
+													 "UnusedParameters"
+											 })
+		protected final <Type> Class<? extends Type> resolveClassType(Class<Type> type, String className) {
 			if (className == null || className.length() == 0)
-				throw new BadImplementationException("MUST specify a valid a controller class name");
+				throw ExceptionGenerator.noValueForControllerClassNameSpecified();
 
 			if (className.startsWith("."))
 				className = cyborg.getPackageName() + className;
 			try {
 				return (Class<? extends Type>) getClass().getClassLoader().loadClass(className);
 			} catch (ClassNotFoundException e) {
-				throw new BadImplementationException("MUST specify a valid controller class name, found: " + className, e);
+				throw ExceptionGenerator.invalidControllerClassNameSpecified(className, e);
 			}
 		}
 	}

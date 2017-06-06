@@ -32,11 +32,11 @@ import com.nu.art.reflection.annotations.ReflectiveInitialization;
 public class CyborgRecyclerSetter
 		extends AttributesSetter<CyborgRecycler> {
 
-	private static int[] ids = {//
-			R.styleable.Recycler_orientation,//
-			R.styleable.Recycler_horizontalSpacing,//
-			R.styleable.Recycler_verticalSpacing,//
-			R.styleable.Recycler_landscapeColumnsCount,//
+	private static int[] ids = {
+			R.styleable.Recycler_orientation,
+			R.styleable.Recycler_horizontalSpacing,
+			R.styleable.Recycler_verticalSpacing,
+			R.styleable.Recycler_landscapeColumnsCount,
 			R.styleable.Recycler_portraitColumnsCount
 	};
 

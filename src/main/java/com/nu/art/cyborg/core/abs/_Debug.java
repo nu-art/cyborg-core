@@ -20,9 +20,18 @@ package com.nu.art.cyborg.core.abs;
 
 public interface _Debug {
 
+	/**
+	 * @return whether or not this is a debug run
+	 */
 	boolean isDebug();
 
+	/**
+	 * @return Whether or not the certificate this apk is signed with is a debug certificate.
+	 */
 	boolean isDebugCertificate();
 
+	/**
+	 * Utility api to call and wait for debugger... <b>will not work if not in debug certificate!!</b>
+	 */
 	void waitForDebugger();
 }

@@ -27,13 +27,12 @@ import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._Analytics;
-import com.nu.art.cyborg.core.interfaces.CyborgDebugLogs;
 import com.nu.art.cyborg.web.JavascriptStack.JavascriptActionExecutor;
 import com.nu.art.cyborg.web.api.OnLifeCycleListener;
 
 public final class JavascriptStack
 		extends PoolQueue<JavascriptActionExecutor>
-		implements ILogger, _Analytics, CyborgDebugLogs {
+		implements ILogger, _Analytics {
 
 	public static final String ClickFromAndroidScript = "" + //
 			"function calculateCoordinateAndClickOnNode(node) {\n" + //
@@ -230,7 +229,7 @@ public final class JavascriptStack
 		}
 	}
 
-	public static final class JavascriptActionExecutor
+	static final class JavascriptActionExecutor
 			implements Runnable, OnLifeCycleListener {
 
 		JavascriptAction action;
@@ -276,7 +275,7 @@ public final class JavascriptStack
 			webView.setLifeCycleListener(null);
 		}
 
-		private final void postInQueue() {
+		private void postInQueue() {
 			ScriptStack.addItem(this);
 		}
 
@@ -307,9 +306,9 @@ public final class JavascriptStack
 
 	private final StackAPI stackAPI = new StackAPI();
 
-	final WebViewAPI webViewAPI = new WebViewAPI();
+	private final WebViewAPI webViewAPI = new WebViewAPI();
 
-	public final String OnLoadJS = "javascript:(\n" + //
+	final String OnLoadJS = "javascript:(\n" + //
 			"    function() {\n" + //
 			webViewAPI.getAPI() + //
 			"        if(!('documentOffsetTop' in Element.prototype)) \n" + //
@@ -333,8 +332,6 @@ public final class JavascriptStack
 			")();\n";//
 
 	static Handler uiHandler;
-
-	private _Analytics analyticsTracker;
 
 	private Runnable interruptThread = new Runnable() {
 

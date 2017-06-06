@@ -18,8 +18,6 @@
 
 package com.nu.art.cyborg.common.utils;
 
-import android.widget.Toast;
-
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.CyborgBuilder;
 
@@ -45,7 +43,7 @@ public class DoubleBackPressCondition {
 
 	public final boolean onBackPressed() {
 		if (System.currentTimeMillis() - lastBackPressed > maxDelay) {
-			CyborgBuilder.getInstance().toast(toastMessage, Toast.LENGTH_LONG);
+			CyborgBuilder.getInstance().toastLong(toastMessage);
 			lastBackPressed = System.currentTimeMillis();
 			return true;
 		}

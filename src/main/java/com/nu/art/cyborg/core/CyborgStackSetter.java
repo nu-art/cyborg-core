@@ -83,7 +83,7 @@ public class CyborgStackSetter
 			if (controllerName == null)
 				return;
 
-			Class<? extends CyborgController> rootControllerType = resolveInstance(CyborgController.class, controllerName);
+			Class<? extends CyborgController> rootControllerType = resolveClassType(CyborgController.class, controllerName);
 			instance.setRootControllerType(rootControllerType);
 			return;
 		}

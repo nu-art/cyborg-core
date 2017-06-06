@@ -31,7 +31,11 @@ import java.util.Locale;
 
 public interface _Resources {
 
-	int[] numericIds = {R.string._0,
+	/**
+	 * Numeric Ids.
+	 */
+	int[] numericIds = {
+			R.string._0,
 			R.string._1,
 			R.string._2,
 			R.string._3,
@@ -43,32 +47,93 @@ public interface _Resources {
 			R.string._9
 	};
 
+	/**
+	 * @return The Application object of your app.
+	 */
 	Application getApplication();
 
+	/**
+	 * @return The package name of your app.
+	 */
 	String getPackageName();
 
+	/**
+	 * @param stringId The string id to extract.
+	 * @param params   The params for the string format.
+	 *
+	 * @return a composed string after formatting.
+	 */
 	String getString(int stringId, Object... params);
 
+	/**
+	 * @param stringResolver The string resolver to be resolved.
+	 *
+	 * @return the resolved string.
+	 */
 	String getString(StringResourceResolver stringResolver);
 
+	/**
+	 * @param numericString the numeric string to replace.
+	 *
+	 * @return The numeric string in current locale
+	 */
 	String convertNumericString(String numericString);
 
+	/**
+	 * Utility function to convert dp to px
+	 *
+	 * @param dp the value of dp to convert.
+	 *
+	 * @return the provided dp value in pixels
+	 */
 	int dpToPx(int dp);
 
+	/**
+	 * @return Android locale {@link Resources}
+	 */
 	Resources getResources();
 
+	/**
+	 * @param resourceId The desired resource id.
+	 * @return Resource input stream of the provided resource id.
+	 */
 	InputStream getRawResources(int resourceId);
 
+	/**
+	 *
+	 * @param assetName The desired asset's Name.
+	 * @return Asset input stream of the provided assetName.
+	 * @throws IOException if something goes wrong...
+	 */
 	InputStream getAsset(String assetName)
 			throws IOException;
 
+	/**
+	 * @return Android's {@link ContentResolver}.
+	 */
 	ContentResolver getContentResolver();
 
+	/**
+	 * @return The current Locale.
+	 */
 	Locale getLocale();
 
+	/**
+	 * @param dimensionId The desired dimension id.
+	 * @return The value of the provided dimension id.
+	 */
 	float getDimension(int dimensionId);
 
+	/**
+	 * @param colorId The desired color id.
+	 * @return The value of the provided color id.
+	 */
 	int getColor(int colorId);
 
-	float getDynamicDimension(int type, float size);
+	/**
+	 * @param type The type of provided dimension.
+	 * @param size The value of the dimension
+	 * @return the size in pixels.
+	 */
+	float dimToPx(int type, float size);
 }

@@ -24,9 +24,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+
 import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.CyborgReceiver;
@@ -36,45 +36,128 @@ import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 public interface Cyborg
 		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, ModuleManagerDelegator {
 
+	/**
+	 * @return The application instance of the app
+	 */
 	Application getApplication();
 
+	/**
+	 * @return Android's {@link PackageManager}
+	 */
 	PackageManager getPackageManager();
 
+	/**
+	 * Register a receiver if not already present in the manifest.
+	 *
+	 * @param receiverType The class type of the receiver.
+	 * @param actions      The list of actions the receiver will respond to.
+	 */
 	void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String[] actions);
 
+	/**
+	 * Unregister the receiver of the specified class type.
+	 *
+	 * @param receiverType The class type of the receiver.
+	 */
 	void unregisterReceiver(Class<? extends CyborgReceiver<?>> receiverType);
 
+	/**
+	 * In case you use a single instance activity, this workaround would delegate and return the result to your original activity.
+	 *
+	 * @param intent      The intent to start the activity for.
+	 * @param requestCode the request code for the result.
+	 */
 	void openActivityInStackForResult(Intent intent, int requestCode);
 
+	/**
+	 * Start an Android activity, upon the next activity in the stack.
+	 *
+	 * @param intent Intent to start the activity.
+	 */
 	void openActivityInStack(Intent intent);
 
+	/**
+	 * Start an Android Activity according to the provided intent
+	 *
+	 * @param intent Intent to start the activity.
+	 */
 	void startActivity(Intent intent);
 
-	boolean isMainThread();
-
-	ComponentName startService(Intent serviceIntent);
-
+	/**
+	 * @param activityBridge sets the activity in the foreground
+	 */
 	void setActivityInForeground(CyborgActivityBridge activityBridge);
 
-	void postActivityAction(ActivityStackAction activityStackAction);
-
+	/**
+	 * @return The instance of the module injector.
+	 */
 	ModuleInjector getModuleInjector();
 
+	/**
+	 * @return The launch configuration of Cyborg
+	 */
 	LaunchConfiguration getLaunchConfiguration();
 
+	/**
+	 * @return whether this is an edit mode instance
+	 */
 	boolean isInEditMode();
 
+	/**
+	 * @return Whether or not the executing is the main thread.
+	 */
+	boolean isMainThread();
+
+	/**
+	 * Crash the app if this is not the main thread
+	 */
 	void assertMainThread();
 
+	/**
+	 * @return Android current configuration
+	 */
 	Configuration getConfiguration();
 
+	/**
+	 * Start a service according to the respective intent
+	 *
+	 * @param serviceIntent The intent to start the service with
+	 *
+	 * @return A component name of the service.
+	 */
+	ComponentName startService(Intent serviceIntent);
+
+	/**
+	 * Bind to a service.
+	 * @param serviceIntent The intent to start the service with
+	 * @param serviceConnection The connection to manage the service connectivity state.
+	 * @param flags Other flags for the service.
+	 */
 	void bindService(Intent serviceIntent, ServiceConnection serviceConnection, int flags);
 
+	/**
+	 * Unbind from a service.
+	 * @param serviceConnection The connection of the service to disconnect from.
+	 */
 	void unbindService(ServiceConnection serviceConnection);
 
+	/**
+	 * @param parentType parent class to match with
+	 * @param <Type>     The Type of Modules
+	 *
+	 * @return an array of the modules answering the parentType
+	 */
 	<Type> Type[] getModulesAssignableFrom(Class<Type> parentType);
 
+	/**
+	 * @param beLogged The object to be logged
+	 *
+	 * @return The ILogger for the object to belogged.
+	 */
 	ILogger getLogger(Object beLogged);
 
+	/**
+	 * @param logger set the logger for Cyborg
+	 */
 	void setBeLogged(Logger logger);
 }

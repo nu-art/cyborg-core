@@ -31,8 +31,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
@@ -170,7 +168,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public final void showKeyboard() {
+	public final void showKeyboard(View view) {
 		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
 		inputServiceManager.showSoftInput(activity.getCurrentFocus(), InputMethodManager.SHOW_FORCED);
 		inputServiceManager.showSoftInput(activity.getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
@@ -452,7 +450,6 @@ public class CyborgActivityBridgeImpl
 
 	}
 
-	@Override
 	public Window getWindow() {
 		return activity.getWindow();
 	}

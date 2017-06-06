@@ -22,15 +22,40 @@ import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 
 interface _Toasts {
 
+	/**
+	 * This will only work while in debug!!!
+	 *
+	 * @param text the toast text to display.
+	 */
 	void toastDebug(String text);
 
-	void toast(StringResourceResolver stringResolver, int length);
+	/**
+	 * Will display a <b>short</b> toast with the resolved String.
+	 *
+	 * @param stringResolver string resolver to resolve.
+	 */
+	void toastShort(StringResourceResolver stringResolver);
 
-	void toast(int length, String text);
+	/**
+	 * Will display a <b>long</b> toast with the resolved String.
+	 *
+	 * @param stringResolver string resolver to resolve.
+	 */
+	void toastLong(StringResourceResolver stringResolver);
 
-	void toast(int length, int stringId, Object... params);
-
+	/**
+	 * Will display a <b>short</b> toast with the resolved String.
+	 *
+	 * @param stringId String resource id to use
+	 * @param args     The parameters to use in the formatting.
+	 */
 	void toastShort(int stringId, Object... args);
 
+	/**
+	 * Will display a <b>long</b> toast with the resolved String.
+	 *
+	 * @param stringId String resource id to use
+	 * @param args     The parameters to use in the formatting.
+	 */
 	void toastLong(int stringId, Object... args);
 }

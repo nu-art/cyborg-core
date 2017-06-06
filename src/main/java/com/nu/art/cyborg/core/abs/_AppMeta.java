@@ -20,9 +20,18 @@ package com.nu.art.cyborg.core.abs;
 
 public interface _AppMeta {
 
+	/**
+	 * @return the app version name, as set in the build.gradle file
+	 */
 	String getVersion();
 
+	/**
+	 * @return the app version code, as set in the build.gradle file
+	 */
 	int getVersionCode();
 
+	/**
+	 * @return the app name, as set in the manifest file
+	 */
 	String getName();
 }

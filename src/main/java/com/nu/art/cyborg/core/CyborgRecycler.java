@@ -28,7 +28,6 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.nu.art.cyborg.annotations.Restorable;
-import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AttributeModule;
 
 /**
@@ -111,15 +110,8 @@ public class CyborgRecycler
 	}
 
 	private void init(Context context, AttributeSet attrs, int defStyle) {
-		getCyborg(context).getModule(AttributeModule.class).setAttributes(context, attrs, this);
+		CyborgBuilder.getModule(isInEditMode() ? context : null, AttributeModule.class).setAttributes(context, attrs, this);
 		addItemDecoration(itemDecoration);
-	}
-
-	private Cyborg getCyborg(Context context) {
-		if (isInEditMode()) {
-			return CyborgBuilder.getInEditMode(context);
-		}
-		return CyborgBuilder.getInstance();
 	}
 
 	@Override
@@ -191,7 +183,6 @@ public class CyborgRecycler
 			itemDecoration.set(verticalSpacing, horizontalSpacing);
 		else
 			itemDecoration.set(horizontalSpacing, verticalSpacing);
-
 	}
 
 	//	@Override
