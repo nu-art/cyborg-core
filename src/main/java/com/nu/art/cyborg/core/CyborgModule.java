@@ -133,7 +133,7 @@ public abstract class CyborgModule
 		Class<? extends CyborgModule> moduleType = getClass();
 		ModuleDescriptor descriptor = moduleType.getAnnotation(ModuleDescriptor.class);
 		if (descriptor == null) {
-			result.addEntry(this, "MISSING " + ModuleDescriptor.class.getName());
+//			result.addEntry(this, "MISSING " + ModuleDescriptor.class.getName());
 			return;
 		}
 
