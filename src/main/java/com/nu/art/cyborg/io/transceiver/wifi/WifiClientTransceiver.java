@@ -22,7 +22,8 @@ public class WifiClientTransceiver
 	@Override
 	protected SocketWrapper connectImpl()
 			throws Exception {
-
+		setOneShot();
+		logDebug("Connecting on: " + serverIpAddress + ":" + serverPort);
 		Socket socket = new Socket();
 		socket.bind(null);
 		socket.connect((new InetSocketAddress(serverIpAddress, serverPort)), 5000);

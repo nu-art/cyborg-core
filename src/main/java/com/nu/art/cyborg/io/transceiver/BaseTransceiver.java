@@ -8,7 +8,11 @@ import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.net.SocketException;
+
+import static com.nu.art.cyborg.io.transceiver.ConnectionState.Connected;
+import static com.nu.art.cyborg.io.transceiver.ConnectionState.Connecting;
+import static com.nu.art.cyborg.io.transceiver.ConnectionState.Idle;
 
 public abstract class BaseTransceiver
 		extends Logger {
@@ -16,7 +20,7 @@ public abstract class BaseTransceiver
 	protected SocketWrapper socket;
 
 	//		protected BluetoothSocket socket;
-	private ConnectionState state = ConnectionState.Idle;
+	private ConnectionState state = Idle;
 
 	protected final String name;
 
@@ -34,19 +38,31 @@ public abstract class BaseTransceiver
 		@Override
 		public void run() {
 			try {
-				setState(ConnectionState.Connecting);
-				socket = connectImpl();
-				setState(ConnectionState.Connected);
-
 				while (listen) {
-					try {
-						processPacket();
-					} catch (Exception e) {
-						notifyError(e);
+					setState(Connecting);
+					socket = connectImpl();
+					setState(Connected);
+
+					while (socket.isConnected()) {
+						try {
+							processPacket();
+						} catch (SocketException e) {
+							break;
+						} catch (IOException e) {
+							try {
+								socket.close();
+							} catch (IOException e1) {
+								notifyError(e);
+							}
+						} catch (Exception e) {
+							notifyError(e);
+						}
 					}
 				}
 			} catch (Exception e) {
 				notifyError(e);
+			} finally {
+				setState(Idle);
 			}
 		}
 	};
@@ -60,6 +76,10 @@ public abstract class BaseTransceiver
 		CyborgBuilder.getInstance().setBeLogged(this);
 	}
 
+	public final void setOneShot() {
+		listen = false;
+	}
+
 	public final void sendPacket(final Packet packet) {
 		transmitter.post(new Runnable() {
 			@Override
@@ -71,8 +91,7 @@ public abstract class BaseTransceiver
 
 				logInfo("Sending packet to remote device: " + packet);
 				try {
-					OutputStream os = socket.getOutputStream();
-					packetSerializer.serializePacket(os, packet);
+					packetSerializer.serializePacket(socket.getOutputStream(), packet);
 				} catch (IOException e) {
 					notifyError(e);
 				}
@@ -81,6 +100,8 @@ public abstract class BaseTransceiver
 	}
 
 	public void connect() {
+		logInfo("Connecting");
+
 		receiver.removeCallbacks(connectAndListen);
 		receiver.post(connectAndListen);
 	}
@@ -94,19 +115,23 @@ public abstract class BaseTransceiver
 		listeners = ArrayTools.appendElement(listeners, listener);
 	}
 
-	public final void removeListener(TransceiverListener incomingPacketListener) {
-		listeners = ArrayTools.removeElement(listeners, incomingPacketListener);
+	public final void removeListener(TransceiverListener listener) {
+		listeners = ArrayTools.removeElement(listeners, listener);
 	}
 
 	protected ConnectionState getState() {
 		return state;
 	}
 
-	public final void setState(ConnectionState newState) {
+	public synchronized boolean isState(ConnectionState state) {
+		return this.state == state;
+	}
+
+	public final synchronized void setState(ConnectionState newState) {
 		if (state == newState)
 			return;
 
-		logDebug("State changed: " + state + " ==> " + newState);
+		logDebug("State changed: " + state + " => " + newState);
 		this.state = newState;
 		notifyStateChanged(newState);
 	}
@@ -115,6 +140,13 @@ public abstract class BaseTransceiver
 			throws Exception;
 
 	public void disconnect() {
+		logInfo("Disconnecting");
+
+		if (state == Idle) {
+			logWarning("Cannot disconnect, State is Idle");
+			return;
+		}
+
 		setState(ConnectionState.Disconnecting);
 		listen = false;
 
@@ -129,10 +161,8 @@ public abstract class BaseTransceiver
 			socket.close();
 		} catch (IOException e) {
 			notifyError(e);
-		} finally {
-			socket = null;
 		}
-		setState(ConnectionState.Idle);
+		setState(Idle);
 	}
 
 	protected final void notifyError(Exception e) {
@@ -143,7 +173,7 @@ public abstract class BaseTransceiver
 	}
 
 	protected final void notifyNewPacket(Packet packet) {
-		logDebug("New Packet received from Remote BT Device: " + name + "\n  Data: " + packet.toString());
+		logDebug("New Packet received to: " + name + "\n  Data: " + packet.toString());
 		for (TransceiverListener listener : listeners) {
 			listener.onIncomingPacket(packet);
 		}
@@ -153,9 +183,5 @@ public abstract class BaseTransceiver
 		for (TransceiverListener listener : listeners) {
 			listener.onStateChange(state);
 		}
-	}
-
-	public boolean isConnected() {
-		return state != ConnectionState.Idle;
 	}
 }

@@ -14,5 +14,8 @@ public interface SocketWrapper {
 
 	void close()
 			throws IOException;
+
+	boolean isConnected()
+			throws IOException;
 }
 

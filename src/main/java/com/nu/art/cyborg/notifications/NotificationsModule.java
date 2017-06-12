@@ -33,8 +33,7 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.utils.GenericMap;
 
-@ModuleDescriptor(
-		usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {})
 public final class NotificationsModule
 		extends CyborgModule
 		implements NotificationKeys {
@@ -49,11 +48,14 @@ public final class NotificationsModule
 	}
 
 	public final <Type extends NotificationHandler> void addNotificationHandler(Class<Type> handlerType) {
-		Type notificationHandler = instantiateModuleItem(handlerType);
+		Type notificationHandler = createModuleItem(handlerType);
 		notificationHandlers.put(handlerType, notificationHandler);
 	}
 
-	@SuppressWarnings( {"unchecked", "SuspiciousMethodCalls"})
+	@SuppressWarnings( {
+												 "unchecked",
+												 "SuspiciousMethodCalls"
+										 })
 	public final <HandlerType extends NotificationHandler> HandlerType getNotificationHandler(Class<HandlerType> handlerType) {
 		return (HandlerType) notificationHandlers.get(handlerType);
 	}

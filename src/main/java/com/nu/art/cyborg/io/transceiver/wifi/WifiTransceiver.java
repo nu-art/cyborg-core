@@ -38,6 +38,12 @@ abstract class WifiTransceiver
 				throws IOException {
 			socket.close();
 		}
+
+		@Override
+		public boolean isConnected()
+				throws IOException {
+			return socket.isConnected();
+		}
 	}
 
 	public WifiTransceiver(String name, PacketSerializer packetSerializer) {

@@ -216,6 +216,7 @@ public abstract class CyborgModule
 		Type moduleItem = super.instantiateModuleItem(moduleItemType);
 		if (moduleItem instanceof CyborgModuleItem)
 			((CyborgModuleItem) moduleItem).setCyborg(cyborg);
+
 		return moduleItem;
 	}
 
