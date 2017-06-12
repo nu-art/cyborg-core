@@ -101,6 +101,10 @@ public final class CyborgBuilder {
 		return getCyborg(context).getModule(moduleType);
 	}
 
+	public static <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
+		return getInstance().getModule(moduleType);
+	}
+
 	private static Cyborg getCyborg(Context context) {
 		if (context != null) {
 			return CyborgBuilder.getInEditMode(context);

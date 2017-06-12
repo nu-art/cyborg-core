@@ -30,9 +30,11 @@ import com.nu.art.cyborg.core.CyborgModule;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
-@SuppressWarnings( {"unused", "WeakerAccess"})
-@ModuleDescriptor(
-		usesPermissions = {})
+@SuppressWarnings( {
+											 "unused",
+											 "WeakerAccess"
+									 })
+@ModuleDescriptor(usesPermissions = {})
 public final class PreferencesModule
 		extends CyborgModule {
 
@@ -116,8 +118,6 @@ public final class PreferencesModule
 	public abstract class PreferenceKey<ItemType>
 			implements Getter<ItemType> {
 
-		private ItemType cache;
-
 		final String key;
 
 		private final PreferencesStorage type;
@@ -147,11 +147,8 @@ public final class PreferencesModule
 
 		public final ItemType get() {
 			SharedPreferences preferences = getPreferences(type);
+			ItemType cache;
 			if (expires == -1 || System.currentTimeMillis() - preferences.getLong(key + EXPIRES_POSTFIX, -1) < expires) {
-				if (cache != null) {
-					logDebug("+----+ CACHED: " + key + ": " + cache);
-					return cache;
-				}
 				cache = _get(preferences, key, defaultValue);
 				logInfo("+----+ LOADED: " + key + ": " + cache);
 				return cache;
@@ -167,8 +164,6 @@ public final class PreferencesModule
 		public void set(ItemType value) {
 			Editor editor = getPreferences(type).edit();
 			logDebug("+----+ SET: " + key + ": " + value);
-
-			this.cache = value;
 
 			_set(editor, key, value);
 			if (expires != -1)
