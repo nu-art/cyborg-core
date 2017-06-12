@@ -144,7 +144,11 @@ public class CyborgView
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
-		controller.getStack().addController(controller);
+		CyborgStackController stack = controller.getStack();
+		if (stack == null)
+			return;
+
+		stack.addController(controller);
 	}
 
 	final void setController(CyborgController controller) {

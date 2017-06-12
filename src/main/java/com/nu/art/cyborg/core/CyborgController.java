@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
@@ -186,12 +187,20 @@ public abstract class CyborgController
 	/**
 	 * @return Get the stack this controller is a part of.
 	 */
-	protected final CyborgStackController getStack() {
+	final CyborgStackController getStack() {
 		View rootView = getRootView();
+
 		CyborgController controller;
-		while ((rootView = (View) rootView.getParent()) != null) {
-			if (!(rootView instanceof CyborgView))
+		while (rootView != null) {
+			ViewParent parent = rootView.getParent();
+			if (!(parent instanceof View))
+				return null;
+
+			rootView = (View) parent;
+
+			if (!(rootView instanceof CyborgView)) {
 				continue;
+			}
 
 			controller = ((CyborgView) rootView).getController();
 			if (controller instanceof CyborgStackController)
