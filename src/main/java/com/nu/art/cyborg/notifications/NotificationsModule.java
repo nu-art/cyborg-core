@@ -64,18 +64,18 @@ public final class NotificationsModule
 		notificationManager.cancel(notificationId);
 	}
 
-	final PendingIntent createPendingIntent(int notificationId, String action, Bundle notificationData, int flags) {
+	final PendingIntent createPendingIntent(NotificationHandler notificationHandler, int notificationId, String action, Bundle notificationData, int flags) {
 		Application application = cyborg.getApplication();
 		Intent intent = new Intent(application, NotificationReceiver.class);
 		intent.putExtra(ExtraKey_Id, notificationId);
 		intent.putExtra(ExtraKey_DataBundle, notificationData);
-		intent.putExtra(ExtraKey_HandlerType, getClass().getSimpleName());
+		intent.putExtra(ExtraKey_HandlerType, notificationHandler.getClass().getName());
 		intent.putExtra(ExtraKey_Action, action);
 		return PendingIntent.getBroadcast(application, CyborgModule.getNextRandomPositiveShort(), intent, flags);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <HandlerType extends NotificationHandler> void processNotification(Intent intent) {
+	<HandlerType extends NotificationHandler> void processNotification(Intent intent) {
 		String handlerTypeClassName = intent.getStringExtra(ExtraKey_HandlerType);
 		Class<HandlerType> handlerType;
 		try {
@@ -90,13 +90,13 @@ public final class NotificationsModule
 			Bundle bundle = intent.getBundleExtra(ExtraKey_DataBundle);
 			int notificationId = intent.getIntExtra(ExtraKey_Id, -1);
 			String action = intent.getStringExtra(ExtraKey_Action);
-			notificationHandler.processNotification(notificationId, action, bundle);
+			notificationHandler.processNotification((short) notificationId, action, bundle);
 		} catch (Exception e) {
 			logError("Error processing notification event", e);
 		}
 	}
 
-	public void postNotification(int notificationId, Builder builder) {
+	final void postNotification(Builder builder, int notificationId) {
 		Notification notification;
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN)
 			notification = builder.build();
