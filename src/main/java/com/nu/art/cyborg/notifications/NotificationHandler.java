@@ -51,7 +51,11 @@ public abstract class NotificationHandler
 		return builder;
 	}
 
-	protected final void postNotification(Builder builder,short notificationId) {
+	protected final void cancelNotification(short notificationId) {
+		module.disposeNotification(notificationId);
+	}
+
+	protected final void postNotification(Builder builder, short notificationId) {
 		module.postNotification(builder, notificationId);
 	}
 
