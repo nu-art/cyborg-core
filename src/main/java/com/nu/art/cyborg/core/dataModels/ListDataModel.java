@@ -41,11 +41,11 @@ public class ListDataModel<Item>
 		return items.indexOf(item);
 	}
 
-	public final void addItems(Item... items) {
-		addItems(Arrays.asList(items));
+	public final void add(Item... items) {
+		addAll(Arrays.asList(items));
 	}
 
-	public final void addItems(List<Item> items) {
+	public final void addAll(List<Item> items) {
 		this.items.addAll(items);
 		dispatchDataSetChanged();
 	}
@@ -119,7 +119,7 @@ public class ListDataModel<Item>
 
 	public final void setItems(Item... items) {
 		this.items.clear();
-		addItems(items);
+		add(items);
 	}
 
 	public final void clear() {

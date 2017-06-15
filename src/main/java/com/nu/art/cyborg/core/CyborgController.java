@@ -57,7 +57,7 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
  * <li>You can declare members that extends {@link CyborgModule} and Cyborg would resolve these for you.</li>
  * <li>The controller have a super intuitive behaviour... <b>LIKE</b> a Fragment.</li>
  * <li>The controller have most of the apis you would normally use, so you don't need to search for your context.</li>
- * <li> If you have data tat you would like to persist after your activity had lost its state... declare a member and add the {@link Restorable} annotation to
+ * <li> If you have data tat you would like to persist after your activityType had lost its state... declare a member and add the {@link Restorable} annotation to
  * it!</li>
  * </ul>
  * <b>I can elaborate about the controller's magnificence for 50 more lines, but instead just explore the API, and check out the sample project!</b>

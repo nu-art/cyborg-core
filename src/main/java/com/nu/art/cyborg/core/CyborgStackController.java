@@ -112,17 +112,19 @@ public final class CyborgStackController
 			if (controller == null)
 				return;
 
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
-			activityBridge.removeController(controller.getStateTag());
+			removeController(controller.getStateTag());
 
 			for (CyborgController nestedController : nestedControllers) {
-				nestedController.dispatchLifeCycleEvent(LifeCycleState.OnPause);
-				nestedController.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
-				activityBridge.removeController(nestedController.getStateTag());
+				removeController(nestedController.getStateTag());
 			}
 
 			controller = null;
+		}
+
+		private void removeController(String stateTag) {
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
+			activityBridge.removeController(stateTag);
 		}
 
 		public void saveState() {

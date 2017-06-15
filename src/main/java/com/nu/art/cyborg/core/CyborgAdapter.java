@@ -122,8 +122,8 @@ public class CyborgAdapter<Item>
 
 	protected void setupRenderer(ItemRenderer<? extends Item> renderer) {}
 
-	protected <RendererType extends ItemRenderer<? extends Item>> RendererType instantiateItemRendererType(Class<RendererType> renderersType) {
-		return ReflectiveTools.newInstance(renderersType);
+	protected <RendererType extends ItemRenderer<? extends Item>> RendererType instantiateItemRendererType(Class<RendererType> rendererType) {
+		return ReflectiveTools.newInstance(rendererType);
 	}
 
 	protected int getItemTypeIndexByPosition(int position) {
