@@ -23,7 +23,6 @@ import android.app.PendingIntent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
 
-import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 
@@ -52,26 +51,34 @@ public abstract class NotificationHandler
 		return builder;
 	}
 
-	protected final void postNotification(int notificationId, Builder builder) {
-		module.postNotification(notificationId, builder);
+	protected final void cancelNotification(short notificationId) {
+		module.disposeNotification(notificationId);
 	}
 
-	protected void addActionButton(int notificationId, String action, Builder builder, int iconResId, StringResourceResolver stringResolver, Bundle notificationData) {
+	protected final void postNotification(Builder builder, short notificationId) {
+		module.postNotification(builder, notificationId);
+	}
+
+	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {
+		addActionButton(builder, notificationId, action, iconResId, label, null);
+	}
+
+	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label, Bundle notificationData) {
 		PendingIntent moreInfoIntent = createPendingIntent(notificationId, action, notificationData, CyborgModule.getNextRandomPositiveShort());
-		builder.addAction(iconResId, stringResolver.getString(cyborg), moreInfoIntent);
+		builder.addAction(iconResId, label, moreInfoIntent);
 	}
 
-	protected final PendingIntent createPendingIntent(int notificationId, String action) {
+	protected final PendingIntent createPendingIntent(short notificationId, String action) {
 		return createPendingIntent(notificationId, action, new Bundle());
 	}
 
-	protected final PendingIntent createPendingIntent(int notificationId, String action, Bundle data) {
+	protected final PendingIntent createPendingIntent(short notificationId, String action, Bundle data) {
 		return createPendingIntent(notificationId, action, data, 0);
 	}
 
-	protected final PendingIntent createPendingIntent(int notificationId, String action, Bundle data, int flags) {
-		return module.createPendingIntent(notificationId, action, data, flags);
+	protected final PendingIntent createPendingIntent(short notificationId, String action, Bundle data, int flags) {
+		return module.createPendingIntent(this, notificationId, action, data, flags);
 	}
 
-	protected abstract void processNotification(int notificationId, String action, Bundle bundle);
+	protected abstract void processNotification(short notificationId, String action, Bundle bundle);
 }

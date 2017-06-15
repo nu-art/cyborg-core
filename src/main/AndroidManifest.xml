@@ -38,5 +38,6 @@
             android:windowSoftInputMode="stateHidden"
             />
 
+        <receiver android:name=".notifications.NotificationReceiver"/>
     </application>
 </manifest>
