@@ -488,7 +488,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public void postOnUI(int delay, Runnable action) {
+	public void postOnUI(long delay, Runnable action) {
 		cyborg.postOnUI(delay, action);
 	}
 
@@ -498,7 +498,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public void removeAndPostOnUI(int delay, Runnable action) {
+	public void removeAndPostOnUI(long delay, Runnable action) {
 		cyborg.removeAndPostOnUI(delay, action);
 	}
 

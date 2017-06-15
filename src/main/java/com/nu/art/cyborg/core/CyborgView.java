@@ -20,14 +20,19 @@ package com.nu.art.cyborg.core;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.modules.AttributeModule;
+import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
+import com.nu.art.reflection.annotations.ReflectiveInitialization;
+import com.nu.art.reflection.tools.ReflectiveTools;
 
 /**
  * I've thought about this for a very long time, and at the end it still took me two days to make up my mind that this is better than Fragments... and now that
@@ -165,5 +170,44 @@ public class CyborgView
 
 	public void dispose() {
 		controller.disposeViews();
+	}
+
+	@ReflectiveInitialization
+	public static class CyborgViewSetter
+			extends AttributesSetter<CyborgView> {
+
+		private static int[] ids = {
+				R.styleable.CyborgView_controller,
+				R.styleable.CyborgView_tag
+		};
+
+		public CyborgViewSetter() {
+			super(CyborgView.class, R.styleable.CyborgView, ids);
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		protected void setAttribute(CyborgView instance, TypedArray a, int attr) {
+			if (attr == R.styleable.CyborgView_controller) {
+				String controllerName = a.getString(attr);
+				if (controllerName == null || controllerName.length() == 0)
+					throw new BadImplementationException("MUST specify a valid a controller class name");
+
+				if (controllerName.startsWith("."))
+					controllerName = cyborg.getPackageName() + controllerName;
+				try {
+					Class<? extends CyborgController> controllerType = (Class<? extends CyborgController>) getClass().getClassLoader().loadClass(controllerName);
+					CyborgController controller = ReflectiveTools.newInstance(controllerType);
+					instance.setController(controller);
+				} catch (ClassNotFoundException e) {
+					throw new BadImplementationException("MUST specify a valid controller class name, found: " + controllerName, e);
+				}
+				return;
+			}
+			if (attr == R.styleable.CyborgView_tag) {
+				String xmlTag = a.getString(attr);
+				instance.setStateTag(xmlTag);
+			}
+		}
 	}
 }

@@ -481,7 +481,7 @@ final class CyborgImpl
 	 * UI
 	 */
 	@Override
-	public final void postOnUI(int delay, Runnable action) {
+	public final void postOnUI(long delay, Runnable action) {
 		getUI_Handler().postDelayed(action, delay);
 	}
 
@@ -492,7 +492,7 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final void removeAndPostOnUI(int delay, Runnable action) {
+	public final void removeAndPostOnUI(long delay, Runnable action) {
 		removeActionFromUI(action);
 		postOnUI(delay, action);
 	}

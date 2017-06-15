@@ -88,12 +88,17 @@ public class ListDataModel<Item>
 
 	@Override
 	public Item getItemForPosition(int position) {
-		return items.get(position);
+		return items.get(position % items.size());
+	}
+
+	@Override
+	public int getRealItemsCount() {
+		return items.size();
 	}
 
 	@Override
 	public int getItemsCount() {
-		return items.size();
+		return cyclic ? Integer.MAX_VALUE : items.size();
 	}
 
 	@Override
@@ -110,7 +115,7 @@ public class ListDataModel<Item>
 
 	@Override
 	public void renderItemAtPosition(int position) {
-		dispatchItemAtPositionChanged(position);
+		dispatchItemAtPositionChanged(position % items.size());
 	}
 
 	public final void notifyDataSetChanged() {

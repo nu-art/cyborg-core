@@ -68,4 +68,8 @@
         <attr name="verticalSpacing" format="dimension"/>
         <attr name="horizontalSpacing" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="ViewPager">
+        <attr name="scrollIntervalMS" format="integer"/>
+    </declare-styleable>
 </resources>

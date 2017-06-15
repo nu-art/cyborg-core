@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,9 @@ import android.view.View;
 
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.modules.AttributeModule;
+import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
+import com.nu.art.reflection.annotations.ReflectiveInitialization;
+import com.nu.art.cyborg.R;
 
 /**
  * Enhanced Recycler with item click events, xml layouting parameters.
@@ -213,5 +217,58 @@ public class CyborgRecycler
 
 	public void setLayoutOrientation(int layoutOrientation) {
 		this.layoutOrientation = layoutOrientation;
+	}
+
+	/**
+	 * Setting the xml attributes onto a {@link CyborgRecycler} instance.
+	 */
+	@ReflectiveInitialization
+	public static class CyborgRecyclerSetter
+			extends AttributesSetter<CyborgRecycler> {
+
+		private static int[] ids = {
+				R.styleable.Recycler_orientation,
+				R.styleable.Recycler_horizontalSpacing,
+				R.styleable.Recycler_verticalSpacing,
+				R.styleable.Recycler_landscapeColumnsCount,
+				R.styleable.Recycler_portraitColumnsCount
+		};
+
+		private CyborgRecyclerSetter() {
+			super(CyborgRecycler.class, R.styleable.Recycler, ids);
+		}
+
+		@Override
+		protected void setAttribute(CyborgRecycler instance, TypedArray a, int attr) {
+			if (attr == R.styleable.Recycler_orientation) {
+				int margin = a.getInt(attr, 0);
+				instance.setLayoutOrientation(margin == 0 ? LinearLayoutManager.VERTICAL : LinearLayoutManager.HORIZONTAL);
+				return;
+			}
+			if (attr == R.styleable.Recycler_horizontalSpacing) {
+				int horizontalSpacing = a.getDimensionPixelSize(attr, 0);
+				instance.setHorizontalSpacing(horizontalSpacing);
+				return;
+			}
+			if (attr == R.styleable.Recycler_verticalSpacing) {
+				int verticalSpacing = a.getDimensionPixelSize(attr, 0);
+				instance.setVerticalSpacing(verticalSpacing);
+				return;
+			}
+			if (attr == R.styleable.Recycler_landscapeColumnsCount) {
+				int columnsCount = a.getInt(attr, 1);
+				instance.setLandscapeColumnsCount(columnsCount);
+				return;
+			}
+			if (attr == R.styleable.Recycler_portraitColumnsCount) {
+				int columnsCount = a.getInt(attr, 1);
+				instance.setPortraitColumnsCount(columnsCount);
+			}
+		}
+
+		@Override
+		protected void onSettingCompleted(CyborgRecycler instance) {
+			instance.invalidateLayoutManager();
+		}
 	}
 }

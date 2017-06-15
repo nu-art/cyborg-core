@@ -19,10 +19,12 @@
 package com.nu.art.cyborg.core.modules;
 
 import com.nu.art.belog.BeLogged;
-import com.nu.art.cyborg.core.CyborgRecyclerSetter;
+import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
-import com.nu.art.cyborg.core.CyborgViewSetter;
+import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
+import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
 import com.nu.art.cyborg.modules.AttributeModule;
+import com.nu.art.cyborg.modules.custom.FontTypeSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
@@ -34,7 +36,10 @@ import com.nu.art.modular.core.ModulesPack;
 public class CyborgEditModePack
 		extends ModulesPack {
 
-	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{AttributeModule.class, BeLogged.class};
+	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
+			AttributeModule.class,
+			BeLogged.class
+	};
 
 	private CyborgEditModePack() {
 		super(modulesTypes);
@@ -42,7 +47,9 @@ public class CyborgEditModePack
 
 	@Override
 	protected void init() {
+		getModule(AttributeModule.class).registerAttributesSetter(FontTypeSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(CyborgViewSetter.class);
+		getModule(AttributeModule.class).registerAttributesSetter(CyborgViewPagerSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(CyborgStackSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(CyborgRecyclerSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(ValueChangerSetter.class);

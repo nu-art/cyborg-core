@@ -119,11 +119,11 @@ public interface CyborgActivityBridge {
 
 	<ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType);
 
-	void postOnUI(int delay, Runnable action);
+	void postOnUI(long delay, Runnable action);
 
 	void postOnUI(Runnable action);
 
-	void removeAndPostOnUI(int delay, Runnable action);
+	void removeAndPostOnUI(long delay, Runnable action);
 
 	void removeAndPostOnUI(Runnable action);
 

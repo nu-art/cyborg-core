@@ -25,6 +25,8 @@ import com.nu.art.core.tools.ArrayTools;
  */
 public abstract class DataModel<Item> {
 
+	protected boolean cyclic;
+
 	public abstract int getItemTypesCount();
 
 	public abstract int getPositionForItem(Item item);
@@ -34,6 +36,8 @@ public abstract class DataModel<Item> {
 	public abstract Item getItemForPosition(int position);
 
 	public abstract int getItemsCount();
+
+	public abstract int getRealItemsCount();
 
 	public abstract void renderItem(Item item);
 
@@ -47,6 +51,10 @@ public abstract class DataModel<Item> {
 
 	public final void removeDataModelListener(DataModelListener listener) {
 		listeners = ArrayTools.removeElement(listeners, listener);
+	}
+
+	public final void setCyclic() {
+		cyclic = true;
 	}
 
 	protected final void dispatchDataSetChanged() {

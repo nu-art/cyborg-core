@@ -209,7 +209,7 @@ public class CyborgActivity
 		return bridge.getModule(moduleType);
 	}
 
-	public final void postOnUI(int delay, Runnable action) {
+	public final void postOnUI(long delay, Runnable action) {
 		bridge.postOnUI(delay, action);
 	}
 
@@ -217,7 +217,7 @@ public class CyborgActivity
 		bridge.postOnUI(action);
 	}
 
-	public final void removeAndPostOnUI(int delay, Runnable action) {
+	public final void removeAndPostOnUI(long delay, Runnable action) {
 		bridge.removeAndPostOnUI(delay, action);
 	}
 

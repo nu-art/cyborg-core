@@ -105,7 +105,7 @@ public abstract class CyborgModuleItem
 	}
 
 	@Override
-	public final void postOnUI(int delay, Runnable action) {
+	public final void postOnUI(long delay, Runnable action) {
 		cyborg.postOnUI(delay, action);
 	}
 
@@ -115,7 +115,7 @@ public abstract class CyborgModuleItem
 	}
 
 	@Override
-	public final void removeAndPostOnUI(int delay, Runnable action) {
+	public final void removeAndPostOnUI(long delay, Runnable action) {
 		cyborg.removeAndPostOnUI(delay, action);
 	}
 

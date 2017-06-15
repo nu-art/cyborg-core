@@ -45,6 +45,11 @@ public class CursorDataModel<Item>
 	}
 
 	@Override
+	public int getRealItemsCount() {
+		return getItemsCount();
+	}
+
+	@Override
 	public int getItemsCount() {
 		return cursor == null ? 0 : cursor.getCount();
 	}

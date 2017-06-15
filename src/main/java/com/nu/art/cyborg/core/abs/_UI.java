@@ -37,7 +37,7 @@ public interface _UI {
 	 * @param delay  The delay interval before executing the provided {@link Runnable}
 	 * @param action The runnable to execute once interval expires.
 	 */
-	void postOnUI(int delay, Runnable action);
+	void postOnUI(long delay, Runnable action);
 
 	/**
 	 * Will execute the provided action on the UI thread as soon as possible.
@@ -59,7 +59,7 @@ public interface _UI {
 	 * @param delay  The delay interval before executing the provided {@link Runnable}
 	 * @param action The runnable to be removed and execute once interval expires.
 	 */
-	void removeAndPostOnUI(int delay, Runnable action);
+	void removeAndPostOnUI(long delay, Runnable action);
 
 	/**
 	 * Remove the specified runnable from the UI handler.
