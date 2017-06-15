@@ -18,6 +18,8 @@
 
 package com.nu.art.cyborg.core;
 
+import android.os.Handler;
+
 import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.utils.PoolQueue;
@@ -31,29 +33,15 @@ public final class ActivityStack
 		void execute(CyborgActivityBridge activity);
 	}
 
-	@SuppressWarnings("unused")
-	private Thread runnableExecutor;
+	private final Handler uiHandler;
 
-	private PoolQueue<ActivityStackAction> queue = new PoolQueue<ActivityStackAction>() {
+	private final Object screenSyncObject = new Object();
 
-		@Override
-		protected void executeAction(final ActivityStackAction action)
-				throws Exception {
-			synchronized (screenSyncObject) {
-				if (activity == null)
-					screenSyncObject.wait();
-				action.execute(activity);
-			}
-		}
-
-		@Override
-		protected void onExecutionError(ActivityStackAction action, Throwable e) {
-			logError("Error while executing action: " + action, e);
-		}
-	};
+	private volatile CyborgActivityBridge activity;
 
 	public ActivityStack(Cyborg cyborg) {
-		queue.createThreads("Screen UI Action Executer");
+		queue.createThreads("Screen UI Action Executor");
+		uiHandler = cyborg.getUI_Handler();
 		setBeLogged(cyborg.getModule(BeLogged.class));
 	}
 
@@ -65,10 +53,6 @@ public final class ActivityStack
 		return queue.removeItem(item);
 	}
 
-	private final Object screenSyncObject = new Object();
-
-	private volatile CyborgActivityBridge activity;
-
 	final void setActivityBridge(CyborgActivityBridge activity) {
 		synchronized (screenSyncObject) {
 			this.activity = activity;
@@ -76,4 +60,38 @@ public final class ActivityStack
 				screenSyncObject.notify();
 		}
 	}
+
+	private PoolQueue<ActivityStackAction> queue = new PoolQueue<ActivityStackAction>() {
+		@Override
+		protected void executeAction(final ActivityStackAction action)
+				throws Exception {
+			synchronized (screenSyncObject) {
+				if (activity == null)
+					screenSyncObject.wait();
+
+				executeStackImpl(action);
+			}
+		}
+
+		private void executeStackImpl(final ActivityStackAction action) {
+			Runnable r = new Runnable() {
+				@Override
+				public void run() {
+					synchronized (screenSyncObject) {
+						if (activity == null) {
+							addItem(action);
+							return;
+						}
+						action.execute(activity);
+					}
+				}
+			};
+			uiHandler.post(r);
+		}
+
+		@Override
+		protected void onExecutionError(ActivityStackAction item, Throwable e) {
+			logError("Error while executing action: " + item, e);
+		}
+	};
 }
