@@ -58,7 +58,7 @@ public class CyborgActivityBridgeImpl
 		implements CyborgActivityBridge, IntentKeys, _SystemServices {
 
 	public static Intent composeIntent(LaunchConfiguration launchConfiguration) {
-		return composeIntent(CyborgActivity.class, launchConfiguration.screenName, launchConfiguration.layoutId);
+		return composeIntent(launchConfiguration.activityType, launchConfiguration.screenName, launchConfiguration.layoutId);
 	}
 
 	public static Intent composeIntent(String screenName, int layoutId) {
@@ -419,7 +419,7 @@ public class CyborgActivityBridgeImpl
 		}
 	}
 
-	// need to make sure the only lifecycles called on the controllers are the same ones as in the activity lifecycle state
+	// need to make sure the only lifecycles called on the controllers are the same ones as in the activityType lifecycle state
 	//	including onCreate, which is now has an abnormal behavior
 
 	@SuppressWarnings("unchecked")

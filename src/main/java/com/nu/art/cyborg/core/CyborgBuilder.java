@@ -40,13 +40,13 @@ public final class CyborgBuilder {
 
 		final String screenName;
 
-		final Class<? extends CyborgActivity> activity;
+		final Class<? extends CyborgActivity> activityType;
 
-		public LaunchConfiguration(int layoutId, String screenName, Class<? extends CyborgActivity> activity) {
+		public LaunchConfiguration(int layoutId, String screenName, Class<? extends CyborgActivity> activityType) {
 			super();
 			this.layoutId = layoutId;
 			this.screenName = screenName;
-			this.activity = activity;
+			this.activityType = activityType;
 		}
 	}
 

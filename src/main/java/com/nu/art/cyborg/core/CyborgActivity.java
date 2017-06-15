@@ -29,13 +29,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
+
 import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
 
 /**
- * If I could completely remove Activities I would, but Android needs a some rubbish to govern the views, so this a one type activity for the entire
+ * If I could completely remove Activities I would, but Android needs a some rubbish to govern the views, so this a one type activityType for the entire
  * application, any other UI feature would be created as {@CyborgView}.
  * <p/>
- * The only reason I can see to extend this object is to create a Cyborg activity with another theme that would be defined in the manifest, but this can also
+ * The only reason I can see to extend this object is to create a Cyborg activityType with another theme that would be defined in the manifest, but this can
+ * also
  * be
  * done programmatically.
  */
@@ -228,5 +231,9 @@ public class CyborgActivity
 
 	public final Handler getUI_Handler() {
 		return bridge.getUI_Handler();
+	}
+
+	protected final StackLayerBuilder createStackLayer(CyborgStackController controller) {
+		return controller.createLayerBuilder();
 	}
 }

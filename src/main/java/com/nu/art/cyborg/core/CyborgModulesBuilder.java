@@ -64,12 +64,13 @@ final class CyborgModulesBuilder
 
 	@Override
 	protected void setupModule(Module module) {
+		BeLogged beLogged = getModule(BeLogged.class);
+		if (beLogged != null && module != beLogged)
+			setLogger(module, beLogged.getLogger(module));
+
 		if (!(module instanceof CyborgModule))
 			return;
 
-		BeLogged beLogged = getModule(BeLogged.class);
-		if (beLogged != null)
-			setLogger(module, beLogged.getLogger(module));
 		((CyborgModule) module).setCyborg(cyborgImpl);
 	}
 
