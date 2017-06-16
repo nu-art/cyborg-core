@@ -37,6 +37,7 @@ import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.cyborg.core.dataModels.DataModel.DataModelListener;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
@@ -46,7 +47,7 @@ public class CyborgAdapter<Item>
 
 	private final Class<? extends ItemRenderer<? extends Item>>[] renderersTypes;
 
-	private final CyborgActivityBridge activityBridge;
+	private final CyborgController controller;
 
 	private final Cyborg cyborg;
 
@@ -65,9 +66,9 @@ public class CyborgAdapter<Item>
 	private boolean autoAnimate;
 
 	@SafeVarargs
-	public CyborgAdapter(CyborgActivityBridge activityBridge, Class<? extends ItemRenderer<? extends Item>>... renderersTypes) {
+	public CyborgAdapter(CyborgController controller, Class<? extends ItemRenderer<? extends Item>>... renderersTypes) {
 		this.renderersTypes = renderersTypes;
-		this.activityBridge = activityBridge;
+		this.controller = controller;
 		cyborg = CyborgBuilder.getInstance();
 		cyborg.setBeLogged(this);
 	}
@@ -109,7 +110,7 @@ public class CyborgAdapter<Item>
 
 	private ItemRenderer<? extends Item> createRendererForType(ViewGroup parent, int typeIndex) {
 		ItemRenderer<? extends Item> renderer = instantiateItemRendererType(typeIndex);
-		renderer.setActivityBridge(activityBridge);
+		renderer.setActivityBridge(controller.activityBridge);
 		renderer._createView(LayoutInflater.from(parent.getContext()), parent);
 		renderer.extractMembersImpl();
 		setupRenderer(renderer);
@@ -123,7 +124,17 @@ public class CyborgAdapter<Item>
 	protected void setupRenderer(ItemRenderer<? extends Item> renderer) {}
 
 	protected <RendererType extends ItemRenderer<? extends Item>> RendererType instantiateItemRendererType(Class<RendererType> rendererType) {
-		return ReflectiveTools.newInstance(rendererType);
+		Class<?> enclosingClass = rendererType.getEnclosingClass();
+		if (enclosingClass == null)
+			return ReflectiveTools.newInstance(rendererType);
+
+		if (!enclosingClass.isAssignableFrom(controller.getClass()))
+			return ReflectiveTools.newInstance(rendererType);
+
+		if (Modifier.isStatic(rendererType.getModifiers()))
+			return ReflectiveTools.newInstance(rendererType);
+
+		return ReflectiveTools.newInstance(rendererType, enclosingClass, controller);
 	}
 
 	protected int getItemTypeIndexByPosition(int position) {
@@ -305,7 +316,7 @@ public class CyborgAdapter<Item>
 			extends ArrayAdapter {
 
 		public CyborgArrayAdapter() {
-			super(activityBridge.getActivity(), -1);
+			super(controller.getActivity(), -1);
 		}
 
 		@Override
