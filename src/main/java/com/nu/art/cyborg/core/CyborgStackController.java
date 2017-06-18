@@ -237,8 +237,6 @@ public final class CyborgStackController
 			getFrameRootView().addView(rootView, 0);
 
 			controller.extractMembersImpl();
-			bringControllerToState(controller, LifeCycleState.OnCreate);
-
 			// xml attribute for root controller are handled in the handleAttributes method
 		}
 	}
@@ -544,7 +542,7 @@ public final class CyborgStackController
 			postCreateProcessController(processor, controller);
 		}
 
-		bringControllerToState(controller, LifeCycleState.OnResume);
+		bringControllerToState(controller, activityBridge.getState());
 	}
 
 	private void setInAnimationState(boolean animating) {

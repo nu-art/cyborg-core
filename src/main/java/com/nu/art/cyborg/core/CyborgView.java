@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
@@ -97,6 +98,9 @@ public class CyborgView
 	}
 
 	final void init(Context context, AttributeSet attrs, int defStyle) {
+		if (attrs == null)
+			return;
+
 		// First set attributes to this CyborgView
 		cyborg.getModule(AttributeModule.class).setAttributes(context, attrs, this);
 
@@ -133,6 +137,9 @@ public class CyborgView
 
 		if (isInEditMode())
 			return;
+
+		if (activityBridge == null)
+			throw new MUST_NeverHappenedException("activityBridge is null...???");
 
 		LifeCycleState activityBridgeState = activityBridge.getState();
 		for (LifeCycleState lifeCycleState : LifeCycleState.values()) {
@@ -176,7 +183,7 @@ public class CyborgView
 	public static class CyborgViewSetter
 			extends AttributesSetter<CyborgView> {
 
-		private static int[] ids = {
+		private static final int[] ids = {
 				R.styleable.CyborgView_controller,
 				R.styleable.CyborgView_tag
 		};
