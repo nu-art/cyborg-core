@@ -18,8 +18,8 @@
 
 package com.nu.art.cyborg.core.abs;
 
-import android.app.Application;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -39,7 +39,7 @@ public interface Cyborg
 	/**
 	 * @return The application instance of the app
 	 */
-	Application getApplication();
+	Context getApplicationContext();
 
 	/**
 	 * @return Android's {@link PackageManager}

@@ -84,13 +84,13 @@ final class ReceiversManager
 		}
 		logInfo("+++-+ Registering Receiver: '" + receiverType.getName() + "'");
 		registeredReceivers.put(receiverType, receiver);
-		cyborg.getApplication().registerReceiver(receiver, intentFilter);
+		cyborg.getApplicationContext().registerReceiver(receiver, intentFilter);
 	}
 
 	private <Receiver extends CyborgReceiver<?>> boolean checkIfBroadcastReceiverIsRegisteredInManifest(Class<Receiver> receiverType) {
 		PackageManager pm = cyborg.getPackageManager();
 		try {
-			ActivityInfo info = pm.getReceiverInfo(new ComponentName(cyborg.getApplication(), receiverType), PackageManager.GET_RECEIVERS);
+			ActivityInfo info = pm.getReceiverInfo(new ComponentName(cyborg.getApplicationContext(), receiverType), PackageManager.GET_RECEIVERS);
 			return info.enabled;
 		} catch (NameNotFoundException e) {
 			return false;
@@ -111,6 +111,6 @@ final class ReceiversManager
 		}
 
 		logInfo("+++-+ Unregistering Receiver: '" + receiverType.getName() + "'");
-		cyborg.getApplication().unregisterReceiver(receiver);
+		cyborg.getApplicationContext().unregisterReceiver(receiver);
 	}
 }

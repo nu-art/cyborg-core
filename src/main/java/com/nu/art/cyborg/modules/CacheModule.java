@@ -28,7 +28,7 @@ public class CacheModule
 
 	@Override
 	protected void init() {
-		cacheDir = getApplication().getCacheDir();
+		cacheDir = getApplicationContext().getCacheDir();
 		cacheQueue.createThreads("Caching Thread", 5);
 	}
 

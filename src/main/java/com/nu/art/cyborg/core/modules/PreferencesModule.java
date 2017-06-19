@@ -109,7 +109,7 @@ public final class PreferencesModule
 
 		SharedPreferences sharedPreferences = preferencesMap.get(type);
 		if (sharedPreferences == null) {
-			sharedPreferences = cyborg.getApplication().getSharedPreferences(type.getPreferencesName(), type.getMode());
+			sharedPreferences = cyborg.getApplicationContext().getSharedPreferences(type.getPreferencesName(), type.getMode());
 			preferencesMap.put(type, sharedPreferences);
 		}
 		return sharedPreferences;

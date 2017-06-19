@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Application;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ContentResolver;
@@ -137,8 +136,8 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 	}
 
 	@Override
-	public Application getApplication() {
-		return cyborg.getApplication();
+	public Context getApplicationContext() {
+		return cyborg.getApplicationContext();
 	}
 
 	@Override

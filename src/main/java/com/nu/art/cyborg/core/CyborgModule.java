@@ -18,8 +18,8 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
@@ -133,7 +133,7 @@ public abstract class CyborgModule
 		Class<? extends CyborgModule> moduleType = getClass();
 		ModuleDescriptor descriptor = moduleType.getAnnotation(ModuleDescriptor.class);
 		if (descriptor == null) {
-//			result.addEntry(this, "MISSING " + ModuleDescriptor.class.getName());
+			//			result.addEntry(this, "MISSING " + ModuleDescriptor.class.getName());
 			return;
 		}
 
@@ -234,8 +234,8 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	public Application getApplication() {
-		return cyborg.getApplication();
+	public Context getApplicationContext() {
+		return cyborg.getApplicationContext();
 	}
 
 	@Override

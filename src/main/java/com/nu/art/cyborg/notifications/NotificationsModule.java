@@ -18,20 +18,20 @@
 
 package com.nu.art.cyborg.notifications;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
 
-import com.nu.art.cyborg.annotations.ModuleDescriptor;
-import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.utils.GenericMap;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
+import com.nu.art.cyborg.core.CyborgModule;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class NotificationsModule
@@ -65,13 +65,13 @@ public final class NotificationsModule
 	}
 
 	final PendingIntent createPendingIntent(NotificationHandler notificationHandler, int notificationId, String action, Bundle notificationData, int flags) {
-		Application application = cyborg.getApplication();
-		Intent intent = new Intent(application, NotificationReceiver.class);
+		Context context = cyborg.getApplicationContext();
+		Intent intent = new Intent(context, NotificationReceiver.class);
 		intent.putExtra(ExtraKey_Id, notificationId);
 		intent.putExtra(ExtraKey_DataBundle, notificationData);
 		intent.putExtra(ExtraKey_HandlerType, notificationHandler.getClass().getName());
 		intent.putExtra(ExtraKey_Action, action);
-		return PendingIntent.getBroadcast(application, CyborgModule.getNextRandomPositiveShort(), intent, flags);
+		return PendingIntent.getBroadcast(context, CyborgModule.getNextRandomPositiveShort(), intent, flags);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -19,8 +19,8 @@
 package com.nu.art.cyborg.core;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -596,8 +596,8 @@ abstract class CyborgControllerBase
 	}
 
 	@Override
-	public Application getApplication() {
-		return cyborg.getApplication();
+	public Context getApplicationContext() {
+		return cyborg.getApplicationContext();
 	}
 
 	@Override

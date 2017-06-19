@@ -40,7 +40,7 @@ public class PermissionModule
 	}
 
 	private boolean isGranted(String permission) {
-		return ContextCompat.checkSelfPermission(getApplication(), permission) == PackageManager.PERMISSION_GRANTED;
+		return ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED;
 	}
 
 	@Override

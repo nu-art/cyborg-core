@@ -37,8 +37,8 @@ public class CyborgEditModePack
 		extends ModulesPack {
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
+			BeLogged.class,
 			AttributeModule.class,
-			BeLogged.class
 	};
 
 	private CyborgEditModePack() {

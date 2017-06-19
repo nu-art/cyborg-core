@@ -18,8 +18,8 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.view.animation.Animation;
@@ -65,8 +65,8 @@ public abstract class CyborgModuleItem
 	}
 
 	@Override
-	public Application getApplication() {
-		return cyborg.getApplication();
+	public Context getApplicationContext() {
+		return cyborg.getApplicationContext();
 	}
 
 	@Override

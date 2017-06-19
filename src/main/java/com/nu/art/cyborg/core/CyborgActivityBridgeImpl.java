@@ -66,7 +66,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	public static Intent composeIntent(Class<? extends CyborgActivity> activityType, String screenName, int layoutId) {
-		Intent intent = new Intent(CyborgBuilder.getInstance().getApplication(), activityType);
+		Intent intent = new Intent(CyborgBuilder.getInstance().getApplicationContext(), activityType);
 		intent.putExtra(ScreenName, screenName);
 		intent.putExtra(LayoutId, layoutId);
 		return intent;

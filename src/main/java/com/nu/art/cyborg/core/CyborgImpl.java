@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -250,12 +249,12 @@ final class CyborgImpl
 	 */
 	@Override
 	public final Resources getResources() {
-		return getApplication().getResources();
+		return getApplicationContext().getResources();
 	}
 
 	@Override
 	public Configuration getConfiguration() {
-		return getApplication().getResources().getConfiguration();
+		return getApplicationContext().getResources().getConfiguration();
 	}
 
 	@Override
@@ -266,7 +265,7 @@ final class CyborgImpl
 	@Override
 	public final InputStream getAsset(String assetName)
 			throws IOException {
-		return getApplication().getAssets().open(assetName);
+		return getApplicationContext().getAssets().open(assetName);
 	}
 
 	@Override
@@ -294,7 +293,7 @@ final class CyborgImpl
 
 	@Override
 	public final String getString(int stringId, Object... args) {
-		return getApplication().getString(stringId, args);
+		return getApplicationContext().getString(stringId, args);
 	}
 
 	@Override
@@ -407,26 +406,22 @@ final class CyborgImpl
 	 */
 	@Override
 	public final PackageManager getPackageManager() {
-		return getContext().getPackageManager();
+		return getApplicationContext().getPackageManager();
 	}
 
 	@Override
 	public final ContentResolver getContentResolver() {
-		return getApplication().getContentResolver();
-	}
-
-	public final Context getContext() {
-		return (Context) applicationRef.get();
+		return getApplicationContext().getContentResolver();
 	}
 
 	@Override
-	public final Application getApplication() {
-		return (Application) applicationRef.get();
+	public final Context getApplicationContext() {
+		return applicationRef.get();
 	}
 
 	@Override
 	public final void startActivity(Intent intent) {
-		getApplication().startActivity(intent);
+		getApplicationContext().startActivity(intent);
 	}
 
 	@Override
@@ -435,7 +430,7 @@ final class CyborgImpl
 												 "ResourceType"
 										 })
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
-		return (Service) getApplication().getSystemService(service.getKey());
+		return (Service) getApplicationContext().getSystemService(service.getKey());
 	}
 
 	@Override
@@ -450,17 +445,17 @@ final class CyborgImpl
 
 	@Override
 	public void bindService(Intent serviceIntent, ServiceConnection serviceConnection, int flags) {
-		getApplication().bindService(serviceIntent, serviceConnection, flags);
+		getApplicationContext().bindService(serviceIntent, serviceConnection, flags);
 	}
 
 	@Override
 	public void unbindService(ServiceConnection serviceConnection) {
-		getApplication().unbindService(serviceConnection);
+		getApplicationContext().unbindService(serviceConnection);
 	}
 
 	@Override
 	public final ComponentName startService(Intent serviceIntent) {
-		return getApplication().startService(serviceIntent);
+		return getApplicationContext().startService(serviceIntent);
 	}
 
 	/*
@@ -525,7 +520,7 @@ final class CyborgImpl
 	 * Toast
 	 */
 	private final void showToast(int length, String toToast) {
-		final Toast toast = Toast.makeText(getApplication(), toToast, length);
+		final Toast toast = Toast.makeText(getApplicationContext(), toToast, length);
 		toast.show();
 	}
 
@@ -562,7 +557,7 @@ final class CyborgImpl
 	}
 
 	private void _toast(final int length, final String text) {
-		if (Thread.currentThread() == getApplication().getMainLooper().getThread()) {
+		if (Thread.currentThread() == getApplicationContext().getMainLooper().getThread()) {
 			showToast(length, text);
 		} else
 			getUI_Handler().post(new Runnable() {
@@ -611,6 +606,6 @@ final class CyborgImpl
 
 	@Override
 	public Animation loadAnimation(int animationId) {
-		return AnimationUtils.loadAnimation(getApplication(), animationId);
+		return AnimationUtils.loadAnimation(getApplicationContext(), animationId);
 	}
 }

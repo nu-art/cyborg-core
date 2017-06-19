@@ -177,7 +177,7 @@ public final class UtilsModule
 	}
 
 	public final void openMyApplicationSettingsScreen() {
-		openMyApplicationSettingsScreen(cyborg.getApplication());
+		openMyApplicationSettingsScreen(cyborg.getApplicationContext());
 	}
 
 	public final void openMyApplicationSettingsScreen(Context context) {
@@ -197,7 +197,7 @@ public final class UtilsModule
 			intent.putExtra(AppPackageNameKey, appPackageName);
 		}
 		if (context == null)
-			context = cyborg.getApplication();
+			context = cyborg.getApplicationContext();
 
 		if (context instanceof Application) {
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -371,7 +371,7 @@ public final class UtilsModule
 	 * @return The system battery level between 0.0f - 1.0f
 	 */
 	public final float calculateBattery() {
-		Intent intent = cyborg.getApplication().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		Intent intent = cyborg.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		float level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 		float percent = (level * 100) / scale;

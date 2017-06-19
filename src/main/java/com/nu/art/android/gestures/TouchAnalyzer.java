@@ -23,15 +23,14 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 import com.nu.art.belog.Logger;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder;
-
-import java.util.Vector;
 
 public final class TouchAnalyzer
 		extends Logger
 		implements OnTouchListener {
 
-	private static final boolean DebugAnalyzer = false;
+	private static final boolean DebugAnalyzer = true;
 
 	private static final int DoubleClickInterval = 400;
 
@@ -167,9 +166,7 @@ public final class TouchAnalyzer
 
 	private int maxPointerInSession = 0;
 
-	private OnTouchGestureListener[] listenersArray;
-
-	private final Vector<OnTouchGestureListener> listeners = new Vector<OnTouchGestureListener>();
+	private OnTouchGestureListener[] listeners;
 
 	public TouchAnalyzer() {
 		for (int i = 0; i < eventsData.length; i++) {
@@ -178,18 +175,12 @@ public final class TouchAnalyzer
 		CyborgBuilder.getInstance().setBeLogged(this);
 	}
 
-	public final void addOnTouchGesturListener(OnTouchGestureListener onTouchGestureListener) {
-		synchronized (listeners) {
-			listeners.add(onTouchGestureListener);
-			listenersArray = listeners.toArray(new OnTouchGestureListener[listeners.size()]);
-		}
+	public final void addOnTouchGesturListener(OnTouchGestureListener listener) {
+		listeners = ArrayTools.appendElement(listeners, listener);
 	}
 
-	public final void removeOnTouchGesturListener(OnTouchGestureListener onTouchGestureListener) {
-		synchronized (listeners) {
-			listeners.remove(onTouchGestureListener);
-			listenersArray = listeners.toArray(new OnTouchGestureListener[listeners.size()]);
-		}
+	public final void removeOnTouchGesturListener(OnTouchGestureListener listener) {
+		listeners = ArrayTools.removeElement(listeners, listener);
 	}
 
 	@Override
@@ -370,7 +361,10 @@ public final class TouchAnalyzer
 		boolean longClicked = distance < LongClickRadius && pressInterval > LongClickInterval && pressInterval < LongClickMaxInterval;
 		boolean doubleClicked = eventData.initAt - eventData.clickedAt < DoubleClickInterval && clicked;
 		if (DebugAnalyzer)
-			logDebug("pointer: %d, distance: %.3f px^2, interval: " + pressInterval + "ms => " + (clicked ? "Clicked, " : "") + (longClicked ? "Long Clicked, " : "") + (doubleClicked ? "Double Clicked" : ""), eventData.index, distance);
+			logDebug("pointer: %d, distance: %.3f px^2, interval: " + pressInterval + "ms => " + (clicked ? "Clicked, " : "") + (longClicked ? "Long Clicked, "
+																																																																			 : "") + (doubleClicked
+																																																																								? "Double Clicked"
+																																																																								: ""), eventData.index, distance);
 		if (doubleClicked) {
 			dispatchOnDoubleClick(eventData.index, eventData.initX + dx / 2, eventData.initY + dy / 2);
 		} else if (clicked) {
@@ -384,7 +378,7 @@ public final class TouchAnalyzer
 	private void dispatchOnGestureStoppedEvent() {
 		if (DebugAnalyzer)
 			logInfo("Gesture stopped");
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onGestureStopped();
 		}
 	}
@@ -392,7 +386,7 @@ public final class TouchAnalyzer
 	private void dispatchZoomEvent(float zoomFactor, float midX, float midY) {
 		if (DebugAnalyzer)
 			logInfo("Zoom gesture recognized, dZoom = %.2f, midX = %.2f, midY = %.2f", zoomFactor, midX, midY);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onZoomChanged(zoomFactor, midX, midY);
 		}
 	}
@@ -400,7 +394,7 @@ public final class TouchAnalyzer
 	private void dispatchRotateEvent(double daInDegrees) {
 		if (DebugAnalyzer)
 			logInfo("Rotate gesture recognized deg: " + daInDegrees);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onRotationAngleChanged(daInDegrees);
 		}
 	}
@@ -408,7 +402,7 @@ public final class TouchAnalyzer
 	private void dispatchFlingEvent(TouchEventData touchEventData) {
 		if (DebugAnalyzer)
 			logInfo("Fling gesture recognized for pointer: " + touchEventData.index);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onFling(touchEventData);
 		}
 	}
@@ -416,7 +410,7 @@ public final class TouchAnalyzer
 	private void dispatchDragEvent(TouchEventData touchEventData) {
 		if (DebugAnalyzer)
 			logInfo("Drag gesture recognized for pointer: " + touchEventData.index);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onDrag(touchEventData);
 		}
 	}
@@ -424,7 +418,7 @@ public final class TouchAnalyzer
 	private void dispatchOnDoubleClick(int pointerIndex, float x, float y) {
 		if (DebugAnalyzer)
 			logInfo("Double Click gesture recognized for pointer: " + pointerIndex);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onDoubleClick(pointerIndex, x, y);
 		}
 	}
@@ -432,7 +426,7 @@ public final class TouchAnalyzer
 	private void dispatchOnLongClick(int pointerIndex, float x, float y) {
 		if (DebugAnalyzer)
 			logInfo("Long Click gesture recognized for pointer: " + pointerIndex);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onLongClick(pointerIndex, x, y);
 		}
 	}
@@ -440,7 +434,7 @@ public final class TouchAnalyzer
 	private void dispatchOnClick(int pointerIndex, float x, float y) {
 		if (DebugAnalyzer)
 			logInfo("Click gesture recognized for pointer: " + pointerIndex);
-		for (OnTouchGestureListener l : listenersArray) {
+		for (OnTouchGestureListener l : listeners) {
 			l.onClick(pointerIndex, x, y);
 		}
 	}

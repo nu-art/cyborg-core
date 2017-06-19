@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core.abs;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.res.Resources;
 
 import com.nu.art.cyborg.R;
@@ -50,7 +51,7 @@ public interface _Resources {
 	/**
 	 * @return The Application object of your app.
 	 */
-	Application getApplication();
+	Context getApplicationContext();
 
 	/**
 	 * @return The package name of your app.

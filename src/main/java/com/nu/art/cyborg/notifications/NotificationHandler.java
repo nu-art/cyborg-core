@@ -41,7 +41,7 @@ public abstract class NotificationHandler
 	}
 
 	protected Builder createBasicBuilder(short notificationId, Bundle data) {
-		Builder builder = new Builder(getApplication());
+		Builder builder = new Builder(getApplicationContext());
 
 		PendingIntent clickedPendingIntent = createPendingIntent(notificationId, Action_Click, data);
 		builder.setContentIntent(clickedPendingIntent);

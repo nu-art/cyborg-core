@@ -83,10 +83,8 @@ public final class CyborgBuilder {
 			}
 
 			if (addBasePack)
-				if (CyborgImpl.inEditMode)
-					modulesPacks.add(0, CyborgEditModePack.class);
-				else
-					modulesPacks.add(0, CyborgBasePack.class);
+				modulesPacks.add(0, CyborgBasePack.class);
+
 			this.modulesPacks = (Class<? extends ModulesPack>[]) ArrayTools.asArray(modulesPacks, Class.class);
 		}
 	}
@@ -123,7 +121,7 @@ public final class CyborgBuilder {
 		if (instance != null)
 			return instance;
 		CyborgImpl.inEditMode = true;
-		CyborgBuilder.startCyborg(new CyborgConfiguration(context));
+		CyborgBuilder.startCyborg(new CyborgConfiguration(context, CyborgEditModePack.class));
 		return CyborgBuilder.getInstance();
 	}
 
