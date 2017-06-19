@@ -18,6 +18,8 @@
 
 package com.nu.art.cyborg.modules;
 
+import android.annotation.SuppressLint;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build.VERSION;
@@ -150,17 +152,23 @@ public final class AppDetailsModule
 			installationUUID.set(installationId);
 		}
 
+		if (isInEditMode()) {
+			debugSimulationMode = true;
+			return;
+		}
+
 		checkCertificate();
 	}
 
 	@SuppressWarnings("unchecked")
+	@SuppressLint("PackageManagerGetSignatures")
 	private <Type extends Enum<?>> void checkCertificate() {
 		try {
 			CyborgAppCertificate certificate = DummyCertificate.Default;
 
 			PackageManager pm = cyborg.getPackageManager();
-			// TODO: handle warnings...
-			Signature sig = pm.getPackageInfo(cyborg.getPackageName(), PackageManager.GET_SIGNATURES).signatures[0];
+			PackageInfo packageInfo = pm.getPackageInfo(cyborg.getPackageName(), PackageManager.GET_SIGNATURES);
+			Signature sig = packageInfo.signatures[0];
 			String md5Fingerprint = doFingerprint(sig.toByteArray(), "MD5");
 			Type[] certificateList = (Type[]) ReflectiveTools.getEnumValues(certificateType);
 			logDebug("Certificate found: " + md5Fingerprint);

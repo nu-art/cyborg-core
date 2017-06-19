@@ -24,6 +24,7 @@ import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 
@@ -32,21 +33,21 @@ public class FontTypeSetter
 
 	public interface SupportedFont {
 
-		String name();
+		String attributeName();
 
 		Typeface getTypeface(Context application);
 	}
 
 	private float spFactor;
 
-	private SupportedFont[] fonts;
+	private SupportedFont[] fonts = {};
 
 	public FontTypeSetter() {
 		super(TextView.class, R.styleable.CustomFont, R.styleable.CustomFont_font);
 	}
 
-	public void setFonts(SupportedFont... fonts) {
-		this.fonts = fonts;
+	public void addFonts(SupportedFont... fonts) {
+		this.fonts = ArrayTools.appendElements(this.fonts, fonts);
 	}
 
 	protected void init() {
@@ -80,7 +81,7 @@ public class FontTypeSetter
 
 	private SupportedFont getFontsValues(String fontName) {
 		for (SupportedFont supportedFont : fonts) {
-			if (!supportedFont.name().equals(fontName))
+			if (!supportedFont.attributeName().equals(fontName))
 				continue;
 			return supportedFont;
 		}

@@ -117,6 +117,11 @@ public final class AttributeModule
 		return setter;
 	}
 
+	@SuppressWarnings("unchecked")
+	public final <SetterType extends AttributesSetter<?>> SetterType getAttributesSetter(Class<SetterType> setterType) {
+		return (SetterType) settersMap.get(setterType);
+	}
+
 	public void setAttributes(Context context, AttributeSet attrs, Object instance) {
 		if (attrs == null)
 			throw new BadImplementationException("Cannot build rootView without reference to a controller type!");
@@ -133,7 +138,7 @@ public final class AttributeModule
 
 	@SuppressWarnings("unchecked")
 	private <ExpectedType> void resolveAttributes(Context context, AttributeSet attrs, Object instance, Class<?> type) {
-		AttributesSetter<ExpectedType> setter = (AttributesSetter<ExpectedType>) settersMap.get((Class<ExpectedType>) type);
+		AttributesSetter<ExpectedType> setter = (AttributesSetter<ExpectedType>) settersMap.get(type);
 		if (setter == null)
 			return;
 

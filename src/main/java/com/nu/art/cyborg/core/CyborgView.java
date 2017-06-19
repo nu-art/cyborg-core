@@ -120,11 +120,13 @@ public class CyborgView
 		if (stateTag == null)
 			stateTag = controller.getClass().getSimpleName();
 
-		if (!isInEditMode())
-			controller.setStateTag(stateTag);
-
 		// inflating views
 		controller._createView(LayoutInflater.from(context), this);
+
+		if (isInEditMode())
+			return;
+
+		controller.setStateTag(stateTag);
 
 		// extract members by injection or by find view by id
 		controller.extractMembersImpl();
@@ -134,9 +136,6 @@ public class CyborgView
 
 		// handle the attributes for the controller
 		controller.handleAttributes(context, attrs);
-
-		if (isInEditMode())
-			return;
 
 		if (activityBridge == null)
 			throw new MUST_NeverHappenedException("activityBridge is null...???");

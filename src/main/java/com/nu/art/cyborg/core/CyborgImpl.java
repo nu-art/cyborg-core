@@ -430,7 +430,11 @@ final class CyborgImpl
 												 "ResourceType"
 										 })
 	public final <Service> Service getSystemService(ServiceType<Service> service) {
-		return (Service) getApplicationContext().getSystemService(service.getKey());
+		Context applicationContext = getApplicationContext();
+		if (isInEditMode())
+			return null;
+
+		return (Service) applicationContext.getSystemService(service.getKey());
 	}
 
 	@Override
