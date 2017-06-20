@@ -26,13 +26,15 @@ import com.nu.art.cyborg.common.consts.DeviceScreenDensity;
 import com.nu.art.cyborg.common.consts.DeviceScreenSize;
 import com.nu.art.cyborg.common.consts.DeviceValuesFolder;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
 
 import java.io.File;
+import java.util.HashMap;
 
-@ModuleDescriptor(
-		usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {})
 public final class DeviceDetailsModule
-		extends CyborgModule {
+		extends CyborgModule
+		implements CrashReportListener {
 
 	private DeviceScreenSize screenSize;
 
@@ -63,7 +65,7 @@ public final class DeviceDetailsModule
 	@Override
 	protected void printModuleDetails() {
 		logInfo("    Android Device Id: " + androidId);
-		logInfo("    Device values fodler: " + deviceValues.getFolderName());
+		logInfo("    Device values folder: " + deviceValues.getFolderName());
 		logInfo("    Screen Density: " + screenDensity.name());
 		logInfo("    Screen Size: " + screenSize.name());
 	}
@@ -75,5 +77,13 @@ public final class DeviceDetailsModule
 
 	public final String getAndroidDeviceId() {
 		return androidId;
+	}
+
+	@Override
+	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
+		moduleCrashData.put("androidId", androidId);
+		moduleCrashData.put("ScreenDpi", screenDensity.name());
+		moduleCrashData.put("ScreenSize", screenSize.name());
+		moduleCrashData.put("isRooted", isSuperUser());
 	}
 }

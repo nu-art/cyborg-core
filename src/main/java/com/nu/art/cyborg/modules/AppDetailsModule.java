@@ -31,6 +31,7 @@ import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.StringPreference;
+import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
 import com.nu.art.cyborg.ui.BootStarterReceiver.OnBootCompletedListener;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
@@ -38,13 +39,19 @@ import java.io.ByteArrayInputStream;
 import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.UUID;
 
 @ModuleDescriptor(usesPermissions = {/*permission.READ_PHONE_STATE*/},
 									dependencies = {PreferencesModule.class})
 public final class AppDetailsModule
 		extends CyborgModule
-		implements AnalyticsConstants {
+		implements AnalyticsConstants, CrashReportListener {
+
+	@Override
+	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
+		moduleCrashData.put("Certificate", getCertificate().toString());
+	}
 
 	public interface CyborgAppCertificate {
 

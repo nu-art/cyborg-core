@@ -13,9 +13,13 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.interfaces.ActivityLifeCycleImpl;
-import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
 
 public class KeyboardChangeListener {
+
+	public interface OnKeyboardVisibilityListener {
+
+		void onVisibilityChanged(boolean visible);
+	}
 
 	private final Activity activity;
 
