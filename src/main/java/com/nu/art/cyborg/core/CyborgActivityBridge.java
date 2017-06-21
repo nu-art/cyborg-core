@@ -32,8 +32,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.core.KeyboardChangeListener.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
-import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 public interface CyborgActivityBridge {
