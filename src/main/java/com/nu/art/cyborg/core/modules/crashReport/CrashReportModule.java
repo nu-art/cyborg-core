@@ -12,6 +12,7 @@ import com.nu.art.cyborg.core.modules.PreferencesModule.BooleanPreference;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by TacB0sS on 19-Sep 2016.
@@ -39,6 +40,10 @@ public class CrashReportModule
 		moduleCrashData.put("HOST", Build.HOST);
 		moduleCrashData.put("FINGERPRINT", Build.FINGERPRINT);
 		moduleCrashData.put("VERSION CODE", Build.VERSION.RELEASE);
+	}
+
+	public void setForceDebugCrashReport(boolean reportInDebug) {
+		sendDebugCrashReports.set(reportInDebug);
 	}
 
 	public interface CrashReportHandler {
@@ -94,17 +99,27 @@ public class CrashReportModule
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
 		logError("Crash on thread: " + thread.getName(), ex);
+		logError(" ");
+		logError(" _______  _______  _______  _______           _______  ______  ");
+		logError("(  ____ \\(  ____ )(  ___  )(  ____ \\|\\     /|(  ____ \\(  __  \\ ");
+		logError("| (    \\/| (    )|| (   ) || (    \\/| )   ( || (    \\/| (  \\  )");
+		logError("| |      | (____)|| (___) || (_____ | (___) || (__    | |   ) |");
+		logError("| |      |     __)|  ___  |(_____  )|  ___  ||  __)   | |   | |");
+		logError("| |      | (\\ (   | (   ) |      ) || (   ) || (      | |   ) |");
+		logError("| (____/\\| ) \\ \\__| )   ( |/\\____) || )   ( || (____/\\| (__/  )");
+		logError("(_______/|/   \\__/|/     \\|\\_______)|/     \\|(_______/(______/ ");
+		logError(" ");
 		if (!isDebug() || sendDebugCrashReports.get())
-			composeAndSendReport(thread, ex);
+			composeAndSendReport(thread, ex, true);
 
 		defaultExceptionHandler.uncaughtException(thread, ex);
 	}
 
-	private void composeAndSendReport(Thread thread, Throwable ex) {
+	private void composeAndSendReport(Thread thread, Throwable ex, boolean crashed) {
 		CrashReport crashReport = new CrashReport();
-		crashReport.crashMessage = composeMessage(thread, ex);
+		crashReport.crashMessage = composeMessage(thread, ex, crashed);
 		crashReport.modulesData = collectModulesData();
-		crashReport.runningThreads = Thread.getAllStackTraces();
+		crashReport.runningThreads = getRunningThreads();
 
 		try {
 			crashReportHandler.prepareAndBackupCrashReport(crashReport);
@@ -128,18 +143,45 @@ public class CrashReportModule
 		}
 	}
 
+	private HashMap<String, ThreadState> getRunningThreads() {
+		HashMap<String, ThreadState> threads = new HashMap<>();
+
+		Map<Thread, StackTraceElement[]> systemThreads = Thread.getAllStackTraces();
+		for (Thread thread : systemThreads.keySet()) {
+			ThreadState state = new ThreadState();
+			threads.put(thread.getName(), state);
+			state.alive = thread.isAlive();
+			state.daemon = thread.isDaemon();
+			state.interrupted = thread.isInterrupted();
+			state.id = thread.getId();
+			state.priority = thread.getPriority();
+			state.threadGroup = thread.getThreadGroup().getName();
+			state.state = thread.getState().name();
+			state.stacktrace = ExceptionTools.parseStackTrace(thread.getStackTrace());
+		}
+		return threads;
+	}
+
 	public void composeAndSendReport() {
-		composeAndSendReport(null, null);
+		composeAndSendReport(null, null, false);
 	}
 
 	public void composeAndSendReport(Throwable ex) {
-		composeAndSendReport(Thread.currentThread(), ex);
+		composeAndSendReport(Thread.currentThread(), ex, false);
 	}
 
-	private String composeMessage(Thread thread, Throwable ex) {
+	private String composeMessage(Thread thread, Throwable ex, boolean crash) {
 		StringBuilder crashReport = new StringBuilder();
 
-		crashReport.append("Thread: ").append(thread.getName()).append("\n");
+		if (crash)
+			crashReport.append("Application Crashed!");
+		else if (ex != null)
+			crashReport.append("Exception report");
+
+		if (thread != null)
+			crashReport.append("Thread: ").append(thread.getName()).append("\n");
+		else
+			crashReport.append("User sent a bug report");
 
 		if (ex != null)
 			crashReport.append(ExceptionTools.getStackTrace(ex));

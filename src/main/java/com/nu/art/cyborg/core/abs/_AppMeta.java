@@ -23,7 +23,7 @@ public interface _AppMeta {
 	/**
 	 * @return the app version name, as set in the build.gradle file
 	 */
-	String getVersion();
+	String getVersionName();
 
 	/**
 	 * @return the app version code, as set in the build.gradle file

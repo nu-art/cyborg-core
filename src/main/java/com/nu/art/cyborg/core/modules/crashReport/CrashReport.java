@@ -1,7 +1,8 @@
 package com.nu.art.cyborg.core.modules.crashReport;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings( {
@@ -10,13 +11,15 @@ import java.util.UUID;
 									 })
 public final class CrashReport {
 
-	private final String id = UUID.randomUUID().toString();
+	public final static SimpleDateFormat DefaultTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	private final long timestamp = System.currentTimeMillis();
+	public final String uuid = UUID.randomUUID().toString();
+
+	public final String timestamp = DefaultTimeFormat.format(new Date());
 
 	public String crashMessage;
 
 	public HashMap<CrashReportListener, HashMap<String, Object>> modulesData;
 
-	public Map<Thread, StackTraceElement[]> runningThreads;
+	public HashMap<String, ThreadState> runningThreads;
 }

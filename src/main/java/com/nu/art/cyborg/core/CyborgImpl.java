@@ -178,6 +178,7 @@ final class CyborgImpl
 					return;
 
 				setBeLogged(CyborgImpl.this);
+				printApplicationStarted();
 				activityStackHandler = new ActivityStack(CyborgImpl.this);
 				receiversManager = new ReceiversManager(CyborgImpl.this);
 			}
@@ -188,6 +189,19 @@ final class CyborgImpl
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
 		}
+	}
+
+	private void printApplicationStarted() {
+		logVerbose(" ");
+		logVerbose(" _______  _______  _______  _       _________ _______  _______ __________________ _______  _          _______ _________ _______  _______ _________ _______  ______  ");
+		logVerbose("(  ___  )(  ____ )(  ____ )( \\      \\__   __/(  ____ \\(  ___  )\\__   __/\\__   __/(  ___  )( (    /|  (  ____ \\\\__   __/(  ___  )(  ____ )\\__   __/(  ____ \\(  __  \\ ");
+		logVerbose("| (   ) || (    )|| (    )|| (         ) (   | (    \\/| (   ) |   ) (      ) (   | (   ) ||  \\  ( |  | (    \\/   ) (   | (   ) || (    )|   ) (   | (    \\/| (  \\  )");
+		logVerbose("| (___) || (____)|| (____)|| |         | |   | |      | (___) |   | |      | |   | |   | ||   \\ | |  | (_____    | |   | (___) || (____)|   | |   | (__    | |   ) |");
+		logVerbose("|  ___  ||  _____)|  _____)| |         | |   | |      |  ___  |   | |      | |   | |   | || (\\ \\) |  (_____  )   | |   |  ___  ||     __)   | |   |  __)   | |   | |");
+		logVerbose("| (   ) || (      | (      | |         | |   | |      | (   ) |   | |      | |   | |   | || | \\   |        ) |   | |   | (   ) || (\\ (      | |   | (      | |   ) |");
+		logVerbose("| )   ( || )      | )      | (____/\\___) (___| (____/\\| )   ( |   | |   ___) (___| (___) || )  \\  |  /\\____) |   | |   | )   ( || ) \\ \\__   | |   | (____/\\| (__/  )");
+		logVerbose("|/     \\||/       |/       (_______/\\_______/(_______/|/     \\|   )_(   \\_______/(_______)|/    )_)  \\_______)   )_(   |/     \\||/   \\__/   )_(   (_______/(______/ ");
+		logVerbose(" ");
 	}
 
 	@Override
@@ -392,7 +406,7 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final String getVersion() {
+	public final String getVersionName() {
 		return meta.version;
 	}
 
