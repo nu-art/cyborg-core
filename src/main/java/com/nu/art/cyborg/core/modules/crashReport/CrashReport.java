@@ -16,8 +16,6 @@ public final class CrashReport {
 
 	public String crashMessage;
 
-	public String pathToLogFile;
-
 	public HashMap<CrashReportListener, HashMap<String, Object>> modulesData;
 
 	public Map<Thread, StackTraceElement[]> runningThreads;

@@ -18,12 +18,12 @@
 
 package com.nu.art.cyborg.core;
 
-import android.support.ViewServer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.support.ViewServer;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -39,12 +39,12 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
+import com.nu.art.cyborg.core.KeyboardChangeListener.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
-import com.nu.art.cyborg.core.interfaces.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 import java.util.Arrays;

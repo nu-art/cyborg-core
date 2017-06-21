@@ -10,7 +10,6 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.BooleanPreference;
 
-import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 
@@ -44,13 +43,14 @@ public class CrashReportModule
 
 	public interface CrashReportHandler {
 
-		void backupCrashReport(CrashReport crashReport)
-				throws IOException;
+		void prepareAndBackupCrashReport(CrashReport crashReport)
+				throws Exception;
 
-		void sendCrashReport(CrashReport crashReport, Processor<Throwable> resultListener);
+		void sendCrashReport(CrashReport crashReport, Processor<Throwable> resultListener)
+				throws Exception;
 
 		void deleteBackup()
-				throws IOException;
+				throws Exception;
 	}
 
 	private CrashReportHandler crashReportHandler;
@@ -107,7 +107,7 @@ public class CrashReportModule
 		crashReport.runningThreads = Thread.getAllStackTraces();
 
 		try {
-			crashReportHandler.backupCrashReport(crashReport);
+			crashReportHandler.prepareAndBackupCrashReport(crashReport);
 			hasCrashReportWaiting.set(true);
 
 			crashReportHandler.sendCrashReport(crashReport, new Processor<Throwable>() {
@@ -116,7 +116,11 @@ public class CrashReportModule
 					if (throwable != null)
 						hasCrashReportWaiting.set(false);
 
-					crashReportHandler.deleteBackup();
+					try {
+						crashReportHandler.deleteBackup();
+					} catch (Exception e) {
+						logError("Error deleting crash report: ", e);
+					}
 				}
 			});
 		} catch (Throwable e) {
