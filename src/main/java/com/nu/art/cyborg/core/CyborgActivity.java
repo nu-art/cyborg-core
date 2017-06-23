@@ -35,8 +35,8 @@ import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
 
 /**
  * If I could completely remove Activities I would, but Android needs a some rubbish to govern the views, so this a one type activityType for the entire
- * application, any other UI feature would be created as {@CyborgView}.
- * <p/>
+ * application.
+ *
  * The only reason I can see to extend this object is to create a Cyborg activityType with another theme that would be defined in the manifest, but this can
  * also
  * be

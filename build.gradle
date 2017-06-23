@@ -37,15 +37,9 @@ android {
         versionName "1.1.8"
         project.version = versionName
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-
     libraryVariants.all { variant ->
         variant.outputs.each { output ->
-            def outputFile = output.outputFile 
+            def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.aar')) {
                 def fileName = "${archivesBaseName}-v${version}.aar"
                 output.outputFile = new File(outputFile.parent, fileName)
@@ -62,28 +56,8 @@ android {
 
 }
 
-android.libraryVariants.all { variant ->
-    task("generate${variant.name}Javadoc", type: Javadoc) {
-        title = "Documentation for Android $android.defaultConfig.versionName b$android.defaultConfig.versionCode"
-        description "Generates Javadoc for $variant.name."
-
-        destinationDir = new File("${project.getProjectDir()}/build/doc/compiled/", variant.baseName)
-        source = variant.javaCompile.source
-        classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
-
-        options {
-            links "http://docs.oracle.com/javase/7/docs/api/"
-            linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
-        }
-    }
-
-    task("package${variant.name.capitalize()}Javadoc", type: Jar, dependsOn: "generate${variant.name}Javadoc") {
-        description "Bundles Javadoc into zip for $variant.name."
-        classifier = "javadoc"
-        destinationDir = new File("${project.getProjectDir()}/build/doc/")
-        from tasks["generate${variant.name}Javadoc"]
-    }
-}
+if (project.hasProperty("configureUploadAndroidLibArtifact"))
+    configureUploadAndroidLibArtifact( "com.nu-art-software.cyborg", "nu-art/cyborg-cor");
 
 dependencies {
     compile project(':module-manager')

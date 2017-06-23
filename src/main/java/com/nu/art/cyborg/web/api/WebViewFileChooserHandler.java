@@ -25,11 +25,11 @@ import com.nu.art.core.generics.Processor;
 public interface WebViewFileChooserHandler {
 
 	/**
-	 * @param acceptType The type of file to open. <b>CAN BE NULL</b>
-	 * @param acceptType
-	 * @param processor  A processor callback to handled the resolved Uri.
+	 * @param url       The file chooser url
+	 * @param mimeType  The respective expected mime type
+	 * @param processor A processor callback to handled the resolved Uri.
 	 *
-	 * @return Whether this request is been handled or not.
+	 * @return whether or not the operation was successful
 	 */
 	boolean openFileChooser(String url, String mimeType, Processor<Uri> processor);
 }

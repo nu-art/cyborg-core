@@ -35,7 +35,6 @@ public class ThreadsModule
 	/**
 	 * This is only for a quick one time action... if you have a bulk of action to perform, or multiple individual
 	 * method, then create your own damn thread key! <br>
-	 * <p/>
 	 * <br>
 	 * <b>Use this wisely</b>
 	 */

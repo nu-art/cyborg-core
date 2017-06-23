@@ -330,7 +330,7 @@ public class ViewServer
 	 *
 	 * @param view A rootView that belongs to the rootView hierarchy/window to register
 	 *
-	 * @name name The name of the rootView hierarchy/window to register
+	 * @param name The name of the rootView hierarchy/window to register
 	 * @see #removeWindow(View)
 	 */
 	public void addWindow(View view, String name) {

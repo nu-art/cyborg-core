@@ -32,16 +32,9 @@ import java.lang.reflect.Method;
 /**
  * An wrapping API to use for {@link CyborgWebView} java script calls.<br>
  * in order to use with Proguard, one MUSt add the following lines to the '<b>proguard-project.txt</b>' project file: <br>
- * <br>
- * <i># Generic keep Methods</i><br>
  * <code>-keep class ** implements Obfuscation_KeepMethods {<br>
- * &lt;methods>;<br>
- * }</code><br>
- * <br>
- * <br>
  * <i># Keep Javascript callback names</i><br>
- * <code>-keepclasseswithmembernames class ** extends com.nu.art.cyborg.web.WebViewJavascriptAPI {<br>
- * &lt;methods>;<br>
+ * -keepclasseswithmembernames class ** extends com.nu.art.cyborg.web.WebViewJavascriptAPI {<br>
  * }</code><br>
  * <br>
  *
@@ -103,9 +96,9 @@ public abstract class JavascriptAPI
 	}
 
 	@SuppressLint( {
-			"JavascriptInterface",
-			"AddJavascriptInterface"
-	})
+										 "JavascriptInterface",
+										 "AddJavascriptInterface"
+								 })
 	public final void appendToWebView(WebView webView) {
 		if (webView == null)
 			throw new BadImplementationException("API: " + name + " - WEBVIEW == null");

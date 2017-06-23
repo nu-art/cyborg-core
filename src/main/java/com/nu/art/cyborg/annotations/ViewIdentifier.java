@@ -43,37 +43,34 @@ public @interface ViewIdentifier {
 	 *
 	 * @return The parent rootView Id as defined in your layout xmls.
 	 *
-	 * @code class <b>ClassName</b> {<br>
+	 * <code> class ClassName {
 	 * private &lt;ViewType extends View&gt; <b>ViewType</b> singleView;} <br>
+	 * </code>
 	 */
 	int parentViewId() default -1;
 
 	/**
 	 * Use this method only in case of a single rootView, eg. <br>
-	 * <p/>
-	 * <pre>
 	 *
 	 * @return The rootView Id as defined in your layout xmls.
 	 *
-	 * @code class <b>ClassName</b> {<br>
+	 * <code>class ClassName {
 	 * private &lt;ViewType extends View&gt; <b>ViewType</b> singleView; <br>
 	 * }<br>
-	 * </pre>
+	 * </code>
 	 */
 	int viewId() default -1;
 
 	/**
 	 * Use this method only in case of a multiple views, eg. <br>
-	 * <p/>
-	 * <pre>
 	 *
 	 * @return An array of rootView ids. The size of the rootView array would correspond with size of the return array of this
 	 * method!!
 	 *
-	 * @code class <b>ClassName</b> {<br>
-	 * private <ViewType extends View> <b>ViewType</b>[] multipleViews;
+	 * <code>class ClassName {
+	 * private &lt;ViewType extends View&gt; <b>ViewType</b>[] multipleViews;
 	 * }<br>
-	 * </pre>
+	 * </code>
 	 */
 	int[] viewIds() default {};
 

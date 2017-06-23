@@ -38,7 +38,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 /**
  * I've thought about this for a very long time, and at the end it still took me two days to make up my mind that this is better than Fragments... and now that
  * it is done I believe it is a drastic improvement!
- * <p/>
+ *
  * So this is a container for your views, which is super intuitive:
  * <pre>
  * {@code
@@ -51,7 +51,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
  *     android:layout_height="match_parent"
  *     custom:controller="Your Controller Fully Qualified Name"/>}
  * </pre>
- * <p/>
+ *
  * Now what is your control65ler?? check out {@link CyborgController}
  */
 @SuppressWarnings("unchecked")

@@ -43,48 +43,11 @@ import java.util.Locale;
 import java.util.Random;
 
 /**
- * The concept behind this object is to encapsulate a feature, I've covered three types of feature <b>groups</b> so far:<br>
- * <ol>
- * <li>Services of the <b>Android framework</b>:</li>
- * <ul>
- * <li>Network</li>
- * <li>Location</li>
- * <li>Sensors</li>
- * <li>Google Maps</li>
- * <li>Other...</li>
- * </ul>
- * <li>Also used to encapsulate <b>3rd party feature</b>:</li>
- * <ul>
- * <li>PayPal</li>
- * <li>Google Analytics</li>
- * <li>AdMob</li>
- * <li>Other...</li>
- * </ul>
- * <li>I've also added/implemented <b>new featured</b> modules:</li>
- * <ul>
- * <li>Crash report</li>
- * <li>Automation</li>
- * <li>Other application level modules...</li>
- * </ul>
- * </ol>
- * <br>
- * Each of these modules deals with its own unique feature, and rarely has the need to interacte with another, although it is possible.<br>
- * <p/>
- * In order to make your own Cyborg module:
- * <ol>
- * <li>Extend this {@link CyborgModule}</li>
- * <li>Add the your new module type to your application's {@link CyborgModulesBuilder}</li>
- * <li>Override the <b>injectMembers()</b> method in your new module</li>
- * <li>Implement your module.</li>
- * </ol>
- * <br>
- * <b>TIP:</b> <br>
+ * The concept behind this object is to encapsulate a feature...<br>
  * Let the module lead you as you develop...<br>
+ *
  * Try to access it from parts of the code, to see the functions your module requires<br>
- * In the injectMembers method, perform all the initialization required... <br>
  * Everything you'll need dynamically should be available for you from the superclass<br>
- * Any static data you want to set, is done in the module registration level.<br>
- * <br>
  *
  * @author TacB0sS
  */
