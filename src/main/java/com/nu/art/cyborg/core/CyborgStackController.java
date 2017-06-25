@@ -390,6 +390,8 @@ public final class CyborgStackController
 
 		private Processor<?> processor;
 
+		private boolean disposable;
+
 		public StackLayerBuilder setRefKey(String refKey) {
 			this.refKey = refKey;
 			return this;
@@ -461,6 +463,14 @@ public final class CyborgStackController
 		public StackLayerBuilder setProcessor(Processor<?> processor) {
 			this.processor = processor;
 			return this;
+		}
+
+		public void setDisposable(boolean disposable) {
+			this.disposable = disposable;
+		}
+
+		public boolean isDisposable() {
+			return disposable;
 		}
 	}
 

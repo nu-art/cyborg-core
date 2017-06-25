@@ -140,6 +140,7 @@ public class CyborgView
 		if (activityBridge == null)
 			throw new MUST_NeverHappenedException("activityBridge is null...???");
 
+		// TODO need to manage the nested controllers lifecycle, hold ref in the parent controller, and update the state according to the parent.
 		LifeCycleState activityBridgeState = activityBridge.getState();
 		for (LifeCycleState lifeCycleState : LifeCycleState.values()) {
 			controller.dispatchLifeCycleEvent(lifeCycleState);
