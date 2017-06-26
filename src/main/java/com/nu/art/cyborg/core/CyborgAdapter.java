@@ -222,15 +222,6 @@ public class CyborgAdapter<Item>
 		renderer.dispatchLifeCycleEvent(LifeCycleState.OnResume);
 	}
 
-
-
-	/*
-
-
-
-	---
-	 */
-
 	private class CyborgPagerAdapter
 			extends PagerAdapter {
 

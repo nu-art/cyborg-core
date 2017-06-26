@@ -112,19 +112,11 @@ public final class CyborgStackController
 			if (controller == null)
 				return;
 
-			removeController(controller.getStateTag());
-
-			for (CyborgController nestedController : nestedControllers) {
-				removeController(nestedController.getStateTag());
-			}
-
-			controller = null;
-		}
-
-		private void removeController(String stateTag) {
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
-			activityBridge.removeController(stateTag);
+			activityBridge.removeController(controller);
+
+			controller = null;
 		}
 
 		public void saveState() {
@@ -241,8 +233,6 @@ public final class CyborgStackController
 		}
 	}
 
-	private StackLayer tempLayer;
-
 	private LayoutInflater inflater;
 
 	private HashMap<String, StackLayer> layers = new HashMap<String, StackLayer>();
@@ -301,11 +291,6 @@ public final class CyborgStackController
 
 	void setTransitionDuration(int transitionDuration) {
 		this.transitionDuration = transitionDuration;
-	}
-
-	void addController(CyborgController controller) {
-		if (tempLayer != null)
-			tempLayer.addNestedController(controller);
 	}
 
 	private void assignRootController() {
@@ -543,9 +528,7 @@ public final class CyborgStackController
 	}
 
 	private void createLayerToView(StackLayer targetLayerToBeAdded, Processor<?> processor) {
-		tempLayer = targetLayerToBeAdded;
 		targetLayerToBeAdded.create();
-		tempLayer = null;
 
 		CyborgController controller = targetLayerToBeAdded.controller;
 		if (controller != null && processor != null) {

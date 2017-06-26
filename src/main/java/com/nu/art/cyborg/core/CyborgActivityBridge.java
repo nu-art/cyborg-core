@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -75,9 +76,9 @@ public interface CyborgActivityBridge {
 	void removeKeyboardListener(OnKeyboardVisibilityListener listener);
 
 	/* Controllers */
-	void addController(String stateTag, CyborgController controller);
+	void addController(CyborgController controller);
 
-	void removeController(String stateTag);
+	void removeController(CyborgController controller);
 
 	/* LifeCycle */
 	void onCreate(Bundle savedInstanceState);
@@ -115,7 +116,7 @@ public interface CyborgActivityBridge {
 
 	Activity getActivity();
 
-	<Type> Type getController(Class<Type> type, String tag);
+	<Type> Type getController(@IdRes int viewId);
 
 	<ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType);
 

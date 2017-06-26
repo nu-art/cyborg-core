@@ -57,8 +57,10 @@ public class FontTypeSetter
 	@Override
 	protected void setAttribute(TextView textview, TypedArray a, int attr) {
 		String fontName = a.getString(attr);
-		if (fontName == null)
+		if (fontName == null) {
 			logWarning("No attribute set: " + attr);
+			return;
+		}
 
 		SupportedFont font = getFontsValues(fontName);
 		if (font == null) {

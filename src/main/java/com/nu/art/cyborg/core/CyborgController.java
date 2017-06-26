@@ -37,6 +37,7 @@ import android.view.ViewParent;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
@@ -83,9 +84,8 @@ public abstract class CyborgController
 		return ScreenOrientation.Landscape;
 	}
 
-	/*
-	 * A map of rootView Id, to its rootView instance.
-     */
+	private CyborgController[] nestedControllers = {};
+
 	private final SparseArray<View> views = new SparseArray<View>();
 
 	final int layoutId;
@@ -436,10 +436,10 @@ public abstract class CyborgController
 			return;
 
 		if (this.stateTag != null)
-			activityBridge.removeController(this.stateTag);
+			activityBridge.removeController(this);
 
 		this.stateTag = stateTag;
-		activityBridge.addController(this.stateTag, this);
+		activityBridge.addController(this);
 	}
 
 	final String getStateTag() {
@@ -498,5 +498,9 @@ public abstract class CyborgController
 
 	protected final StackLayerBuilder createNewLayerBuilder() {
 		return getStack().createLayerBuilder();
+	}
+
+	final void addNestedController(CyborgController controller) {
+		nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
 	}
 }

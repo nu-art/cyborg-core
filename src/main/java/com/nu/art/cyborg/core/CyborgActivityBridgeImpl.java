@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.support.ViewServer;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -48,7 +49,6 @@ import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
 import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by TacB0sS on 19-Jun 2015.
@@ -94,8 +94,6 @@ public class CyborgActivityBridgeImpl
 	private CyborgController[] controllerList = {};
 
 	protected LifeCycleListener[] lifecycleListeners = {};
-
-	private final HashMap<String, CyborgController> controllersTagMap = new HashMap<String, CyborgController>();
 
 	protected String screenName;
 
@@ -374,27 +372,12 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public final void addController(String newStateTag, CyborgController controller) {
-		if (Arrays.asList(controllerList).contains(controller)) {
-			removeController(controller.getStateTag());
-		}
-
+	public final void addController(CyborgController controller) {
 		controllerList = ArrayTools.appendElement(controllerList, controller);
-		CyborgController previousController = controllersTagMap.put(newStateTag, controller);
-
-		if (previousController != null) {
-			if (previousController.getClass().getSimpleName().equals(previousController.getStateTag()))
-				throw new BadImplementationException("Too Many controllers of same type: '" + previousController
-						.getStateTag() + "'\n --- If using two or more controllers of the same type in the same CyborgActivity, you MUST define a different tag for each controller!");
-			else
-				throw new BadImplementationException("More than one controller declared with tag '" + controller
-						.getStateTag() + "'  --- TAG must be unique for each controller in the same CyborgActivity!");
-		}
 	}
 
 	@Override
-	public final void removeController(String stateTag) {
-		CyborgController controller = controllersTagMap.remove(stateTag);
+	public final void removeController(CyborgController controller) {
 		controllerList = ArrayTools.removeElement(controllerList, controller);
 	}
 
@@ -470,12 +453,8 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <Type> Type getController(Class<Type> type, String tag) {
-		CyborgController controller = controllersTagMap.get(tag);
-		if (!type.isAssignableFrom(controller.getClass()))
-			throw new BadImplementationException("Controller of type: " + controller.getClass().getSimpleName() + " does NOT implements requested type: " + type
-					.getSimpleName());
-		return (Type) controller;
+	public final <Type> Type getController(@IdRes int viewId) {
+		return (Type) activity.findViewById(viewId).getTag();
 	}
 
 	@Override

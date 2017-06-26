@@ -23,6 +23,7 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
@@ -60,28 +61,23 @@ public class CyborgView
 
 	protected final String TAG = getClass().getSimpleName();
 
-	protected final Cyborg cyborg;
+	protected Cyborg cyborg;
 
 	private CyborgController controller;
 
 	private String stateTag = null;
 
 	public CyborgView(Context context) {
-		super(context);
-		cyborg = getCyborg(context);
-		init(context, null, -1);
+		this(context, null);
 	}
 
 	public CyborgView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		cyborg = getCyborg(context);
-		init(context, attrs, -1);
+		this(context, attrs, 0);
 	}
 
 	public CyborgView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		cyborg = getCyborg(context);
-		init(context, attrs, defStyle);
+		init(attrs, defStyle);
 	}
 
 	private Cyborg getCyborg(Context context) {
@@ -97,9 +93,12 @@ public class CyborgView
 		controller.onConfigurationChanged(newConfig);
 	}
 
-	final void init(Context context, AttributeSet attrs, int defStyle) {
+	final void init(AttributeSet attrs, int defStyle) {
 		if (attrs == null)
 			return;
+
+		Context context = getContext();
+		cyborg = getCyborg(context);
 
 		// First set attributes to this CyborgView
 		cyborg.getModule(AttributeModule.class).setAttributes(context, attrs, this);
@@ -122,6 +121,7 @@ public class CyborgView
 
 		// inflating views
 		controller._createView(LayoutInflater.from(context), this);
+		setTag(controller);
 
 		if (isInEditMode())
 			return;
@@ -140,11 +140,19 @@ public class CyborgView
 		if (activityBridge == null)
 			throw new MUST_NeverHappenedException("activityBridge is null...???");
 
-		// TODO need to manage the nested controllers lifecycle, hold ref in the parent controller, and update the state according to the parent.
-		LifeCycleState activityBridgeState = activityBridge.getState();
+		CyborgController parentController = findParentController();
+		if (parentController != null)
+			parentController.addNestedController(controller);
+
+		LifeCycleState targetBridgeState;
+		if (parentController == null)
+			targetBridgeState = activityBridge.getState();
+		else
+			targetBridgeState = parentController.getState();
+
 		for (LifeCycleState lifeCycleState : LifeCycleState.values()) {
 			controller.dispatchLifeCycleEvent(lifeCycleState);
-			if (lifeCycleState == activityBridgeState)
+			if (lifeCycleState == targetBridgeState)
 				break;
 		}
 
@@ -153,14 +161,14 @@ public class CyborgView
 		controller.handleAttributes(context, attrs);
 	}
 
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		CyborgStackController stack = controller.getStack();
-		if (stack == null)
-			return;
-
-		stack.addController(controller);
+	private CyborgController findParentController() {
+		View v = this;
+		while (v.getParent() instanceof View) {
+			v = (View) v.getParent();
+			if (v instanceof CyborgView)
+				return (CyborgController) v.getTag();
+		}
+		return null;
 	}
 
 	final void setController(CyborgController controller) {
