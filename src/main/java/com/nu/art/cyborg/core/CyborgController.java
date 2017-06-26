@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -57,7 +58,8 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
  * <li>You can declare members that extends {@link CyborgModule} and Cyborg would resolve these for you.</li>
  * <li>The controller have a super intuitive behaviour... <b>LIKE</b> a Fragment.</li>
  * <li>The controller have most of the apis you would normally use, so you don't need to search for your context.</li>
- * <li> If you have data tat you would like to persist after your activityType had lost its state... declare a member and add the {@link Restorable} annotation to
+ * <li> If you have data tat you would like to persist after your activityType had lost its state... declare a member and add the {@link Restorable} annotation
+ * to
  * it!</li>
  * </ul>
  * <b>I can elaborate about the controller's magnificence for 50 more lines, but instead just explore the API, and check out the sample project!</b>
@@ -460,26 +462,13 @@ public abstract class CyborgController
 	/**
 	 * Get a controller instance from the stack matching the parameters
 	 *
-	 * @param type   The type of the controller.
-	 * @param tag    The tag of the controller as defined init's creation.
-	 * @param <Type> The Type of the controller.
+	 * @param viewId The <b>CyborgView</b> id.
+	 * @param <Type> The Type of the expected controller.
 	 *
 	 * @return An instance of the controller, or null if does not exist.
 	 */
-	protected final <Type> Type getController(Class<Type> type, String tag) {
-		return activityBridge.getController(type, tag);
-	}
-
-	/**
-	 * Get a controller instance from the stack matching the parameters
-	 *
-	 * @param type   The type of the controller.
-	 * @param <Type> The Type of the controller.
-	 *
-	 * @return An instance of the controller, or null if does not exist.
-	 */
-	protected final <Type> Type getController(Class<Type> type) {
-		return activityBridge.getController(type, type.getSimpleName());
+	protected final <Type> Type getControllerById(@IdRes int viewId) {
+		return (Type) rootView.findViewById(viewId).getTag();
 	}
 
 	protected View createView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
