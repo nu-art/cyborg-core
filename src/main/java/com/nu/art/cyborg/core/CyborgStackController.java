@@ -42,7 +42,6 @@ import com.nu.art.cyborg.common.utils.AnimationListenerImpl;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
-import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.InvocationTargetException;
@@ -65,6 +64,8 @@ public final class CyborgStackController
 	public abstract class StackLayer {
 
 		private StackTransitionAnimator[] stackTransitionAnimator;
+
+		protected Processor<?> processor;
 
 		protected String refKey;
 
@@ -114,7 +115,6 @@ public final class CyborgStackController
 
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
-			activityBridge.removeController(controller);
 
 			controller = null;
 		}
@@ -155,6 +155,10 @@ public final class CyborgStackController
 
 		private void addNestedController(CyborgController controller) {
 			nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
+		}
+
+		protected void setProcessor(Processor<?> processor) {
+			this.processor = processor;
 		}
 	}
 
@@ -225,11 +229,19 @@ public final class CyborgStackController
 			controller._createView(inflater, getFrameRootView(), false);
 			rootView = controller.getRootView();
 
-			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not be the case?
+			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
 			getFrameRootView().addView(rootView, 0);
 
 			controller.extractMembersImpl();
 			// xml attribute for root controller are handled in the handleAttributes method
+
+			if (processor != null)
+				postCreateProcessController(processor, controller);
+
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
+			if (getState() == LifeCycleState.OnResume)
+				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
 		}
 	}
 
@@ -321,11 +333,13 @@ public final class CyborgStackController
 	@Override
 	protected void onCreate() {
 		inflater = LayoutInflater.from(getActivity());
-		assignRootController();
 	}
 
 	@Override
 	public void handleAttributes(Context context, AttributeSet attrs) {
+		super.handleAttributes(context, attrs);
+		assignRootController();
+
 		// If the developer didn't specify a root layer in the xml
 		StackLayer topLayer = getTopLayer();
 		if (topLayer == null)
@@ -336,27 +350,7 @@ public final class CyborgStackController
 		if (controller == null)
 			return;
 
-		getModule(AttributeModule.class).setAttributes(context, attrs, controller);
-		controller.extractMembers();
-		bringControllerToState(controller, getState());
 		controller.handleAttributes(context, attrs);
-	}
-
-	private void bringControllerToState(CyborgController controller, LifeCycleState state) {
-		if (state == null)
-			return;
-
-		switch (state) {
-			case OnCreate:
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-				break;
-			case OnResume:
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
-				break;
-			default:
-				logError("VERY VERY BAD... GOT IN A PAUSED OR DESTROYED STATE!");
-		}
 	}
 
 	public class StackLayerBuilder {
@@ -433,7 +427,8 @@ public final class CyborgStackController
 			layerToBeAdded.setDuration(duration);
 			layerToBeAdded.setSaveState(saveState);
 
-			push(layerToBeAdded, processor);
+			layerToBeAdded.setProcessor(processor);
+			push(layerToBeAdded);
 		}
 
 		public StackLayerBuilder setDuration(int duration) {
@@ -474,7 +469,7 @@ public final class CyborgStackController
 		this.focused = focused;
 	}
 
-	private void push(final StackLayer targetLayerToBeAdded, Processor<?> processor) {
+	private void push(final StackLayer targetLayerToBeAdded) {
 		if (animatingTransition) {
 			logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
 			return;
@@ -484,8 +479,7 @@ public final class CyborgStackController
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();
 
-		createLayerToView(targetLayerToBeAdded, processor);
-
+		targetLayerToBeAdded.create();
 		layers.put(targetLayerToBeAdded.refKey, targetLayerToBeAdded);
 		layersStack.add(targetLayerToBeAdded.refKey);
 
@@ -527,17 +521,6 @@ public final class CyborgStackController
 		});
 	}
 
-	private void createLayerToView(StackLayer targetLayerToBeAdded, Processor<?> processor) {
-		targetLayerToBeAdded.create();
-
-		CyborgController controller = targetLayerToBeAdded.controller;
-		if (controller != null && processor != null) {
-			postCreateProcessController(processor, controller);
-		}
-
-		bringControllerToState(controller, activityBridge.getState());
-	}
-
 	private void setInAnimationState(boolean animating) {
 		animatingTransition = animating;
 	}
@@ -559,7 +542,7 @@ public final class CyborgStackController
 
 		final StackLayer originLayerToBeRestored = getTopLayer();
 		if (originLayerToBeRestored != null) {
-			createLayerToView(originLayerToBeRestored, null);
+			originLayerToBeRestored.create();
 			originLayerToBeRestored.restoreState();
 		}
 

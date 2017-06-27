@@ -48,8 +48,6 @@ import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
 import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
-import java.util.Arrays;
-
 /**
  * Created by TacB0sS on 19-Jun 2015.
  */
@@ -374,11 +372,17 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public final void addController(CyborgController controller) {
 		controllerList = ArrayTools.appendElement(controllerList, controller);
+		if (Cyborg.DebugActivityLifeCycle) {
+			logDebug("Added controller(" + controllerList.length + "): " + controller);
+		}
 	}
 
 	@Override
 	public final void removeController(CyborgController controller) {
 		controllerList = ArrayTools.removeElement(controllerList, controller);
+		if (Cyborg.DebugActivityLifeCycle) {
+			logDebug("Removed controller(" + controllerList.length + "): " + controller);
+		}
 	}
 
 	@Override
@@ -418,8 +422,8 @@ public class CyborgActivityBridgeImpl
 					action.process((ListenerType) activity);
 				}
 
-				ListenerType[] listeners = ArrayTools.asFilteredArray(Arrays.asList(controllerList), listenerType);
-				for (ListenerType listener : listeners) {
+				ListenerType[] controllers = ArrayTools.asFilteredArray(controllerList, listenerType);
+				for (ListenerType listener : controllers) {
 					if (((CyborgController) listener).getState().ordinal() >= LifeCycleState.OnDestroy.ordinal())
 						continue;
 					action.process(listener);

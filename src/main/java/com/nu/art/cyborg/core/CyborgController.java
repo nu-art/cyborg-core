@@ -49,6 +49,7 @@ import com.nu.art.cyborg.core.more.CyborgStateExtractor;
 import com.nu.art.cyborg.core.more.CyborgStateInjector;
 import com.nu.art.cyborg.core.more.CyborgViewInjector;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
+import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 
 /**
@@ -72,6 +73,8 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 									 })
 public abstract class CyborgController
 		extends CyborgControllerBase {
+
+	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 
 	public ScreenOrientation getScreenOrientation() {
 		Display display = getSystemService(WindowService).getDefaultDisplay();
@@ -225,7 +228,9 @@ public abstract class CyborgController
 	 * @param context Not sure why this is needed...
 	 * @param attrs   The xml attributes
 	 */
-	public void handleAttributes(Context context, AttributeSet attrs) {}
+	public void handleAttributes(Context context, AttributeSet attrs) {
+		getModule(AttributeModule.class).setAttributes(context, attrs, this);
+	}
 
 	protected void onDestroyView() {}
 
@@ -242,6 +247,7 @@ public abstract class CyborgController
 				if (this.state != null)
 					return;
 
+				activityBridge.addController(this);
 				onCreate();
 				break;
 			case OnResume:
@@ -260,6 +266,8 @@ public abstract class CyborgController
 				if (this.state != LifeCycleState.OnPause)
 					return;
 
+				activityBridge.removeController(this);
+				nestedControllers = EmptyControllersArray;
 				onDestroy();
 				break;
 		}
@@ -442,11 +450,7 @@ public abstract class CyborgController
 		if (stateTag.equals(this.stateTag))
 			return;
 
-		if (this.stateTag != null)
-			activityBridge.removeController(this);
-
 		this.stateTag = stateTag;
-		activityBridge.addController(this);
 	}
 
 	final String getStateTag() {

@@ -84,6 +84,7 @@ public final class AttributeModule
 
 		protected void init() {}
 
+
 		@SuppressWarnings( {
 													 "unchecked",
 													 "UnusedParameters"
@@ -94,6 +95,7 @@ public final class AttributeModule
 
 			if (className.startsWith("."))
 				className = cyborg.getPackageName() + className;
+
 			try {
 				return (Class<? extends Type>) getClass().getClassLoader().loadClass(className);
 			} catch (ClassNotFoundException e) {

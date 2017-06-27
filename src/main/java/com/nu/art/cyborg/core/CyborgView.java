@@ -131,33 +131,26 @@ public class CyborgView
 		// extract members by injection or by find view by id
 		controller.extractMembersImpl();
 
-		// set Attributes to the controller, this action can be dependant on the inject members
-		cyborg.getModule(AttributeModule.class).setAttributes(context, attrs, controller);
-
-		// handle the attributes for the controller
-		controller.handleAttributes(context, attrs);
-
 		if (activityBridge == null)
 			throw new MUST_NeverHappenedException("activityBridge is null...???");
 
 		CyborgController parentController = findParentController();
-		// this can still be because the controller is set to be the tag of the
-		if (parentController != null && parentController != controller)
-			parentController.addNestedController(controller);
-
+		// this can still be, because the controller is set to be the tag of the cyborg-view on the one hand, and the itemrenderer layout on the other.
 		LifeCycleState targetState;
-		if (parentController == null) {
+		if (parentController != null && parentController != controller) {
+			parentController.addNestedController(controller);
+			targetState = parentController.getState();
+		} else {
 			targetState = activityBridge.getState();
-			for (LifeCycleState lifeCycleState : LifeCycleState.values()) {
-				controller.dispatchLifeCycleEvent(lifeCycleState);
-				if (lifeCycleState == targetState)
-					break;
-			}
 		}
 
-		// Some view are loaded using findViewById, so after the onCreate,
-		// we'll let the controller decide if he wants to delegate some xml attributes to its children views
+		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
+		// handle the attributes for the controller
 		controller.handleAttributes(context, attrs);
+
+		if (targetState == LifeCycleState.OnResume)
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
 	}
 
 	private CyborgController findParentController() {
@@ -204,20 +197,11 @@ public class CyborgView
 		protected void setAttribute(CyborgView instance, TypedArray a, int attr) {
 			if (attr == R.styleable.CyborgView_controller) {
 				String controllerName = a.getString(attr);
-				if (controllerName == null || controllerName.length() == 0)
-					throw new BadImplementationException("MUST specify a valid a controller class name");
-
-				if (controllerName.startsWith("."))
-					controllerName = cyborg.getPackageName() + controllerName;
-				try {
-					Class<? extends CyborgController> controllerType = (Class<? extends CyborgController>) getClass().getClassLoader().loadClass(controllerName);
-					CyborgController controller = ReflectiveTools.newInstance(controllerType);
-					instance.setController(controller);
-				} catch (ClassNotFoundException e) {
-					throw new BadImplementationException("MUST specify a valid controller class name, found: " + controllerName, e);
-				}
-				return;
+				Class<? extends CyborgController> controllerType = resolveClassType(CyborgController.class, controllerName);
+				CyborgController controller = ReflectiveTools.newInstance(controllerType);
+				instance.setController(controller);
 			}
+
 			if (attr == R.styleable.CyborgView_tag) {
 				String xmlTag = a.getString(attr);
 				instance.setStateTag(xmlTag);

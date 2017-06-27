@@ -28,10 +28,10 @@ interface _LifeCycleLogger {
 	/**
 	 * Should controller lifecycle be printed to the log
 	 */
-	boolean DebugControllerLifeCycle = false;
+	boolean DebugControllerLifeCycle = true;
 
 	/**
 	 * Should activity lifecycle be printed to the log
 	 */
-	boolean DebugActivityLifeCycle = false;
+	boolean DebugActivityLifeCycle = true;
 }
