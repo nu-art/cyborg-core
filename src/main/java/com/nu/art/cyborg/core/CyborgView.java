@@ -141,19 +141,18 @@ public class CyborgView
 			throw new MUST_NeverHappenedException("activityBridge is null...???");
 
 		CyborgController parentController = findParentController();
-		if (parentController != null)
+		// this can still be because the controller is set to be the tag of the
+		if (parentController != null && parentController != controller)
 			parentController.addNestedController(controller);
 
-		LifeCycleState targetBridgeState;
-		if (parentController == null)
-			targetBridgeState = activityBridge.getState();
-		else
-			targetBridgeState = parentController.getState();
-
-		for (LifeCycleState lifeCycleState : LifeCycleState.values()) {
-			controller.dispatchLifeCycleEvent(lifeCycleState);
-			if (lifeCycleState == targetBridgeState)
-				break;
+		LifeCycleState targetState;
+		if (parentController == null) {
+			targetState = activityBridge.getState();
+			for (LifeCycleState lifeCycleState : LifeCycleState.values()) {
+				controller.dispatchLifeCycleEvent(lifeCycleState);
+				if (lifeCycleState == targetState)
+					break;
+			}
 		}
 
 		// Some view are loaded using findViewById, so after the onCreate,

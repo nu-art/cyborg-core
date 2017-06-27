@@ -20,10 +20,8 @@ package com.nu.art.cyborg.core.more;
 
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.core.exceptions.runtime.ThisShouldNotHappenedException;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
@@ -32,15 +30,16 @@ import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgAdapter;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.injector.AnnotatbleInjector;
 import com.nu.art.reflection.tools.ART_Tools;
 
 import java.lang.reflect.Field;
 
 @SuppressWarnings( {
-		"rawtypes",
-		"unchecked"
-})
+											 "rawtypes",
+											 "unchecked"
+									 })
 public final class CyborgViewInjector
 		extends AnnotatbleInjector<ViewIdentifier, View, CyborgController>
 		implements ILogger {
@@ -90,70 +89,63 @@ public final class CyborgViewInjector
 		Class<?> fieldType = viewField.getType();
 		ViewIdentifier viewIdentifier = viewField.getAnnotation(ViewIdentifier.class);
 		if (View.class.isAssignableFrom(fieldType)) {
-			// if (viewIdentifier == null)
-			// return;
-			/*
-			 * If rootView field
-			 */
 			int parentViewId = viewIdentifier.parentViewId();
 			int viewId = viewIdentifier.viewId();
-			if (viewId == -1) {
-				throw new BadImplementationException("You MUST supply a valid rootView id for:\n		 " + viewField);
-			}
+			if (viewId == -1)
+				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
+
 			return setupView(viewField, parentViewId, viewId, viewIdentifier.forDev(), viewIdentifier.listeners());
 		} else if (fieldType.isArray()) {
 			Class<? extends View> viewType = (Class<? extends View>) fieldType.getComponentType();
 
 			int parentViewId = viewIdentifier.parentViewId();
 			int viewId = viewIdentifier.viewId();
-			if (viewId != -1) {
-				throw new BadImplementationException("You MUST NOT supply any value rootView id for:\n		 " + viewField);
-			}
+			if (viewId != -1)
+				throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
 
 			int[] ids = viewIdentifier.viewIds();
-			if (ids.length == 0) {
-				throw new BadImplementationException("There is no point adding an annotation for an array of views,\n without specifying any rootView id in the viewIds() method,\n add ids, or comment out the deceleration of: " + viewField);
-			}
+			if (ids.length == 0)
+				throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
+
 			View[] views = ArrayTools.newInstance(viewType, ids.length);
 			for (int i = 0; i < ids.length; i++) {
 				views[i] = setupView(viewField, parentViewId, ids[i], viewIdentifier.forDev(), viewIdentifier.listeners());
 			}
 			return views;
 		} else {
-			throw new ThisShouldNotHappenedException("Extracting fields using: '" + ART_Tools.class.getName() + "' from '" + getClass().getName() + "'");
+			throw ExceptionGenerator.infraErrorInTheArtTools(viewField.getDeclaringClass());
 		}
 	}
 
 	private View setupView(Field viewField, int parentViewId, int viewId, boolean forDev, ViewListener[] listeners) {
 		View view;
-		if (parentViewId != -1) {
-			ViewGroup parentView = (ViewGroup) rootView.findViewById(parentViewId);
-			view = parentView.findViewById(viewId);
-		} else {
-			view = rootView.findViewById(viewId);
-		}
+		View parentView = rootView;
 
-		if (view == null) {
-			throw new BadImplementationException("You must supply a valid rootView id for rootView:\n		 '" + viewField);
-		}
+		if (parentViewId != -1)
+			parentView = rootView.findViewById(parentViewId);
+
+		view = parentView.findViewById(viewId);
+
+		if (view == null)
+			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(viewField);
 
 		if (modelDelegator == null)
 			throw new BadImplementationException("modelDelegator == null");
 
 		for (ViewListener listener : listeners) {
-			if (!listener.getMethodOwnerType().isAssignableFrom(view.getClass())) {
-				throw new BadImplementationException("Cannot assign '" + listener + "' listener to type: " + view.getClass()
-						.getSimpleName() + ", it does not inherit from super type: " + listener.getMethodOwnerType().getSimpleName());
-			}
+			if (!listener.getMethodOwnerType().isAssignableFrom(view.getClass()))
+				throw ExceptionGenerator.wrongListenerToViewAssignment(view, listener);
+
 			try {
 				listener.assign(view, modelDelegator);
 			} catch (Exception e) {
-				throw new BadImplementationException("Error while assigning listener to view", e);
+				throw ExceptionGenerator.errorWhileAssigningListenerToView(e);
 			}
 		}
-		if (forDev && !debuggable) {
+
+		if (forDev && !debuggable)
 			view.setVisibility(View.GONE);
-		}
+
 		views.put(viewId, view);
 		return view;
 	}

@@ -230,6 +230,13 @@ public abstract class CyborgController
 	protected void onDestroyView() {}
 
 	final void dispatchLifeCycleEvent(LifeCycleState newState) {
+		if (newState == state)
+			logWarning("ALREADY IN STATE: " + newState);
+
+		for (CyborgController nestedController : nestedControllers) {
+			nestedController.dispatchLifeCycleEvent(newState);
+		}
+
 		switch (newState) {
 			case OnCreate:
 				if (this.state != null)
