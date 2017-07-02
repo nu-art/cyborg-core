@@ -38,6 +38,7 @@ public abstract class BaseTransceiver
 		@Override
 		public void run() {
 			try {
+				listen = true;
 				while (listen) {
 					setState(Connecting);
 					socket = connectImpl();
@@ -60,6 +61,13 @@ public abstract class BaseTransceiver
 					}
 				}
 			} catch (Exception e) {
+				try {
+					if (socket != null)
+						socket.close();
+				} catch (IOException e1) {
+					notifyError(e);
+				}
+
 				notifyError(e);
 			} finally {
 				setState(Idle);
