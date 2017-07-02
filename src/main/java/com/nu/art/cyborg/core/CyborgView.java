@@ -67,6 +67,8 @@ public class CyborgView
 
 	private String stateTag = null;
 
+	private CyborgActivityBridge activityBridge;
+
 	public CyborgView(Context context) {
 		this(context, null);
 	}
@@ -107,7 +109,6 @@ public class CyborgView
 		if (controller == null)
 			throw new BadImplementationException("MUST specify a valid controller class name");
 
-		CyborgActivityBridge activityBridge = null;
 		// I've been going around this issue for a while... I believe this 'if' is the only real solution
 		if (!isInEditMode()) {
 			// set the context for inflating and custom views
@@ -131,8 +132,15 @@ public class CyborgView
 		// extract members by injection or by find view by id
 		controller.extractMembersImpl();
 
-		if (activityBridge == null)
-			throw new MUST_NeverHappenedException("activityBridge is null...???");
+		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
+		// handle the attributes for the controller
+		controller.handleAttributes(context, attrs);
+	}
+
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
 
 		CyborgController parentController = findParentController();
 		// this can still be, because the controller is set to be the tag of the cyborg-view on the one hand, and the itemrenderer layout on the other.
@@ -144,21 +152,19 @@ public class CyborgView
 			targetState = activityBridge.getState();
 		}
 
-		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-
-		// handle the attributes for the controller
-		controller.handleAttributes(context, attrs);
-
 		if (targetState == LifeCycleState.OnResume)
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
+
 	}
 
 	private CyborgController findParentController() {
 		View v = this;
 		while (v.getParent() instanceof View) {
 			v = (View) v.getParent();
-			if (v instanceof CyborgView)
-				return (CyborgController) v.getTag();
+
+			Object tagAsController = v.getTag();
+			if(tagAsController instanceof CyborgController)
+				return (CyborgController) tagAsController;
 		}
 		return null;
 	}

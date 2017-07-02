@@ -235,10 +235,10 @@ public final class CyborgStackController
 			controller.extractMembersImpl();
 			// xml attribute for root controller are handled in the handleAttributes method
 
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
 			if (processor != null)
 				postCreateProcessController(processor, controller);
-
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
 
 			if (getState() == LifeCycleState.OnResume)
 				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
