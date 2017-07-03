@@ -19,7 +19,6 @@ public abstract class BaseTransceiver
 
 	protected SocketWrapper socket;
 
-	//		protected BluetoothSocket socket;
 	private ConnectionState state = Idle;
 
 	protected final String name;
@@ -32,7 +31,7 @@ public abstract class BaseTransceiver
 
 	private boolean listen = true;
 
-	private TransceiverListener[] listeners = new TransceiverListener[0];
+	private TransceiverListener[] listeners = {};
 
 	private Runnable connectAndListen = new Runnable() {
 		@Override
@@ -60,6 +59,7 @@ public abstract class BaseTransceiver
 						}
 					}
 				}
+				//TODO all logic here needs to be mapped to the disconnect method!!
 			} catch (Exception e) {
 				try {
 					if (socket != null)
@@ -70,6 +70,7 @@ public abstract class BaseTransceiver
 
 				notifyError(e);
 			} finally {
+				socket = null;
 				setState(Idle);
 			}
 		}
