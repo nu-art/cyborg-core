@@ -82,7 +82,6 @@ public abstract class BaseTransceiver
 		this.packetSerializer = packetSerializer;
 		transmitter = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Transmitter - " + name);
 		receiver = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Receiver - " + name);
-		CyborgBuilder.getInstance().setBeLogged(this);
 	}
 
 	public final void setOneShot() {

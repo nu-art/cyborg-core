@@ -109,7 +109,6 @@ public class CyborgActivityBridgeImpl
 		this.activity = activity;
 		this.screenName = screenName;
 		cyborg = CyborgBuilder.getInstance();
-		cyborg.setBeLogged(this);
 		keyboardChangeListener = new KeyboardChangeListener(cyborg, activity);
 	}
 

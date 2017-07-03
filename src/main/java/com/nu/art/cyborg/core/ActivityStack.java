@@ -20,7 +20,6 @@ package com.nu.art.cyborg.core;
 
 import android.os.Handler;
 
-import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -42,7 +41,6 @@ public final class ActivityStack
 	public ActivityStack(Cyborg cyborg) {
 		queue.createThreads("Screen UI Action Executor");
 		uiHandler = cyborg.getUI_Handler();
-		setBeLogged(cyborg.getModule(BeLogged.class));
 	}
 
 	public final void addItem(ActivityStackAction item) {

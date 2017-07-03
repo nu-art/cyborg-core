@@ -70,7 +70,6 @@ public class CyborgAdapter<Item>
 		this.renderersTypes = renderersTypes;
 		this.controller = controller;
 		cyborg = CyborgBuilder.getInstance();
-		cyborg.setBeLogged(this);
 	}
 
 	public final void setResolver(Getter<? extends DataModel<Item>> resolver) {

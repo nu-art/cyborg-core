@@ -43,7 +43,6 @@ final class ReceiversManager
 	public ReceiversManager(Cyborg cyborg) {
 		super();
 		this.cyborg = cyborg;
-		cyborg.setBeLogged(this);
 	}
 
 	/*

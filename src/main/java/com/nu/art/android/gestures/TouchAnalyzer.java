@@ -24,7 +24,6 @@ import android.view.View.OnTouchListener;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.tools.ArrayTools;
-import com.nu.art.cyborg.core.CyborgBuilder;
 
 public final class TouchAnalyzer
 		extends Logger
@@ -172,7 +171,6 @@ public final class TouchAnalyzer
 		for (int i = 0; i < eventsData.length; i++) {
 			eventsData[i] = new TouchEventData();
 		}
-		CyborgBuilder.getInstance().setBeLogged(this);
 	}
 
 	public final void addOnTouchGesturListener(OnTouchGestureListener listener) {
