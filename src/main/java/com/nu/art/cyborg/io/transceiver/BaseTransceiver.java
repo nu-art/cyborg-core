@@ -160,6 +160,7 @@ public abstract class BaseTransceiver
 
 		if (socket == null) {
 			logWarning("Cannot disconnect, Socket is null");
+			setState(Idle);
 			return;
 		}
 
