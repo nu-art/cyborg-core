@@ -174,7 +174,7 @@ public class CyborgAdapter<Item>
 		renderers.remove(item);
 		renderers.put(item, renderer);
 		renderer._setItem(item);
-		renderer.renderImpl();
+		renderer.render();
 	}
 
 	public final ItemRenderer<? extends Item> getRendererForItem(Item item) {

@@ -55,7 +55,7 @@ public abstract class ItemRenderer<ItemType>
 	}
 
 	@Override
-	public final void renderImpl() {
+	public final void render() {
 		renderItem(item);
 	}
 

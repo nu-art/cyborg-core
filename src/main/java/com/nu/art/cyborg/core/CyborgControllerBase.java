@@ -466,6 +466,10 @@ abstract class CyborgControllerBase
 		return cyborg.elapsedTimeMillis();
 	}
 
+	protected final boolean isMainThread() {
+		return cyborg.isMainThread();
+	}
+
 	@Override
 	public final void postOnUI(long delay, Runnable action) {
 		cyborg.postOnUI(delay, action);

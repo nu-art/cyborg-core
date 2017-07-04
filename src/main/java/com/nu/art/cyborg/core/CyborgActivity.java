@@ -134,10 +134,10 @@ public class CyborgActivity
 	@Override
 	protected final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		onCreateImpl();
-
 		int windowFeature = getIntent().getIntExtra(WindowFeature, Window.FEATURE_NO_TITLE);
 		requestWindowFeature(windowFeature);
+
+		onCreateImpl();
 
 		postOnUI(new Runnable() {
 			@Override

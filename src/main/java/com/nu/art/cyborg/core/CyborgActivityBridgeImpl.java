@@ -426,6 +426,7 @@ public class CyborgActivityBridgeImpl
 				for (ListenerType listener : controllers) {
 					if (((CyborgController) listener).getState().ordinal() >= LifeCycleState.OnDestroy.ordinal())
 						continue;
+
 					action.process(listener);
 				}
 			}

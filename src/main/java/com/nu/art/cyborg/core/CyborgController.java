@@ -177,14 +177,14 @@ public abstract class CyborgController
 	}
 
 	/**
-	 * A render api that will call renderImpl on the UI thread.
+	 * A render UI api that will call render on the UI thread.
 	 */
-	public final void render() {
+	public final void renderUI() {
 		postOnUI(new Runnable() {
 
 			@Override
 			public void run() {
-				renderImpl();
+				render();
 			}
 		});
 	}
@@ -291,7 +291,7 @@ public abstract class CyborgController
 
 	protected void handleIntent(Intent intent) {}
 
-	protected void renderImpl() {}
+	protected void render() {}
 
 	public boolean onBackPressed() {
 		return false;
