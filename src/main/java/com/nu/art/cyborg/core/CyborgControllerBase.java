@@ -292,7 +292,6 @@ abstract class CyborgControllerBase
 
 	CyborgControllerBase() {
 		cyborg = CyborgBuilder.getInstance();
-		cyborg.setBeLogged(this);
 		actionDelegator = new ActionDelegator(cyborg);
 	}
 

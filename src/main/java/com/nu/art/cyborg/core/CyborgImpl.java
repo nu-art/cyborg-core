@@ -174,10 +174,6 @@ final class CyborgImpl
 
 		moduleManager.setModuleListener(new OnModuleInitializedListener() {
 			public void onModuleInitialized(Module module) {
-				if (!(module instanceof BeLogged))
-					return;
-
-				setBeLogged(CyborgImpl.this);
 				printApplicationStarted();
 				activityStackHandler = new ActivityStack(CyborgImpl.this);
 				receiversManager = new ReceiversManager(CyborgImpl.this);
@@ -379,12 +375,7 @@ final class CyborgImpl
 
 	@Override
 	public ILogger getLogger(Object beLogged) {
-		return getModule(BeLogged.class).getLogger(beLogged);
-	}
-
-	@Override
-	public void setBeLogged(Logger logger) {
-		logger.setBeLogged(getModule(BeLogged.class));
+		return BeLogged.getInstance().getLogger(beLogged);
 	}
 
 	@Override

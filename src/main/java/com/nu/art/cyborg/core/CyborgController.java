@@ -41,6 +41,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
+import com.nu.art.cyborg.common.utils.BusyState;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.KeyboardChangeListener.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -99,9 +100,22 @@ public abstract class CyborgController
 
 	private String stateTag;
 
+	private BusyState busyState = new BusyState();
+
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
 		this.layoutId = layoutId;
+	}
+
+	protected final void setBusyState(BusyState busyState) {
+		this.busyState = busyState;
+		for (CyborgController nestedController : nestedControllers) {
+			nestedController.setBusyState(busyState);
+		}
+	}
+
+	protected boolean canExecute() {
+		return busyState.canExecute();
 	}
 
 	/**

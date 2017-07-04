@@ -25,7 +25,6 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 
-import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
@@ -129,14 +128,16 @@ public interface Cyborg
 
 	/**
 	 * Bind to a service.
-	 * @param serviceIntent The intent to start the service with
+	 *
+	 * @param serviceIntent     The intent to start the service with
 	 * @param serviceConnection The connection to manage the service connectivity state.
-	 * @param flags Other flags for the service.
+	 * @param flags             Other flags for the service.
 	 */
 	void bindService(Intent serviceIntent, ServiceConnection serviceConnection, int flags);
 
 	/**
 	 * Unbind from a service.
+	 *
 	 * @param serviceConnection The connection of the service to disconnect from.
 	 */
 	void unbindService(ServiceConnection serviceConnection);
@@ -155,9 +156,4 @@ public interface Cyborg
 	 * @return The ILogger for the object to belogged.
 	 */
 	ILogger getLogger(Object beLogged);
-
-	/**
-	 * @param logger set the logger for Cyborg
-	 */
-	void setBeLogged(Logger logger);
 }

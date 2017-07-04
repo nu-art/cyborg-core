@@ -20,7 +20,6 @@ package com.nu.art.cyborg.core;
 
 import android.content.pm.FeatureInfo;
 
-import com.nu.art.belog.BeLogged;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AppDetailsModule;
@@ -64,10 +63,6 @@ final class CyborgModulesBuilder
 
 	@Override
 	protected void setupModule(Module module) {
-		BeLogged beLogged = getModule(BeLogged.class);
-		if (beLogged != null && module != beLogged)
-			setLogger(module, beLogged.getLogger(module));
-
 		if (!(module instanceof CyborgModule))
 			return;
 

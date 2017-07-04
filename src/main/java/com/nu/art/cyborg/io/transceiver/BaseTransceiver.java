@@ -19,7 +19,6 @@ public abstract class BaseTransceiver
 
 	protected SocketWrapper socket;
 
-	//		protected BluetoothSocket socket;
 	private ConnectionState state = Idle;
 
 	protected final String name;
@@ -32,12 +31,13 @@ public abstract class BaseTransceiver
 
 	private boolean listen = true;
 
-	private TransceiverListener[] listeners = new TransceiverListener[0];
+	private TransceiverListener[] listeners = {};
 
 	private Runnable connectAndListen = new Runnable() {
 		@Override
 		public void run() {
 			try {
+				listen = true;
 				while (listen) {
 					setState(Connecting);
 					socket = connectImpl();
@@ -59,9 +59,18 @@ public abstract class BaseTransceiver
 						}
 					}
 				}
+				//TODO all logic here needs to be mapped to the disconnect method!!
 			} catch (Exception e) {
+				try {
+					if (socket != null)
+						socket.close();
+				} catch (IOException e1) {
+					notifyError(e);
+				}
+
 				notifyError(e);
 			} finally {
+				socket = null;
 				setState(Idle);
 			}
 		}
@@ -73,7 +82,6 @@ public abstract class BaseTransceiver
 		this.packetSerializer = packetSerializer;
 		transmitter = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Transmitter - " + name);
 		receiver = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Receiver - " + name);
-		CyborgBuilder.getInstance().setBeLogged(this);
 	}
 
 	public final void setOneShot() {
@@ -152,6 +160,7 @@ public abstract class BaseTransceiver
 
 		if (socket == null) {
 			logWarning("Cannot disconnect, Socket is null");
+			setState(Idle);
 			return;
 		}
 

@@ -42,7 +42,6 @@ public class CyborgBasePack
 		extends ModulesPack {
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
-			BeLogged.class,
 			CacheModule.class,
 			PreferencesModule.class,
 			PermissionModule.class,
@@ -61,12 +60,14 @@ public class CyborgBasePack
 
 	@Override
 	protected final void init() {
-		getModule(BeLogged.class).addClient(new AndroidLogClient());
-		getModule(AttributeModule.class).registerAttributesSetter(FontTypeSetter.class);
-		getModule(AttributeModule.class).registerAttributesSetter(CyborgViewSetter.class);
-		getModule(AttributeModule.class).registerAttributesSetter(CyborgViewPagerSetter.class);
-		getModule(AttributeModule.class).registerAttributesSetter(CyborgStackSetter.class);
-		getModule(AttributeModule.class).registerAttributesSetter(CyborgRecyclerSetter.class);
-		getModule(AttributeModule.class).registerAttributesSetter(ValueChangerSetter.class);
+		BeLogged.getInstance().addClient(new AndroidLogClient());
+
+		AttributeModule attributeModule = getModule(AttributeModule.class);
+		attributeModule.registerAttributesSetter(FontTypeSetter.class);
+		attributeModule.registerAttributesSetter(CyborgViewSetter.class);
+		attributeModule.registerAttributesSetter(CyborgViewPagerSetter.class);
+		attributeModule.registerAttributesSetter(CyborgStackSetter.class);
+		attributeModule.registerAttributesSetter(CyborgRecyclerSetter.class);
+		attributeModule.registerAttributesSetter(ValueChangerSetter.class);
 	}
 }
