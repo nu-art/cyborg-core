@@ -25,6 +25,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 
+import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
@@ -156,4 +157,18 @@ public interface Cyborg
 	 * @return The ILogger for the object to belogged.
 	 */
 	ILogger getLogger(Object beLogged);
+
+	/**
+	 * Apparently when in the process of migrating an Android project that is stupidly coupled to Android classes) to Cyborg, you'd find this API really useful
+	 * to contact your module and update it.
+	 *
+	 * If you are calling this keep in mind that you are doing something wrong, the logic which calls this needs to be encapsulated within a module... That's what
+	 * they are for!
+	 *
+	 * @param message        A log message to accompany the event.
+	 * @param listenerType   The listener type entities need to implement to receive the event.
+	 * @param processor      A processor on how ti handle the event.
+	 * @param <ListenerType> A generic bound to the listener type
+	 */
+	<ListenerType> void dispatchModuleEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor);
 }

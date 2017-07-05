@@ -47,13 +47,16 @@ public abstract class CyborgServiceBase
 
 	private ILogger logger;
 
-	@Override
-	public void onCreate() {
+	public CyborgServiceBase() {
+		binder = createBinder();
 		cyborg = CyborgBuilder.getInstance();
 		logger = cyborg.getLogger(this);
+	}
 
-		logInfo("Service created " + super.toString().split("@")[1]);
-		binder = createBinder();
+	@Override
+	public void onCreate() {
+		logInfo("Service created " + super.toString()
+																			.split("@")[1]);
 	}
 
 	protected abstract BaseBinder createBinder();

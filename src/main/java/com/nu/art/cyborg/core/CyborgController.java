@@ -77,6 +77,14 @@ public abstract class CyborgController
 
 	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 
+	protected final Runnable render = new Runnable() {
+
+		@Override
+		public void run() {
+			render();
+		}
+	};
+
 	public ScreenOrientation getScreenOrientation() {
 		Display display = getSystemService(WindowService).getDefaultDisplay();
 		if (display.getWidth() == display.getHeight()) {
@@ -194,13 +202,12 @@ public abstract class CyborgController
 	 * A render UI api that will call render on the UI thread.
 	 */
 	public final void renderUI() {
-		postOnUI(new Runnable() {
+		if (!isMainThread()) {
+			postOnUI(render);
+			return;
+		}
 
-			@Override
-			public void run() {
-				render();
-			}
-		});
+		render.run();
 	}
 
 	/**

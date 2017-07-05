@@ -182,7 +182,7 @@ final class CyborgImpl
 
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		printApplicationStarted();
-		
+
 		builder.buildMainManager();
 
 		if (!inEditMode) {
@@ -614,6 +614,11 @@ final class CyborgImpl
 				activity.dispatchEvent(listenerType, processor);
 			}
 		});
+	}
+
+	@Override
+	public final <ListenerType> void dispatchModuleEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		moduleManager.dispatchModuleEvent(message, listenerType, processor);
 	}
 
 	@Override
