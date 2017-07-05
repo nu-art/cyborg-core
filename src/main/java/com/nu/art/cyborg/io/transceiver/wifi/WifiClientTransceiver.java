@@ -13,10 +13,16 @@ public class WifiClientTransceiver
 
 	private final int serverPort;
 
+	private int timeout = 30000;
+
 	public WifiClientTransceiver(String serverIpAddress, int serverPort, String name, PacketSerializer packetSerializer) {
 		super(name, packetSerializer);
 		this.serverIpAddress = serverIpAddress;
 		this.serverPort = serverPort;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 
 	@Override
@@ -26,7 +32,7 @@ public class WifiClientTransceiver
 		logDebug("Connecting on: " + serverIpAddress + ":" + serverPort);
 		Socket socket = new Socket();
 		socket.bind(null);
-		socket.connect((new InetSocketAddress(serverIpAddress, serverPort)), 5000);
+		socket.connect((new InetSocketAddress(serverIpAddress, serverPort)), this.timeout);
 
 		return new WifiSocketWrapper(socket);
 	}

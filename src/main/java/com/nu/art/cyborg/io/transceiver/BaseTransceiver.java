@@ -120,10 +120,16 @@ public abstract class BaseTransceiver
 	}
 
 	public final void addListener(TransceiverListener listener) {
+		if (listener == null)
+			return;
+
 		listeners = ArrayTools.appendElement(listeners, listener);
 	}
 
 	public final void removeListener(TransceiverListener listener) {
+		if (listener == null)
+			return;
+
 		listeners = ArrayTools.removeElement(listeners, listener);
 	}
 

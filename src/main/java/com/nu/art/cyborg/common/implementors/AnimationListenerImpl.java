@@ -16,23 +16,20 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.common.utils;
+package com.nu.art.cyborg.common.implementors;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 
-public abstract class AnimatorListenerImpl
-		implements AnimatorListener {
-
-	@Override
-	public void onAnimationStart(Animator animator) {}
+public abstract class AnimationListenerImpl
+		implements AnimationListener {
 
 	@Override
-	public void onAnimationEnd(Animator animator) {}
+	public void onAnimationStart(Animation animation) {}
 
 	@Override
-	public void onAnimationCancel(Animator animator) {}
+	public void onAnimationRepeat(Animation animation) {}
 
 	@Override
-	public void onAnimationRepeat(Animator animator) {}
+	public void onAnimationEnd(Animation animation) {}
 }

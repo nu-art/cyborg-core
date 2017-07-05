@@ -144,8 +144,8 @@ public abstract class CyborgController
 		return state;
 	}
 
-	protected final View getViewById(int id) {
-		return getViewById(View.class, id);
+	protected final <ViewType extends View> ViewType getViewById(int id) {
+		return (ViewType) getViewById(View.class, id);
 	}
 
 	/**

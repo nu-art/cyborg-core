@@ -16,29 +16,22 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.common.utils;
+package com.nu.art.cyborg.common.implementors;
 
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 
 /**
- * Created by TacB0sS on 29-Aug 2016.
+ * Created by TacB0sS on 18-Mar-15.
  */
-public abstract class TextWatcherImpl
-		implements TextWatcher {
+public abstract class OnPageChangedListenerImpl
+		implements OnPageChangeListener {
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-	}
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
 	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-	}
+	public void onPageSelected(int position) {}
 
 	@Override
-	public void afterTextChanged(Editable s) {
-
-	}
+	public void onPageScrollStateChanged(int state) {}
 }
