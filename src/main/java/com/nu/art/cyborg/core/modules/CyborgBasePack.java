@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core.modules;
 
-import com.nu.art.belog.BeLogged;
 import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
@@ -60,8 +59,6 @@ public class CyborgBasePack
 
 	@Override
 	protected final void init() {
-		BeLogged.getInstance().addClient(new AndroidLogClient());
-
 		AttributeModule attributeModule = getModule(AttributeModule.class);
 		attributeModule.registerAttributesSetter(FontTypeSetter.class);
 		attributeModule.registerAttributesSetter(CyborgViewSetter.class);

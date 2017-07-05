@@ -49,6 +49,7 @@ import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.core.modules.AndroidLogClient;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
@@ -174,12 +175,14 @@ final class CyborgImpl
 
 		moduleManager.setModuleListener(new OnModuleInitializedListener() {
 			public void onModuleInitialized(Module module) {
-				printApplicationStarted();
 				activityStackHandler = new ActivityStack(CyborgImpl.this);
 				receiversManager = new ReceiversManager(CyborgImpl.this);
 			}
 		});
 
+		BeLogged.getInstance().addClient(new AndroidLogClient());
+		printApplicationStarted();
+		
 		builder.buildMainManager();
 
 		if (!inEditMode) {
