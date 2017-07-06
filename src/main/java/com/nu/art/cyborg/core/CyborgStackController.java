@@ -454,7 +454,7 @@ public final class CyborgStackController
 		}
 	}
 
-	final StackLayerBuilder createLayerBuilder() {
+	public final StackLayerBuilder createLayerBuilder() {
 		return new StackLayerBuilder();
 	}
 
