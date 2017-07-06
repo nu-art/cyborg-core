@@ -46,7 +46,6 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by TacB0sS on 25-Jun 2015.
@@ -190,8 +189,6 @@ public final class CyborgStackController
 
 				// the dispatchLifeCycleEvent for the onCreate is called from CyborgView
 			}
-
-			layers.put(refKey, this);
 		}
 
 		private Throwable getCauseError(Throwable e) {
@@ -247,9 +244,7 @@ public final class CyborgStackController
 
 	private LayoutInflater inflater;
 
-	private HashMap<String, StackLayer> layers = new HashMap<String, StackLayer>();
-
-	private ArrayList<String> layersStack = new ArrayList<String>();
+	private ArrayList<StackLayer> layersStack = new ArrayList<>();
 
 	private RelativeLayout frameLayout;
 
@@ -480,8 +475,7 @@ public final class CyborgStackController
 			originLayerToBeDisposed.preDestroy();
 
 		targetLayerToBeAdded.create();
-		layers.put(targetLayerToBeAdded.refKey, targetLayerToBeAdded);
-		layersStack.add(targetLayerToBeAdded.refKey);
+		layersStack.add(targetLayerToBeAdded);
 
 		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeAdded.stackTransitionAnimator;
 		if (transitionAnimators == null) {
@@ -614,15 +608,10 @@ public final class CyborgStackController
 	}
 
 	private StackLayer getTopLayer(boolean remove) {
-		String topLayerTag = layersStack.size() == (withRoot && remove ? 1 : 0) ? null : layersStack.get(layersStack.size() - 1);
-		if (topLayerTag == null)
-			return null;
+		StackLayer layer = layersStack.size() == (withRoot && remove ? 1 : 0) ? null : layersStack.get(layersStack.size() - 1);
 
-		StackLayer layer = layers.get(topLayerTag);
-		if (remove) {
-			layersStack.remove(topLayerTag);
-			layers.remove(topLayerTag);
-		}
+		if (remove)
+			layersStack.remove(layer);
 
 		return layer;
 	}
