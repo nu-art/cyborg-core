@@ -27,7 +27,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
@@ -149,12 +148,14 @@ public class CyborgView
 			parentController.addNestedController(controller);
 			targetState = parentController.getState();
 		} else {
+			if (activityBridge == null)
+				return;
+
 			targetState = activityBridge.getState();
 		}
 
 		if (targetState == LifeCycleState.OnResume)
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
-
 	}
 
 	private CyborgController findParentController() {
@@ -163,7 +164,7 @@ public class CyborgView
 			v = (View) v.getParent();
 
 			Object tagAsController = v.getTag();
-			if(tagAsController instanceof CyborgController)
+			if (tagAsController instanceof CyborgController)
 				return (CyborgController) tagAsController;
 		}
 		return null;
