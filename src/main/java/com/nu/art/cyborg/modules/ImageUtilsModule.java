@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.modules;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,7 +31,10 @@ import android.net.Uri;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Base64;
+import android.widget.ImageView;
 
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
@@ -44,9 +48,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-@ModuleDescriptor(
-		usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {})
 public final class ImageUtilsModule
 		extends CyborgModule {
 
@@ -166,6 +170,36 @@ public final class ImageUtilsModule
 		}
 
 		return images;
+	}
+
+	public void setRoundedImage(Context context, Uri photoUri, ImageView imageView)
+			throws FileNotFoundException {
+
+		RoundedBitmapDrawable roundedImage;
+		InputStream inputStream = null;
+		try {
+			inputStream = context.getContentResolver().openInputStream(photoUri);
+			Bitmap image = BitmapFactory.decodeStream(inputStream);
+			int originalWidth = image.getWidth();
+			int originalHeight = image.getHeight();
+
+			if (originalHeight != originalWidth) {
+				int dimen = Math.min(originalWidth, originalHeight);
+				image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
+			}
+
+			roundedImage = RoundedBitmapDrawableFactory.create(context.getResources(), image);
+			roundedImage.setCornerRadius(Math.max(imageView.getWidth(), imageView.getHeight()) / 2.0f);
+		} finally {
+			try {
+				if (inputStream != null)
+					inputStream.close();
+			} catch (IOException e) {
+				logError("Failed to close photo uri input stream", e);
+			}
+		}
+
+		imageView.setImageDrawable(roundedImage);
 	}
 
 	public void selectImage(final int chooserTitleId, final OnImageSelected onImageSelected) {
