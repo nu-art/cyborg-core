@@ -26,11 +26,13 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Base64;
@@ -172,22 +174,14 @@ public final class ImageUtilsModule
 		return images;
 	}
 
-	public void setRoundedImage(Context context, Uri photoUri, ImageView imageView)
+	public Drawable cropRoundedImage(Context context, Uri photoUri, ImageView imageView)
 			throws FileNotFoundException {
 
-		RoundedBitmapDrawable roundedImage;
 		InputStream inputStream = null;
 		try {
 			inputStream = context.getContentResolver().openInputStream(photoUri);
 			Bitmap image = BitmapFactory.decodeStream(inputStream);
-			int originalWidth = image.getWidth();
-			int originalHeight = image.getHeight();
-
-			int dimen = Math.min(originalWidth, originalHeight);
-			image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
-
-			roundedImage = RoundedBitmapDrawableFactory.create(context.getResources(), image);
-			roundedImage.setCornerRadius(dimen / 2.0f);
+			return cropRoundedImage(context, image);
 		} finally {
 			try {
 				if (inputStream != null)
@@ -196,8 +190,20 @@ public final class ImageUtilsModule
 				logError("Failed to close photo uri input stream", e);
 			}
 		}
+	}
 
-		imageView.setImageDrawable(roundedImage);
+	@NonNull
+	public Drawable cropRoundedImage(Context context, Bitmap image) {
+		RoundedBitmapDrawable roundedImage;
+		int originalWidth = image.getWidth();
+		int originalHeight = image.getHeight();
+
+		int dimen = Math.min(originalWidth, originalHeight);
+		image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
+
+		roundedImage = RoundedBitmapDrawableFactory.create(context.getResources(), image);
+		roundedImage.setCornerRadius(dimen / 2.0f);
+		return roundedImage;
 	}
 
 	public void selectImage(final int chooserTitleId, final OnImageSelected onImageSelected) {
