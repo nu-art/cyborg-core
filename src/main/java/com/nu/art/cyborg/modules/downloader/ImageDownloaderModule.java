@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
 
+import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
@@ -34,6 +35,8 @@ public class ImageDownloaderModule
 		boolean isSameUrl(String url);
 
 		ImageDownloaderBuilder setDownloader(Downloader downloader);
+
+		ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading);
 
 		ImageDownloaderBuilder setTarget(ImageView target);
 
@@ -71,6 +74,8 @@ public class ImageDownloaderModule
 
 		private ImageView target;
 
+		private Function<Bitmap, Bitmap> postDownloading;
+
 		private Runnable onBefore;
 
 		private Runnable onAfter;
@@ -88,6 +93,12 @@ public class ImageDownloaderModule
 		@Override
 		public boolean isSameUrl(String url) {
 			return this.url.equals(url);
+		}
+
+		@Override
+		public ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading) {
+			this.postDownloading = postDownloading;
+			return this;
 		}
 
 		@Override
@@ -136,14 +147,19 @@ public class ImageDownloaderModule
 			downloaderBuilder.setDownloader(downloader);
 			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
 				@Override
-				public void process(final Bitmap bitmap) {
+				public void process(Bitmap bitmap) {
 					if (cancelled)
 						return;
 
+					if(postDownloading!=null)
+					bitmap = postDownloading.map(bitmap);
+
+					final Bitmap finalBitmap = bitmap;
 					postOnUI(new Runnable() {
 						@Override
 						public void run() {
-							target.setImageBitmap(bitmap);
+
+							target.setImageBitmap(finalBitmap);
 						}
 					});
 				}
@@ -191,7 +207,4 @@ public class ImageDownloaderModule
 			return this;
 		}
 	}
-
-
-
 }

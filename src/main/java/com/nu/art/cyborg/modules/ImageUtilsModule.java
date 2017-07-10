@@ -24,7 +24,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -172,7 +174,7 @@ public final class ImageUtilsModule
 		return images;
 	}
 
-	public Drawable cropRoundedImage(Uri photoUri)
+	/*public Drawable cropRoundedImage(Uri photoUri)
 			throws FileNotFoundException {
 
 		InputStream inputStream = null;
@@ -202,6 +204,22 @@ public final class ImageUtilsModule
 		roundedImage = RoundedBitmapDrawableFactory.create(getResources(), image);
 		roundedImage.setCornerRadius(dimen / 2.0f);
 		return roundedImage;
+	}*/
+
+	@NonNull
+	public Bitmap cropRoundedImage(Bitmap image) {
+		RoundedBitmapDrawable roundedImage;
+		int originalWidth = image.getWidth();
+		int originalHeight = image.getHeight();
+
+		int dimen = Math.min(originalWidth, originalHeight);
+		image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
+
+		roundedImage = RoundedBitmapDrawableFactory.create(getResources(), image);
+		roundedImage.setAntiAlias(true);
+		roundedImage.setCircular(true);
+		//roundedImage.setCornerRadius(dimen / 2);
+		return drawableToBitmap(roundedImage);
 	}
 
 	public void selectImage(final int chooserTitleId, final OnImageSelected onImageSelected) {
@@ -252,5 +270,25 @@ public final class ImageUtilsModule
 				activity.startActivityForResult(chooserIntent, SELECT_PICTURE);
 			}
 		});
+	}
+
+	public static Bitmap drawableToBitmap(Drawable drawable) {
+		if (drawable == null)
+			return null;
+
+		if (drawable instanceof BitmapDrawable) {
+			return ((BitmapDrawable) drawable).getBitmap();
+		}
+
+		if (drawable.getIntrinsicWidth() > 0 && drawable.getIntrinsicHeight() > 0) {
+			Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+			Canvas canvas = new Canvas(bitmap);
+			drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+			drawable.draw(canvas);
+			return bitmap;
+		}
+
+		return null;
 	}
 }
