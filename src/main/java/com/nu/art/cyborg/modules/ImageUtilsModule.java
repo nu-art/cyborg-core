@@ -19,7 +19,6 @@
 package com.nu.art.cyborg.modules;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -36,7 +35,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Base64;
-import android.widget.ImageView;
 
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
@@ -174,14 +172,14 @@ public final class ImageUtilsModule
 		return images;
 	}
 
-	public Drawable cropRoundedImage(Context context, Uri photoUri, ImageView imageView)
+	public Drawable cropRoundedImage(Uri photoUri)
 			throws FileNotFoundException {
 
 		InputStream inputStream = null;
 		try {
-			inputStream = context.getContentResolver().openInputStream(photoUri);
+			inputStream = getContentResolver().openInputStream(photoUri);
 			Bitmap image = BitmapFactory.decodeStream(inputStream);
-			return cropRoundedImage(context, image);
+			return cropRoundedImage(image);
 		} finally {
 			try {
 				if (inputStream != null)
@@ -193,7 +191,7 @@ public final class ImageUtilsModule
 	}
 
 	@NonNull
-	public Drawable cropRoundedImage(Context context, Bitmap image) {
+	public Drawable cropRoundedImage(Bitmap image) {
 		RoundedBitmapDrawable roundedImage;
 		int originalWidth = image.getWidth();
 		int originalHeight = image.getHeight();
@@ -201,7 +199,7 @@ public final class ImageUtilsModule
 		int dimen = Math.min(originalWidth, originalHeight);
 		image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
 
-		roundedImage = RoundedBitmapDrawableFactory.create(context.getResources(), image);
+		roundedImage = RoundedBitmapDrawableFactory.create(getResources(), image);
 		roundedImage.setCornerRadius(dimen / 2.0f);
 		return roundedImage;
 	}
