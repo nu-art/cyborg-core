@@ -183,13 +183,11 @@ public final class ImageUtilsModule
 			int originalWidth = image.getWidth();
 			int originalHeight = image.getHeight();
 
-			if (originalHeight != originalWidth) {
-				int dimen = Math.min(originalWidth, originalHeight);
-				image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
-			}
+			int dimen = Math.min(originalWidth, originalHeight);
+			image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
 
 			roundedImage = RoundedBitmapDrawableFactory.create(context.getResources(), image);
-			roundedImage.setCornerRadius(Math.max(imageView.getWidth(), imageView.getHeight()) / 2.0f);
+			roundedImage.setCornerRadius(dimen / 2.0f);
 		} finally {
 			try {
 				if (inputStream != null)
