@@ -177,7 +177,6 @@ public abstract class BaseTransceiver
 		} catch (IOException e) {
 			notifyError(e);
 		}
-		setState(Idle);
 	}
 
 	protected final void notifyError(Exception e) {

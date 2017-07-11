@@ -3,6 +3,7 @@ package com.nu.art.cyborg.io.transceiver.wifi;
 import com.nu.art.cyborg.io.transceiver.PacketSerializer;
 import com.nu.art.cyborg.io.transceiver.SocketWrapper;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -10,6 +11,8 @@ public final class WifiServerTransceiver
 		extends WifiTransceiver {
 
 	private final int serverPort;
+
+	private ServerSocket serverSocket;
 
 	public WifiServerTransceiver(int serverPort, String name, PacketSerializer packetSerializer) {
 		super(name, packetSerializer);
@@ -20,8 +23,17 @@ public final class WifiServerTransceiver
 	protected SocketWrapper connectImpl()
 			throws Exception {
 
-		ServerSocket serverSocket = new ServerSocket(serverPort);
+		serverSocket = new ServerSocket(serverPort);
 		Socket socket = serverSocket.accept();
 		return new WifiSocketWrapper(socket);
+	}
+
+	public void disconnect() {
+		super.disconnect();
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			notifyError(e);
+		}
 	}
 }
