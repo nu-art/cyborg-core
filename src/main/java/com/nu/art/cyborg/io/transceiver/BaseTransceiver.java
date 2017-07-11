@@ -80,8 +80,8 @@ public abstract class BaseTransceiver
 		this.name = name;
 		setTag(name);
 		this.packetSerializer = packetSerializer;
-		transmitter = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Transmitter - " + name);
-		receiver = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Receiver - " + name);
+		transmitter = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Tx - " + name);
+		receiver = CyborgBuilder.getModule(ThreadsModule.class).getDefaultHandler("Rx - " + name);
 	}
 
 	public final void setOneShot() {
