@@ -52,7 +52,7 @@ public interface Cyborg
 	 * @param receiverType The class type of the receiver.
 	 * @param actions      The list of actions the receiver will respond to.
 	 */
-	void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String[] actions);
+	void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String... actions);
 
 	/**
 	 * Unregister the receiver of the specified class type.

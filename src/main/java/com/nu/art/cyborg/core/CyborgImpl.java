@@ -446,7 +446,7 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String[] actions) {
+	public final void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String... actions) {
 		receiversManager.registerReceiver(receiverType, actions);
 	}
 

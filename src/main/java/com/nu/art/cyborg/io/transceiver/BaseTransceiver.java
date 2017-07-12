@@ -40,6 +40,8 @@ public abstract class BaseTransceiver
 				listen = true;
 				while (listen) {
 					setState(Connecting);
+					receiver.removeCallbacks(null);
+
 					socket = connectImpl();
 					setState(Connected);
 
@@ -108,8 +110,10 @@ public abstract class BaseTransceiver
 	}
 
 	public void connect() {
-		logInfo("Connecting");
+		if (!isState(Idle))
+			return;
 
+		logInfo("Connecting");
 		receiver.removeCallbacks(connectAndListen);
 		receiver.post(connectAndListen);
 	}
@@ -157,7 +161,7 @@ public abstract class BaseTransceiver
 		logInfo("Disconnecting");
 
 		if (state == Idle) {
-			logWarning("Cannot disconnect, State is Idle");
+			logWarning("Cannot disconnect, State is Disconnected");
 			return;
 		}
 
