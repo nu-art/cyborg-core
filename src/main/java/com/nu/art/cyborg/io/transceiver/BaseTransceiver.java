@@ -61,22 +61,25 @@ public abstract class BaseTransceiver
 						}
 					}
 				}
-				//TODO all logic here needs to be mapped to the disconnect method!!
 			} catch (Exception e) {
-				try {
-					if (socket != null)
-						socket.close();
-				} catch (IOException e1) {
-					notifyError(e);
-				}
-
 				notifyError(e);
 			} finally {
-				socket = null;
-				setState(Idle);
+				disconnectImpl();
 			}
 		}
 	};
+
+	protected void disconnectImpl() {
+		try {
+			if (socket != null)
+				socket.close();
+		} catch (IOException e) {
+			notifyError(e);
+		}
+
+		socket = null;
+		setState(Idle);
+	}
 
 	public BaseTransceiver(String name, PacketSerializer packetSerializer) {
 		this.name = name;
@@ -157,7 +160,7 @@ public abstract class BaseTransceiver
 	protected abstract SocketWrapper connectImpl()
 			throws Exception;
 
-	public void disconnect() {
+	public final void disconnect() {
 		logInfo("Disconnecting");
 
 		if (state == Idle) {

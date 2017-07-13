@@ -28,7 +28,7 @@ public final class WifiServerTransceiver
 		return new WifiSocketWrapper(socket);
 	}
 
-	public void disconnect() {
+	public void disconnectImpl() {
 		super.disconnect();
 		try {
 			serverSocket.close();
