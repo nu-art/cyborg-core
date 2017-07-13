@@ -82,7 +82,7 @@ public abstract class BaseTransceiver
 		setState(Idle);
 	}
 
-	protected abstract void disconnectImpl();
+	protected void disconnectImpl() {}
 
 	public BaseTransceiver(String name, PacketSerializer packetSerializer) {
 		this.name = name;
