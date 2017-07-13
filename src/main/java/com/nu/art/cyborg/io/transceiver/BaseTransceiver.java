@@ -64,12 +64,13 @@ public abstract class BaseTransceiver
 			} catch (Exception e) {
 				notifyError(e);
 			} finally {
-				disconnectImpl();
+				_disconnectImpl();
 			}
 		}
 	};
 
-	protected void disconnectImpl() {
+	private void _disconnectImpl() {
+		disconnectImpl();
 		try {
 			if (socket != null)
 				socket.close();
@@ -80,6 +81,8 @@ public abstract class BaseTransceiver
 		socket = null;
 		setState(Idle);
 	}
+
+	protected abstract void disconnectImpl();
 
 	public BaseTransceiver(String name, PacketSerializer packetSerializer) {
 		this.name = name;

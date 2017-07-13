@@ -29,7 +29,6 @@ public final class WifiServerTransceiver
 	}
 
 	public void disconnectImpl() {
-		super.disconnect();
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
