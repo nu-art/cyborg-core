@@ -29,7 +29,6 @@ Cyborg defines things a bit differently to overcome some of Android design flaws
  - Controller stacks can live in parallel (This is not clear I know!).
  - Preferences are now one liners, to set and get.
  - Communication between components without overhead (This is not clear I know!).
- - Save instance state just got simple.
  - Notifications posting and interaction handling encpsulated.
  - Crash report data collection built-in.
  - User scenario recording is a feature!
@@ -38,7 +37,7 @@ Cyborg defines things a bit differently to overcome some of Android design flaws
  - I can probably go on a while longer...
 
 
-Using the above, Cyborg allows you to quickly develop an Android applications and save you a lot of code, time and Android agony.
+Using the above, Cyborg allows you to quickly develop Android applications and save you a lot of code, time and Android agony.
 
 Sounds like magic...? well, it is not, it is years of hard work, that is finally brought to the light.
  
