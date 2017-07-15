@@ -253,8 +253,8 @@ abstract class CyborgControllerBase
 
 	protected final Cyborg cyborg;
 
-	protected final void startActivity(Intent settingsIntent) {
-		activityBridge.startActivity(settingsIntent);
+	protected final void startActivity(Intent intent) {
+		activityBridge.startActivity(intent);
 	}
 
 	protected CyborgActivityBridge activityBridge;
