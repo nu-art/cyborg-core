@@ -46,6 +46,7 @@ import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
 import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
+import com.nu.art.modular.core.EventDispatcher;
 
 import java.util.Arrays;
 
@@ -171,6 +172,7 @@ public class CyborgActivityBridgeImpl
 		 **********************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		eventDispatcher.addListener(activity);
 		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
 		dispatchLifecycleEvent(LifeCycleState.OnCreate);
 		logLifeCycle(screenName + ": onCreate");
@@ -236,6 +238,7 @@ public class CyborgActivityBridgeImpl
 		logLifeCycle(screenName + ": onDestroy");
 		dispatchLifecycleEvent(LifeCycleState.OnDestroy);
 		ViewServer.get(activity).removeWindow(activity);
+		eventDispatcher.removeListener(activity);
 		destroyed = true;
 	}
 
@@ -345,6 +348,7 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public final void addController(CyborgController controller) {
 		controllerList = ArrayTools.appendElement(controllerList, controller);
+		eventDispatcher.addListener(controller);
 		if (Cyborg.DebugActivityLifeCycle) {
 			logDebug("Added controller(" + controllerList.length + "): " + controller);
 		}
@@ -353,6 +357,7 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public final void removeController(CyborgController controller) {
 		controllerList = ArrayTools.removeElement(controllerList, controller);
+		eventDispatcher.removeListener(controller);
 		if (Cyborg.DebugActivityLifeCycle) {
 			logDebug("Removed controller(" + controllerList.length + "): " + controller);
 		}
@@ -382,9 +387,10 @@ public class CyborgActivityBridgeImpl
 
 	// need to make sure the only lifecycles called on the controllers are the same ones as in the activityType lifecycle state
 	//	including onCreate, which is now has an abnormal behavior
+	EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher");
 
 	@SuppressWarnings("unchecked")
-	public final <ListenerType> void dispatchEvent(final Class<ListenerType> listenerType, final Processor<ListenerType> action) {
+	public final <ListenerType> void dispatchEvent(final Class<ListenerType> eventType, final Processor<ListenerType> processor) {
 		activity.runOnUiThread(new Runnable() {
 
 			@Override
@@ -392,17 +398,7 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				if (listenerType.isAssignableFrom(activity.getClass())) {
-					action.process((ListenerType) activity);
-				}
-
-				ListenerType[] controllers = ArrayTools.asFilteredArray(controllerList, listenerType);
-				for (ListenerType listener : controllers) {
-					if (((CyborgController) listener).getState().ordinal() >= LifeCycleState.OnDestroy.ordinal())
-						continue;
-
-					action.process(listener);
-				}
+				eventDispatcher.dispatchEvent(eventType, processor);
 			}
 		});
 	}
