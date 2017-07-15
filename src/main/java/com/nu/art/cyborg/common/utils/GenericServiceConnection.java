@@ -16,17 +16,20 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 
 		void onServiceConnected(_ServiceType serviceType);
 
-		void onServiceDisconnected();
+		void onServiceDisconnected(_ServiceType service);
 	}
 
-	private final ServiceConnectionListener<_ServiceType> listener;
+	private ServiceConnectionListener<_ServiceType> listener;
 
 	private final Class<_ServiceType> serviceType;
 
 	private _ServiceType service;
 
-	public GenericServiceConnection(Class<_ServiceType> serviceType, ServiceConnectionListener<_ServiceType> listener) {
+	public GenericServiceConnection(Class<_ServiceType> serviceType) {
 		this.serviceType = serviceType;
+	}
+
+	public void setListener(ServiceConnectionListener<_ServiceType> listener) {
 		this.listener = listener;
 	}
 
@@ -34,16 +37,15 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	@SuppressWarnings("unchecked")
 	public void onServiceConnected(ComponentName className, IBinder binder) {
 		service = ((BaseBinder<_ServiceType>) binder).getService();
-		logDebug("Service connected, " + serviceType + ": " + service.toString()
-																																 .split("@")[1]);
+		logDebug("Service connected, " + serviceType + ": " + service.toString().split("@")[1]);
 
 		listener.onServiceConnected(service);
 	}
 
 	@Override
 	public void onServiceDisconnected(ComponentName className) {
-		logDebug("Service disconnected, " + serviceType + ": " + service.toString()
-																																		.split("@")[1]);
-		listener.onServiceDisconnected();
+		logDebug("Service disconnected, " + serviceType + ": " + service.toString().split("@")[1]);
+		listener.onServiceDisconnected(service);
+		service = null;
 	}
 }
