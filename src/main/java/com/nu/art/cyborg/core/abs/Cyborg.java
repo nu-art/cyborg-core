@@ -34,7 +34,7 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface Cyborg
-		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, ModuleManagerDelegator {
+		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, _SystemServices, ModuleManagerDelegator {
 
 	/**
 	 * @return The application instance of the app

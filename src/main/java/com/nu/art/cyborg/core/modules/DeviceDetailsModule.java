@@ -19,12 +19,14 @@
 package com.nu.art.cyborg.core.modules;
 
 import android.provider.Settings.Secure;
+import android.view.Display;
 
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.consts.DeviceScreenDensity;
 import com.nu.art.cyborg.common.consts.DeviceScreenSize;
 import com.nu.art.cyborg.common.consts.DeviceValuesFolder;
+import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
 
@@ -85,5 +87,16 @@ public final class DeviceDetailsModule
 		moduleCrashData.put("ScreenDpi", screenDensity.name());
 		moduleCrashData.put("ScreenSize", screenSize.name());
 		moduleCrashData.put("isRooted", isSuperUser());
+	}
+
+	public ScreenOrientation getOrientation() {
+		Display display = getSystemService(WindowService).getDefaultDisplay();
+		if (display.getWidth() == display.getHeight()) {
+			return ScreenOrientation.Square;
+		}
+		if (display.getWidth() < display.getHeight()) {
+			return ScreenOrientation.Portrait;
+		}
+		return ScreenOrientation.Landscape;
 	}
 }

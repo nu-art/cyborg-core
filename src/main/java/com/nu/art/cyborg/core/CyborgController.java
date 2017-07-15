@@ -27,7 +27,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +45,7 @@ import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.KeyboardChangeListener.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
 import com.nu.art.cyborg.core.more.CyborgStateInjector;
 import com.nu.art.cyborg.core.more.CyborgViewInjector;
@@ -86,14 +86,7 @@ public abstract class CyborgController
 	};
 
 	public ScreenOrientation getScreenOrientation() {
-		Display display = getSystemService(WindowService).getDefaultDisplay();
-		if (display.getWidth() == display.getHeight()) {
-			return ScreenOrientation.Square;
-		}
-		if (display.getWidth() < display.getHeight()) {
-			return ScreenOrientation.Portrait;
-		}
-		return ScreenOrientation.Landscape;
+		return getModule(DeviceDetailsModule.class).getOrientation();
 	}
 
 	private CyborgController[] nestedControllers = {};

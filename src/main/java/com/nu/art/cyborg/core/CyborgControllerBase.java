@@ -42,10 +42,9 @@ import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.common.beans.ModelEvent;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
-import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.abs.CyborgDelegator;
+import com.nu.art.cyborg.common.interfaces.ICyborgController;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.more.UserActionsDelegatorImpl;
 import com.nu.art.modular.core.Module;
@@ -61,7 +60,7 @@ import java.util.Random;
 //@SuppressWarnings("WeakerAccess")
 abstract class CyborgControllerBase
 		extends Logger
-		implements UserActionsDelegator, CyborgDelegator {
+		implements ICyborgController {
 
 	public static final Random UtilsRandom = new Random();
 
@@ -636,15 +635,6 @@ abstract class CyborgControllerBase
 	@Override
 	public final ContentResolver getContentResolver() {
 		return cyborg.getContentResolver();
-	}
-
-	@Override
-	@SuppressWarnings( {
-												 "unchecked",
-												 "ResourceType"
-										 })
-	public final <Service> Service getSystemService(ServiceType<Service> service) {
-		return cyborg.getSystemService(service);
 	}
 
 	public final int dpToPx(int dp) {
