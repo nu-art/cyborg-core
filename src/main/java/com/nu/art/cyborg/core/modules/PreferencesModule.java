@@ -186,19 +186,19 @@ public final class PreferencesModule
 	public final class IntegerPreference
 			extends PreferenceKey<Integer> {
 
-		public IntegerPreference(String key, Integer defaultValue) {
+		public IntegerPreference(String key, int defaultValue) {
 			super(key, defaultValue);
 		}
 
-		public IntegerPreference(String key, Integer defaultValue, PreferencesStorage type) {
+		public IntegerPreference(String key, int defaultValue, PreferencesStorage type) {
 			super(key, defaultValue, type);
 		}
 
-		public IntegerPreference(String key, Integer defaultValue, long expires) {
+		public IntegerPreference(String key, int defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public IntegerPreference(String key, Integer defaultValue, long expires, PreferencesStorage type) {
+		public IntegerPreference(String key, int defaultValue, long expires, PreferencesStorage type) {
 			super(key, defaultValue, expires, type);
 		}
 
@@ -216,19 +216,19 @@ public final class PreferencesModule
 	public final class BooleanPreference
 			extends PreferenceKey<Boolean> {
 
-		public BooleanPreference(String key, Boolean defaultValue) {
+		public BooleanPreference(String key, boolean defaultValue) {
 			super(key, defaultValue);
 		}
 
-		public BooleanPreference(String key, Boolean defaultValue, PreferencesStorage type) {
+		public BooleanPreference(String key, boolean defaultValue, PreferencesStorage type) {
 			super(key, defaultValue, type);
 		}
 
-		public BooleanPreference(String key, Boolean defaultValue, long expires) {
+		public BooleanPreference(String key, boolean defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public BooleanPreference(String key, Boolean defaultValue, long expires, PreferencesStorage type) {
+		public BooleanPreference(String key, boolean defaultValue, long expires, PreferencesStorage type) {
 			super(key, defaultValue, expires, type);
 		}
 
@@ -246,19 +246,19 @@ public final class PreferencesModule
 	public final class LongPreference
 			extends PreferenceKey<Long> {
 
-		public LongPreference(String key, Long defaultValue) {
+		public LongPreference(String key, long defaultValue) {
 			super(key, defaultValue);
 		}
 
-		public LongPreference(String key, Long defaultValue, PreferencesStorage type) {
+		public LongPreference(String key, long defaultValue, PreferencesStorage type) {
 			super(key, defaultValue, type);
 		}
 
-		public LongPreference(String key, Long defaultValue, long expires) {
+		public LongPreference(String key, long defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public LongPreference(String key, Long defaultValue, long expires, PreferencesStorage type) {
+		public LongPreference(String key, long defaultValue, long expires, PreferencesStorage type) {
 			super(key, defaultValue, expires, type);
 		}
 
@@ -276,19 +276,19 @@ public final class PreferencesModule
 	public final class FloatPreference
 			extends PreferenceKey<Float> {
 
-		public FloatPreference(String key, Float defaultValue) {
+		public FloatPreference(String key, float defaultValue) {
 			super(key, defaultValue);
 		}
 
-		public FloatPreference(String key, Float defaultValue, PreferencesStorage type) {
+		public FloatPreference(String key, float defaultValue, PreferencesStorage type) {
 			super(key, defaultValue, type);
 		}
 
-		public FloatPreference(String key, Float defaultValue, long expires) {
+		public FloatPreference(String key, float defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public FloatPreference(String key, Float defaultValue, long expires, PreferencesStorage type) {
+		public FloatPreference(String key, float defaultValue, long expires, PreferencesStorage type) {
 			super(key, defaultValue, expires, type);
 		}
 
