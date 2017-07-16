@@ -42,7 +42,6 @@ import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.common.utils.BusyState;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
-import com.nu.art.cyborg.core.KeyboardChangeListener.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
@@ -440,24 +439,6 @@ public abstract class CyborgController
 	 */
 	protected final void showKeyboard() {
 		showKeyboard(null);
-	}
-
-	/**
-	 * Add a keyboard visibility listener.
-	 *
-	 * @param listener The listener to be called on.
-	 */
-	protected final void addKeyboardListener(final OnKeyboardVisibilityListener listener) {
-		activityBridge.addKeyboardListener(listener);
-	}
-
-	/**
-	 * Remove the keyboard visibility listener.
-	 *
-	 * @param listener The listener to be removed.
-	 */
-	protected final void removeKeyboardListener(final OnKeyboardVisibilityListener listener) {
-		activityBridge.removeKeyboardListener(listener);
 	}
 
 	final void setStateTag(String stateTag) {

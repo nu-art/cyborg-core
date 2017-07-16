@@ -112,8 +112,6 @@ final class CyborgImpl
 
 	private final long CurrentElapsedDelta = SystemClock.elapsedRealtime() - System.currentTimeMillis();
 
-	private final String TAG = getClass().getSimpleName();
-
 	private final ArrayList<Processor<Cyborg>> completionListeners;
 
 	private final WeakReference<Context> applicationRef;
@@ -157,6 +155,7 @@ final class CyborgImpl
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	final void init(Class<? extends ModulesPack>... modulesPacks) {
 		if (loaded)
 			throw new BadImplementationException("Trying to load Cyborg for the second time!");
@@ -531,7 +530,7 @@ final class CyborgImpl
 	/*
 	 * Toast
 	 */
-	private final void showToast(int length, String toToast) {
+	private void showToast(int length, String toToast) {
 		final Toast toast = Toast.makeText(getApplicationContext(), toToast, length);
 		toast.show();
 	}
