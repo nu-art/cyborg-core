@@ -22,4 +22,6 @@ public final class CrashReport {
 	public HashMap<CrashReportListener, HashMap<String, Object>> modulesData;
 
 	public HashMap<String, ThreadState> runningThreads;
+
+	public String threadTraces;
 }

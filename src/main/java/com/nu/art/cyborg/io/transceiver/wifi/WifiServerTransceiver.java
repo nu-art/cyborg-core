@@ -30,7 +30,8 @@ public final class WifiServerTransceiver
 
 	public void disconnectImpl() {
 		try {
-			serverSocket.close();
+			if (serverSocket != null)
+				serverSocket.close();
 		} catch (IOException e) {
 			notifyError(e);
 		}

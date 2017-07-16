@@ -6,10 +6,14 @@ import android.os.StrictMode;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ExceptionTools;
+import com.nu.art.core.tools.StreamTools;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.BooleanPreference;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,6 +124,7 @@ public class CrashReportModule
 		crashReport.crashMessage = composeMessage(thread, ex, crashed);
 		crashReport.modulesData = collectModulesData();
 		crashReport.runningThreads = getRunningThreads();
+		crashReport.threadTraces = getTraces();
 
 		try {
 			crashReportHandler.prepareAndBackupCrashReport(crashReport);
@@ -140,6 +145,18 @@ public class CrashReportModule
 			});
 		} catch (Throwable e) {
 			logError("Error sending crash report: ", e);
+		}
+	}
+
+	private String getTraces() {
+		File tracesFile = new File("/data/anr/traces.txt");
+		if (!tracesFile.exists())
+			return "";
+
+		try {
+			return StreamTools.readFullyAsString(new FileInputStream(tracesFile));
+		} catch (Exception e) {
+			return "Error Getting traces: " + ExceptionTools.getStackTrace(e);
 		}
 	}
 
