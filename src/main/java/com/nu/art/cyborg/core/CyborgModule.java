@@ -28,11 +28,10 @@ import android.view.animation.Animation;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
+import com.nu.art.cyborg.common.interfaces.ICyborgModule;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
-import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.abs.CyborgDelegator;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModuleItem;
@@ -55,7 +54,7 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public abstract class CyborgModule
 		extends Module
-		implements CyborgDelegator {
+		implements ICyborgModule {
 
 	public static final String GSF_Services = "com.google.android.providers.gsf.permission.READ_GSERVICES";
 

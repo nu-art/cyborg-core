@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager.OnActivityResultListener;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
@@ -33,9 +32,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.nu.art.core.generics.Processor;
-import com.nu.art.cyborg.core.KeyboardChangeListener.OnKeyboardVisibilityListener;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
-import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 public interface CyborgActivityBridge {
 
@@ -56,24 +53,11 @@ public interface CyborgActivityBridge {
 
 	boolean onBackPressed();
 
-	/* Activity Results */
-	void addResultListener(OnActivityResultListener onActivityResultListener);
-
-	void removeResultListener(OnActivityResultListener onActivityResultListener);
-
 	void onActivityResult(int requestCode, int resultCode, Intent data);
 
-	/* Permissions Results */
 	void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
 
-	void addPermissionResultListener(OnSystemPermissionsResultListener onPermissionResultListener);
-
-	void removePermissionResultListener(OnSystemPermissionsResultListener onPermissionResultListener);
-
-	/* Keyboard visibility listener */
-	void addKeyboardListener(OnKeyboardVisibilityListener listener);
-
-	void removeKeyboardListener(OnKeyboardVisibilityListener listener);
+	void enableKeyboardEvents(boolean enable);
 
 	/* Controllers */
 	void addController(CyborgController controller);

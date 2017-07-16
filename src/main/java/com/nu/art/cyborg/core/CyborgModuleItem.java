@@ -26,7 +26,7 @@ import android.view.animation.Animation;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.cyborg.common.interfaces.CyborgComponentDelegator;
+import com.nu.art.cyborg.common.interfaces.ICyborgModule;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -41,7 +41,7 @@ import java.util.Locale;
  */
 public abstract class CyborgModuleItem
 		extends ModuleItem
-		implements CyborgComponentDelegator, ILogger {
+		implements ICyborgModule, ILogger {
 
 	private final String TAG = getClass().getSimpleName();
 

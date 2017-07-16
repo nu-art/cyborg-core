@@ -16,28 +16,11 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.abs;
+package com.nu.art.cyborg.common.interfaces;
 
-public interface CyborgDelegator
-		extends _Analytics, _Resources, _Toasts, _Debug, _UI {
+import com.nu.art.cyborg.core.abs.CyborgDelegator;
+import com.nu.art.cyborg.core.abs._SystemServices;
+import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
-	/**
-	 * Vibrate for the provided ms.
-	 *
-	 * @param ms the interval to vibrate.
-	 */
-	void vibrate(long ms);
-
-	/**
-	 * Vibrate for the provided pattern.
-	 *
-	 * @param repeat  should the pattern repeat.
-	 * @param pattern the pattern to vibrate.
-	 */
-	void vibrate(int repeat, long... pattern);
-
-	/**
-	 * @return The time in millis since last factory reset.
-	 */
-	long elapsedTimeMillis();
-}
+public interface ICyborgModule
+		extends CyborgDelegator, ModuleManagerDelegator, _SystemServices {}

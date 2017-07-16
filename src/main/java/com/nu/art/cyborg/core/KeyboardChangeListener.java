@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
-import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.interfaces.ActivityLifeCycleImpl;
 
@@ -21,11 +21,11 @@ public class KeyboardChangeListener {
 		void onVisibilityChanged(boolean visible);
 	}
 
+	private boolean enabled;
+
 	private final Activity activity;
 
 	private final Cyborg cyborg;
-
-	private OnKeyboardVisibilityListener[] listeners = {};
 
 	private OnGlobalLayoutListener layoutChangeListener;
 
@@ -34,9 +34,9 @@ public class KeyboardChangeListener {
 		this.activity = activity;
 	}
 
-	public final void addKeyboardListener(OnKeyboardVisibilityListener listener) {
-		listeners = ArrayTools.appendElement(listeners, listener);
-		if (layoutChangeListener == null) {
+	final void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if (enabled && layoutChangeListener == null) {
 			addActivityLifecycleListener();
 		}
 	}
@@ -48,7 +48,7 @@ public class KeyboardChangeListener {
 				if (KeyboardChangeListener.this.activity != activity)
 					return;
 
-				if (listeners.length == 0)
+				if (!enabled)
 					return;
 
 				addLayoutChangeListener();
@@ -70,10 +70,6 @@ public class KeyboardChangeListener {
 				removeLayoutChangeListener();
 			}
 		});
-	}
-
-	public final void removeKeyboardListener(OnKeyboardVisibilityListener listener) {
-		listeners = ArrayTools.removeElement(listeners, listener);
 	}
 
 	private void removeLayoutChangeListener() {
@@ -106,15 +102,18 @@ public class KeyboardChangeListener {
 
 				activityRootView.getWindowVisibleDisplayFrame(r);
 				int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
-				boolean isShown = heightDiff >= estimatedKeyboardHeight;
+				final boolean isShown = heightDiff >= estimatedKeyboardHeight;
 
 				if (isShown == wasOpened)
 					return;
 
 				wasOpened = isShown;
-				for (OnKeyboardVisibilityListener listener : listeners) {
-					listener.onVisibilityChanged(isShown);
-				}
+				cyborg.dispatchEvent("Keyboard visibility changed: " + isShown, OnKeyboardVisibilityListener.class, new Processor<OnKeyboardVisibilityListener>() {
+					@Override
+					public void process(OnKeyboardVisibilityListener listener) {
+						listener.onVisibilityChanged(isShown);
+					}
+				});
 			}
 		});
 	}

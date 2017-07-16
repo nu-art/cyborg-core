@@ -38,6 +38,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Base64;
 
+import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
@@ -50,19 +51,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class ImageUtilsModule
-		extends CyborgModule {
+		extends CyborgModule
+		implements OnActivityResultListener {
 
 	private static final int SELECT_PICTURE = getNextRandomPositiveShort();
 
-	public static interface OnImageSelected {
+	public interface OnImageSelectedListener {
 
 		void onImageSelected(String uriToImage);
 
 		void onActionCancelled();
+
+		void onActionError();
 	}
 
 	@Override
@@ -205,6 +208,52 @@ public final class ImageUtilsModule
 		roundedImage.setCornerRadius(dimen / 2.0f);
 		return roundedImage;
 	}*/
+	@Override
+	public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode != SELECT_PICTURE)
+			return false;
+
+		if (resultCode != Activity.RESULT_OK) {
+			logInfo("User Cancelled Image Selection");
+			dispatchEvent("Image selection action cancelled", OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
+				@Override
+				public void process(OnImageSelectedListener listener) {
+					listener.onActionCancelled();
+				}
+			});
+			return true;
+		}
+
+		if (data == null || data.getData() == null) {
+			return true;
+		}
+
+		Uri _uri = data.getData();
+
+		Cursor cursor = getContentResolver().query(_uri, new String[]{MediaColumns.DATA}, null, null, null);
+		if (cursor == null) {
+			dispatchEvent("Image selection action error", OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
+				@Override
+				public void process(OnImageSelectedListener listener) {
+					listener.onActionError();
+				}
+			});
+			return true;
+		}
+
+		cursor.moveToFirst();
+
+		final String uriToImage = cursor.getString(0);
+		cursor.close();
+		dispatchEvent("User Had Picked an Image: " + uriToImage, OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
+			@Override
+			public void process(OnImageSelectedListener listener) {
+				listener.onImageSelected(uriToImage);
+			}
+		});
+
+		return true;
+	}
 
 	@NonNull
 	public Bitmap cropRoundedImage(Bitmap image) {
@@ -222,42 +271,12 @@ public final class ImageUtilsModule
 		return drawableToBitmap(roundedImage);
 	}
 
-	public void selectImage(final int chooserTitleId, final OnImageSelected onImageSelected) {
+	public void selectImage(final int chooserTitleId, final OnImageSelectedListener onImageSelectedListener) {
 		postActivityAction(new ActivityStackAction() {
 
 			@Override
 			public void execute(final CyborgActivityBridge activity) {
 				logInfo("Selecting Image started...");
-				activity.addResultListener(new OnActivityResultListener() {
-
-					@Override
-					public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-						if (requestCode != SELECT_PICTURE)
-							return false;
-
-						activity.removeResultListener(this);
-						if (resultCode != Activity.RESULT_OK) {
-							logInfo("User Cancelled Image Selection");
-							onImageSelected.onActionCancelled();
-							return true;
-						}
-
-						if (data == null || data.getData() == null) {
-							return true;
-						}
-
-						Uri _uri = data.getData();
-
-						Cursor cursor = getContentResolver().query(_uri, new String[]{MediaColumns.DATA}, null, null, null);
-						cursor.moveToFirst();
-
-						final String uriToImage = cursor.getString(0);
-						cursor.close();
-						logInfo("User Had Picked an Image: " + uriToImage);
-						onImageSelected.onImageSelected(uriToImage);
-						return true;
-					}
-				});
 				Intent pickIntent = new Intent();
 				pickIntent.setType("image/*");
 				pickIntent.setAction(Intent.ACTION_GET_CONTENT);

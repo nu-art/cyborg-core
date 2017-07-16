@@ -24,9 +24,9 @@ public class PermissionModule
 
 	public interface PermissionResultListener {
 
-		void onPermissionsRejected(String[] rejected);
+		void onPermissionsRejected(int requestCode, String[] rejected);
 
-		void onAllPermissionsGranted();
+		void onAllPermissionsGranted(int requestCode);
 	}
 
 	public final String[] getRejectedPermissions(String... requestedPermissions) {
@@ -48,14 +48,14 @@ public class PermissionModule
 
 	}
 
-	public void requestPermission(final String... permissions) {
+	public void requestPermission(final int requestCode, final String... permissions) {
 		String[] rejectedPermissions = getRejectedPermissions(permissions);
 
 		if (rejectedPermissions.length == 0) {
 			dispatchEvent("All Permissions Granted", PermissionResultListener.class, new Processor<PermissionResultListener>() {
 				@Override
 				public void process(PermissionResultListener listener) {
-					listener.onAllPermissionsGranted();
+					listener.onAllPermissionsGranted(requestCode);
 				}
 			});
 			return;
@@ -64,14 +64,13 @@ public class PermissionModule
 		postActivityAction(new ActivityStackAction() {
 			@Override
 			public void execute(CyborgActivityBridge bridge) {
-				bridge.addPermissionResultListener(PermissionModule.this);
 				ActivityCompat.requestPermissions(bridge.getActivity(), permissions, RequestCode_Permissions);
 			}
 		});
 	}
 
 	@Override
-	public boolean onPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+	public boolean onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		switch (requestCode) {
 			case RequestCode_Permissions: {
 				final ArrayList<String> rejected = new ArrayList<>();
@@ -87,9 +86,9 @@ public class PermissionModule
 					@Override
 					public void process(PermissionResultListener listener) {
 						if (rejected.size() > 0)
-							listener.onPermissionsRejected(ArrayTools.asArray(rejected, String.class));
+							listener.onPermissionsRejected(requestCode, ArrayTools.asArray(rejected, String.class));
 						else
-							listener.onAllPermissionsGranted();
+							listener.onAllPermissionsGranted(requestCode);
 					}
 				});
 				return true;

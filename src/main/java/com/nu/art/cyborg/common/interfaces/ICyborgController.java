@@ -19,7 +19,10 @@
 package com.nu.art.cyborg.common.interfaces;
 
 import com.nu.art.cyborg.core.abs.CyborgDelegator;
-import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
-public interface CyborgComponentDelegator
-		extends CyborgDelegator, ModuleManagerDelegator {}
+/**
+ * Created by TacB0sS on 15-Jul 2017.
+ */
+
+public interface ICyborgController
+		extends UserActionsDelegator, CyborgDelegator {}
