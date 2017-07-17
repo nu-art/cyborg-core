@@ -21,6 +21,7 @@ package com.nu.art.cyborg.core;
 import android.os.Handler;
 
 import com.nu.art.belog.Logger;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
@@ -57,6 +58,10 @@ public final class ActivityStack
 			if (activity != null)
 				screenSyncObject.notify();
 		}
+	}
+
+	<ListenerType> void dispatchEvent(Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		activity.dispatchEvent(listenerType, processor);
 	}
 
 	private PoolQueue<ActivityStackAction> queue = new PoolQueue<ActivityStackAction>() {

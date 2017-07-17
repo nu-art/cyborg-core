@@ -606,13 +606,7 @@ final class CyborgImpl
 
 	@Override
 	public final <ListenerType> void dispatchEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		postActivityAction(new ActivityStackAction() {
-
-			@Override
-			public void execute(CyborgActivityBridge activity) {
-				activity.dispatchEvent(listenerType, processor);
-			}
-		});
+		activityStackHandler.dispatchEvent(listenerType, processor);
 	}
 
 	@Override
