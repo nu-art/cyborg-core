@@ -61,6 +61,9 @@ public final class ActivityStack
 	}
 
 	<ListenerType> void dispatchEvent(Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		if (activity == null)
+			return;
+
 		activity.dispatchEvent(listenerType, processor);
 	}
 
