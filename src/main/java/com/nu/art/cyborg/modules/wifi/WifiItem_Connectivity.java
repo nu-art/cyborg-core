@@ -154,6 +154,7 @@ public class WifiItem_Connectivity
 		return wifiName.substring(1, wifiName.length() - 1);
 	}
 
+
 	public boolean isConnectivityState(WifiConnectivityState connectivityState) {
 		return monitor.isState(connectivityState);
 	}
