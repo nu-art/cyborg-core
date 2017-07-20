@@ -19,6 +19,7 @@
 
 package com.nu.art.cyborg.notifications;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
@@ -55,8 +56,8 @@ public abstract class NotificationHandler
 		module.disposeNotification(notificationId);
 	}
 
-	protected final void postNotification(Builder builder, short notificationId) {
-		module.postNotification(builder, notificationId);
+	protected final Notification postNotification(Builder builder, short notificationId) {
+		return module.postNotification(builder, notificationId);
 	}
 
 	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {

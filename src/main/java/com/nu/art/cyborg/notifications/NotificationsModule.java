@@ -96,7 +96,7 @@ public final class NotificationsModule
 		}
 	}
 
-	final void postNotification(Builder builder, int notificationId) {
+	final Notification postNotification(Builder builder, int notificationId) {
 		Notification notification;
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN)
 			notification = builder.build();
@@ -104,5 +104,6 @@ public final class NotificationsModule
 			notification = builder.getNotification();
 
 		notificationManager.notify(notificationId, notification);
+		return notification;
 	}
 }
