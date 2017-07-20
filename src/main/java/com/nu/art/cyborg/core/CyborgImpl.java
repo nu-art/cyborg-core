@@ -405,12 +405,12 @@ final class CyborgImpl
 												 "unchecked",
 												 "ResourceType"
 										 })
-	public final <Service> Service getSystemService(ServiceType<Service> service) {
+	public final <SystemService> SystemService getSystemService(ServiceType<SystemService> service) {
 		Context applicationContext = getApplicationContext();
 		if (isInEditMode())
 			return null;
 
-		return (Service) applicationContext.getSystemService(service.getKey());
+		return (SystemService) applicationContext.getSystemService(service.getKey());
 	}
 
 	@Override
@@ -481,7 +481,6 @@ final class CyborgImpl
 	/*
 	 * Vibrator
 	 */
-
 	@Override
 	public final void vibrate(long ms) {
 		getModule(VibrationModule.class).vibrateImpl(ms);
