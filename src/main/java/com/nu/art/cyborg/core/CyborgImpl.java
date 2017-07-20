@@ -18,6 +18,8 @@
 
 package com.nu.art.cyborg.core;
 
+import android.app.Notification;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -46,6 +48,8 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
+import com.nu.art.cyborg.common.utils.GenericServiceConnection;
+import com.nu.art.cyborg.common.utils.GenericServiceConnection.ServiceConnectionListenerImpl;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -63,6 +67,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -72,43 +77,7 @@ final class CyborgImpl
 		extends Logger
 		implements Cyborg {
 
-	private class AppMeta {
-
-		private String name;
-
-		private String version;
-
-		private String packageName;
-
-		private int versionCode;
-
-		public AppMeta() {
-		}
-
-		private void populate()
-				throws NameNotFoundException {
-			packageName = applicationRef.get().getPackageName();
-			if (getPackageManager() != null) {
-				PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_META_DATA);
-				ApplicationInfo info = getPackageManager().getApplicationInfo(getPackageName(), 0);
-
-				if (info == null)
-					// we are in edit mode
-					name = "NoName";
-				else
-					name = info.name;
-
-				if (packageInfo == null) {
-					// we are in edit mode
-					version = "no version";
-					versionCode = 0;
-				} else {
-					version = packageInfo.versionName;
-					versionCode = packageInfo.versionCode;
-				}
-			}
-		}
-	}
+	private final HashMap<Class<? extends Service>, GenericServiceConnection<? extends Service>> serviceConnections = new HashMap<>();
 
 	private final long CurrentElapsedDelta = SystemClock.elapsedRealtime() - System.currentTimeMillis();
 
@@ -469,6 +438,46 @@ final class CyborgImpl
 		return getApplicationContext().startService(serviceIntent);
 	}
 
+	@Override
+	public void startService(Class<? extends Service> serviceType) {
+		getApplicationContext().startService(new Intent(getApplicationContext(), serviceType));
+	}
+
+	@Override
+	public void stopService(Class<? extends Service> serviceType) {
+		getApplicationContext().stopService(new Intent(getApplicationContext(), serviceType));
+	}
+
+	@SuppressWarnings("unchecked")
+	private <_ServiceType extends Service> GenericServiceConnection<_ServiceType> getServiceConnection(Class<_ServiceType> cls) {
+
+		GenericServiceConnection<_ServiceType> connection = (GenericServiceConnection<_ServiceType>) serviceConnections.get(cls);
+
+		if (connection == null) {
+			serviceConnections.put(cls, connection = new GenericServiceConnection<>(cls));
+			Intent serviceIntent = new Intent(getApplicationContext(), ApplicationService.class);
+			getApplicationContext().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+		}
+
+		return connection;
+	}
+
+	@Override
+	public <_ServiceType extends Service> void startForegroundService(final Class<_ServiceType> cls, final int id, final Notification notification) {
+		getServiceConnection(cls).addListener(new ServiceConnectionListenerImpl<_ServiceType>() {
+			@Override
+			public void onServiceConnected(_ServiceType service) {
+				startService(cls);
+				service.startForeground(id, notification);
+			}
+
+			@Override
+			public void onServiceDisconnected(_ServiceType service) {
+				service.stopForeground(true);
+			}
+		});
+	}
+
 	/*
 	 * Vibrator
 	 */
@@ -617,5 +626,43 @@ final class CyborgImpl
 	@Override
 	public Animation loadAnimation(int animationId) {
 		return AnimationUtils.loadAnimation(getApplicationContext(), animationId);
+	}
+
+	private class AppMeta {
+
+		private String name;
+
+		private String version;
+
+		private String packageName;
+
+		private int versionCode;
+
+		public AppMeta() {
+		}
+
+		private void populate()
+				throws NameNotFoundException {
+			packageName = applicationRef.get().getPackageName();
+			if (getPackageManager() != null) {
+				PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_META_DATA);
+				ApplicationInfo info = getPackageManager().getApplicationInfo(getPackageName(), 0);
+
+				if (info == null)
+					// we are in edit mode
+					name = "NoName";
+				else
+					name = info.name;
+
+				if (packageInfo == null) {
+					// we are in edit mode
+					version = "no version";
+					versionCode = 0;
+				} else {
+					version = packageInfo.versionName;
+					versionCode = packageInfo.versionCode;
+				}
+			}
+		}
 	}
 }
