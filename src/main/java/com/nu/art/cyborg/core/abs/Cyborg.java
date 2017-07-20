@@ -18,6 +18,8 @@
 
 package com.nu.art.cyborg.core.abs;
 
+import android.app.Notification;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -107,6 +109,12 @@ public interface Cyborg
 	 * @return Whether or not the executing is the main thread.
 	 */
 	boolean isMainThread();
+
+	void startService(Class<? extends Service> serviceType);
+
+	void stopService(Class<? extends Service> serviceType);
+
+	<_ServiceType extends Service> void startForegroundService(Class<_ServiceType> cls, int id, Notification notification);
 
 	/**
 	 * Crash the app if this is not the main thread
