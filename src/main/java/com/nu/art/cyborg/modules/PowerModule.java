@@ -101,9 +101,7 @@ public class PowerModule
 	}
 
 	@Override
-	protected void init() {
-		initPower_IndicatorReceiver();
-	}
+	protected void init() {}
 
 	public void initPower_IndicatorReceiver() {
 		registerReceiver(Power_IndicatorReceiver.class);
@@ -158,16 +156,16 @@ public class PowerModule
 		}
 	}
 
-	private static void setBatteryHealthState(BatteryHealth healthState) {
-		batteryHealthState = healthState;
+	private static void setChargingSource(ChargingSource source) {
+		batteryChargingSource = source;
 	}
 
 	private static void setChargingState(ChargingState chargingState) {
 		batteryChargingState = chargingState;
 	}
 
-	private static void setChargingSource(ChargingSource source) {
-		batteryChargingSource = source;
+	private static void setBatteryHealthState(BatteryHealth healthState) {
+		batteryHealthState = healthState;
 	}
 
 	public ChargingSource getChargingSource() {
