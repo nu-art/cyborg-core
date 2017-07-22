@@ -107,7 +107,6 @@ public class CyborgActivityBridgeImpl
 		this.activity = activity;
 		this.screenName = screenName;
 		cyborg = CyborgBuilder.getInstance();
-		keyboardChangeListener = new KeyboardChangeListener(cyborg, activity);
 	}
 
 	@Override
@@ -172,6 +171,7 @@ public class CyborgActivityBridgeImpl
 		 **********************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		keyboardChangeListener = new KeyboardChangeListener(cyborg, activity);
 		eventDispatcher.addListener(activity);
 		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
 		dispatchLifecycleEvent(LifeCycleState.OnCreate);
@@ -255,11 +255,6 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void finish() {
 		activity.finish();
-	}
-
-	@Override
-	public void enableKeyboardEvents(boolean enable) {
-		keyboardChangeListener.setEnabled(enable);
 	}
 
 	/* ********************************

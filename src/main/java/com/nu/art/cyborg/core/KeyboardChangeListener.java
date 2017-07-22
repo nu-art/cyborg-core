@@ -21,34 +21,19 @@ public class KeyboardChangeListener {
 		void onVisibilityChanged(boolean visible);
 	}
 
-	private boolean enabled;
-
 	private final Activity activity;
 
 	private final Cyborg cyborg;
 
 	private OnGlobalLayoutListener layoutChangeListener;
 
-	public KeyboardChangeListener(Cyborg cyborg, Activity activity) {
+	KeyboardChangeListener(Cyborg cyborg, Activity activity) {
 		this.cyborg = cyborg;
 		this.activity = activity;
-	}
-
-	final void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-		if (enabled && layoutChangeListener == null) {
-			addActivityLifecycleListener();
-		}
-	}
-
-	private void addActivityLifecycleListener() {
 		activity.getApplication().registerActivityLifecycleCallbacks(new ActivityLifeCycleImpl() {
 			@Override
 			public void onActivityResumed(Activity activity) {
 				if (KeyboardChangeListener.this.activity != activity)
-					return;
-
-				if (!enabled)
 					return;
 
 				addLayoutChangeListener();

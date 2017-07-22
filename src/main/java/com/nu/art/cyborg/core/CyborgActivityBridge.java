@@ -57,8 +57,6 @@ public interface CyborgActivityBridge {
 
 	void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
 
-	void enableKeyboardEvents(boolean enable);
-
 	/* Controllers */
 	void addController(CyborgController controller);
 

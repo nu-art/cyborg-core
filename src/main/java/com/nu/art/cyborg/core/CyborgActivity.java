@@ -138,13 +138,7 @@ public class CyborgActivity
 		requestWindowFeature(windowFeature);
 
 		onCreateImpl();
-
-		postOnUI(new Runnable() {
-			@Override
-			public void run() {
-				bridge.onCreate(savedInstanceState);
-			}
-		});
+		bridge.onCreate(savedInstanceState);
 	}
 
 	protected void onCreateImpl() {}
@@ -158,34 +152,18 @@ public class CyborgActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		postOnUI(new Runnable() {
-			@Override
-			public void run() {
-				bridge.onResume();
-			}
-		});
+		bridge.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		postOnUI(new Runnable() {
-			@Override
-			public void run() {
-				bridge.onPause();
-			}
-		});
+		bridge.onPause();
 		super.onPause();
 	}
 
 	@Override
 	protected void onDestroy() {
-		postOnUI(new Runnable() {
-			@Override
-			public void run() {
-				bridge.onDestroy();
-			}
-		});
-
+		bridge.onDestroy();
 		super.onDestroy();
 	}
 
