@@ -246,11 +246,6 @@ public abstract class CyborgModuleItem
 		cyborg.dispatchEvent(message, listenerType, processor);
 	}
 
-	public final <ListenerType> void dispatchModuleEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		logDebug("Dispatching Module Event: " + message);
-		cyborg.dispatchModuleEvent(message, listenerType, processor);
-	}
-
 	public final <ListenerType> void dispatchGlobalEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
 		dispatchModuleEvent(message, listenerType, processor);
 		dispatchEvent(message, listenerType, processor);
