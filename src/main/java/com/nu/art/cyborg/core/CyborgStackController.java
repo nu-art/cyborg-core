@@ -80,6 +80,8 @@ public final class CyborgStackController
 
 		private boolean saveState;
 
+		private boolean keepBackground;
+
 		private StackLayer() {
 			if (defaultTransition != null) {
 				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
@@ -142,6 +144,10 @@ public final class CyborgStackController
 
 		public void setSaveState(boolean saveState) {
 			this.saveState = saveState;
+		}
+
+		protected void setKeepBackground(boolean keepBackground) {
+			this.keepBackground = keepBackground;
 		}
 
 		public boolean isSaveState() {
@@ -366,6 +372,8 @@ public final class CyborgStackController
 
 		private boolean disposable;
 
+		private boolean keepBackground;
+
 		public StackLayerBuilder setRefKey(String refKey) {
 			this.refKey = refKey;
 			return this;
@@ -396,6 +404,26 @@ public final class CyborgStackController
 			return this;
 		}
 
+		public StackLayerBuilder setDuration(int duration) {
+			this.duration = duration;
+			return this;
+		}
+
+		public StackLayerBuilder setKeepBackground(boolean keepBackground) {
+			this.keepBackground = keepBackground;
+			return this;
+		}
+
+		public StackLayerBuilder setProcessor(Processor<?> processor) {
+			this.processor = processor;
+			return this;
+		}
+
+		public StackLayerBuilder setDisposable(boolean disposable) {
+			this.disposable = disposable;
+			return this;
+		}
+
 		public final void build() {
 			StackLayer layerToBeAdded = null;
 
@@ -421,31 +449,10 @@ public final class CyborgStackController
 
 			layerToBeAdded.setDuration(duration);
 			layerToBeAdded.setSaveState(saveState);
+			layerToBeAdded.setKeepBackground(keepBackground);
 
 			layerToBeAdded.setProcessor(processor);
 			push(layerToBeAdded);
-		}
-
-		public StackLayerBuilder setDuration(int duration) {
-			this.duration = duration;
-			return this;
-		}
-
-		public int getDuration() {
-			return duration;
-		}
-
-		public StackLayerBuilder setProcessor(Processor<?> processor) {
-			this.processor = processor;
-			return this;
-		}
-
-		public void setDisposable(boolean disposable) {
-			this.disposable = disposable;
-		}
-
-		public boolean isDisposable() {
-			return disposable;
 		}
 	}
 
@@ -470,7 +477,7 @@ public final class CyborgStackController
 			return;
 		}
 
-		final StackLayer originLayerToBeDisposed = getTopLayer();
+		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground ? null : getTopLayer();
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();
 
@@ -534,7 +541,7 @@ public final class CyborgStackController
 		if (targetLayerToBeRemove == null)
 			return false;
 
-		final StackLayer originLayerToBeRestored = getTopLayer();
+		final StackLayer originLayerToBeRestored = targetLayerToBeRemove.keepBackground ? null : getTopLayer();
 		if (originLayerToBeRestored != null) {
 			originLayerToBeRestored.create();
 			originLayerToBeRestored.restoreState();
