@@ -233,7 +233,7 @@ public final class CyborgStackController
 			rootView = controller.getRootView();
 
 			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
-			getFrameRootView().addView(rootView, 0);
+			getFrameRootView().addView(rootView);
 
 			controller.extractMembersImpl();
 			// xml attribute for root controller are handled in the handleAttributes method
