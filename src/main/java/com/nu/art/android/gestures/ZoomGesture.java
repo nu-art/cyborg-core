@@ -49,7 +49,7 @@ public final class ZoomGesture
 
 	private double vectorLength;
 
-	private Vector<ZoomListener> zoomListeners = new Vector<ZoomListener>();
+	private Vector<ZoomListener> zoomListeners = new Vector<>();
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {

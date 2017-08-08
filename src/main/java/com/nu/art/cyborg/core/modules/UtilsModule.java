@@ -128,7 +128,7 @@ public final class UtilsModule
 	}
 
 	public final Intent getChooserIntentForMimeTypes(StringResourceResolver title, String... mimeTypes) {
-		List<Intent> intents = new ArrayList<Intent>();
+		List<Intent> intents = new ArrayList<>();
 		for (int i = 0; i < mimeTypes.length; i++) {
 			String mimeType = mimeTypes[i];
 			appendExtraIntentsForMimeType(intents, mimeType);
@@ -217,8 +217,8 @@ public final class UtilsModule
 	public final ComponentName getDefaultComponentForIntent(ComponentType type, Intent intent, IntentFilter... intentFilter) {
 		PackageManager packageManager = cyborg.getPackageManager();
 
-		List<ComponentName> activities = new ArrayList<ComponentName>();
-		List<IntentFilter> filters = new ArrayList<IntentFilter>(Arrays.asList(intentFilter));
+		List<ComponentName> activities = new ArrayList<>();
+		List<IntentFilter> filters = new ArrayList<>(Arrays.asList(intentFilter));
 
 		/**
 		 * Returns all the default activities in the system!

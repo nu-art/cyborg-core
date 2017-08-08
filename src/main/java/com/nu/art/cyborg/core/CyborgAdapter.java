@@ -51,7 +51,7 @@ public class CyborgAdapter<Item>
 
 	private final Cyborg cyborg;
 
-	private HashMap<Item, ItemRenderer<? extends Item>> renderers = new HashMap<Item, ItemRenderer<? extends Item>>();
+	private HashMap<Item, ItemRenderer<? extends Item>> renderers = new HashMap<>();
 
 	private DataModel<Item> dataModel;
 

@@ -90,7 +90,7 @@ public abstract class CyborgController
 
 	private CyborgController[] nestedControllers = {};
 
-	private final SparseArray<View> views = new SparseArray<View>();
+	private final SparseArray<View> views = new SparseArray<>();
 
 	final int layoutId;
 

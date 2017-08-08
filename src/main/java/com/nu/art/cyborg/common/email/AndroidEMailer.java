@@ -18,13 +18,13 @@
 
 package com.nu.art.cyborg.common.email;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public final class AndroidEMailer {
 
@@ -63,7 +63,7 @@ public final class AndroidEMailer {
 		emailIntent.putExtra(Intent.EXTRA_TEXT, mail.getMessageBody());
 		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mail.getSubject());
 
-		ArrayList<Uri> uris = new ArrayList<Uri>();
+		ArrayList<Uri> uris = new ArrayList<>();
 		for (File file : mail.getAttachments()) {
 			Uri u = Uri.fromFile(file);
 			uris.add(u);

@@ -47,7 +47,7 @@ public final class CyborgViewInjector
 	/**
 	 * A map of rootView Id, to its rootView instance.
 	 */
-	private final SparseArray<View> views = new SparseArray<View>();
+	private final SparseArray<View> views = new SparseArray<>();
 
 	private String tag;
 

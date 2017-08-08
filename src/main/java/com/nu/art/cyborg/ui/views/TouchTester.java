@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class TouchTester
 		extends View {
 
-	private ArrayList<Point> points = new ArrayList<Point>();
+	private ArrayList<Point> points = new ArrayList<>();
 
 	private Paint paint = new Paint();
 

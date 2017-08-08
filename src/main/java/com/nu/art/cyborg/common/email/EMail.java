@@ -23,13 +23,13 @@ import java.util.Vector;
 
 public class EMail {
 
-	private Vector<Recipient> to = new Vector<Recipient>();
+	private Vector<Recipient> to = new Vector<>();
 
-	private Vector<Recipient> cc = new Vector<Recipient>();
+	private Vector<Recipient> cc = new Vector<>();
 
-	private Vector<Recipient> bcc = new Vector<Recipient>();
+	private Vector<Recipient> bcc = new Vector<>();
 
-	private Vector<File> attachments = new Vector<File>();
+	private Vector<File> attachments = new Vector<>();
 
 	private Recipient sender;
 

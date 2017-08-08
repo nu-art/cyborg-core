@@ -104,7 +104,7 @@ public final class AttributeModule
 		}
 	}
 
-	private HashMap<Class<?>, AttributesSetter<?>> settersMap = new HashMap<Class<?>, AttributesSetter<?>>();
+	private HashMap<Class<?>, AttributesSetter<?>> settersMap = new HashMap<>();
 
 	@Override
 	protected void init() {

@@ -36,9 +36,9 @@ final class ReceiversManager
 
 	private final Cyborg cyborg;
 
-	private HashMap<Class<? extends CyborgReceiver<?>>, CyborgReceiver<?>> registeredReceivers = new HashMap<Class<? extends CyborgReceiver<?>>, CyborgReceiver<?>>();
+	private HashMap<Class<? extends CyborgReceiver<?>>, CyborgReceiver<?>> registeredReceivers = new HashMap<>();
 
-	private HashMap<Class<? extends CyborgReceiver<?>>, Boolean> receiversInManifest = new HashMap<Class<? extends CyborgReceiver<?>>, Boolean>();
+	private HashMap<Class<? extends CyborgReceiver<?>>, Boolean> receiversInManifest = new HashMap<>();
 
 	public ReceiversManager(Cyborg cyborg) {
 		super();

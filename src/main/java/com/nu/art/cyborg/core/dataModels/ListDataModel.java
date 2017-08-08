@@ -31,7 +31,7 @@ public class ListDataModel<Item>
 
 	private final Class<? extends Item>[] itemsType;
 
-	private ArrayList<Item> items = new ArrayList<Item>();
+	private ArrayList<Item> items = new ArrayList<>();
 
 	public ListDataModel(Class<? extends Item>... itemsType) {
 		this.itemsType = itemsType;
