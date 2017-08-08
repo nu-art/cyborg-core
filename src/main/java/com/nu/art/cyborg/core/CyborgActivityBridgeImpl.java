@@ -45,7 +45,7 @@ import com.nu.art.cyborg.core.abs._SystemServices;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
-import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
+import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.modular.core.EventDispatcher;
 
 import java.util.Arrays;
@@ -360,24 +360,20 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
-			@Override
-			public void process(OnActivityResultListener listener) {
-				listener.onActivityResult(requestCode, resultCode, data);
-			}
-		});
+		cyborg
+				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
+					@Override
+					public void process(OnActivityResultListener listener) {
+						listener.onActivityResult(requestCode, resultCode, data);
+					}
+				});
 	}
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-		String message = screenName + ": onPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays
-				.toString(grantResults);
-		cyborg.dispatchModuleEvent(message, OnSystemPermissionsResultListener.class, new Processor<OnSystemPermissionsResultListener>() {
-			@Override
-			public void process(OnSystemPermissionsResultListener listener) {
-				listener.onPermissionsResult(requestCode, permissions, grantResults);
-			}
-		});
+		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays
+				.toString(grantResults));
+		getModule(PermissionModule.class).onPermissionsResult(requestCode, permissions, grantResults);
 	}
 
 	// need to make sure the only lifecycles called on the controllers are the same ones as in the activityType lifecycle state

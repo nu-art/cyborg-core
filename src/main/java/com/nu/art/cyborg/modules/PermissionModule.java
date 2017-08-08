@@ -11,14 +11,12 @@ import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.interfaces.OnSystemPermissionsResultListener;
 
 import java.util.ArrayList;
 
 @ModuleDescriptor
 public class PermissionModule
-		extends CyborgModule
-		implements OnSystemPermissionsResultListener {
+		extends CyborgModule {
 
 	private static final int RequestCode_Permissions = 100;
 
@@ -64,12 +62,11 @@ public class PermissionModule
 		postActivityAction(new ActivityStackAction() {
 			@Override
 			public void execute(CyborgActivityBridge bridge) {
-				ActivityCompat.requestPermissions(bridge.getActivity(), permissions, RequestCode_Permissions);
+				ActivityCompat.requestPermissions(bridge.getActivity(), permissions, requestCode);
 			}
 		});
 	}
 
-	@Override
 	public boolean onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		switch (requestCode) {
 			case RequestCode_Permissions: {
@@ -91,9 +88,8 @@ public class PermissionModule
 							listener.onAllPermissionsGranted(requestCode);
 					}
 				});
-				return true;
 			}
 		}
-		return false;
+		return true;
 	}
 }
