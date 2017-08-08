@@ -398,14 +398,4 @@ public final class UtilsModule
 		}
 		return false;
 	}
-
-	/*
-	 * Move to ImagesModule.
-	 */
-	public static interface OnActivityResult {
-
-		void onActionCompleted();
-
-		void onActionCancelled();
-	}
 }
