@@ -41,33 +41,22 @@ public final class PreferencesModule
 	public interface PreferencesStorage {
 
 		String getPreferencesName();
-
-		int getMode();
 	}
 
 	public enum PreferencesType
 			implements PreferencesStorage {
-		Default("DefaultStorage"/* "Configuration" */, 0);
+		Default("DefaultStorage");
 
 		private String preferencesName;
 
-		private int mode;
-
-		PreferencesType(String name, int mode) {
+		PreferencesType(String name) {
 			this.preferencesName = name;
-			this.mode = mode;
 		}
 
 		@Override
 		public String getPreferencesName() {
 			return preferencesName;
 		}
-
-		@Override
-		public int getMode() {
-			return mode;
-		}
-
 	}
 
 	private static final String EXPIRES_POSTFIX = "-Expires";
@@ -109,7 +98,7 @@ public final class PreferencesModule
 
 		SharedPreferences sharedPreferences = preferencesMap.get(type);
 		if (sharedPreferences == null) {
-			sharedPreferences = cyborg.getApplicationContext().getSharedPreferences(type.getPreferencesName(), type.getMode());
+			sharedPreferences = cyborg.getApplicationContext().getSharedPreferences(type.getPreferencesName(), 0);
 			preferencesMap.put(type, sharedPreferences);
 		}
 		return sharedPreferences;
