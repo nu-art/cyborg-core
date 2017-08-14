@@ -13,7 +13,6 @@ import com.nu.art.cyborg.core.modules.PreferencesModule.BooleanPreference;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,7 +119,11 @@ public class CrashReportModule
 	}
 
 	private void composeAndSendReport(Thread thread, Throwable ex, boolean crashed) {
-		CrashReport crashReport = new CrashReport();
+		composeAndSendReport(null, thread, ex, crashed);
+	}
+
+	private void composeAndSendReport(String uuid, Thread thread, Throwable ex, boolean crashed) {
+		CrashReport crashReport = new CrashReport(uuid);
 		crashReport.crashMessage = composeMessage(thread, ex, crashed);
 		crashReport.modulesData = collectModulesData();
 		crashReport.runningThreads = getRunningThreads();
@@ -179,8 +182,26 @@ public class CrashReportModule
 		return threads;
 	}
 
+	//TODO Convert this idiotic API to builder, a report builder!!
+	//	public final class ReportBuilder {
+	//
+	//		String uuid;
+	//
+	//		Throwable t;
+	//
+	//		boolean crashed;
+	//	}
+	//
+	//	public ReportBuilder composeReport() {
+	//		return new ReportBuilder();
+	//	}
+
 	public void composeAndSendReport() {
 		composeAndSendReport(null, null, false);
+	}
+
+	public void composeAndSendReport(String uuid) {
+		composeAndSendReport(uuid, null, null, false);
 	}
 
 	public void composeAndSendReport(Throwable ex) {

@@ -13,7 +13,7 @@ public final class CrashReport {
 
 	public final static SimpleDateFormat DefaultTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public final String uuid = UUID.randomUUID().toString();
+	public final String uuid;
 
 	public final String timestamp = DefaultTimeFormat.format(new Date());
 
@@ -24,4 +24,12 @@ public final class CrashReport {
 	public HashMap<String, ThreadState> runningThreads;
 
 	public String threadTraces;
+
+	public CrashReport(String uuid) {
+		this.uuid = uuid == null ? UUID.randomUUID().toString() : uuid;
+	}
+
+	public CrashReport() {
+		this(UUID.randomUUID().toString());
+	}
 }
