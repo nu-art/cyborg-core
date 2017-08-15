@@ -209,5 +209,4 @@ public abstract class BaseTransceiver
 		}
 	}
 
-	public abstract String getRemoteAddress();
 }

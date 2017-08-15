@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-abstract class WifiTransceiver
+public abstract class WifiTransceiver
 		extends BaseTransceiver {
 
 	class WifiSocketWrapper
@@ -49,6 +49,8 @@ abstract class WifiTransceiver
 	public WifiTransceiver(String name, PacketSerializer packetSerializer) {
 		super(name, packetSerializer);
 	}
+
+	public abstract String getRemoteAddress();
 }
 
 
