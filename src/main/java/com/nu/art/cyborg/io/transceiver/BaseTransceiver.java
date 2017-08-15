@@ -208,4 +208,6 @@ public abstract class BaseTransceiver
 			listener.onStateChange(state);
 		}
 	}
+
+	public abstract String getRemoteAddress();
 }

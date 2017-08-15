@@ -36,4 +36,9 @@ public class WifiClientTransceiver
 
 		return new WifiSocketWrapper(socket);
 	}
+
+	@Override
+	public String getRemoteAddress() {
+		return serverIpAddress;
+	}
 }

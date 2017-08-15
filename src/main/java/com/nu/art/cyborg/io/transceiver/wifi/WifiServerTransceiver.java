@@ -14,6 +14,8 @@ public final class WifiServerTransceiver
 
 	private ServerSocket serverSocket;
 
+	private String remoteAddress;
+
 	public WifiServerTransceiver(int serverPort, String name, PacketSerializer packetSerializer) {
 		super(name, packetSerializer);
 		this.serverPort = serverPort;
@@ -25,6 +27,7 @@ public final class WifiServerTransceiver
 
 		serverSocket = new ServerSocket(serverPort);
 		Socket socket = serverSocket.accept();
+		remoteAddress = socket.getInetAddress().getHostAddress();
 		return new WifiSocketWrapper(socket);
 	}
 
@@ -35,5 +38,10 @@ public final class WifiServerTransceiver
 		} catch (IOException e) {
 			notifyError(e);
 		}
+	}
+
+	@Override
+	public String getRemoteAddress() {
+		return remoteAddress;
 	}
 }
