@@ -24,6 +24,23 @@ public class CrashReportModule
 		extends CyborgModule
 		implements UncaughtExceptionHandler, CrashReportListener {
 
+	private CrashReportHandler crashReportHandler;
+
+	private UncaughtExceptionHandler defaultExceptionHandler;
+
+	private BooleanPreference sendDebugCrashReports;
+
+	private BooleanPreference hasCrashReportWaiting;
+
+	/**
+	 * Will only be available while a crash report composing is in progress...
+	 */
+	private CrashReport crashReport;
+
+	public CrashReport getCrashReport() {
+		return crashReport;
+	}
+
 	@Override
 	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
 		moduleCrashData.put("Package", getApplicationContext().getPackageName());
@@ -48,26 +65,6 @@ public class CrashReportModule
 	public void setForceDebugCrashReport(boolean reportInDebug) {
 		sendDebugCrashReports.set(reportInDebug);
 	}
-
-	public interface CrashReportHandler {
-
-		void prepareAndBackupCrashReport(CrashReport crashReport)
-				throws Exception;
-
-		void sendCrashReport(CrashReport crashReport, Processor<Throwable> resultListener)
-				throws Exception;
-
-		void deleteBackup()
-				throws Exception;
-	}
-
-	private CrashReportHandler crashReportHandler;
-
-	private UncaughtExceptionHandler defaultExceptionHandler;
-
-	private BooleanPreference sendDebugCrashReports;
-
-	private BooleanPreference hasCrashReportWaiting;
 
 	public void setCrashReportHandler(CrashReportHandler crashReportHandler) {
 		this.crashReportHandler = crashReportHandler;
@@ -118,12 +115,18 @@ public class CrashReportModule
 		defaultExceptionHandler.uncaughtException(thread, ex);
 	}
 
+	@Override
+	protected void printModuleDetails() {
+		super.printModuleDetails();
+		logDebug("hasCrashReportWaiting: " + hasCrashReportWaiting.get());
+	}
+
 	private void composeAndSendReport(Thread thread, Throwable ex, boolean crashed) {
 		composeAndSendReport(null, thread, ex, crashed);
 	}
 
 	private void composeAndSendReport(String uuid, Thread thread, Throwable ex, boolean crashed) {
-		CrashReport crashReport = new CrashReport(uuid);
+		crashReport = new CrashReport(uuid);
 		crashReport.crashMessage = composeMessage(thread, ex, crashed);
 		crashReport.modulesData = collectModulesData();
 		crashReport.runningThreads = getRunningThreads();
@@ -224,7 +227,10 @@ public class CrashReportModule
 		if (ex != null)
 			crashReport.append(ExceptionTools.getStackTrace(ex));
 
-		return crashReport.toString();
+		String crashReportAsString = crashReport.toString();
+		crashReportAsString = crashReportAsString.replaceAll("\\n", "<br>");
+		crashReportAsString = crashReportAsString.replaceAll("\\t", "&nbsp;");
+		return crashReportAsString;
 	}
 
 	private HashMap<CrashReportListener, HashMap<String, Object>> collectModulesData() {
@@ -241,5 +247,17 @@ public class CrashReportModule
 			}
 		}
 		return modulesData;
+	}
+
+	public interface CrashReportHandler {
+
+		void prepareAndBackupCrashReport(CrashReport crashReport)
+				throws Exception;
+
+		void sendCrashReport(CrashReport crashReport, Processor<Throwable> resultListener)
+				throws Exception;
+
+		void deleteBackup()
+				throws Exception;
 	}
 }
