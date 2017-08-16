@@ -227,10 +227,7 @@ public class CrashReportModule
 		if (ex != null)
 			crashReport.append(ExceptionTools.getStackTrace(ex));
 
-		String crashReportAsString = crashReport.toString();
-		crashReportAsString = crashReportAsString.replaceAll("\\n", "<br>");
-		crashReportAsString = crashReportAsString.replaceAll("\\t", "&nbsp;");
-		return crashReportAsString;
+		return crashReport.toString();
 	}
 
 	private HashMap<CrashReportListener, HashMap<String, Object>> collectModulesData() {
