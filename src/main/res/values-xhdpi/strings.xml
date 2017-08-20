@@ -19,6 +19,7 @@
 
 <resources>
 
-    <string name="Resolution" ignore="true">XHDPI</string>
+    <string name="Density" ignore="true">XHDPI</string>
+    <string name="Folder" ignore="true">XHDPI</string>
 
 </resources>

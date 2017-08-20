@@ -19,6 +19,7 @@
 
 <resources>
 
-    <string name="Resolution" ignore="true">XXHPDI</string>
+    <string name="Density" ignore="true">XXHPDI</string>
+    <string name="Folder" ignore="true">XXHPDI</string>
 
 </resources>

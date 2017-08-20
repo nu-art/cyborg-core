@@ -25,23 +25,23 @@ package com.nu.art.cyborg.common.consts;
  * @author TacB0sS
  */
 public enum DeviceScreenDensity {
-	Unknown(-1),
-	LDPI(0.75f),
-	MDPI(1),
-	HDPI(1.5f),
-	XHDPI(2),
-	XXHDPI(3),
-	XXXHDPI(4),;
+	Unknown(""),
+	LDPI("LDPI"),
+	MDPI("MDPI"),
+	HDPI("HDPI"),
+	XHDPI("XHDPI"),
+	XXHDPI("XXHDPI"),
+	XXXHDPI("XXXHDPI"),;
 
-	private float density;
+	private String density;
 
-	private DeviceScreenDensity(float density) {
+	DeviceScreenDensity(String density) {
 		this.density = density;
 	}
 
-	public static final DeviceScreenDensity getValueByDensity(float density) {
+	public static final DeviceScreenDensity getValueByDensity(String density) {
 		for (DeviceScreenDensity value : values()) {
-			if (value.density == density)
+			if (value.density.equals(density))
 				return value;
 		}
 		return Unknown;
