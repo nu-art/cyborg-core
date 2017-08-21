@@ -19,6 +19,7 @@
 
 <resources>
 
-    <string name="Resolution" ignore="true">LDPI</string>
+    <string name="Density" ignore="true">LDPI</string>
+    <string name="Folder" ignore="true">LDPI</string>
 
 </resources>

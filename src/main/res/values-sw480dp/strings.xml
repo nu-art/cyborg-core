@@ -19,6 +19,6 @@
 
 <resources>
 
-    <string name="Resolution" ignore="true">SW480DP</string>
+    <string name="Folder" ignore="true">SW480DP</string>
 
 </resources>

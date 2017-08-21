@@ -19,7 +19,7 @@
 
 <resources>
 
-    <string name="Resolution" ignore="true">UNKNOWN</string>
+    <string name="Density" ignore="true">UNKNOWN</string>
     <string name="UtilsModule_IntentResolverDefaultTitle">Complete Action Using:</string>
 
     <!-- Numeric -->

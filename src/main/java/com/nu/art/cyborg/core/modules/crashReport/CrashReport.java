@@ -31,7 +31,9 @@ public final class CrashReport {
 
 	public final static SimpleDateFormat DefaultTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public final String uuid;
+	public String uuid;
+
+	public final long timestampLong = System.currentTimeMillis();
 
 	public final String timestamp = DefaultTimeFormat.format(new Date());
 
