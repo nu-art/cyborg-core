@@ -1,6 +1,5 @@
 /*
- * The notifications module, is an extendable infrastructure to
- * encapsulate the posting and event handling of Android notifications.
+ * cyborg-core is an extendable  module based framework for Android.
  *
  * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
  *
