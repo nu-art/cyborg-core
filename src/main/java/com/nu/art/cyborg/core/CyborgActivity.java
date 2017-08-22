@@ -18,11 +18,11 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,13 +38,17 @@ import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
  * application.
  *
  * The only reason I can see to extend this object is to create a Cyborg activityType with another theme that would be defined in the manifest, but this can
- * also
- * be
- * done programmatically.
+ * also be done programmatically.
+ *
+ * Update:
+ * As I truly hate Activities and Fragments, I tried to force CyborgActivity to extend Activity, but as luck (at the moment) is not on my side, some 3rd party
+ * (like Google's YouTube SDK) still uses Fragments, so in order to keep users in same activities and against my gut...
+ *
+ * CyborgActivity will extend FragmentActivity :(
  */
 @SuppressWarnings("unused")
 public class CyborgActivity
-		extends Activity {
+		extends FragmentActivity {
 
 	protected final String TAG = getClass().getSimpleName();
 
