@@ -16,9 +16,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <resources>
 
-    <string name="Density" ignore="true">HDPI</string>
-    <string name="Folder" ignore="true">HDPI</string>
+    <string name="Density" ignore="true">XXXHPDI</string>
+    <string name="Folder" ignore="true">XXXHPDI</string>
 
 </resources>

@@ -51,13 +51,13 @@ public final class DeviceDetailsModule
 		int screenLayout = cyborg.getResources().getConfiguration().screenLayout;
 		screenSize = DeviceScreenSize.getValueByScreenLayout(screenLayout);
 
-		float density = cyborg.getResources().getDisplayMetrics().density;
-		screenDensity = DeviceScreenDensity.getValueByDensity(density);
+		//float density = cyborg.getResources().getDisplayMetrics().density;
+		String densityString = getString(R.string.Density);
 
-		String resolution = cyborg.getString(R.string.Resolution);
+		screenDensity = DeviceScreenDensity.getValueByDensity(densityString);
 
 		try {
-			deviceValues = DeviceValuesFolder.valueOf(resolution);
+			deviceValues = DeviceValuesFolder.valueOf(densityString);
 		} catch (Exception e) {
 			deviceValues = DeviceValuesFolder.UNKNOWN;
 		}
