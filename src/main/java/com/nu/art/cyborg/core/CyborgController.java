@@ -124,7 +124,7 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	private void injectMembers() {
-		CyborgViewInjector viewInjector = new CyborgViewInjector(getClass().getSimpleName(), rootView, actionDelegator, isDebug());
+		CyborgViewInjector viewInjector = new CyborgViewInjector(rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 		viewInjector.injectToInstance(this);
 		moduleInjector.injectToInstance(this);
@@ -508,5 +508,9 @@ public abstract class CyborgController
 
 	final void addNestedController(CyborgController controller) {
 		nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
+	}
+
+	public void setVisibility(int visibility) {
+		rootView.setVisibility(visibility);
 	}
 }

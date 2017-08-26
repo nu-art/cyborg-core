@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,10 +40,10 @@ import android.widget.TextView;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.common.beans.ModelEvent;
+import com.nu.art.cyborg.common.interfaces.ICyborgController;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.common.interfaces.ICyborgController;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.more.UserActionsDelegatorImpl;
 import com.nu.art.modular.core.Module;
@@ -263,7 +262,7 @@ abstract class CyborgControllerBase
 		this.activityBridge = activityBridge;
 	}
 
-	protected final Activity getActivity() {
+	protected final CyborgActivity getActivity() {
 		return activityBridge.getActivity();
 	}
 

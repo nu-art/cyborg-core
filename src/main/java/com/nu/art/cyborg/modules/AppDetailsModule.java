@@ -32,7 +32,7 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.StringPreference;
 import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
-import com.nu.art.cyborg.ui.BootStarterReceiver.OnBootCompletedListener;
+import com.nu.art.cyborg.common.utils.BootStarterReceiver.OnBootCompletedListener;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.io.ByteArrayInputStream;
