@@ -176,7 +176,8 @@ public class ImageDownloaderModule
 					postOnUI(new Runnable() {
 						@Override
 						public void run() {
-
+							if (cancelled)
+								return;
 							target.setImageBitmap(finalBitmap);
 						}
 					});
