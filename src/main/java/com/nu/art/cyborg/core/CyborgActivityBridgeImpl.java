@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -81,7 +80,7 @@ public class CyborgActivityBridgeImpl
 		CyborgBuilder.getInstance().openActivityInStack(intent);
 	}
 
-	private final Activity activity;
+	private final CyborgActivity activity;
 
 	private final Cyborg cyborg;
 
@@ -89,11 +88,11 @@ public class CyborgActivityBridgeImpl
 
 	private CyborgController[] controllerList = {};
 
-	protected LifeCycleListener[] lifecycleListeners = {};
+	private LifeCycleListener[] lifecycleListeners = {};
 
-	protected String screenName;
+	private String screenName;
 
-	protected boolean addToStack;
+	private boolean addToStack;
 
 	private boolean savedState;
 
@@ -103,7 +102,9 @@ public class CyborgActivityBridgeImpl
 
 	private LayoutInflater layoutInflater;
 
-	CyborgActivityBridgeImpl(String screenName, Activity activity) {
+	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher");
+
+	CyborgActivityBridgeImpl(String screenName, CyborgActivity activity) {
 		this.activity = activity;
 		this.screenName = screenName;
 		cyborg = CyborgBuilder.getInstance();
@@ -121,7 +122,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public Activity getActivity() {
+	public CyborgActivity getActivity() {
 		return activity;
 	}
 
@@ -315,6 +316,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
+	@SuppressWarnings("ConstantConditions")
 	public boolean onBackPressed() {
 		boolean toRet = false;
 		CyborgController[] controllers = controllerList;
@@ -360,25 +362,19 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg
-				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
-					@Override
-					public void process(OnActivityResultListener listener) {
-						listener.onActivityResult(requestCode, resultCode, data);
-					}
-				});
+		cyborg.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
+			@Override
+			public void process(OnActivityResultListener listener) {
+				listener.onActivityResult(requestCode, resultCode, data);
+			}
+		});
 	}
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays
-				.toString(grantResults));
+		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays.toString(grantResults));
 		getModule(PermissionModule.class).onPermissionsResult(requestCode, permissions, grantResults);
 	}
-
-	// need to make sure the only lifecycles called on the controllers are the same ones as in the activityType lifecycle state
-	//	including onCreate, which is now has an abnormal behavior
-	EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher");
 
 	@SuppressWarnings("unchecked")
 	public final <ListenerType> void dispatchEvent(final Class<ListenerType> eventType, final Processor<ListenerType> processor) {

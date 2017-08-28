@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -120,7 +121,16 @@ public class CyborgView
 			stateTag = controller.getClass().getSimpleName();
 
 		// inflating views
-		controller._createView(LayoutInflater.from(context), this);
+		try {
+			controller._createView(LayoutInflater.from(context), this);
+		} catch (Throwable e) {
+			while (e.getCause() != null) {
+				e = e.getCause();
+			}
+			Log.e("CYBORG", "As Android's exception handling is crappy, here is the reason for the failure: ", e);
+			//noinspection ConstantConditions
+			throw (RuntimeException) e;
+		}
 		setTag(controller);
 
 		if (isInEditMode())
