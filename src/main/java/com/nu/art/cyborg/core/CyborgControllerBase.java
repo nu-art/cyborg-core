@@ -63,12 +63,18 @@ abstract class CyborgControllerBase
 
 	public static final Random UtilsRandom = new Random();
 
+	boolean keepInStack;
+
 	public static short getRandomShort() {
 		return (short) UtilsRandom.nextInt(Short.MAX_VALUE);
 	}
 
 	public LifeCycleState getActivityState() {
 		return activityBridge.getState();
+	}
+
+	final void setKeepInStack(boolean keepInStack) {
+		this.keepInStack = keepInStack;
 	}
 
 	final class ActionDelegator

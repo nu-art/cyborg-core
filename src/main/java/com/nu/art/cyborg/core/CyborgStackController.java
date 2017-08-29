@@ -82,6 +82,8 @@ public final class CyborgStackController
 
 		private boolean keepBackground;
 
+		protected boolean keepInStack = true;
+
 		private StackLayer() {
 			if (defaultTransition != null) {
 				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
@@ -223,10 +225,9 @@ public final class CyborgStackController
 			if (refKey == null)
 				refKey = controller.getClass().getSimpleName();
 
-			if (getActivity() instanceof CyborgActivity) {
-				CyborgActivityBridge activityBridge = ((CyborgActivity) getActivity()).getBridge();
-				controller.setActivityBridge(activityBridge);
-			}
+			CyborgActivityBridge activityBridge = getActivity().getBridge();
+			controller.setActivityBridge(activityBridge);
+			controller.setKeepInStack(keepInStack);
 
 			controller.setStateTag(refKey);
 			controller._createView(inflater, getFrameRootView(), false);
@@ -370,7 +371,7 @@ public final class CyborgStackController
 
 		private Processor<?> processor;
 
-		private boolean disposable;
+		private boolean keepInStack;
 
 		private boolean keepBackground;
 
@@ -387,6 +388,11 @@ public final class CyborgStackController
 
 		public StackLayerBuilder setSaveState(boolean saveState) {
 			this.saveState = saveState;
+			return this;
+		}
+
+		public StackLayerBuilder setKeepInStack(boolean keepInStack) {
+			this.keepInStack = keepInStack;
 			return this;
 		}
 
@@ -416,11 +422,6 @@ public final class CyborgStackController
 
 		public StackLayerBuilder setProcessor(Processor<?> processor) {
 			this.processor = processor;
-			return this;
-		}
-
-		public StackLayerBuilder setDisposable(boolean disposable) {
-			this.disposable = disposable;
 			return this;
 		}
 
@@ -631,6 +632,9 @@ public final class CyborgStackController
 			layerToBeDisposed.saveState();
 		}
 		layerToBeDisposed.detachView();
+
+		if (layerToBeDisposed.controller != null && !layerToBeDisposed.controller.keepInStack)
+			layersStack.remove(layerToBeDisposed);
 	}
 
 	public void clear() {

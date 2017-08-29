@@ -513,4 +513,6 @@ public abstract class CyborgController
 	public void setVisibility(int visibility) {
 		rootView.setVisibility(visibility);
 	}
+
+
 }
