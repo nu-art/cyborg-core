@@ -223,6 +223,6 @@ public class CyborgActivity
 	}
 
 	protected final <Type> Type getViewById(@IdRes int viewId) {
-		return (Type) findViewById(viewId).getTag();
+		return (Type) findViewById(viewId);
 	}
 }
