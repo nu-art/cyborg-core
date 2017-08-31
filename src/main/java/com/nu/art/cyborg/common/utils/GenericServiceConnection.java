@@ -60,7 +60,9 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	}
 
 	public void addListener(ServiceConnectionListener<_ServiceType> listener) {
-		this.listeners.add(listener);
+		synchronized (listeners) {
+			this.listeners.add(listener);
+		}
 		if (service == null)
 			return;
 
@@ -68,7 +70,9 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	}
 
 	public void removeListener(ServiceConnectionListener<_ServiceType> listener) {
-		this.listeners.remove(listener);
+		synchronized (listeners) {
+			this.listeners.remove(listener);
+		}
 	}
 
 	@Override
@@ -76,16 +80,20 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	public void onServiceConnected(ComponentName className, IBinder binder) {
 		service = ((BaseBinder<_ServiceType>) binder).getService();
 		logDebug("Service connected, " + serviceType + ": " + service.toString().split("@")[1]);
-		for (ServiceConnectionListener<_ServiceType> listener : listeners) {
-			listener.onServiceConnected(service);
+		synchronized (listeners) {
+			for (ServiceConnectionListener<_ServiceType> listener : listeners) {
+				listener.onServiceConnected(service);
+			}
 		}
 	}
 
 	@Override
 	public void onServiceDisconnected(ComponentName className) {
 		logDebug("Service disconnected, " + serviceType + ": " + service.toString().split("@")[1]);
-		for (ServiceConnectionListener<_ServiceType> listener : listeners) {
-			listener.onServiceDisconnected(service);
+		synchronized (listeners) {
+			for (ServiceConnectionListener<_ServiceType> listener : listeners) {
+				listener.onServiceDisconnected(service);
+			}
 		}
 		service = null;
 	}
