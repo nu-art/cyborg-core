@@ -419,11 +419,6 @@ public final class CyborgStackController
 			return this;
 		}
 
-		public StackLayerBuilder setDisposable(boolean disposable) {
-			this.disposable = disposable;
-			return this;
-		}
-
 		public final void build() {
 			StackLayer layerToBeAdded = null;
 

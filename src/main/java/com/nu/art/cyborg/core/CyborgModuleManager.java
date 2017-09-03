@@ -21,11 +21,8 @@ package com.nu.art.cyborg.core;
 import com.nu.art.belog.BeLogged;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModuleManager;
-
-import java.util.ArrayList;
 
 /**
  * This is an internal object.
@@ -34,20 +31,6 @@ public final class CyborgModuleManager
 		extends ModuleManager {
 
 	private ILogger logger;
-
-	@SuppressWarnings("unchecked")
-	final <Type> Type[] getModulesAssignableFrom(Class<Type> moduleType) {
-		ArrayList<Type> toRet = new ArrayList<>();
-		for (Module obj : getOrderedModules()) {
-			if (!moduleType.isAssignableFrom(obj.getClass()))
-				continue;
-
-			toRet.add((Type) obj);
-		}
-		return ArrayTools.asArray(toRet, moduleType);
-	}
-
-	protected final String TAG = getClass().getSimpleName();
 
 	CyborgModuleManager() {
 		super();
