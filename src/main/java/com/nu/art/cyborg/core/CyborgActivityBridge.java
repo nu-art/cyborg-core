@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,7 +95,7 @@ public interface CyborgActivityBridge {
 
 	Intent getIntent();
 
-	Activity getActivity();
+	CyborgActivity getActivity();
 
 	<Type> Type getController(@IdRes int viewId);
 

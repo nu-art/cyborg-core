@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.ui;
+package com.nu.art.cyborg.common.utils;
 
 import android.content.Intent;
 

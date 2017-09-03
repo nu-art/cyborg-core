@@ -21,14 +21,17 @@ package com.nu.art.cyborg.core;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 
 import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
@@ -217,5 +220,9 @@ public class CyborgActivity
 
 	protected final StackLayerBuilder createStackLayer(CyborgStackController controller) {
 		return controller.createLayerBuilder();
+	}
+
+	protected final <Type> Type getViewById(@IdRes int viewId) {
+		return (Type) findViewById(viewId);
 	}
 }

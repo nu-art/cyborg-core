@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core.more;
 
-import android.util.SparseArray;
 import android.view.View;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
@@ -30,6 +29,7 @@ import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgAdapter;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
+import com.nu.art.cyborg.core.CyborgView;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.injector.AnnotatbleInjector;
 import com.nu.art.reflection.tools.ART_Tools;
@@ -47,10 +47,6 @@ public final class CyborgViewInjector
 	/**
 	 * A map of rootView Id, to its rootView instance.
 	 */
-	private final SparseArray<View> views = new SparseArray<>();
-
-	private String tag;
-
 	private View rootView;
 
 	private UserActionsDelegator modelDelegator;
@@ -63,14 +59,13 @@ public final class CyborgViewInjector
 	 * This constructor is for a single rootView for a single controller approach as the {@link CyborgAdapter} and {@link
 	 * com.nu.art.cyborg.core.ItemRenderer}
 	 *
-	 * @param tag            For log.
 	 * @param rootView       The rootView containing the rootView to inject to the controllers.
 	 * @param modelDelegator The listener delegator that would catch the events registered for the injected members.
 	 * @param debuggable     A debug flag.
 	 */
-	public CyborgViewInjector(String tag, View rootView, UserActionsDelegator modelDelegator, boolean debuggable) {
+	public CyborgViewInjector(View rootView, UserActionsDelegator modelDelegator, boolean debuggable) {
 		super(ViewIdentifier.class);
-		this.tag = tag;
+
 		this.rootView = rootView;
 		this.modelDelegator = modelDelegator;
 		this.debuggable = debuggable;
@@ -79,8 +74,7 @@ public final class CyborgViewInjector
 
 	@Override
 	protected final Field[] extractFieldsFromInstance(Class<? extends CyborgController> controllerType) {
-		return ART_Tools
-				.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class);
+		return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
 	}
 
 	@Override
@@ -88,36 +82,40 @@ public final class CyborgViewInjector
 	protected Object getValueFromAnnotationAndField(ViewIdentifier annotation, Field viewField) {
 		Class<?> fieldType = viewField.getType();
 		ViewIdentifier viewIdentifier = viewField.getAnnotation(ViewIdentifier.class);
-		if (View.class.isAssignableFrom(fieldType)) {
+		if (!fieldType.isArray()) {
 			int parentViewId = viewIdentifier.parentViewId();
 			int viewId = viewIdentifier.viewId();
 			if (viewId == -1)
 				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
 
-			return setupView(viewField, parentViewId, viewId, viewIdentifier.forDev(), viewIdentifier.listeners());
-		} else if (fieldType.isArray()) {
-			Class<? extends View> viewType = (Class<? extends View>) fieldType.getComponentType();
-
-			int parentViewId = viewIdentifier.parentViewId();
-			int viewId = viewIdentifier.viewId();
-			if (viewId != -1)
-				throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
-
-			int[] ids = viewIdentifier.viewIds();
-			if (ids.length == 0)
-				throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
-
-			View[] views = ArrayTools.newInstance(viewType, ids.length);
-			for (int i = 0; i < ids.length; i++) {
-				views[i] = setupView(viewField, parentViewId, ids[i], viewIdentifier.forDev(), viewIdentifier.listeners());
-			}
-			return views;
-		} else {
-			throw ExceptionGenerator.infraErrorInTheArtTools(viewField.getDeclaringClass());
+			return setupItem(viewField, fieldType, viewIdentifier, parentViewId, viewId);
 		}
+
+		Class<?> componentType = fieldType.getComponentType();
+
+		int parentViewId = viewIdentifier.parentViewId();
+		int viewId = viewIdentifier.viewId();
+		if (viewId != -1)
+			throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
+
+		int[] ids = viewIdentifier.viewIds();
+		if (ids.length == 0)
+			throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
+
+		return getArrayValueFromAnnotationAndField(viewField, viewIdentifier, componentType, parentViewId, ids);
 	}
 
-	private View setupView(Field viewField, int parentViewId, int viewId, boolean forDev, ViewListener[] listeners) {
+	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Field viewField, ViewIdentifier viewIdentifier, Class<ComponentType> componentType, int parentViewId, int[] ids) {
+		ComponentType[] items = ArrayTools.newInstance(componentType, ids.length);
+
+		for (int i = 0; i < ids.length; i++) {
+			items[i] = (ComponentType) setupItem(viewField, componentType, viewIdentifier, parentViewId, ids[i]);
+		}
+
+		return items;
+	}
+
+	private Object setupItem(Field viewField, Class<?> fieldType, ViewIdentifier viewIdentifier, int parentViewId, int viewId) {
 		View view;
 		View parentView = rootView;
 
@@ -129,6 +127,28 @@ public final class CyborgViewInjector
 		if (view == null)
 			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(viewField);
 
+		if (View.class.isAssignableFrom(fieldType)) {
+			return setupView(view, viewIdentifier.forDev(), viewIdentifier.listeners());
+		}
+
+		if (CyborgController.class.isAssignableFrom(fieldType)) {
+			return setupController(view, viewField, viewIdentifier.forDev());
+		}
+
+		throw ExceptionGenerator.developerSetViewIdentifierAnnotationToMemberWithUnsupportedType(viewField);
+	}
+
+	private CyborgController setupController(View view, Field viewField, boolean forDev) {
+		if (!(view instanceof CyborgView))
+			throw ExceptionGenerator.developerSetViewIdOfIncompatibleViewForController(viewField);
+
+		CyborgController controller = ((CyborgView) view).getController();
+		controller.setVisibility(forDev ? View.GONE : View.VISIBLE);
+
+		return controller;
+	}
+
+	private View setupView(View view, boolean forDev, ViewListener[] listeners) {
 		if (modelDelegator == null)
 			throw new BadImplementationException("modelDelegator == null");
 
@@ -146,7 +166,6 @@ public final class CyborgViewInjector
 		if (forDev && !debuggable)
 			view.setVisibility(View.GONE);
 
-		views.put(viewId, view);
 		return view;
 	}
 

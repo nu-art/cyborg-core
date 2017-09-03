@@ -24,9 +24,8 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import com.nu.art.belog.Logger;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgServiceBase.BaseBinder;
-
-import java.util.ArrayList;
 
 public final class GenericServiceConnection<_ServiceType extends Service>
 		extends Logger
@@ -49,7 +48,8 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 		public void onServiceDisconnected(_ServiceType service) {}
 	}
 
-	private ArrayList<ServiceConnectionListener<_ServiceType>> listeners = new ArrayList<>();
+	@SuppressWarnings("unchecked")
+	private ServiceConnectionListener<_ServiceType>[] listeners = new ServiceConnectionListener[0];
 
 	private final Class<_ServiceType> serviceType;
 
@@ -60,7 +60,7 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	}
 
 	public void addListener(ServiceConnectionListener<_ServiceType> listener) {
-		this.listeners.add(listener);
+		listeners = ArrayTools.appendElement(listeners, listener);
 		if (service == null)
 			return;
 
@@ -68,7 +68,7 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	}
 
 	public void removeListener(ServiceConnectionListener<_ServiceType> listener) {
-		this.listeners.remove(listener);
+		listeners = ArrayTools.removeElement(listeners, listener);
 	}
 
 	@Override
