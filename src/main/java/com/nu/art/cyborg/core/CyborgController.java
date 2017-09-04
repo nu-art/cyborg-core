@@ -245,8 +245,6 @@ public abstract class CyborgController
 		getModule(AttributeModule.class).setAttributes(context, attrs, this);
 	}
 
-	protected void onDestroyView() {}
-
 	final void dispatchLifeCycleEvent(LifeCycleState newState) {
 		if (newState == state)
 			logWarning("ALREADY IN STATE: " + newState);
