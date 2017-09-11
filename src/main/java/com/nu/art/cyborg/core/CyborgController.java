@@ -212,7 +212,7 @@ public abstract class CyborgController
 		while (rootView != null) {
 			ViewParent parent = rootView.getParent();
 			if (!(parent instanceof View))
-				return null;
+				break;
 
 			rootView = (View) parent;
 

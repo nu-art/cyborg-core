@@ -98,7 +98,7 @@ public class ListDataModel<Item>
 
 	@Override
 	public int getItemsCount() {
-		return cyclic ? Integer.MAX_VALUE : items.size();
+		return cyclic && items.size() > 0 ? Integer.MAX_VALUE : items.size();
 	}
 
 	@Override
