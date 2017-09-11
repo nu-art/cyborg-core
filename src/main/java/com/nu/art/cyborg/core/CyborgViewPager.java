@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
 
 import com.nu.art.cyborg.R;
@@ -38,6 +39,8 @@ import java.lang.reflect.Field;
 public class CyborgViewPager
 		extends ViewPager {
 
+	private boolean blockUserSwiping;
+
 	public CyborgViewPager(Context context) {
 		super(context);
 		init(context, null, -1);
@@ -52,6 +55,14 @@ public class CyborgViewPager
 		CyborgBuilder.getModule(isInEditMode() ? context : null, AttributeModule.class).setAttributes(context, attrs, this);
 	}
 
+	public void setBlockUserSwiping(boolean blockUserSwiping) {
+		this.blockUserSwiping = blockUserSwiping;
+	}
+
+	public boolean isBlockUserSwiping() {
+		return blockUserSwiping;
+	}
+
 	public void setAdapter(CyborgAdapter adapter) {
 		super.setAdapter(adapter.getPagerAdapter());
 	}
@@ -64,6 +75,18 @@ public class CyborgViewPager
 		CustomScroller scroller = new CustomScroller(getContext(), new DecelerateInterpolator());
 		scroller.setFixedDuration(speedInMillis);
 		mScroller.set(this, scroller);
+	}
+
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent event) {
+		// Never allow swiping to switch between pages
+		return !blockUserSwiping && super.onInterceptTouchEvent(event);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		// Never allow swiping to switch between pages
+		return !blockUserSwiping && super.onTouchEvent(event);
 	}
 
 	/**
