@@ -108,7 +108,7 @@ public class WifiItem_Scanner
 		Collections.sort(scanResults, new Comparator<ScannedWifiInfo>() {
 			@Override
 			public int compare(ScannedWifiInfo o1, ScannedWifiInfo o2) {
-				return o1.strength.ordinal() < o2.strength.ordinal() ? 1 : 0;
+				return o1.strength.ordinal() < o2.strength.ordinal() ? 1 : -1;
 			}
 		});
 

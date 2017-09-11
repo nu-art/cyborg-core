@@ -29,6 +29,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.nu.art.cyborg.annotations.Restorable;
+import com.nu.art.cyborg.core.CyborgAdapter.CyborgRecyclerAdapter;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
@@ -40,8 +41,6 @@ import com.nu.art.cyborg.R;
 @Restorable
 public class CyborgRecycler
 		extends RecyclerView {
-
-	private GridLayoutManager layoutManager;
 
 	public interface OnRecyclerItemClickListener {
 
@@ -76,6 +75,29 @@ public class CyborgRecycler
 			return this;
 		}
 	}
+
+	public class CyborgGridLayoutManager
+			extends GridLayoutManager {
+
+		public CyborgGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+			super(context, attrs, defStyleAttr, defStyleRes);
+		}
+
+		public CyborgGridLayoutManager(Context context, int spanCount) {
+			super(context, spanCount);
+		}
+
+		public CyborgGridLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
+			super(context, spanCount, orientation, reverseLayout);
+		}
+
+		@Override
+		public boolean supportsPredictiveItemAnimations() {
+			return (getAdapter()!=null && ((CyborgRecyclerAdapter)getAdapter()).isAutoAnimate()) || super.supportsPredictiveItemAnimations();
+		}
+	}
+
+	private CyborgGridLayoutManager layoutManager;
 
 	public OnRecyclerItemClickListener recyclerItemListener;
 
@@ -170,13 +192,13 @@ public class CyborgRecycler
 
 		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			if (layoutManager == null) {
-				layoutManager = new GridLayoutManager(getContext(), landscapeColumnsCount, layoutOrientation, false);
+				layoutManager = new CyborgGridLayoutManager(getContext(), landscapeColumnsCount, layoutOrientation, false);
 				setLayoutManager(layoutManager);
 			}
 			layoutManager.setSpanCount(landscapeColumnsCount);
 		} else {
 			if (layoutManager == null) {
-				layoutManager = new GridLayoutManager(getContext(), landscapeColumnsCount, layoutOrientation, false);
+				layoutManager = new CyborgGridLayoutManager(getContext(), landscapeColumnsCount, layoutOrientation, false);
 				setLayoutManager(layoutManager);
 			}
 			layoutManager.setSpanCount(portraitColumnsCount);

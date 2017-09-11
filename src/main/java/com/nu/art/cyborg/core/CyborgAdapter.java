@@ -381,6 +381,8 @@ public class CyborgAdapter<Item>
 
 		private long clickTimeStamp;
 
+		private final CyborgRecycler parentView;
+
 		@Override
 		@SuppressWarnings("unchecked")
 		public void onClick(View view) {
@@ -409,7 +411,9 @@ public class CyborgAdapter<Item>
 			return parentView.recyclerItemLongListener.onRecyclerItemLongClicked(parentView, view, renderer.getItemPosition());
 		}
 
-		private final CyborgRecycler parentView;
+		public boolean isAutoAnimate() {
+			return autoAnimate;
+		}
 
 		public CyborgRecyclerAdapter(CyborgRecycler parentView) {
 			this.parentView = parentView;
