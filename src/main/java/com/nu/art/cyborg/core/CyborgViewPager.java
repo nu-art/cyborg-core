@@ -98,6 +98,7 @@ public class CyborgViewPager
 
 		private static int[] ids = {
 				R.styleable.ViewPager_scrollIntervalMS,
+				R.styleable.ViewPager_blockUserSwiping,
 		};
 
 		private CyborgViewPagerSetter() {
@@ -110,6 +111,15 @@ public class CyborgViewPager
 				int scrollIntervalMS = a.getInt(attr, 500);
 				try {
 					instance.setAutoScrollSpeed(scrollIntervalMS);
+				} catch (Exception e) {
+					logError("", e);
+				}
+			}
+
+			if (attr == R.styleable.ViewPager_blockUserSwiping) {
+				boolean disableSwipe = a.getBoolean(attr, false);
+				try {
+					instance.setBlockUserSwiping(disableSwipe);
 				} catch (Exception e) {
 					logError("", e);
 				}

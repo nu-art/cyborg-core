@@ -71,5 +71,6 @@
 
     <declare-styleable name="ViewPager">
         <attr name="scrollIntervalMS" format="integer"/>
+        <attr name="blockUserSwiping" format="boolean"/>
     </declare-styleable>
 </resources>
