@@ -496,8 +496,10 @@ public abstract class CyborgController
 	}
 
 	final void extractMembersImpl() {
-		injectMembers();
+		/* When constructing a controller in a library, it would be simpler (I think) to define listeners in the field's annotation
+		 * and force the view injector to use whatever instance already set manually in the extract member method.*/
 		extractMembers();
+		injectMembers();
 	}
 
 	protected final StackLayerBuilder createNewLayerBuilder() {
@@ -511,6 +513,4 @@ public abstract class CyborgController
 	public void setVisibility(int visibility) {
 		rootView.setVisibility(visibility);
 	}
-
-
 }
