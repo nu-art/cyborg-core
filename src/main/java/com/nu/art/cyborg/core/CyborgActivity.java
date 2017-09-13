@@ -28,10 +28,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 
 import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
@@ -52,6 +50,11 @@ import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
 @SuppressWarnings("unused")
 public class CyborgActivity
 		extends FragmentActivity {
+
+	/**
+	 * Should activity lifecycle be printed to the log
+	 */
+	public static boolean DebugActivityLifeCycle = true;
 
 	protected final String TAG = getClass().getSimpleName();
 

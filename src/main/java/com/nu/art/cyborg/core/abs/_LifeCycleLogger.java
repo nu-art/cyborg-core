@@ -25,13 +25,4 @@ interface _LifeCycleLogger {
 	 */
 	boolean LogDebug_WebJavascriptStack = false;
 
-	/**
-	 * Should controller lifecycle be printed to the log
-	 */
-	boolean DebugControllerLifeCycle = true;
-
-	/**
-	 * Should activity lifecycle be printed to the log
-	 */
-	boolean DebugActivityLifeCycle = true;
 }

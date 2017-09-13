@@ -347,8 +347,14 @@ public class CyborgAdapter<Item>
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			int viewType = getItemViewType(position);
-			ItemRenderer<? extends Item> renderer = createRendererForType(parent, viewType);
-			callRendererLifeCycle(renderer);
+			ItemRenderer<? extends Item> renderer;
+			if (convertView != null)
+				renderer = (ItemRenderer<? extends Item>) convertView.getTag();
+			else {
+				renderer = createRendererForType(parent, viewType);
+				callRendererLifeCycle(renderer);
+			}
+
 			renderer.setPositionResolver(createPositionResolver(position));
 			_renderItem(renderer, position);
 			return renderer.getRootView();

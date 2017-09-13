@@ -115,6 +115,10 @@ public abstract class BaseTransceiver
 	}
 
 	public final void sendPacket(final Packet packet) {
+		sendPacket(packet, true);
+	}
+
+	public final void sendPacket(final Packet packet, final boolean printToLog) {
 		transmitter.post(new Runnable() {
 			@Override
 			public void run() {
@@ -123,7 +127,8 @@ public abstract class BaseTransceiver
 					return;
 				}
 
-				logInfo("Sending packet to remote device: " + packet);
+				if (printToLog)
+					logInfo("Sending packet to remote device: " + packet);
 				try {
 					packetSerializer.serializePacket(socket.getOutputStream(), packet);
 				} catch (IOException e) {
@@ -215,7 +220,6 @@ public abstract class BaseTransceiver
 	}
 
 	protected final void notifyNewPacket(Packet packet) {
-		logDebug("New Packet received to: " + name + "\n  Data: " + packet.toString());
 		for (TransceiverListener listener : listeners) {
 			listener.onIncomingPacket(packet);
 		}
@@ -226,5 +230,4 @@ public abstract class BaseTransceiver
 			listener.onStateChange(state);
 		}
 	}
-
 }

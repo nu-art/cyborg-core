@@ -49,6 +49,8 @@ import com.nu.art.modular.core.EventDispatcher;
 
 import java.util.Arrays;
 
+import static com.nu.art.cyborg.core.CyborgActivity.DebugActivityLifeCycle;
+
 /**
  * Created by TacB0sS on 19-Jun 2015.
  */
@@ -346,7 +348,7 @@ public class CyborgActivityBridgeImpl
 	public final void addController(CyborgController controller) {
 		controllerList = ArrayTools.appendElement(controllerList, controller);
 		eventDispatcher.addListener(controller);
-		if (Cyborg.DebugActivityLifeCycle) {
+		if (DebugActivityLifeCycle) {
 			logDebug("Added controller(" + controllerList.length + "): " + controller);
 		}
 	}
@@ -355,24 +357,26 @@ public class CyborgActivityBridgeImpl
 	public final void removeController(CyborgController controller) {
 		controllerList = ArrayTools.removeElement(controllerList, controller);
 		eventDispatcher.removeListener(controller);
-		if (Cyborg.DebugActivityLifeCycle) {
+		if (DebugActivityLifeCycle) {
 			logDebug("Removed controller(" + controllerList.length + "): " + controller);
 		}
 	}
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
-			@Override
-			public void process(OnActivityResultListener listener) {
-				listener.onActivityResult(requestCode, resultCode, data);
-			}
-		});
+		cyborg
+				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
+					@Override
+					public void process(OnActivityResultListener listener) {
+						listener.onActivityResult(requestCode, resultCode, data);
+					}
+				});
 	}
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays.toString(grantResults));
+		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays
+				.toString(grantResults));
 		getModule(PermissionModule.class).onPermissionsResult(requestCode, permissions, grantResults);
 	}
 
@@ -486,7 +490,7 @@ public class CyborgActivityBridgeImpl
 		Logs
  	 **********************************/
 	private void logLifeCycle(String log) {
-		if (Cyborg.DebugActivityLifeCycle)
+		if (DebugActivityLifeCycle)
 			logDebug("Activity State Changed: " + log);
 	}
 }

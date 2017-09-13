@@ -135,15 +135,21 @@ public final class PreferencesModule
 		}
 
 		public final ItemType get() {
+			return get(true);
+		}
+
+		public final ItemType get(boolean printToLog) {
 			SharedPreferences preferences = getPreferences(type);
 			ItemType cache;
 			if (expires == -1 || System.currentTimeMillis() - preferences.getLong(key + EXPIRES_POSTFIX, -1) < expires) {
 				cache = _get(preferences, key, defaultValue);
-				logInfo("+----+ LOADED: " + key + ": " + cache);
+				if (printToLog)
+					logInfo("+----+ LOADED: " + key + ": " + cache);
 				return cache;
 			} else {
 				cache = defaultValue;
-				logInfo("+----+ DEFAULT: " + key + ": " + cache);
+				if (printToLog)
+					logInfo("+----+ DEFAULT: " + key + ": " + cache);
 				return cache;
 			}
 		}
@@ -151,6 +157,10 @@ public final class PreferencesModule
 		protected abstract ItemType _get(SharedPreferences preferences, String key, ItemType defaultValue);
 
 		public void set(ItemType value) {
+			set(value, true);
+		}
+
+		public void set(ItemType value, boolean printToLog) {
 			Editor editor = getPreferences(type).edit();
 			logDebug("+----+ SET: " + key + ": " + value);
 
@@ -411,22 +421,29 @@ public final class PreferencesModule
 			itemType = type;
 		}
 
-		@SuppressWarnings("unchecked")
 		public ItemType get() {
+			return get(true);
+		}
+
+		@SuppressWarnings("unchecked")
+		public ItemType get(boolean printToLog) {
 			if (cache != null) {
-				logDebug("+----+ CACHED: " + key.key + ": " + cache);
+				if (printToLog)
+					logDebug("+----+ CACHED: " + key.key + ": " + cache);
 				return cache;
 			}
 
 			String value = key.get();
 			if (value == null) {
 				cache = defaultValue;
-				logDebug("+----+ DEFAULT: " + key.key + ": " + cache);
+				if (printToLog)
+					logDebug("+----+ DEFAULT: " + key.key + ": " + cache);
 				return cache;
 			}
 
 			cache = (ItemType) serializer.mapRev(itemType, value);
-			logInfo("+----+ DESERIALIZED: " + key.key + ": " + cache);
+			if (printToLog)
+				logInfo("+----+ DESERIALIZED: " + key.key + ": " + cache);
 			return cache;
 		}
 

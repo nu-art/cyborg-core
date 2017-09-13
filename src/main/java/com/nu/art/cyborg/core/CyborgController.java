@@ -42,7 +42,6 @@ import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.common.utils.BusyState;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
-import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
@@ -73,6 +72,11 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 									 })
 public abstract class CyborgController
 		extends CyborgControllerBase {
+
+	/**
+	 * Should controller lifecycle be printed to the log
+	 */
+	public static boolean DebugControllerLifeCycle = true;
 
 	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 
@@ -131,7 +135,7 @@ public abstract class CyborgController
 	}
 
 	final void setState(LifeCycleState newState) {
-		if (Cyborg.DebugControllerLifeCycle)
+		if (DebugControllerLifeCycle)
 			logDebug("State Changed: " + this.state + " ==> " + newState);
 
 		if (state == newState)
