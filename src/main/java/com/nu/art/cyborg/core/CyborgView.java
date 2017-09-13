@@ -73,18 +73,24 @@ public class CyborgView
 		this(context, null);
 	}
 
+	public CyborgView(CyborgActivity activity, Class<? extends CyborgController> controllerType) {
+		super(activity);
+		this.controller=ReflectiveTools.newInstance(controllerType);
+		initController();
+	}
+
 	public CyborgView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
 	public CyborgView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		init(attrs, defStyle);
+		initController(attrs, defStyle);
 	}
 
-	private Cyborg getCyborg(Context context) {
+	private Cyborg resolveCyborg() {
 		if (isInEditMode())
-			return CyborgBuilder.getInEditMode(context);
+			return CyborgBuilder.getInEditMode(getContext());
 
 		return CyborgBuilder.getInstance();
 	}
@@ -95,19 +101,8 @@ public class CyborgView
 		controller.onConfigurationChanged(newConfig);
 	}
 
-	final void init(AttributeSet attrs, int defStyle) {
-		if (attrs == null)
-			return;
-
+	private void initController() {
 		Context context = getContext();
-		cyborg = getCyborg(context);
-
-		// First set attributes to this CyborgView
-		cyborg.getModule(AttributeModule.class).setAttributes(context, attrs, this);
-
-		// MUST have a controller at this point
-		if (controller == null)
-			throw new BadImplementationException("MUST specify a valid controller class name");
 
 		// I've been going around this issue for a while... I believe this 'if' is the only real solution
 		if (!isInEditMode()) {
@@ -142,6 +137,23 @@ public class CyborgView
 		controller.extractMembersImpl();
 
 		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+	}
+
+	final void initController(AttributeSet attrs, int defStyle) {
+		if (attrs == null)
+			return;
+
+		Context context = getContext();
+		cyborg = resolveCyborg();
+
+		// First set attributes to this CyborgView
+		cyborg.getModule(AttributeModule.class).setAttributes(context, attrs, this);
+
+		// MUST have a controller at this point
+		if (controller == null)
+			throw new BadImplementationException("MUST specify a valid controller class name");
+
+		initController();
 
 		// handle the attributes for the controller
 		controller.handleAttributes(context, attrs);
