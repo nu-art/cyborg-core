@@ -41,6 +41,7 @@ import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.common.utils.BusyState;
+import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
@@ -230,6 +231,25 @@ public abstract class CyborgController
 		}
 
 		throw new ImplementationMissingException("In order to use the stack, this view must be a contained within a StackController");
+	}
+
+	protected final <ControllerType extends CyborgController> ControllerType injectController(@IdRes int viewId, Class<ControllerType> controller) {
+		CyborgView viewToInject = new CyborgView(getActivity(), controller);
+
+		int id = Tools.generateValidViewId(getActivity());
+		viewToInject.setId(id);
+
+		View view = getViewById(viewId);
+		if (view == null)
+			throw new BadImplementationException("The provided viewId does not exists in this controller");
+
+		if (!(view instanceof ViewGroup))
+			throw new BadImplementationException("The provided viewId is to a " + view.getClass()
+					.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
+
+		((ViewGroup) view).removeAllViews();
+		((ViewGroup) view).addView(viewToInject);
+		return (ControllerType) viewToInject.getController();
 	}
 
 	/**

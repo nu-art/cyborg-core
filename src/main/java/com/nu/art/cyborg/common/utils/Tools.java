@@ -18,11 +18,16 @@
 
 package com.nu.art.cyborg.common.utils;
 
+import android.app.Activity;
 import android.graphics.Rect;
 import android.view.View;
 
+import java.util.Random;
+
 @SuppressWarnings("WeakerAccess")
 public final class Tools {
+
+	private static final Random random = new Random();
 
 	public static int getViewRealLeft(View view) {
 		int left = 0;
@@ -52,5 +57,13 @@ public final class Tools {
 		rect.right = rect.left + width;
 		rect.bottom = rect.top + height;
 		return rect;
+	}
+
+	public static int generateValidViewId(Activity activity) {
+		int id;
+		while (activity.findViewById(id = random.nextInt()) != null)
+			;
+
+		return id;
 	}
 }
