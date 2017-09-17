@@ -131,6 +131,10 @@ public class WifiItem_Connectivity
 		wifiManager.saveConfiguration();
 	}
 
+	void disconnectFromWifi() {
+		wifiManager.disconnect();
+	}
+
 	final void connectToWifi(String wifiName, String password) {
 		if (wifiName == null)
 			throw new BadImplementationException("MUST provide wifiName");
@@ -171,7 +175,6 @@ public class WifiItem_Connectivity
 		String wifiName = wifiManager.getConnectionInfo().getSSID();
 		return wifiName.substring(1, wifiName.length() - 1);
 	}
-
 
 	public boolean isConnectivityState(WifiConnectivityState connectivityState) {
 		return monitor.isState(connectivityState);

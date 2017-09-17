@@ -86,6 +86,14 @@ public class WifiModule
 		WifiConnectivity.connectToWifi(wifiName, password);
 	}
 
+	public void disconnectFromWifi() {
+		WifiConnectivity.disconnectFromWifi();
+	}
+
+	public void removeWifi(String connectedWifiName) {
+		WifiConnectivity.removeWifi(connectedWifiName);
+	}
+
 	public boolean isAdapterEnabled() {
 		return WifiAdapter.isAdapterEnabled();
 	}
