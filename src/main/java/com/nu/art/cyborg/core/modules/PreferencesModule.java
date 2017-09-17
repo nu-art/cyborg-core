@@ -38,32 +38,11 @@ import java.util.HashMap;
 public final class PreferencesModule
 		extends CyborgModule {
 
-	public interface PreferencesStorage {
-
-		String getPreferencesName();
-	}
-
-	public enum PreferencesType
-			implements PreferencesStorage {
-		Default("DefaultStorage");
-
-		private String preferencesName;
-
-		PreferencesType(String name) {
-			this.preferencesName = name;
-		}
-
-		@Override
-		public String getPreferencesName() {
-			return preferencesName;
-		}
-	}
+	private static final String DefaultStorageGroup = "DefaultStorage";
 
 	private static final String EXPIRES_POSTFIX = "-Expires";
 
-	private final PreferencesStorage DefaultPreferences = PreferencesType.Default;
-
-	private HashMap<PreferencesStorage, SharedPreferences> preferencesMap = new HashMap<>();
+	private HashMap<String, SharedPreferences> preferencesMap = new HashMap<>();
 
 	private PreferencesModule() {}
 
@@ -71,35 +50,35 @@ public final class PreferencesModule
 	protected void init() {}
 
 	public final void clearExpiration(PreferenceKey type) {
-		Editor editor = getPreferences(type.type).edit();
+		Editor editor = getPreferences(type.storageGroup).edit();
 		editor.putLong(type.key + EXPIRES_POSTFIX, -1L);
 		editor.apply();
 	}
 
 	public final void removeValue(PreferenceKey<?> type) {
-		Editor editor = getPreferences(type.type).edit();
+		Editor editor = getPreferences(type.storageGroup).edit();
 		editor.remove(type.key);
 		editor.apply();
 	}
 
 	public void clearCache() {
-		for (PreferencesStorage key : preferencesMap.keySet()) {
+		for (String key : preferencesMap.keySet()) {
 			dropPreferences(key);
 		}
 	}
 
-	public void dropPreferences(PreferencesStorage type) {
-		getPreferences(type).edit().clear().apply();
+	public void dropPreferences(String storageGroup) {
+		getPreferences(storageGroup).edit().clear().apply();
 	}
 
-	private SharedPreferences getPreferences(PreferencesStorage type) {
-		if (type == null)
-			type = DefaultPreferences;
+	private SharedPreferences getPreferences(String storageGroup) {
+		if (storageGroup == null)
+			storageGroup = DefaultStorageGroup;
 
-		SharedPreferences sharedPreferences = preferencesMap.get(type);
+		SharedPreferences sharedPreferences = preferencesMap.get(storageGroup);
 		if (sharedPreferences == null) {
-			sharedPreferences = cyborg.getApplicationContext().getSharedPreferences(type.getPreferencesName(), 0);
-			preferencesMap.put(type, sharedPreferences);
+			sharedPreferences = cyborg.getApplicationContext().getSharedPreferences(storageGroup, 0);
+			preferencesMap.put(storageGroup, sharedPreferences);
 		}
 		return sharedPreferences;
 	}
@@ -109,7 +88,7 @@ public final class PreferencesModule
 
 		final String key;
 
-		private final PreferencesStorage type;
+		private final String storageGroup;
 
 		private final ItemType defaultValue;
 
@@ -119,17 +98,17 @@ public final class PreferencesModule
 			this(key, defaultValue, -1);
 		}
 
-		public PreferenceKey(String key, ItemType defaultValue, PreferencesStorage type) {
-			this(key, defaultValue, -1, type);
+		public PreferenceKey(String key, ItemType defaultValue, String storageGroup) {
+			this(key, defaultValue, -1, storageGroup);
 		}
 
 		public PreferenceKey(String key, ItemType defaultValue, long expires) {
 			this(key, defaultValue, expires, null);
 		}
 
-		public PreferenceKey(String key, ItemType defaultValue, long expires, PreferencesStorage type) {
+		public PreferenceKey(String key, ItemType defaultValue, long expires, String storageGroup) {
 			this.key = key;
-			this.type = type;
+			this.storageGroup = storageGroup;
 			this.defaultValue = defaultValue;
 			this.expires = expires;
 		}
@@ -139,7 +118,7 @@ public final class PreferencesModule
 		}
 
 		public final ItemType get(boolean printToLog) {
-			SharedPreferences preferences = getPreferences(type);
+			SharedPreferences preferences = getPreferences(storageGroup);
 			ItemType cache;
 			if (expires == -1 || System.currentTimeMillis() - preferences.getLong(key + EXPIRES_POSTFIX, -1) < expires) {
 				cache = _get(preferences, key, defaultValue);
@@ -161,7 +140,7 @@ public final class PreferencesModule
 		}
 
 		public void set(ItemType value, boolean printToLog) {
-			Editor editor = getPreferences(type).edit();
+			Editor editor = getPreferences(storageGroup).edit();
 			logDebug("+----+ SET: " + key + ": " + value);
 
 			_set(editor, key, value);
@@ -189,16 +168,16 @@ public final class PreferencesModule
 			super(key, defaultValue);
 		}
 
-		public IntegerPreference(String key, int defaultValue, PreferencesStorage type) {
-			super(key, defaultValue, type);
+		public IntegerPreference(String key, int defaultValue, String storageGroup) {
+			super(key, defaultValue, storageGroup);
 		}
 
 		public IntegerPreference(String key, int defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public IntegerPreference(String key, int defaultValue, long expires, PreferencesStorage type) {
-			super(key, defaultValue, expires, type);
+		public IntegerPreference(String key, int defaultValue, long expires, String storageGroup) {
+			super(key, defaultValue, expires, storageGroup);
 		}
 
 		@Override
@@ -219,16 +198,16 @@ public final class PreferencesModule
 			super(key, defaultValue);
 		}
 
-		public BooleanPreference(String key, boolean defaultValue, PreferencesStorage type) {
-			super(key, defaultValue, type);
+		public BooleanPreference(String key, boolean defaultValue, String storageGroup) {
+			super(key, defaultValue, storageGroup);
 		}
 
 		public BooleanPreference(String key, boolean defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public BooleanPreference(String key, boolean defaultValue, long expires, PreferencesStorage type) {
-			super(key, defaultValue, expires, type);
+		public BooleanPreference(String key, boolean defaultValue, long expires, String storageGroup) {
+			super(key, defaultValue, expires, storageGroup);
 		}
 
 		@Override
@@ -249,16 +228,16 @@ public final class PreferencesModule
 			super(key, defaultValue);
 		}
 
-		public LongPreference(String key, long defaultValue, PreferencesStorage type) {
-			super(key, defaultValue, type);
+		public LongPreference(String key, long defaultValue, String storageGroup) {
+			super(key, defaultValue, storageGroup);
 		}
 
 		public LongPreference(String key, long defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public LongPreference(String key, long defaultValue, long expires, PreferencesStorage type) {
-			super(key, defaultValue, expires, type);
+		public LongPreference(String key, long defaultValue, long expires, String storageGroup) {
+			super(key, defaultValue, expires, storageGroup);
 		}
 
 		@Override
@@ -279,16 +258,16 @@ public final class PreferencesModule
 			super(key, defaultValue);
 		}
 
-		public FloatPreference(String key, float defaultValue, PreferencesStorage type) {
-			super(key, defaultValue, type);
+		public FloatPreference(String key, float defaultValue, String storageGroup) {
+			super(key, defaultValue, storageGroup);
 		}
 
 		public FloatPreference(String key, float defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public FloatPreference(String key, float defaultValue, long expires, PreferencesStorage type) {
-			super(key, defaultValue, expires, type);
+		public FloatPreference(String key, float defaultValue, long expires, String storageGroup) {
+			super(key, defaultValue, expires, storageGroup);
 		}
 
 		@Override
@@ -309,16 +288,16 @@ public final class PreferencesModule
 			super(key, defaultValue);
 		}
 
-		public StringPreference(String key, String defaultValue, PreferencesStorage type) {
-			super(key, defaultValue, type);
+		public StringPreference(String key, String defaultValue, String storageGroup) {
+			super(key, defaultValue, storageGroup);
 		}
 
 		public StringPreference(String key, String defaultValue, long expires) {
 			super(key, defaultValue, expires);
 		}
 
-		public StringPreference(String key, String defaultValue, long expires, PreferencesStorage type) {
-			super(key, defaultValue, expires, type);
+		public StringPreference(String key, String defaultValue, long expires, String storageGroup) {
+			super(key, defaultValue, expires, storageGroup);
 		}
 
 		@Override
@@ -347,13 +326,13 @@ public final class PreferencesModule
 			this(key, enumType, defaultValue, expires, null);
 		}
 
-		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, PreferencesStorage type) {
-			this(key, enumType, defaultValue, -1, type);
+		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, String storageGroup) {
+			this(key, enumType, defaultValue, -1, storageGroup);
 		}
 
 		@SuppressWarnings("unchecked")
-		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, long expires, PreferencesStorage type) {
-			this.key = new StringPreference(key, defaultValue == null ? null : defaultValue.name(), expires, type);
+		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, long expires, String storageGroup) {
+			this.key = new StringPreference(key, defaultValue == null ? null : defaultValue.name(), expires, storageGroup);
 			this.enumType = enumType;
 		}
 
@@ -397,8 +376,8 @@ public final class PreferencesModule
 			this(serializer, key, type, null, expires, null);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, PreferencesStorage preferencesType) {
-			this(serializer, key, type, null, -1, preferencesType);
+		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, String storageGroup) {
+			this(serializer, key, type, null, -1, storageGroup);
 		}
 
 		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue) {
@@ -409,13 +388,13 @@ public final class PreferencesModule
 			this(serializer, key, type, defaultValue, expires, null);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, PreferencesStorage preferencesType) {
-			this(serializer, key, type, defaultValue, -1, preferencesType);
+		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, String storageGroup) {
+			this(serializer, key, type, defaultValue, -1, storageGroup);
 		}
 
 		@SuppressWarnings("unchecked")
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, long expires, PreferencesStorage preferencesType) {
-			this.key = new StringPreference(key, null, expires, preferencesType);
+		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, long expires, String storageGroup) {
+			this.key = new StringPreference(key, null, expires, storageGroup);
 			this.defaultValue = defaultValue;
 			this.serializer = serializer;
 			itemType = type;
