@@ -83,7 +83,7 @@ public interface CyborgActivityBridge {
 	void finish();
 
 	/* Actions */
-	<ListenerType> void dispatchEvent(Class<ListenerType> listenerType, Processor<ListenerType> processor);
+	<ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor);
 
 	void reCreateScreen();
 

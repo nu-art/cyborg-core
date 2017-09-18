@@ -79,7 +79,7 @@ public final class CyborgStateInjector
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected Object getValueFromAnnotationAndField(Restorable annotation, Field field) {
+	protected Object getValueFromAnnotationAndField(Object instance, Restorable annotation, Field field) {
 		Class<?> fieldType = ReflectiveTools.getBoxedType(field.getType());
 		String key = annotation.key();
 		if (key.length() == 0)

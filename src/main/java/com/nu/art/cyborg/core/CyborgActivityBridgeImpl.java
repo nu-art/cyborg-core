@@ -36,6 +36,7 @@ import android.widget.FrameLayout;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
@@ -381,7 +382,10 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <ListenerType> void dispatchEvent(final Class<ListenerType> eventType, final Processor<ListenerType> processor) {
+	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> eventType, final Processor<ListenerType> processor) {
+		logDebug("Dispatching UI Event: " + message);
+
+		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event: " + message);
 		activity.runOnUiThread(new Runnable() {
 
 			@Override
@@ -389,7 +393,7 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				eventDispatcher.dispatchEvent(eventType, processor);
+				eventDispatcher.dispatchEvent(whoCalledThis, eventType, processor);
 			}
 		});
 	}

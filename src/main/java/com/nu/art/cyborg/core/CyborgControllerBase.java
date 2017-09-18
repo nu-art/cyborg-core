@@ -290,8 +290,7 @@ abstract class CyborgControllerBase
 
 	@Override
 	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
-		logDebug("Dispatching UI Event: " + message);
-		activityBridge.dispatchEvent(listenerType, processor);
+		activityBridge.dispatchEvent(message, listenerType, processor);
 	}
 
 	CyborgControllerBase() {

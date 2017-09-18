@@ -74,12 +74,13 @@ public final class CyborgViewInjector
 
 	@Override
 	protected final Field[] extractFieldsFromInstance(Class<? extends CyborgController> controllerType) {
-		return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
+		return ART_Tools
+				.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected Object getValueFromAnnotationAndField(ViewIdentifier annotation, Field viewField) {
+	protected Object getValueFromAnnotationAndField(Object fieldValue, ViewIdentifier annotation, Field viewField) {
 		Class<?> fieldType = viewField.getType();
 		ViewIdentifier viewIdentifier = viewField.getAnnotation(ViewIdentifier.class);
 		if (!fieldType.isArray()) {
@@ -88,7 +89,7 @@ public final class CyborgViewInjector
 			if (viewId == -1)
 				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
 
-			return setupItem(viewField, fieldType, viewIdentifier, parentViewId, viewId);
+			return setupItem(fieldValue, viewField, fieldType, viewIdentifier, parentViewId, viewId);
 		}
 
 		Class<?> componentType = fieldType.getComponentType();
@@ -102,30 +103,36 @@ public final class CyborgViewInjector
 		if (ids.length == 0)
 			throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
 
-		return getArrayValueFromAnnotationAndField(viewField, viewIdentifier, componentType, parentViewId, ids);
+		return getArrayValueFromAnnotationAndField(fieldValue, viewField, viewIdentifier, componentType, parentViewId, ids);
 	}
 
-	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Field viewField, ViewIdentifier viewIdentifier, Class<ComponentType> componentType, int parentViewId, int[] ids) {
-		ComponentType[] items = ArrayTools.newInstance(componentType, ids.length);
+	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Object fieldValue, Field viewField, ViewIdentifier viewIdentifier, Class<ComponentType> componentType, int parentViewId, int[] ids) {
+		ComponentType[] items;
+		if (fieldValue != null)
+			items = (ComponentType[]) fieldValue;
+		else
+			items = ArrayTools.newInstance(componentType, ids.length);
 
-		for (int i = 0; i < ids.length; i++) {
-			items[i] = (ComponentType) setupItem(viewField, componentType, viewIdentifier, parentViewId, ids[i]);
+		for (int i = 0; i < items.length; i++) {
+			items[i] = (ComponentType) setupItem(items[i], viewField, componentType, viewIdentifier, parentViewId, ids[i]);
 		}
 
 		return items;
 	}
 
-	private Object setupItem(Field viewField, Class<?> fieldType, ViewIdentifier viewIdentifier, int parentViewId, int viewId) {
-		View view;
+	private Object setupItem(Object fieldValue, Field viewField, Class<?> fieldType, ViewIdentifier viewIdentifier, int parentViewId, int viewId) {
+		View view = (View) fieldValue;
 		View parentView = rootView;
 
-		if (parentViewId != -1)
-			parentView = rootView.findViewById(parentViewId);
+		if (view == null) {
+			if (parentViewId != -1)
+				parentView = rootView.findViewById(parentViewId);
 
-		view = parentView.findViewById(viewId);
+			view = parentView.findViewById(viewId);
 
-		if (view == null)
-			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(viewField);
+			if (view == null)
+				throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(viewField);
+		}
 
 		if (View.class.isAssignableFrom(fieldType)) {
 			return setupView(view, viewIdentifier.forDev(), viewIdentifier.listeners());
