@@ -631,10 +631,11 @@ public final class CyborgStackController
 		if (layerToBeDisposed.saveState) {
 			layerToBeDisposed.saveState();
 		}
-		layerToBeDisposed.detachView();
 
 		if (layerToBeDisposed.controller != null && !layerToBeDisposed.controller.keepInStack)
 			layersStack.remove(layerToBeDisposed);
+
+		layerToBeDisposed.detachView();
 	}
 
 	public void clear() {

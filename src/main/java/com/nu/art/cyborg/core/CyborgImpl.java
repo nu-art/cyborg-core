@@ -59,7 +59,6 @@ import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
-import com.nu.art.modular.core.ModuleManager.OnModuleInitializedListener;
 import com.nu.art.modular.core.ModulesPack;
 
 import java.io.File;
@@ -141,12 +140,8 @@ final class CyborgImpl
 
 		moduleManager = builder.getCyborgModuleManager();
 
-		moduleManager.setModuleListener(new OnModuleInitializedListener() {
-			public void onModuleInitialized(Module module) {
-				activityStackHandler = new ActivityStack(CyborgImpl.this);
-				receiversManager = new ReceiversManager(CyborgImpl.this);
-			}
-		});
+		activityStackHandler = new ActivityStack(CyborgImpl.this);
+		receiversManager = new ReceiversManager(CyborgImpl.this);
 
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		printApplicationStarted();
