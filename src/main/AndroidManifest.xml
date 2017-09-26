@@ -22,6 +22,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:theme="@android:style/Theme.NoTitleBar">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application>
         <activity
             android:name=".ui.ApplicationLauncher">
