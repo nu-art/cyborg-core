@@ -29,14 +29,11 @@ public class WifiClientTransceiver
 
 	private final String serverIpAddress;
 
-	private final int serverPort;
-
 	private int timeout = 30000;
 
 	public WifiClientTransceiver(String serverIpAddress, int serverPort, String name, PacketSerializer packetSerializer) {
-		super(name, packetSerializer);
+		super(name, packetSerializer, serverPort);
 		this.serverIpAddress = serverIpAddress;
-		this.serverPort = serverPort;
 	}
 
 	public void setTimeout(int timeout) {
@@ -47,10 +44,10 @@ public class WifiClientTransceiver
 	protected SocketWrapper connectImpl()
 			throws Exception {
 		setOneShot();
-		logDebug("Connecting on: " + serverIpAddress + ":" + serverPort);
+		logDebug("Connecting on: " + serverIpAddress + ":" + port);
 		Socket socket = new Socket();
 		socket.bind(null);
-		socket.connect((new InetSocketAddress(serverIpAddress, serverPort)), this.timeout);
+		socket.connect((new InetSocketAddress(serverIpAddress, port)), this.timeout);
 
 		return new WifiSocketWrapper(socket);
 	}

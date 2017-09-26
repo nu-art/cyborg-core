@@ -64,8 +64,15 @@ public abstract class WifiTransceiver
 		}
 	}
 
-	public WifiTransceiver(String name, PacketSerializer packetSerializer) {
+	protected int port;
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public WifiTransceiver(String name, PacketSerializer packetSerializer, int port) {
 		super(name, packetSerializer);
+		this.port = port;
 	}
 
 	public abstract String getRemoteAddress();

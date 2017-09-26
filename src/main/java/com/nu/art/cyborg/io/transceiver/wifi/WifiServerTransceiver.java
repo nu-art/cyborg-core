@@ -28,22 +28,20 @@ import java.net.Socket;
 public final class WifiServerTransceiver
 		extends WifiTransceiver {
 
-	private final int serverPort;
 
 	private ServerSocket serverSocket;
 
 	private String remoteAddress;
 
 	public WifiServerTransceiver(int serverPort, String name, PacketSerializer packetSerializer) {
-		super(name, packetSerializer);
-		this.serverPort = serverPort;
+		super(name, packetSerializer, serverPort);
 	}
 
 	@Override
 	protected SocketWrapper connectImpl()
 			throws Exception {
 
-		serverSocket = new ServerSocket(serverPort);
+		serverSocket = new ServerSocket(port);
 		Socket socket = serverSocket.accept();
 		remoteAddress = socket.getInetAddress().getHostAddress();
 		return new WifiSocketWrapper(socket);
