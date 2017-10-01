@@ -420,7 +420,13 @@ public final class PreferencesModule
 				return cache;
 			}
 
-			cache = (ItemType) serializer.mapRev(itemType, value);
+			try {
+				cache = (ItemType) serializer.mapRev(itemType, value);
+			} catch (Exception e) {
+				logError("Error while deserializing item type: " + itemType + ", probably changed class structure... returning null", e);
+				cache = null;
+			}
+
 			if (printToLog)
 				logInfo("+----+ DESERIALIZED: " + key.key + ": " + cache);
 			return cache;
