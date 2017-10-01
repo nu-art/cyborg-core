@@ -20,7 +20,9 @@ package com.nu.art.cyborg.modules;
 
 import android.Manifest;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
@@ -28,15 +30,59 @@ import com.nu.art.cyborg.core.CyborgModule;
 
 import java.util.List;
 
+import static com.nu.art.cyborg.modules.LocationModule.LocationService.GPS;
+import static com.nu.art.cyborg.modules.LocationModule.LocationService.NETWORK;
+import static com.nu.art.cyborg.modules.LocationModule.LocationService.OFFLINE;
+
 /**
  * Created by TacB0sS on 15-Sep 2017.
  */
-@ModuleDescriptor(usesPermissions = {
+@ModuleDescriptor(usesPermissions = {//
 		Manifest.permission.ACCESS_COARSE_LOCATION,
 		Manifest.permission.ACCESS_FINE_LOCATION
 })
 public class LocationModule
-		extends CyborgModule {
+		extends CyborgModule
+		implements LocationListener {
+
+	private long minTime;
+	private float minDistance;
+
+	LocationService currentService = OFFLINE;
+
+	enum LocationService {
+		GPS, NETWORK, OFFLINE
+	}
+
+	@Override
+	public void onLocationChanged(final Location location) {
+		logInfo("location: onLocationChanged");
+		dispatchGlobalEvent("update location to: " + location, OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
+			@Override
+			public void process(OnLocationUpdatedListener listener) {
+				listener.onLocationUpdated(location);
+			}
+		});
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		logInfo("location: onStatusChanged");
+	}
+
+	@Override
+	@SuppressWarnings("MissingPermission")
+	public void onProviderEnabled(String provider) {
+		logInfo("location: onProviderEnabled");
+		checkAndSetProviders();
+	}
+
+	@Override
+	@SuppressWarnings("MissingPermission")
+	public void onProviderDisabled(String provider) {
+		logInfo("location: onProviderDisabled");
+		checkAndSetProviders();
+	}
 
 	public interface OnLocationUpdatedListener {
 
@@ -51,7 +97,53 @@ public class LocationModule
 	}
 
 	@SuppressWarnings("MissingPermission")
-	public void updateCurrentLocation() {
+	private void checkAndSetProviders() {
+		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, this);
+			currentService = GPS;
+			disableLooper();
+		} else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, this);
+			currentService = NETWORK;
+			activateLooper();
+		} else {
+			if (currentService == GPS)
+				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, this);
+			currentService = OFFLINE;
+			activateLooper();
+		}
+	}
+
+	private Runnable locationUpdate = new Runnable() {
+		@Override
+		public void run() {
+			updateLastLocation();
+			postOnUI(minTime, this);
+		}
+	};
+
+	private void activateLooper() {
+		disableLooper();
+		postOnUI(1000, locationUpdate);
+	}
+
+	private void disableLooper() {
+		removeActionFromUI(locationUpdate);
+	}
+
+	@SuppressWarnings("MissingPermission")
+	public void initLocationServices(long minTime, float minDistance) {
+		this.minTime = minTime;
+		this.minDistance = minDistance;
+
+		checkAndSetProviders();
+		if (currentService == OFFLINE)
+			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, this);
+	}
+
+	@SuppressWarnings("MissingPermission")
+	public void updateLastLocation() {
+		logInfo("location: network/offline");
 		List<String> providers = locationManager.getProviders(true);
 		Location bestLocation = null;
 		for (String provider : providers) {

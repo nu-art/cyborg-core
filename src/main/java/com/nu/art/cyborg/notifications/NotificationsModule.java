@@ -47,9 +47,9 @@ public final class NotificationsModule
 		notificationManager = getSystemService(NotificationService);
 	}
 
+	@Deprecated
 	public final <Type extends NotificationHandler> void addNotificationHandler(Class<Type> handlerType) {
-		Type notificationHandler = createModuleItem(handlerType);
-		notificationHandlers.put(handlerType, notificationHandler);
+		logWarning("addNotificationHandler METHOD DOES NOTHING!!!");
 	}
 
 	@SuppressWarnings( {
@@ -57,7 +57,11 @@ public final class NotificationsModule
 												 "SuspiciousMethodCalls"
 										 })
 	public final <HandlerType extends NotificationHandler> HandlerType getNotificationHandler(Class<HandlerType> handlerType) {
-		return (HandlerType) notificationHandlers.get(handlerType);
+		HandlerType notificationHandler = (HandlerType) notificationHandlers.get(handlerType);
+		if (notificationHandler == null)
+			notificationHandlers.put(handlerType, notificationHandler = createModuleItem(handlerType));
+
+		return notificationHandler;
 	}
 
 	public final void disposeNotification(short notificationId) {
