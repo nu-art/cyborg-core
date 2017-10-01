@@ -28,7 +28,8 @@ public final class FontEditText
 		extends EditText {
 
 	public FontEditText(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
+		super(context, attrs);
+		CyborgBuilder.handleAttributes(this, context, attrs);
 	}
 
 	public FontEditText(Context context, AttributeSet attrs, int defStyle) {

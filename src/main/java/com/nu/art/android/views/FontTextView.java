@@ -28,11 +28,12 @@ public final class FontTextView
 		extends TextView {
 
 	public FontTextView(Context context) {
-		this(context, null);
+		super(context);
 	}
 
 	public FontTextView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
+		super(context, attrs);
+		CyborgBuilder.handleAttributes(this, context, attrs);
 	}
 
 	public FontTextView(Context context, AttributeSet attrs, int defStyle) {
