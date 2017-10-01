@@ -198,7 +198,7 @@ public final class CyborgStackController
 		}
 
 		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
-		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator[] stackTransitionAnimators) {
+		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
 			this.stackTransitionAnimator = stackTransitionAnimators;
 			return this;
 		}
@@ -234,6 +234,8 @@ public final class CyborgStackController
 		}
 
 		protected abstract void create();
+
+		public abstract void build();
 
 		void restoreState() {
 			if (controller == null)
