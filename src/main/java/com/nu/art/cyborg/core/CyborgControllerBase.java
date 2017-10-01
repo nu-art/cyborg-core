@@ -73,7 +73,7 @@ abstract class CyborgControllerBase
 		return activityBridge.getState();
 	}
 
-	protected final void setKeepInStack(boolean keepInStack) {
+	public final void setKeepInStack(boolean keepInStack) {
 		this.keepInStack = keepInStack;
 	}
 

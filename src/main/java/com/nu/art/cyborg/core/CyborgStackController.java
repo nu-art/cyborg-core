@@ -60,195 +60,6 @@ public final class CyborgStackController
 		void animateOut(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
 	}
 
-	public abstract class StackLayer {
-
-		private StackTransitionAnimator[] stackTransitionAnimator;
-
-		protected Processor<?> processor;
-
-		protected String refKey;
-
-		protected CyborgController controller;
-
-		protected CyborgController[] nestedControllers = {};
-
-		protected View rootView;
-
-		private Bundle stateBundle = new Bundle();
-
-		private int duration;
-
-		private boolean saveState;
-
-		private boolean keepBackground;
-
-		protected boolean keepInStack = true;
-
-		private StackLayer() {
-			if (defaultTransition != null) {
-				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
-				this.stackTransitionAnimator = new StackTransitionAnimator[]{transitionAnimator};
-			}
-		}
-
-		public void setStackTransitionAnimators(StackTransitionAnimator[] stackTransitionAnimators) {
-			this.stackTransitionAnimator = stackTransitionAnimators;
-		}
-
-		public void setRefKey(String refKey) {
-			this.refKey = refKey;
-		}
-
-		protected abstract void create();
-
-		public void restoreState() {
-			if (controller == null)
-				return;
-
-			if (!saveState)
-				return;
-
-			controller.onRestoreInstanceState(stateBundle);
-		}
-
-		public void detachView() {
-			getFrameRootView().removeView(rootView);
-			if (controller == null)
-				return;
-
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
-
-			controller = null;
-		}
-
-		public void saveState() {
-			stateBundle.clear();
-			if (controller == null)
-				return;
-
-			controller.onSaveInstanceState(stateBundle);
-		}
-
-		public void preDestroy() {}
-
-		public View getRootView() {
-			return rootView;
-		}
-
-		public void setDuration(int duration) {
-			this.duration = duration;
-		}
-
-		public int getDuration() {
-			return duration;
-		}
-
-		public void setSaveState(boolean saveState) {
-			this.saveState = saveState;
-		}
-
-		protected void setKeepBackground(boolean keepBackground) {
-			this.keepBackground = keepBackground;
-		}
-
-		public boolean isSaveState() {
-			return saveState;
-		}
-
-		public CyborgController getController() {
-			return controller;
-		}
-
-		private void addNestedController(CyborgController controller) {
-			nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
-		}
-
-		protected void setProcessor(Processor<?> processor) {
-			this.processor = processor;
-		}
-	}
-
-	private class StackLayoutLayer
-			extends StackLayer {
-
-		private final int layoutId;
-
-		private StackLayoutLayer(int layoutId) {
-			this.layoutId = layoutId;
-		}
-
-		@Override
-		protected void create() {
-			try {
-				rootView = inflater.inflate(this.layoutId, getFrameRootView(), false);
-			} catch (Exception e) {
-				Throwable t = getCauseError(e);
-				if (t instanceof RuntimeException)
-					throw (RuntimeException) t;
-				else
-					throw new RuntimeException("", t);
-			}
-			getFrameRootView().addView(rootView);
-
-			if (rootView instanceof CyborgView) {
-				controller = ((CyborgView) rootView).getController();
-				controller.setStateTag(refKey);
-
-				// the dispatchLifeCycleEvent for the onCreate is called from CyborgView
-			}
-		}
-
-		private Throwable getCauseError(Throwable e) {
-			if (e == null)
-				return null;
-
-			if (e instanceof InflateException || e instanceof InvocationTargetException)
-				return getCauseError(e.getCause());
-
-			return e;
-		}
-	}
-
-	private class StackControllerLayer
-			extends StackLayer {
-
-		private final Class<? extends CyborgController> controllerType;
-
-		private StackControllerLayer(Class<? extends CyborgController> controllerType) {
-			this.controllerType = controllerType;
-		}
-
-		@Override
-		protected void create() {
-			controller = ReflectiveTools.newInstance(controllerType);
-			if (refKey == null)
-				refKey = controller.getClass().getSimpleName();
-
-			CyborgActivityBridge activityBridge = getActivity().getBridge();
-			controller.setActivityBridge(activityBridge);
-			controller.setKeepInStack(keepInStack);
-
-			controller.setStateTag(refKey);
-			controller._createView(inflater, getFrameRootView(), false);
-			rootView = controller.getRootView();
-
-			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
-			getFrameRootView().addView(rootView);
-
-			controller.extractMembersImpl();
-			// xml attribute for root controller are handled in the handleAttributes method
-
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-
-			if (processor != null)
-				postCreateProcessController(processor, controller);
-
-			if (getState() == LifeCycleState.OnResume)
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
-		}
-	}
-
 	private LayoutInflater inflater;
 
 	private ArrayList<StackLayer> layersStack = new ArrayList<>();
@@ -355,105 +166,226 @@ public final class CyborgStackController
 		controller.handleAttributes(context, attrs);
 	}
 
-	public class StackLayerBuilder {
+	public abstract class StackLayer {
 
-		private StackTransitionAnimator[] stackTransitionAnimators;
+		private StackTransitionAnimator[] stackTransitionAnimator;
 
-		private String refKey;
+		protected Processor<?> processor;
+
+		protected String refKey;
+
+		protected CyborgController controller;
+
+		protected CyborgController[] nestedControllers = {};
+
+		protected View rootView;
+
+		private Bundle stateBundle = new Bundle();
+
+		private int duration = transitionDuration;
+
+		private boolean saveState;
+
+		private boolean keepBackground;
+
+		protected boolean keepInStack = true;
+
+		private StackLayer() {
+			if (defaultTransition != null) {
+				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
+				this.stackTransitionAnimator = new StackTransitionAnimator[]{transitionAnimator};
+			}
+		}
+
+		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
+		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator[] stackTransitionAnimators) {
+			this.stackTransitionAnimator = stackTransitionAnimators;
+			return this;
+		}
+
+		public final StackLayer setKeepInStack(boolean keepInStack) {
+			this.keepInStack = keepInStack;
+			return this;
+		}
+
+		public final StackLayer setRefKey(String refKey) {
+			this.refKey = refKey;
+			return this;
+		}
+
+		public final StackLayer setDuration(int duration) {
+			this.duration = duration;
+			return this;
+		}
+
+		public final StackLayer setSaveState(boolean saveState) {
+			this.saveState = saveState;
+			return this;
+		}
+
+		public final StackLayer setKeepBackground(boolean keepBackground) {
+			this.keepBackground = keepBackground;
+			return this;
+		}
+
+		public final StackLayer setProcessor(Processor<?> processor) {
+			this.processor = processor;
+			return this;
+		}
+
+		protected abstract void create();
+
+		void restoreState() {
+			if (controller == null)
+				return;
+
+			if (!saveState)
+				return;
+
+			controller.onRestoreInstanceState(stateBundle);
+		}
+
+		void detachView() {
+			getFrameRootView().removeView(rootView);
+			if (controller == null)
+				return;
+
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
+
+			controller = null;
+		}
+
+		void saveState() {
+			stateBundle.clear();
+			if (controller == null)
+				return;
+
+			controller.onSaveInstanceState(stateBundle);
+		}
+
+		void preDestroy() {}
+
+		public View getRootView() {
+			return rootView;
+		}
+
+		public int getDuration() {
+			return duration;
+		}
+
+		public boolean isSaveState() {
+			return saveState;
+		}
+
+		public CyborgController getController() {
+			return controller;
+		}
+
+		private void addNestedController(CyborgController controller) {
+			nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
+		}
+	}
+
+	public class StackLayerBuilder
+			extends StackLayer {
 
 		private Class<? extends CyborgController> controllerType;
 
 		private int layoutId = -1;
 
-		private boolean saveState;
-
-		private int duration = transitionDuration;
-
-		private Processor<?> processor;
-
-		private boolean keepInStack;
-
-		private boolean keepBackground;
-
-		public StackLayerBuilder setRefKey(String refKey) {
-			this.refKey = refKey;
-			return this;
+		@Override
+		protected void create() {
+			if (layoutId != -1)
+				createLayoutLayer();
+			else if (controllerType != null)
+				createControllerLayer();
+			else
+				throw new BadImplementationException("Stack Layer was not configured properly");
 		}
 
-		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
-		public StackLayerBuilder setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
-			this.stackTransitionAnimators = stackTransitionAnimators;
-			return this;
+		private void createControllerLayer() {
+			controller = ReflectiveTools.newInstance(controllerType);
+			if (refKey == null)
+				refKey = controller.getClass().getSimpleName();
+
+			CyborgActivityBridge activityBridge = getActivity().getBridge();
+			controller.setActivityBridge(activityBridge);
+			controller.setKeepInStack(keepInStack);
+
+			controller.setStateTag(refKey);
+			controller._createView(inflater, getFrameRootView(), false);
+			rootView = controller.getRootView();
+
+			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
+			getFrameRootView().addView(rootView);
+
+			controller.extractMembersImpl();
+			// xml attribute for root controller are handled in the handleAttributes method
+
+			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
+			if (processor != null)
+				postCreateProcessController(processor, controller);
+
+			if (getState() == LifeCycleState.OnResume)
+				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
 		}
 
-		public StackLayerBuilder setSaveState(boolean saveState) {
-			this.saveState = saveState;
-			return this;
+		private void createLayoutLayer() {
+			try {
+				rootView = inflater.inflate(this.layoutId, getFrameRootView(), false);
+			} catch (Exception e) {
+				Throwable t = getCauseError(e);
+				if (t instanceof RuntimeException)
+					throw (RuntimeException) t;
+				else
+					throw new RuntimeException("", t);
+			}
+			getFrameRootView().addView(rootView);
+
+			if (rootView instanceof CyborgView) {
+				controller = ((CyborgView) rootView).getController();
+				controller.setStateTag(refKey);
+
+				// the dispatchLifeCycleEvent for the onCreate is called from CyborgView
+			}
 		}
 
-		public StackLayerBuilder setKeepInStack(boolean keepInStack) {
-			this.keepInStack = keepInStack;
-			return this;
+		private Throwable getCauseError(Throwable e) {
+			if (e == null)
+				return null;
+
+			if (e instanceof InflateException || e instanceof InvocationTargetException)
+				return getCauseError(e.getCause());
+
+			return e;
 		}
 
 		public StackLayerBuilder setControllerType(Class<? extends CyborgController> controllerType) {
 			if (layoutId != -1)
 				throw new BadImplementationException("Already set layoutId, cannot also set controllerType");
+
 			this.controllerType = controllerType;
+			if (refKey == null)
+				refKey = controllerType.getSimpleName();
+
 			return this;
 		}
 
 		public StackLayerBuilder setLayoutId(int layoutId) {
 			if (controllerType != null)
 				throw new BadImplementationException("Already set controller type, cannot also set layoutId");
+
 			this.layoutId = layoutId;
 			return this;
 		}
 
-		public StackLayerBuilder setDuration(int duration) {
-			this.duration = duration;
-			return this;
-		}
-
-		public StackLayerBuilder setKeepBackground(boolean keepBackground) {
-			this.keepBackground = keepBackground;
-			return this;
-		}
-
-		public StackLayerBuilder setProcessor(Processor<?> processor) {
-			this.processor = processor;
-			return this;
-		}
-
 		public final void build() {
-			StackLayer layerToBeAdded = null;
-
-			if (layoutId != -1)
-				layerToBeAdded = new StackLayoutLayer(layoutId);
-
-			if (controllerType != null)
-				layerToBeAdded = new StackControllerLayer(controllerType);
-
-			if (layerToBeAdded == null)
-				throw new ImplementationMissingException("MUST specify a layoutId or a controllerType");
-
 			if (refKey == null)
-				if (controllerType != null)
-					refKey = controllerType.getSimpleName();
-				else
-					throw new ImplementationMissingException("MUST specify a refKey when using a layoutId");
+				throw new ImplementationMissingException("MUST specify a refKey when using a layoutId");
 
-			layerToBeAdded.setRefKey(refKey);
-
-			if (stackTransitionAnimators != null)
-				layerToBeAdded.setStackTransitionAnimators(stackTransitionAnimators);
-
-			layerToBeAdded.setDuration(duration);
-			layerToBeAdded.setSaveState(saveState);
-			layerToBeAdded.setKeepBackground(keepBackground);
-
-			layerToBeAdded.setProcessor(processor);
-			push(layerToBeAdded);
+			push(this);
 		}
 	}
 
