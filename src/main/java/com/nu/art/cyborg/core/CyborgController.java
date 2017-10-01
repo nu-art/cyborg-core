@@ -359,13 +359,14 @@ public abstract class CyborgController
 	}
 
 	final void onRestoreInstanceState(Bundle inState) {
-		CyborgStateInjector stateInjector = new CyborgStateInjector(stateTag, inState);
-		stateInjector.injectToInstance(this);
-		onPostRestoredState();
-		onRestoreComplexObjectState(inState);
-
-		SparseArray<Parcelable> viewState = inState.getSparseParcelableArray("rootView");
-		getRootView().restoreHierarchyState(viewState);
+		// TODO: 01/10/2017 This method caused a crash in the app after changing the device language while the app was open in the bg. 'inState' was null.
+//		CyborgStateInjector stateInjector = new CyborgStateInjector(stateTag, inState);
+//		stateInjector.injectToInstance(this);
+//		onPostRestoredState();
+//		onRestoreComplexObjectState(inState);
+//
+//		SparseArray<Parcelable> viewState = inState.getSparseParcelableArray("rootView");
+//		getRootView().restoreHierarchyState(viewState);
 	}
 
 	protected void onPreSaveState() {}
