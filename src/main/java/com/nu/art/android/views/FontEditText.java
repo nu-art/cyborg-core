@@ -23,34 +23,16 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 
 import com.nu.art.cyborg.core.CyborgBuilder;
-import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.modules.AttributeModule;
 
 public final class FontEditText
 		extends EditText {
 
+	public FontEditText(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
+	}
+
 	public FontEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		setFonts(context, attrs);
-	}
-
-	public FontEditText(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		setFonts(context, attrs);
-	}
-
-	private void setFonts(Context context, AttributeSet attrs) {
-		Cyborg cyborg;
-		try {
-			cyborg = CyborgBuilder.getInstance();
-		} catch (Exception e) {
-			return;
-		}
-
-		if (cyborg == null)
-			return;
-
-		AttributeModule attributesManager = cyborg.getModule(AttributeModule.class);
-		attributesManager.setAttributes(context, attrs, this);
+		CyborgBuilder.handleAttributes(this, context, attrs);
 	}
 }
