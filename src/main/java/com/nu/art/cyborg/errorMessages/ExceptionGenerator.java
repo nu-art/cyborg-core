@@ -18,9 +18,11 @@
 
 package com.nu.art.cyborg.errorMessages;
 
+import android.app.Service;
 import android.view.View;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.common.consts.ViewListener;
 import com.nu.art.cyborg.core.CyborgController;
 
@@ -102,6 +104,11 @@ public class ExceptionGenerator {
 	}
 
 	public static BadImplementationException errorWhileAssigningListenerToView(Exception e) {
-		throw new BadImplementationException("Error while assigning listener to view", e);
+		return new BadImplementationException("Error while assigning listener to view", e);
+	}
+
+	public static ImplementationMissingException developerDidNotAddTheServiceToTheManifest(Class<? extends Service> serviceType) {
+		String message = "<service android:name=\"" + serviceType.getName() + "\"/>";
+		return new ImplementationMissingException("It might be that you didn't add the service to your manifest:\n\n   " + message);
 	}
 }
