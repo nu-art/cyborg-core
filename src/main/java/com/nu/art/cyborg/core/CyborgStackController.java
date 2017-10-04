@@ -200,7 +200,6 @@ public final class CyborgStackController
 
 		public abstract StackLayer setLayoutId(int layoutId);
 
-		public abstract void build();
 
 		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
 		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
