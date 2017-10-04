@@ -64,7 +64,7 @@ public final class CyborgStackController
 
 	private ArrayList<StackLayer> layersStack = new ArrayList<>();
 
-	private RelativeLayout frameLayout;
+	private RelativeLayout containerLayout;
 
 	private Class<? extends CyborgController> rootControllerType;
 
@@ -138,9 +138,9 @@ public final class CyborgStackController
 
 	@Override
 	protected View createCustomView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
-		this.frameLayout = new RelativeLayout(parent.getContext());
-		parent.addView(frameLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		return frameLayout;
+//		this.containerLayout = new RelativeLayout(parent.getContext());
+//		parent.addView(containerLayout);
+		return this.containerLayout = (RelativeLayout) parent;
 	}
 
 	@Override
@@ -176,7 +176,6 @@ public final class CyborgStackController
 
 		protected CyborgController controller;
 
-		protected CyborgController[] nestedControllers = {};
 
 		protected View rootView;
 
@@ -196,6 +195,12 @@ public final class CyborgStackController
 				this.stackTransitionAnimator = new StackTransitionAnimator[]{transitionAnimator};
 			}
 		}
+
+		public abstract StackLayer setControllerType(Class<? extends CyborgController> controllerType);
+
+		public abstract StackLayer setLayoutId(int layoutId);
+
+		public abstract void build();
 
 		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
 		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator[] stackTransitionAnimators) {
@@ -252,7 +257,7 @@ public final class CyborgStackController
 
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
-
+			removeNestedController(controller);
 			controller = null;
 		}
 
@@ -282,9 +287,6 @@ public final class CyborgStackController
 			return controller;
 		}
 
-		private void addNestedController(CyborgController controller) {
-			nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
-		}
 	}
 
 	public class StackLayerBuilder
@@ -330,6 +332,8 @@ public final class CyborgStackController
 
 			if (getState() == LifeCycleState.OnResume)
 				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
+
+			CyborgStackController.this.addNestedController(controller);
 		}
 
 		private void createLayoutLayer() {
@@ -394,7 +398,7 @@ public final class CyborgStackController
 	}
 
 	private RelativeLayout getFrameRootView() {
-		return frameLayout;
+		return containerLayout;
 	}
 
 	public void popUntil(String refKey) {

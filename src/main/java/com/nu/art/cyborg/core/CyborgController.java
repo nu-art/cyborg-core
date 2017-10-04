@@ -245,7 +245,7 @@ public abstract class CyborgController
 
 		if (!(view instanceof ViewGroup))
 			throw new BadImplementationException("The provided viewId is to a " + view.getClass()
-																																								.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
+					.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
 
 		((ViewGroup) view).removeAllViews();
 		((ViewGroup) view).addView(viewToInject);
@@ -312,13 +312,9 @@ public abstract class CyborgController
 
 	protected void onCreate() {}
 
-	protected void onStart() {}
-
 	protected void onResume() {}
 
 	protected void onPause() {}
-
-	protected void onStop() {}
 
 	protected void onDestroy() {}
 
@@ -534,7 +530,19 @@ public abstract class CyborgController
 		nestedControllers = ArrayTools.appendElement(nestedControllers, controller);
 	}
 
+	final void removeNestedController(CyborgController controller) {
+		nestedControllers = ArrayTools.removeElement(nestedControllers, controller);
+	}
+
 	public void setVisibility(int visibility) {
 		rootView.setVisibility(visibility);
+	}
+
+	public int getVisibility() {
+		return rootView.getVisibility();
+	}
+
+	public void invalidateView() {
+		rootView.invalidate();
 	}
 }
