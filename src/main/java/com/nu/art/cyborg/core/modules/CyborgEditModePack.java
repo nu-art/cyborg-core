@@ -24,6 +24,7 @@ import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
 import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.custom.FontTypeSetter;
+import com.nu.art.cyborg.ui.views.SquareView.SquareViewSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
@@ -45,6 +46,7 @@ public class CyborgEditModePack
 
 	@Override
 	protected void init() {
+		getModule(AttributeModule.class).registerAttributesSetter(SquareViewSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(FontTypeSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(CyborgViewSetter.class);
 		getModule(AttributeModule.class).registerAttributesSetter(CyborgViewPagerSetter.class);

@@ -23,38 +23,22 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.nu.art.cyborg.core.CyborgBuilder;
-import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.modules.AttributeModule;
 
 public final class FontTextView
 		extends TextView {
-
-	public FontTextView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		setFonts(context, attrs);
-	}
-
-	public FontTextView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		setFonts(context, attrs);
-	}
 
 	public FontTextView(Context context) {
 		super(context);
 	}
 
-	private void setFonts(Context context, AttributeSet attrs) {
-		Cyborg cyborg;
-		try {
-			cyborg = CyborgBuilder.getInstance();
-		} catch (Exception e) {
-			return;
-		}
+	public FontTextView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		CyborgBuilder.handleAttributes(this, context, attrs);
+	}
 
-		if (cyborg == null)
-			return;
-
-		AttributeModule attributesManager = cyborg.getModule(AttributeModule.class);
-		attributesManager.setAttributes(context, attrs, this);
+	public FontTextView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		CyborgBuilder.handleAttributes(this, context, attrs);
 	}
 }
+

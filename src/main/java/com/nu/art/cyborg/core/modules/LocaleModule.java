@@ -18,8 +18,13 @@
 
 package com.nu.art.cyborg.core.modules;
 
+import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.util.DisplayMetrics;
 
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModule;
 
 import java.util.Locale;
@@ -29,7 +34,7 @@ public class LocaleModule
 
 	public interface SupportedLocale {
 
-		Locale getLocale();
+		Locale getLanguage();
 	}
 
 	private static final SupportedLocale DefaultLanguage = LanguageLocale.English;
@@ -57,7 +62,7 @@ public class LocaleModule
 			this.localeString = localeString;
 		}
 
-		public Locale getLocale() {
+		public Locale getLanguage() {
 			String[] localeParams = localeString.split("_");
 			if (localeParams.length == 1)
 				return new Locale(localeParams[0]);
@@ -74,8 +79,27 @@ public class LocaleModule
 
 	public final void changeApplicationLocale(SupportedLocale newLocale) {
 		Resources res = getResources();
-		android.content.res.Configuration conf = res.getConfiguration();
-		conf.setLocale(newLocale.getLocale());
-		getApplicationContext().createConfigurationContext(conf);
+		Configuration conf = res.getConfiguration();
+		final Locale locale = newLocale.getLanguage();
+		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+			conf.setLocale(locale);
+			getApplicationContext().createConfigurationContext(conf);
+			return;
+		}
+
+		DisplayMetrics dm = res.getDisplayMetrics();
+		conf.locale = locale;
+		res.updateConfiguration(conf, dm);
+		dispatchModuleEvent("Changed the Locale to: " + locale, OnLocaleChangedListener.class, new Processor<OnLocaleChangedListener>() {
+			@Override
+			public void process(OnLocaleChangedListener listener) {
+				listener.onLocaleChanged(locale);
+			}
+		});
+	}
+
+	private interface OnLocaleChangedListener {
+
+		void onLocaleChanged(Locale locale);
 	}
 }

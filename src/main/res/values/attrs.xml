@@ -69,6 +69,11 @@
         <attr name="horizontalSpacing" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="SquareView">
+        <attr name="heightRatio" format="integer"/>
+        <attr name="widthRatio" format="integer"/>
+    </declare-styleable>
+
     <declare-styleable name="ViewPager">
         <attr name="scrollIntervalMS" format="integer"/>
         <attr name="blockUserSwiping" format="boolean"/>

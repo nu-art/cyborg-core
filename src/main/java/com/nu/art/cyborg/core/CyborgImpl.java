@@ -55,6 +55,7 @@ import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.modules.AndroidLogClient;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.modular.core.Module;
@@ -435,7 +436,9 @@ final class CyborgImpl
 
 	@Override
 	public void startService(Class<? extends Service> serviceType) {
-		getApplicationContext().startService(new Intent(getApplicationContext(), serviceType));
+		ComponentName componentName = getApplicationContext().startService(new Intent(getApplicationContext(), serviceType));
+		if (componentName == null)
+			throw ExceptionGenerator.developerDidNotAddTheServiceToTheManifest(serviceType);
 	}
 
 	@Override

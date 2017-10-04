@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core.abs;
 
 import android.os.Handler;
+import android.support.annotation.AnimRes;
 import android.view.animation.Animation;
 
 import com.nu.art.core.generics.Processor;
@@ -90,5 +91,5 @@ public interface _UI {
 	 *
 	 * @return an instance of the animation.
 	 */
-	Animation loadAnimation(int animationId);
+	Animation loadAnimation(@AnimRes int animationId);
 }

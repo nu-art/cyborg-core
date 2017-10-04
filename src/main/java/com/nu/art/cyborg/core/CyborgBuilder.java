@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core;
 
 import android.content.Context;
 import android.os.Looper;
+import android.util.AttributeSet;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
@@ -27,6 +28,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.modules.CyborgBasePack;
 import com.nu.art.cyborg.core.modules.CyborgEditModePack;
+import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
 
@@ -93,6 +95,21 @@ public final class CyborgBuilder {
 
 	private CyborgBuilder() {
 		throw new BadImplementationException("Stateless static");
+	}
+
+	public static void handleAttributes(Object object, Context context, AttributeSet attrs) {
+		if (attrs == null)
+			return;
+
+		Cyborg cyborg;
+		try {
+			cyborg = CyborgBuilder.getInstance();
+		} catch (Exception e) {
+			return;
+		}
+
+		AttributeModule attributesManager = cyborg.getModule(AttributeModule.class);
+		attributesManager.setAttributes(context, attrs, object);
 	}
 
 	public static <ModuleType extends Module> ModuleType getModule(Context context, Class<ModuleType> moduleType) {

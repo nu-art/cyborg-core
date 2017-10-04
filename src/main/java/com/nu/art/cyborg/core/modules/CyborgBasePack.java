@@ -29,6 +29,7 @@ import com.nu.art.cyborg.modules.ImageUtilsModule;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.cyborg.modules.custom.FontTypeSetter;
+import com.nu.art.cyborg.ui.views.SquareView.SquareViewSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
@@ -60,6 +61,7 @@ public class CyborgBasePack
 	@Override
 	protected final void init() {
 		AttributeModule attributeModule = getModule(AttributeModule.class);
+		attributeModule.registerAttributesSetter(SquareViewSetter.class);
 		attributeModule.registerAttributesSetter(FontTypeSetter.class);
 		attributeModule.registerAttributesSetter(CyborgViewSetter.class);
 		attributeModule.registerAttributesSetter(CyborgViewPagerSetter.class);

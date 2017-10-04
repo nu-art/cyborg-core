@@ -22,7 +22,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.view.KeyEvent;
@@ -609,6 +613,13 @@ abstract class CyborgControllerBase
 	@Override
 	public final Resources getResources() {
 		return cyborg.getResources();
+	}
+
+	public Drawable getDrawable(@DrawableRes int drawableId) {
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			return getResources().getDrawable(drawableId, getActivity().getTheme());
+		}
+		return getResources().getDrawable(drawableId);
 	}
 
 	@Override
