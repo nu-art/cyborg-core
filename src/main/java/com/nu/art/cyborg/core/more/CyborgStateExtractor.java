@@ -58,7 +58,7 @@ public final class CyborgStateExtractor
 
 	@Override
 	protected final Field[] extractFieldsFromInstance(Class<?> controllerType) {
-		return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, Object.class, annotationType, annotationType);
+		return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, Object.class, null, annotationType);
 	}
 
 	@Override

@@ -267,7 +267,10 @@ public abstract class CyborgController
 	 */
 	public void handleAttributes(Context context, AttributeSet attrs) {
 		getModule(AttributeModule.class).setAttributes(context, attrs, this);
+		onReady();
 	}
+
+	protected void onReady() {}
 
 	final void dispatchLifeCycleEvent(LifeCycleState newState) {
 		if (newState == state)
@@ -346,8 +349,8 @@ public abstract class CyborgController
 
 		onPreSaveState();
 		onSaveComplexObjectState(outState);
-		CyborgStateExtractor stateInjector = new CyborgStateExtractor(stateTag, outState);
-		stateInjector.extractFromInstance(this);
+		CyborgStateExtractor stateExtractor = new CyborgStateExtractor(stateTag, outState);
+		stateExtractor.extractFromInstance(this);
 
 		SparseArray<Parcelable> viewState = new SparseArray<>();
 		rootView.saveHierarchyState(viewState);
@@ -355,15 +358,22 @@ public abstract class CyborgController
 	}
 
 	final void onRestoreInstanceState(Bundle inState) {
-		// TODO: 01/10/2017 This method caused a crash in the app after changing the device language while the app was open in the bg. 'inState' was null.
-//		CyborgStateInjector stateInjector = new CyborgStateInjector(stateTag, inState);
-//		stateInjector.injectToInstance(this);
-//		onPostRestoredState();
-//		onRestoreComplexObjectState(inState);
-//
-//		SparseArray<Parcelable> viewState = inState.getSparseParcelableArray("rootView");
-//		getRootView().restoreHierarchyState(viewState);
+		// TODO: 01/10/2017 This method caused a crash in the app after changing the device language while the app was open in the bg. 'viewState' was null.
+		CyborgStateInjector stateInjector = new CyborgStateInjector(stateTag, inState);
+		stateInjector.injectToInstance(this);
+		onPostRestoredState();
+		onRestoreComplexObjectState(inState);
+
+		SparseArray<Parcelable> viewState = inState.getSparseParcelableArray("rootView");
+		if (viewState == null) {
+			return;
+		}
+
+		getRootView().restoreHierarchyState(viewState);
+		onControllerRestored();
 	}
+
+	protected void onControllerRestored() {}
 
 	protected void onPreSaveState() {}
 

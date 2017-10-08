@@ -27,7 +27,6 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.Animation;
@@ -37,7 +36,6 @@ import android.widget.RelativeLayout;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
-import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
@@ -70,6 +68,8 @@ public final class CyborgStackController
 
 	private int rootLayoutId = -1;
 
+	private boolean rootSaveState = false;
+
 	private String rootTag;
 
 	private int transitionDuration = 300;
@@ -90,31 +90,35 @@ public final class CyborgStackController
 		super(-1);
 	}
 
-	void setRootControllerType(Class<? extends CyborgController> rootControllerType) {
+	final void setRootSaveState(boolean rootSaveState) {
+		this.rootSaveState = rootSaveState;
+	}
+
+	final void setRootControllerType(Class<? extends CyborgController> rootControllerType) {
 		this.rootControllerType = rootControllerType;
 	}
 
-	void setRootTag(String rootTag) {
+	final void setRootTag(String rootTag) {
 		this.rootTag = rootTag;
 	}
 
-	void setRootLayoutId(int rootLayoutId) {
+	final void setRootLayoutId(int rootLayoutId) {
 		this.rootLayoutId = rootLayoutId;
 	}
 
-	void setPopOnBackPress(boolean popOnBackPress) {
+	final void setPopOnBackPress(boolean popOnBackPress) {
 		this.popOnBackPress = popOnBackPress;
 	}
 
-	void setDefaultTransition(PredefinedTransitions defaultTransition) {
+	final void setDefaultTransition(PredefinedTransitions defaultTransition) {
 		this.defaultTransition = defaultTransition;
 	}
 
-	void setDefaultTransitionOrientation(int defaultTransitionOrientation) {
+	final void setDefaultTransitionOrientation(int defaultTransitionOrientation) {
 		this.defaultTransitionOrientation = defaultTransitionOrientation;
 	}
 
-	void setTransitionDuration(int transitionDuration) {
+	final void setTransitionDuration(int transitionDuration) {
 		this.transitionDuration = transitionDuration;
 	}
 
@@ -131,15 +135,15 @@ public final class CyborgStackController
 		if (rootControllerType != null)
 			layerBuilder.setControllerType(rootControllerType);
 
-		layerBuilder.setSaveState(false);
+		layerBuilder.setSaveState(rootSaveState);
 		withRoot = true;
 		layerBuilder.build();
 	}
 
 	@Override
 	protected View createCustomView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
-//		this.containerLayout = new RelativeLayout(parent.getContext());
-//		parent.addView(containerLayout);
+		//		this.containerLayout = new RelativeLayout(parent.getContext());
+		//		parent.addView(containerLayout);
 		return this.containerLayout = (RelativeLayout) parent;
 	}
 
@@ -176,7 +180,6 @@ public final class CyborgStackController
 
 		protected CyborgController controller;
 
-
 		protected View rootView;
 
 		private Bundle stateBundle = new Bundle();
@@ -199,7 +202,6 @@ public final class CyborgStackController
 		public abstract StackLayer setControllerType(Class<? extends CyborgController> controllerType);
 
 		public abstract StackLayer setLayoutId(int layoutId);
-
 
 		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
 		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
@@ -263,6 +265,9 @@ public final class CyborgStackController
 		}
 
 		void saveState() {
+			if (!saveState)
+				return;
+
 			stateBundle.clear();
 			if (controller == null)
 				return;
@@ -287,7 +292,6 @@ public final class CyborgStackController
 		public CyborgController getController() {
 			return controller;
 		}
-
 	}
 
 	public class StackLayerBuilder
@@ -327,6 +331,8 @@ public final class CyborgStackController
 			// xml attribute for root controller are handled in the handleAttributes method
 
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
+			restoreState();
 
 			if (processor != null)
 				postCreateProcessController(processor, controller);
@@ -482,7 +488,6 @@ public final class CyborgStackController
 		final StackLayer originLayerToBeRestored = targetLayerToBeRemove.keepBackground ? null : getTopLayer();
 		if (originLayerToBeRestored != null) {
 			originLayerToBeRestored.create();
-			originLayerToBeRestored.restoreState();
 		}
 
 		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeRemove.stackTransitionAnimator;
@@ -565,9 +570,7 @@ public final class CyborgStackController
 		if (layerToBeDisposed == null)
 			return;
 
-		if (layerToBeDisposed.saveState) {
-			layerToBeDisposed.saveState();
-		}
+		layerToBeDisposed.saveState();
 
 		if (layerToBeDisposed.controller != null && !layerToBeDisposed.controller.keepInStack)
 			layersStack.remove(layerToBeDisposed);

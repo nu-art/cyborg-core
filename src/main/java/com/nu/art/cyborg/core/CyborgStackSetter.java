@@ -21,9 +21,9 @@ package com.nu.art.cyborg.core;
 import android.content.res.TypedArray;
 
 import com.nu.art.cyborg.R;
-import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
+import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
 
 /**
@@ -34,13 +34,22 @@ public class CyborgStackSetter
 		extends AttributesSetter<CyborgStackController> {
 
 	private static int[] ids = {//
-			R.styleable.StackController_transition,//
-			R.styleable.StackController_transitionOrientation,//
-			R.styleable.StackController_transitionDuration,//
-			R.styleable.StackController_popOnBackPress,//
-			R.styleable.StackController_rootLayoutId,//
-			R.styleable.StackController_rootController,//
-			R.styleable.StackController_rootTag};
+			R.styleable.StackController_transition,
+			//
+			R.styleable.StackController_transitionOrientation,
+			//
+			R.styleable.StackController_transitionDuration,
+			//
+			R.styleable.StackController_popOnBackPress,
+			//
+			R.styleable.StackController_rootLayoutId,
+			//
+			R.styleable.StackController_rootSaveState,
+			//
+			R.styleable.StackController_rootController,
+			//
+			R.styleable.StackController_rootTag
+	};
 
 	private CyborgStackSetter() {
 		super(CyborgStackController.class, R.styleable.StackController, ids);
@@ -69,6 +78,12 @@ public class CyborgStackSetter
 				return;
 
 			instance.setTransitionDuration(duration);
+			return;
+		}
+
+		if (attr == R.styleable.StackController_rootSaveState) {
+			boolean saveState = a.getBoolean(attr, true);
+			instance.setRootSaveState(saveState);
 			return;
 		}
 

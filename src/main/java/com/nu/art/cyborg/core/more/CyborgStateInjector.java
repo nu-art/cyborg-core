@@ -74,7 +74,7 @@ public final class CyborgStateInjector
 
 	@Override
 	protected final Field[] extractFieldsFromInstance(Class<?> injecteeType) {
-		return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(injecteeType, Object.class, annotationType, annotationType);
+		return ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(injecteeType, Object.class, null, annotationType);
 	}
 
 	@Override

@@ -51,6 +51,7 @@
         <attr name="transitionDuration" format="integer"/>
         <attr name="popOnBackPress" format="boolean"/>
         <attr name="rootLayoutId" format="reference"/>
+        <attr name="rootSaveState" format="boolean"/>
         <attr name="rootController" format="string"/>
         <attr name="rootTag" format="string"/>
     </declare-styleable>
