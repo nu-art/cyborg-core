@@ -316,6 +316,7 @@ public final class CyborgStackController
 			if (refKey == null)
 				refKey = controller.getClass().getSimpleName();
 
+//			if(CyborgBuilder.getInEditMode())
 			CyborgActivityBridge activityBridge = getActivity().getBridge();
 			controller.setActivityBridge(activityBridge);
 			controller.setKeepInStack(keepInStack);
