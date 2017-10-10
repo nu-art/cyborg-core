@@ -112,10 +112,12 @@ public final class CyborgBuilder {
 		attributesManager.setAttributes(context, attrs, object);
 	}
 
+	@Deprecated
 	public static <ModuleType extends Module> ModuleType getModule(Context context, Class<ModuleType> moduleType) {
 		return getCyborg(context).getModule(moduleType);
 	}
 
+	@Deprecated
 	public static <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
 		return getInstance().getModule(moduleType);
 	}
