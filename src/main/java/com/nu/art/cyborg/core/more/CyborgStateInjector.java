@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core.more;
 
 import android.os.Bundle;
+import android.os.Debug;
 
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.exceptions.runtime.NotImplementedYetException;
@@ -79,11 +80,15 @@ public final class CyborgStateInjector
 
 	@Override
 	@SuppressWarnings("unchecked")
-	protected Object getValueFromAnnotationAndField(Object instance, Restorable annotation, Field field) {
+	protected Object getValueFromAnnotationAndField(Object value, Restorable annotation, Field field) {
 		Class<?> fieldType = ReflectiveTools.getBoxedType(field.getType());
 		String key = annotation.key();
 		if (key.length() == 0)
 			key = keyPrefix + field.getName();
+
+		if(!data.containsKey(key))
+			return value;
+
 
 		if (annotation.parserType() != TypeParser.class)
 			return deserializeWithParser(annotation, fieldType, annotation.parserType(), data, key);

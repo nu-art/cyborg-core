@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -77,6 +78,7 @@ public class CyborgView
 		super(activity);
 		this.controller=ReflectiveTools.newInstance(controllerType);
 		initController();
+		controller.onReady();
 	}
 
 	public CyborgView(Context context, AttributeSet attrs) {
@@ -86,6 +88,7 @@ public class CyborgView
 	public CyborgView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		initController(attrs, defStyle);
+		controller.onReady();
 	}
 
 	private Cyborg resolveCyborg() {
@@ -137,6 +140,7 @@ public class CyborgView
 		controller.extractMembersImpl();
 
 		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+
 	}
 
 	final void initController(AttributeSet attrs, int defStyle) {

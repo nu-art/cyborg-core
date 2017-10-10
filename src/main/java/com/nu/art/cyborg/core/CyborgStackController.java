@@ -136,6 +136,7 @@ public final class CyborgStackController
 			layerBuilder.setControllerType(rootControllerType);
 
 		layerBuilder.setSaveState(rootSaveState);
+		layerBuilder.fromXml = true;
 		withRoot = true;
 		layerBuilder.build();
 	}
@@ -168,6 +169,7 @@ public final class CyborgStackController
 			return;
 
 		controller.handleAttributes(context, attrs);
+		controller.onReady();
 	}
 
 	public abstract class StackLayer {
@@ -301,6 +303,8 @@ public final class CyborgStackController
 
 		private int layoutId = -1;
 
+		private boolean fromXml;
+
 		@Override
 		protected void create() {
 			if (layoutId != -1)
@@ -316,7 +320,7 @@ public final class CyborgStackController
 			if (refKey == null)
 				refKey = controller.getClass().getSimpleName();
 
-//			if(CyborgBuilder.getInEditMode())
+			//			if(CyborgBuilder.getInEditMode())
 			CyborgActivityBridge activityBridge = getActivity().getBridge();
 			controller.setActivityBridge(activityBridge);
 			controller.setKeepInStack(keepInStack);
@@ -333,10 +337,16 @@ public final class CyborgStackController
 
 			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
 
-			restoreState();
-
+			// ARE THESE TWO ACTIONS DEPEND ON ONE ANOTHER, IN ANY CONFIGURATION???
 			if (processor != null)
 				postCreateProcessController(processor, controller);
+
+			restoreState();
+
+			// JUST FOR THE RECORD... I HATE THIS CONDITION>> (Adam)
+			if (!fromXml)
+				controller.onReady();
+			// --------------------------------------------------------------------
 
 			if (getState() == LifeCycleState.OnResume)
 				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);

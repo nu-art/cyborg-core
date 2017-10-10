@@ -267,7 +267,6 @@ public abstract class CyborgController
 	 */
 	public void handleAttributes(Context context, AttributeSet attrs) {
 		getModule(AttributeModule.class).setAttributes(context, attrs, this);
-		onReady();
 	}
 
 	protected void onReady() {}
