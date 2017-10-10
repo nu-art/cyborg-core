@@ -26,6 +26,7 @@ import android.os.Parcelable;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -250,6 +251,21 @@ public abstract class CyborgController
 		((ViewGroup) view).removeAllViews();
 		((ViewGroup) view).addView(viewToInject);
 		return (ControllerType) viewToInject.getController();
+	}
+
+	protected final void injectLayout(@IdRes int parentViewId, @LayoutRes int layoutId) {
+		ViewGroup parentView = getViewById(parentViewId);
+		parentView.removeAllViews();
+		try {
+			getLayoutInflater().inflate(layoutId, parentView, true);
+		} catch (Throwable e) {
+			while (e.getCause() != null) {
+				e = e.getCause();
+			}
+			Log.e("CYBORG", "As Android's exception handling is crappy, here is the reason for the failure: ", e);
+			//noinspection ConstantConditions
+			throw (RuntimeException) e;
+		}
 	}
 
 	/**
