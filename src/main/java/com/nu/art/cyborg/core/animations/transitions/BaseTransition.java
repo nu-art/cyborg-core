@@ -19,15 +19,33 @@
 package com.nu.art.cyborg.core.animations.transitions;
 
 import android.content.Context;
+import android.support.annotation.IntDef;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
 /**
  * Created by TacB0sS on 27-Jul 2015.
  */
 public abstract class BaseTransition
 		extends Animation {
+
+	@Documented
+	@Retention(CLASS)
+	@Target( {PARAMETER, FIELD, LOCAL_VARIABLE})
+	@IntDef( {ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL})
+	public @interface TransitionOrientation {
+	}
 
 	public interface BaseTransitionHelper {
 

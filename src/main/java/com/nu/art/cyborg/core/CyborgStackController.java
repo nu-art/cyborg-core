@@ -169,7 +169,6 @@ public final class CyborgStackController
 			return;
 
 		controller.handleAttributes(context, attrs);
-		controller.onReady();
 	}
 
 	public abstract class StackLayer {
@@ -343,7 +342,7 @@ public final class CyborgStackController
 
 			restoreState();
 
-			// JUST FOR THE RECORD... I HATE THIS CONDITION>> (Adam)
+			// JUST FOR THE RECORD... I HATE THIS CONDITION>> ()
 			if (!fromXml)
 				controller.onReady();
 			// --------------------------------------------------------------------
