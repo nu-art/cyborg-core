@@ -22,8 +22,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.support.annotation.NonNull;
 
-import com.nu.art.core.generics.Function;
 import com.nu.art.core.interfaces.Getter;
+import com.nu.art.core.interfaces.Serializer;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 
@@ -421,7 +421,7 @@ public final class PreferencesModule
 			}
 
 			try {
-				cache = (ItemType) serializer.mapRev(itemType, value);
+				cache = (ItemType) serializer.deserialize(value, itemType);
 			} catch (Exception e) {
 				logError("Error while deserializing item type: " + itemType + ", probably changed class structure... returning null", e);
 				cache = null;
@@ -433,7 +433,7 @@ public final class PreferencesModule
 		}
 
 		public void set(ItemType value) {
-			String valueAsString = value == null ? null : serializer.map(value);
+			String valueAsString = value == null ? null : serializer.serialize(value);
 			cache = value;
 			key.set(valueAsString);
 		}
