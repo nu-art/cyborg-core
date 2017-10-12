@@ -28,6 +28,7 @@ import com.nu.art.cyborg.core.CyborgStackController.StackLayer;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.BaseTransitionHelper;
+import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
 
 /**
@@ -44,11 +45,15 @@ public class PredefinedStackTransitionAnimator
 
 	private Animation inTarget;
 
-	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, int orientation) {
+	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper) {
+		this(context, transitionHelper, BaseTransition.ORIENTATION_HORIZONTAL);
+	}
+
+	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, @TransitionOrientation int orientation) {
 		this(context, transitionHelper, orientation, false);
 	}
 
-	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, int orientation, boolean reverse) {
+	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, @TransitionOrientation int orientation, boolean reverse) {
 		if (orientation != BaseTransition.ORIENTATION_HORIZONTAL && orientation != BaseTransition.ORIENTATION_VERTICAL)
 			throw new BadImplementationException("wrong orientation type... = " + orientation);
 

@@ -44,6 +44,11 @@ import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.common.utils.BusyState;
 import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
+import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
+import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
+import com.nu.art.cyborg.core.animations.PredefinedTransitions;
+import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
+import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
@@ -550,6 +555,14 @@ public abstract class CyborgController
 
 	protected final StackLayerBuilder createNewLayerBuilder() {
 		return getStack().createLayerBuilder();
+	}
+
+	protected final StackTransitionAnimator createLayerTransition(PredefinedTransitions transition) {
+		return new PredefinedStackTransitionAnimator(getActivity(), transition, BaseTransition.ORIENTATION_VERTICAL);
+	}
+
+	protected final StackTransitionAnimator createLayerTransition(PredefinedTransitions transition, @TransitionOrientation int orientation) {
+		return new PredefinedStackTransitionAnimator(getActivity(), transition, orientation);
 	}
 
 	final void addNestedController(CyborgController controller) {
