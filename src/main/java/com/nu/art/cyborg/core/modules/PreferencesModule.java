@@ -366,34 +366,34 @@ public final class PreferencesModule
 
 		private final ItemType defaultValue;
 
-		private final PreferencesSerializer<Object, String> serializer;
+		private final Serializer<Object, String> serializer;
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type) {
 			this(serializer, key, type, (ItemType) null);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, long expires) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type, long expires) {
 			this(serializer, key, type, null, expires, null);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, String storageGroup) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type, String storageGroup) {
 			this(serializer, key, type, null, -1, storageGroup);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type, ItemType defaultValue) {
 			this(serializer, key, type, defaultValue, null);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, long expires) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type, ItemType defaultValue, long expires) {
 			this(serializer, key, type, defaultValue, expires, null);
 		}
 
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, String storageGroup) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type, ItemType defaultValue, String storageGroup) {
 			this(serializer, key, type, defaultValue, -1, storageGroup);
 		}
 
 		@SuppressWarnings("unchecked")
-		public CustomPreference(PreferencesSerializer<Object, String> serializer, String key, Type type, ItemType defaultValue, long expires, String storageGroup) {
+		public CustomPreference(Serializer<Object, String> serializer, String key, Type type, ItemType defaultValue, long expires, String storageGroup) {
 			this.key = new StringPreference(key, null, expires, storageGroup);
 			this.defaultValue = defaultValue;
 			this.serializer = serializer;
@@ -443,11 +443,5 @@ public final class PreferencesModule
 			removeValue(key);
 			cache = null;
 		}
-	}
-
-	public interface PreferencesSerializer<From, To>
-			extends Function<From, To> {
-
-		From mapRev(Type fromType, To from);
 	}
 }
