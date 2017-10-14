@@ -187,7 +187,7 @@ public final class CyborgStackController
 
 		private int duration = transitionDuration;
 
-		private boolean saveState;
+		private boolean saveState = true;
 
 		private boolean keepBackground;
 
