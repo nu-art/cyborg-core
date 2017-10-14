@@ -412,7 +412,7 @@ public final class PreferencesModule
 				return cache;
 			}
 
-			String value = key.get();
+			String value = key.get(printToLog);
 			if (value == null) {
 				cache = defaultValue;
 				if (printToLog)

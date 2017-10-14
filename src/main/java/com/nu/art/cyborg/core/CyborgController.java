@@ -216,7 +216,7 @@ public abstract class CyborgController
 	/**
 	 * @return Get the stack this controller is a part of.
 	 */
-	final CyborgStackController getStack() {
+	public final CyborgStackController getStack() {
 		View rootView = getRootView();
 
 		CyborgController controller;

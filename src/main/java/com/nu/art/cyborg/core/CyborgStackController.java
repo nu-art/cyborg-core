@@ -589,6 +589,10 @@ public final class CyborgStackController
 	}
 
 	public void clear() {
+		StackLayer topLayer;
+		while ((topLayer = getTopLayer(true)) != null) {
+			topLayer.detachView();
+		}
 	}
 
 	@Override
