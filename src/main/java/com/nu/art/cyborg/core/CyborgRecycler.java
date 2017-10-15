@@ -188,6 +188,14 @@ public class CyborgRecycler
 		invalidateLayoutManager();
 	}
 
+	public final void invalidateDataModel() {
+		Adapter adapter = getAdapter();
+		if (!(adapter instanceof CyborgRecyclerAdapter))
+			return;
+
+		((CyborgRecyclerAdapter) adapter).invalidateDataModel();
+	}
+
 	public final void invalidateLayoutManager() {
 		int orientation = getContext().getResources().getConfiguration().orientation;
 
