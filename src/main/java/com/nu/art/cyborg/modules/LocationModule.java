@@ -151,7 +151,7 @@ public class LocationModule
 	}
 
 	@SuppressWarnings("MissingPermission")
-	public void initLocationServices(long minTime, float minDistance) {
+	public void requestLocationUpdates(long minTime, float minDistance) {
 		this.minTime = minTime;
 		this.minDistance = minDistance;
 
@@ -160,7 +160,7 @@ public class LocationModule
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, this);
 	}
 
-	public void stopLocationServices() {
+	public void removeLocationUpdates() {
 		locationManager.removeUpdates(this);
 	}
 
