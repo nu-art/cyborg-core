@@ -458,6 +458,10 @@ public class CyborgAdapter<Item>
 		public View getViewForPosition(int position) {
 			return renderers.get(getItemForPosition(position)).getRootView();
 		}
+
+		void invalidateDataModel() {
+			CyborgAdapter.this.invalidateDataModel();
+		}
 	}
 
 	public interface PositionResolver {
