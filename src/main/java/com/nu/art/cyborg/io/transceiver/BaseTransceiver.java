@@ -48,6 +48,7 @@ public abstract class BaseTransceiver
 	private final Handler transmitter;
 
 	private boolean listen = true;
+
 	private boolean oneShot = false;
 
 	private TransceiverListener[] listeners = {};
@@ -79,7 +80,7 @@ public abstract class BaseTransceiver
 							notifyError(e);
 						}
 					}
-					if(oneShot)
+					if (oneShot)
 						break;
 				}
 			} catch (Exception e) {
@@ -91,6 +92,7 @@ public abstract class BaseTransceiver
 	};
 
 	private void _disconnectImpl() {
+		setState(ConnectionState.Disconnecting);
 		disconnectImpl();
 		try {
 			if (socket != null)
@@ -197,7 +199,6 @@ public abstract class BaseTransceiver
 			return;
 		}
 
-		setState(ConnectionState.Disconnecting);
 		listen = false;
 
 		if (socket == null) {
