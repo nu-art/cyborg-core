@@ -48,6 +48,7 @@ public abstract class BaseTransceiver
 	private final Handler transmitter;
 
 	private boolean listen = true;
+	private boolean oneShot = false;
 
 	private TransceiverListener[] listeners = {};
 
@@ -78,6 +79,8 @@ public abstract class BaseTransceiver
 							notifyError(e);
 						}
 					}
+					if(oneShot)
+						break;
 				}
 			} catch (Exception e) {
 				notifyError(e);
@@ -111,7 +114,7 @@ public abstract class BaseTransceiver
 	}
 
 	public final void setOneShot() {
-		listen = false;
+		oneShot = true;
 	}
 
 	public final void sendPacket(final Packet packet) {
