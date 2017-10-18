@@ -383,7 +383,8 @@ public abstract class CyborgController
 		stateInjector.injectToInstance(this);
 		onPostRestoredState();
 		onRestoreComplexObjectState(inState);
-
+		if (inState == null)
+			return;
 		SparseArray<Parcelable> viewState = inState.getSparseParcelableArray("rootView");
 		if (viewState == null) {
 			return;
