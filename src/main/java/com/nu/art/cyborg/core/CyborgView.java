@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -54,7 +53,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
  *     custom:controller="Your Controller Fully Qualified Name"/>}
  * </pre>
  *
- * Now what is your control65ler?? check out {@link CyborgController}
+ * Now what is your controller?? check out {@link CyborgController}
  */
 @SuppressWarnings("unchecked")
 public class CyborgView

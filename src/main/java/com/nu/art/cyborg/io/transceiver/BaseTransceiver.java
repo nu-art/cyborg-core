@@ -49,6 +49,8 @@ public abstract class BaseTransceiver
 
 	private boolean listen = true;
 
+	private boolean oneShot = false;
+
 	private TransceiverListener[] listeners = {};
 
 	private Runnable connectAndListen = new Runnable() {
@@ -78,6 +80,8 @@ public abstract class BaseTransceiver
 							notifyError(e);
 						}
 					}
+					if (oneShot)
+						break;
 				}
 			} catch (Exception e) {
 				notifyError(e);
@@ -88,6 +92,7 @@ public abstract class BaseTransceiver
 	};
 
 	private void _disconnectImpl() {
+		setState(ConnectionState.Disconnecting);
 		disconnectImpl();
 		try {
 			if (socket != null)
@@ -111,7 +116,7 @@ public abstract class BaseTransceiver
 	}
 
 	public final void setOneShot() {
-		listen = false;
+		oneShot = true;
 	}
 
 	public final void sendPacket(final Packet packet) {
@@ -194,7 +199,6 @@ public abstract class BaseTransceiver
 			return;
 		}
 
-		setState(ConnectionState.Disconnecting);
 		listen = false;
 
 		if (socket == null) {

@@ -22,6 +22,7 @@ import android.Manifest;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 
 import com.nu.art.core.generics.Processor;
@@ -46,12 +47,15 @@ public class LocationModule
 		implements LocationListener {
 
 	private long minTime;
+
 	private float minDistance;
 
-	LocationService currentService = OFFLINE;
+	private LocationService currentService = OFFLINE;
 
 	enum LocationService {
-		GPS, NETWORK, OFFLINE
+		GPS,
+		NETWORK,
+		OFFLINE
 	}
 
 	@Override
@@ -67,20 +71,35 @@ public class LocationModule
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		logInfo("location: onStatusChanged");
+		String statusText = null;
+		switch (status) {
+			case LocationProvider.OUT_OF_SERVICE:
+				statusText = "Out Of Service";
+				break;
+
+			case LocationProvider.TEMPORARILY_UNAVAILABLE:
+				statusText = "Temporarily Unavailable";
+				break;
+
+			case LocationProvider.AVAILABLE:
+				statusText = "Available";
+				break;
+		}
+
+		logInfo("location: onStatusChanged - " + provider + " - " + statusText);
 	}
 
 	@Override
 	@SuppressWarnings("MissingPermission")
 	public void onProviderEnabled(String provider) {
-		logInfo("location: onProviderEnabled");
+		logInfo("location: onProviderEnabled - " + provider);
 		checkAndSetProviders();
 	}
 
 	@Override
 	@SuppressWarnings("MissingPermission")
 	public void onProviderDisabled(String provider) {
-		logInfo("location: onProviderDisabled");
+		logInfo("location: onProviderDisabled - " + provider);
 		checkAndSetProviders();
 	}
 
@@ -132,13 +151,17 @@ public class LocationModule
 	}
 
 	@SuppressWarnings("MissingPermission")
-	public void initLocationServices(long minTime, float minDistance) {
+	public void requestLocationUpdates(long minTime, float minDistance) {
 		this.minTime = minTime;
 		this.minDistance = minDistance;
 
 		checkAndSetProviders();
 		if (currentService == OFFLINE)
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, this);
+	}
+
+	public void removeLocationUpdates() {
+		locationManager.removeUpdates(this);
 	}
 
 	@SuppressWarnings("MissingPermission")
