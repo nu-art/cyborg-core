@@ -35,6 +35,15 @@ public class WifiModule
 
 	private WifiItem_Scanner WifiNetworkScanner;
 
+	public interface IWifiModule {
+
+		WifiModule _WifiModule = null;
+	}
+
+	WifiModule() {
+		setInterface(IWifiModule.class);
+	}
+
 	@Override
 	protected void init() {
 		WifiConnectivity = createModuleItem(WifiItem_Connectivity.class);

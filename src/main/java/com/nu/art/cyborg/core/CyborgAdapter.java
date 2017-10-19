@@ -87,6 +87,11 @@ public class CyborgAdapter<Item>
 		setDataModel(resolver.get());
 	}
 
+	/**
+	 * Use the setResolver for better development experience...
+	 * @param dataModel
+	 */
+	@Deprecated
 	public final void setDataModel(DataModel<Item> dataModel) {
 		if (this.dataModel != null)
 			this.dataModel.removeDataModelListener(this);
