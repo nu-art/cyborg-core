@@ -116,6 +116,8 @@ public interface Cyborg
 
 	<_ServiceType extends Service> void startForegroundService(Class<_ServiceType> cls, int id, Notification notification);
 
+	<_ServiceType extends Service> void stopForegroundService(final Class<_ServiceType> cls, boolean dismiss);
+
 	/**
 	 * Crash the app if this is not the main thread
 	 */

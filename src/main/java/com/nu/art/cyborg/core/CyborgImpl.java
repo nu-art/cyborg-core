@@ -476,6 +476,22 @@ final class CyborgImpl
 		});
 	}
 
+	@Override
+	public <_ServiceType extends Service> void stopForegroundService(final Class<_ServiceType> cls, boolean dismiss) {
+		getServiceConnection(cls).addListener(new ServiceConnectionListenerImpl<_ServiceType>() {
+			@Override
+			public void onServiceConnected(_ServiceType service) {
+				service.stopForeground(true);
+				stopService(cls);
+			}
+
+			@Override
+			public void onServiceDisconnected(_ServiceType service) {
+				service.stopForeground(true);
+			}
+		});
+	}
+
 	/*
 	 * Vibrator
 	 */
