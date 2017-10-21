@@ -94,7 +94,8 @@ public class CyborgRecycler
 		@Override
 		public boolean supportsPredictiveItemAnimations() {
 			Adapter adapter = getAdapter();
-			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super.supportsPredictiveItemAnimations();
+			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super
+					.supportsPredictiveItemAnimations();
 		}
 	}
 
@@ -150,8 +151,10 @@ public class CyborgRecycler
 		return layoutManager.findViewByPosition(position);
 	}
 
-	public final void setAdapter(CyborgAdapter adapter) {
-		super.setAdapter(adapter.getRecyclerAdapter(this));
+	public final CyborgRecyclerAdapter setAdapter(CyborgAdapter adapter) {
+		CyborgRecyclerAdapter recyclerAdapter = adapter.getRecyclerAdapter(this);
+		super.setAdapter(recyclerAdapter);
+		return recyclerAdapter;
 	}
 
 	@SuppressWarnings("unused")

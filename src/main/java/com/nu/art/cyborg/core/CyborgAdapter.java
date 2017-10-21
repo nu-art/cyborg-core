@@ -149,7 +149,7 @@ public class CyborgAdapter<Item>
 		return dataModel.getItemForPosition(position);
 	}
 
-	public Adapter getRecyclerAdapter(CyborgRecycler cyborgRecycler) {
+	public CyborgRecyclerAdapter getRecyclerAdapter(CyborgRecycler cyborgRecycler) {
 		this.recyclerAdapter = new CyborgRecyclerAdapter(cyborgRecycler);
 		this.recyclerAdapter.setHasStableIds(this.autoAnimate);
 		return this.recyclerAdapter;
