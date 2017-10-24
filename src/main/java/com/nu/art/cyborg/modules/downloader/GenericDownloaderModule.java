@@ -18,10 +18,13 @@
 
 package com.nu.art.cyborg.modules.downloader;
 
+import com.nu.art.core.GenericListener;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.modular.core.Module;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -38,16 +41,9 @@ public class GenericDownloaderModule
 		return new DownloaderBuilderImpl();
 	}
 
-	public interface DownloaderListener {
-
-		void onSuccess(InputStream inputStream);
-
-		void onError(Throwable e);
-	}
-
 	public interface Downloader {
 
-		void download(DownloaderListener listener);
+		void download(GenericListener<InputStream> listener);
 
 		void cancel();
 	}
@@ -66,6 +62,8 @@ public class GenericDownloaderModule
 
 		DownloaderBuilder cancel();
 
+		DownloaderBuilder setCacheable(Cacheable cacheable);
+
 		DownloaderBuilder onBefore(Runnable runnable);
 
 		DownloaderBuilder onAfter(Runnable runnable);
@@ -77,6 +75,8 @@ public class GenericDownloaderModule
 			implements DownloaderBuilder {
 
 		private String url;
+
+		private Cacheable cacheable;
 
 		private Function<InputStream, ?> converter;
 
@@ -113,6 +113,12 @@ public class GenericDownloaderModule
 		}
 
 		@Override
+		public DownloaderBuilder setCacheable(Cacheable cacheable) {
+			this.cacheable = cacheable;
+			return this;
+		}
+
+		@Override
 		public DownloaderBuilder onError(Processor<Throwable> onError) {
 			this.onError = onError;
 			return this;
@@ -145,19 +151,30 @@ public class GenericDownloaderModule
 			if (onBefore != null)
 				onBefore.run();
 
-			downloader.download(new DownloaderListener() {
+			if (cacheable != null && cacheable.isCached()) {
+				loadFromCache();
+				return;
+			}
+
+			downloadFromUrl();
+		}
+
+		private void downloadFromUrl() {
+			downloader.download(new GenericListener<InputStream>() {
+
 				@Override
 				public void onSuccess(InputStream inputStream) {
-					handleResponse(inputStream);
-				}
+					if (cacheable == null) {
+						handleResponse(inputStream);
+						return;
+					}
 
-				@SuppressWarnings("unchecked")
-				private <Type> void handleResponse(InputStream inputStream) {
-					Type value = ((Function<InputStream, Type>) converter).map(inputStream);
-					((Processor<Type>) onSuccess).process(value);
-
-					if (onAfter != null)
-						onAfter.run();
+					try {
+						cacheable.cacheSync(inputStream);
+						loadFromCache();
+					} catch (IOException e) {
+						onError(e);
+					}
 				}
 
 				@Override
@@ -165,6 +182,30 @@ public class GenericDownloaderModule
 					onError.process(e);
 				}
 			});
+		}
+
+		private void loadFromCache() {
+			cacheable.load(new GenericListener<InputStream>() {
+
+				@Override
+				public void onSuccess(InputStream inputStream) {
+					handleResponse(inputStream);
+				}
+
+				@Override
+				public void onError(Throwable e) {
+					onError.process(e);
+				}
+			});
+		}
+
+		@SuppressWarnings("unchecked")
+		private <Type> void handleResponse(InputStream inputStream) {
+			Type value = ((Function<InputStream, Type>) converter).map(inputStream);
+			((Processor<Type>) onSuccess).process(value);
+
+			if (onAfter != null)
+				onAfter.run();
 		}
 	}
 }

@@ -28,7 +28,7 @@ if (project.hasProperty("configureUploadAndroidLibArtifact")) {
 
 
 dependencies {
-    compile(resolveDependency('module-manager', 'com.nu-art-software', "${DEFAULT_DEPENDENCY_VERSION}"))
+    compile(resolveDependency('module-manager', 'com.nu-art-software', "${NU_ART_VERSION}"))
     compile "com.android.support:support-v4:${ANDROID_SUPPORT_VERSION}"
     compile "com.android.support:recyclerview-v7:${ANDROID_SUPPORT_VERSION}"
 }
