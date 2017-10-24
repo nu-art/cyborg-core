@@ -106,6 +106,8 @@ public class LocationModule
 	public interface OnLocationUpdatedListener {
 
 		void onLocationUpdated(Location location);
+
+		void onLocationUpdateError();
 	}
 
 	private LocationManager locationManager;
@@ -182,6 +184,12 @@ public class LocationModule
 
 		if (bestLocation == null) {
 			toastDebug("Could not find location");
+			dispatchGlobalEvent("location update error", OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
+				@Override
+				public void process(OnLocationUpdatedListener listener) {
+					listener.onLocationUpdateError();
+				}
+			});
 			return;
 		}
 

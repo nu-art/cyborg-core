@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
@@ -39,7 +40,12 @@ public final class ApplicationLauncher
 		LaunchConfiguration launchConfiguration = CyborgBuilder.getInstance().getLaunchConfiguration();
 		if (launchConfiguration == null)
 			throw new BadImplementationException("If you want to use the launching configuration feature, you must specify a layout when creating Cyborg, see documentation of this class");
-		startActivity(CyborgActivityBridgeImpl.composeIntent(launchConfiguration));
+		Intent intent = CyborgActivityBridgeImpl.composeIntent(launchConfiguration);
+
+		if (getIntent() != null && getIntent().getExtras() != null)
+			intent.putExtras(getIntent().getExtras());
+
+		startActivity(intent);
 		finish();
 	}
 }

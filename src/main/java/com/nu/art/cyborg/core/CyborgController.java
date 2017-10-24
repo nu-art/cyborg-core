@@ -18,33 +18,58 @@
 
 package com.nu.art.cyborg.core;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
+import android.widget.CompoundButton;
+import android.widget.RatingBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
+import com.nu.art.cyborg.common.beans.ModelEvent;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
+import com.nu.art.cyborg.common.interfaces.ICyborgController;
+import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.common.utils.BusyState;
 import com.nu.art.cyborg.common.utils.Tools;
+import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
+import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
@@ -54,9 +79,16 @@ import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
 import com.nu.art.cyborg.core.more.CyborgStateInjector;
 import com.nu.art.cyborg.core.more.CyborgViewInjector;
+import com.nu.art.cyborg.core.more.UserActionsDelegatorImpl;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AttributeModule;
+import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
@@ -75,10 +107,12 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 @SuppressWarnings( {
 											 "unused",
 											 "deprecation",
-											 "unchecked"
+											 "unchecked",
+											 "WeakerAccess"
 									 })
 public abstract class CyborgController
-		extends CyborgControllerBase {
+		extends Logger
+		implements ICyborgController {
 
 	/**
 	 * Should controller lifecycle be printed to the log
@@ -107,15 +141,25 @@ public abstract class CyborgController
 
 	private View rootView;
 
-	private LifeCycleState state;
-
 	private String stateTag;
 
 	private BusyState busyState = new BusyState();
 
+	boolean keepInStack;
+
+	private LifeCycleState state;
+
+	protected final ActionDelegator actionDelegator;
+
+	protected final Cyborg cyborg;
+
+	protected CyborgActivityBridge activityBridge;
+
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
 		this.layoutId = layoutId;
+		cyborg = CyborgBuilder.getInstance();
+		actionDelegator = new ActionDelegator(cyborg);
 	}
 
 	protected final void setBusyState(BusyState busyState) {
@@ -404,25 +448,10 @@ public abstract class CyborgController
 		if (o == this)
 			throw new BadImplementationException("Do not pass the controller as the object to save it!! Cyborg is doing it perfectly on its own.");
 
-		//		if (o instanceof View)
-		//			saveViewState(key, outState, (View) o);
-
 		String injectorKey = stateTag + "-" + key;
 		CyborgStateExtractor stateInjector = new CyborgStateExtractor(injectorKey, outState);
 		stateInjector.extractFromInstance(o);
 	}
-
-	//	private void saveViewState(String key, Bundle outState, View view) {
-	//		String viewStateKey = stateTag + "-view-" + key;
-	//		try {
-	//			Method onSaveInstanceState = View.class.getDeclaredMethod("onSaveInstanceState");
-	//			onSaveInstanceState.setAccessible(true);
-	//			Parcelable p = (Parcelable) onSaveInstanceState.invoke(view);
-	//			outState.putParcelable(viewStateKey, p);
-	//		} catch (Exception e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
 
 	protected void onPostRestoredState() {}
 
@@ -435,27 +464,35 @@ public abstract class CyborgController
 		String injectorKey = stateTag + "-" + key;
 		CyborgStateInjector stateInjector = new CyborgStateInjector(injectorKey, inState);
 		stateInjector.injectToInstance(o);
-
-		//		if (o instanceof View)
-		//			restoreViewState(key, inState, (View) o);
 	}
 
-	//	private void restoreViewState(String key, Bundle inState, View view) {
-	//		String viewStateKey = stateTag + "-view-" + key;
-	//		try {
-	//			Method onRestoreInstanceState = View.class.getDeclaredMethod("onRestoreInstanceState", Parcelable.class);
-	//			onRestoreInstanceState.setAccessible(true);
-	//			Parcelable p = inState.getParcelable(viewStateKey);
-	//			onRestoreInstanceState.invoke(view, p);
-	//		} catch (Exception e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
+	protected final void startActivity(Intent intent) {
+		activityBridge.startActivity(intent);
+	}
 
+	final void setActivityBridge(CyborgActivityBridge activityBridge) {
+		this.activityBridge = activityBridge;
+	}
 
-	/* ******************************************
-		KEYBOARD
-	 ********************************************/
+	protected final CyborgActivity getActivity() {
+		return activityBridge.getActivity();
+	}
+
+	protected final LayoutInflater getLayoutInflater() {
+		return activityBridge.getDefaultLayoutInflater();
+	}
+
+	protected final Intent getIntent() {
+		return activityBridge.getIntent();
+	}
+
+	protected final boolean isDestroyed() {
+		return activityBridge.isDestroyed();
+	}
+
+	protected final void finishActivity() {
+		activityBridge.finish();
+	}
 
 	/**
 	 * Hide the soft keyboard
@@ -584,5 +621,644 @@ public abstract class CyborgController
 
 	public void invalidateView() {
 		rootView.invalidate();
+	}
+
+	public static final Random UtilsRandom = new Random();
+
+	public static short getRandomShort() {
+		return (short) UtilsRandom.nextInt(Short.MAX_VALUE);
+	}
+
+	public final void setKeepInStack(boolean keepInStack) {
+		this.keepInStack = keepInStack;
+	}
+
+	final class ActionDelegator
+			extends UserActionsDelegatorImpl {
+
+		public ActionDelegator(Cyborg cyborg) {
+			super(cyborg);
+		}
+
+		boolean canReceiveEvents() {
+			return getState() == LifeCycleState.OnResume;
+		}
+
+		@Override
+		public boolean onLongClick(View v) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onLongClick(v);
+			return CyborgController.this.onLongClick(v);
+		}
+
+		@Override
+		public boolean onTouch(View v, MotionEvent me) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onTouch(v, me);
+			return CyborgController.this.onTouch(v, me);
+		}
+
+		@Override
+		public void onClick(final View v) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onClick(v);
+			CyborgController.this.onClick(v);
+		}
+
+		@Override
+		public void onModelEvent(ModelEvent event) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onModelEvent(event);
+		}
+
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			if (!canReceiveEvents())
+				return;
+
+			if (fromUser) {
+				super.onProgressChanged(seekBar, progress, true);
+			}
+			CyborgController.this.onProgressChanged(seekBar, progress, fromUser);
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onStartTrackingTouch(seekBar);
+			CyborgController.this.onStartTrackingTouch(seekBar);
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onStopTrackingTouch(seekBar);
+			CyborgController.this.onStopTrackingTouch(seekBar);
+		}
+
+		@Override
+		public void onItemSelected(AdapterView<?> parentView, View selectedView, int position, long id) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onItemSelected(parentView, selectedView, position, id);
+			CyborgController.this.onItemSelected(parentView, selectedView, position, id);
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parentView) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onNothingSelected(parentView);
+			CyborgController.this.onNothingSelected(parentView);
+		}
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onItemClick(parent, view, position, id);
+			CyborgController.this.onItemClick(parent, view, position, id);
+		}
+
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onItemLongClick(parent, view, position, id);
+			return CyborgController.this.onItemLongClick(parent, view, position, id);
+		}
+
+		@Override
+		public void onRecyclerItemClicked(RecyclerView parentView, View view, int position) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onRecyclerItemClicked(parentView, view, position);
+			CyborgController.this.onRecyclerItemClicked(parentView, view, position);
+		}
+
+		@Override
+		public boolean onRecyclerItemLongClicked(RecyclerView parentView, View view, int position) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onRecyclerItemLongClicked(parentView, view, position);
+			return CyborgController.this.onRecyclerItemLongClicked(parentView, view, position);
+		}
+
+		@Override
+		public boolean onKeyDown(int keyCode, KeyEvent event) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onKeyDown(keyCode, event);
+			return CyborgController.this.onKeyDown(keyCode, event);
+		}
+
+		@Override
+		public boolean onKeyUp(int keyCode, KeyEvent event) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onKeyUp(keyCode, event);
+			return CyborgController.this.onKeyUp(keyCode, event);
+		}
+
+		@Override
+		public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onKeyLongPress(keyCode, event);
+			return CyborgController.this.onKeyLongPress(keyCode, event);
+		}
+
+		@Override
+		public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onRatingChanged(ratingBar, rating, fromUser);
+			CyborgController.this.onRatingChanged(ratingBar, rating, fromUser);
+		}
+
+		@Override
+		public void onPageSelected(int position) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onPageSelected(position);
+			CyborgController.this.onPageSelected(position);
+		}
+
+		@Override
+		public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+			CyborgController.this.onPageScrolled(position, positionOffset, positionOffsetPixels);
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int state) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onPageScrollStateChanged(state);
+			CyborgController.this.onPageScrollStateChanged(state);
+		}
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onCheckedChanged(buttonView, isChecked);
+			CyborgController.this.onCheckedChanged(buttonView, isChecked);
+		}
+
+		@Override
+		public boolean onMenuItemClick(MenuItem item) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onMenuItemClick(item);
+			return CyborgController.this.onMenuItemClick(item);
+		}
+
+		@Override
+		public void beforeTextChanged(TextView view, CharSequence string, int start, int count, int after) {
+			if (!canReceiveEvents())
+				return;
+
+			super.beforeTextChanged(view, string, start, count, after);
+			CyborgController.this.beforeTextChanged(view, string, start, count, after);
+		}
+
+		@Override
+		public void onTextChanged(TextView view, CharSequence string, int start, int before, int count) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onTextChanged(view, string, start, before, count);
+			CyborgController.this.onTextChanged(view, string, start, before, count);
+		}
+
+		@Override
+		public void afterTextChanged(TextView view, Editable editableValue) {
+			if (!canReceiveEvents())
+				return;
+
+			super.afterTextChanged(view, editableValue);
+			CyborgController.this.afterTextChanged(view, editableValue);
+		}
+
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onEditorAction(v, actionId, event);
+			return CyborgController.this.onEditorAction(v, actionId, event);
+		}
+
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (!canReceiveEvents())
+				return;
+
+			super.onFocusChange(v, hasFocus);
+			CyborgController.this.onFocusChange(v, hasFocus);
+		}
+
+		@Override
+		public boolean onKey(View v, int keyCode, KeyEvent event) {
+			if (!canReceiveEvents())
+				return false;
+
+			super.onKey(v, keyCode, event);
+			return CyborgController.this.onKey(v, keyCode, event);
+		}
+	}
+
+	@Override
+	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		activityBridge.dispatchEvent(message, listenerType, processor);
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parentView, View selectedView, int position, long id) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parentView) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onClick(View v) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public boolean onLongClick(View v) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onModelEvent(ModelEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parentView, View clickedView, int position, long id) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parentView, View clickedView, int position, long id) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public void onRecyclerItemClicked(RecyclerView parentView, View view, int position) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public boolean onRecyclerItemLongClicked(RecyclerView parentView, View view, int position) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int state) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		// Dummy method to be overridden in the inheriting class...
+		return false;
+	}
+
+	@Override
+	public void beforeTextChanged(TextView view, CharSequence string, int start, int count, int after) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void onTextChanged(TextView view, CharSequence string, int start, int before, int count) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	@Override
+	public void afterTextChanged(TextView view, Editable editableValue) {
+		// Dummy method to be overridden in the inheriting class...
+	}
+
+	/*
+	 * Interfaces .....
+	 */
+	@Override
+	public final long elapsedTimeMillis() {
+		return cyborg.elapsedTimeMillis();
+	}
+
+	protected final boolean isMainThread() {
+		return cyborg.isMainThread();
+	}
+
+	@Override
+	public final void postOnUI(long delay, Runnable action) {
+		cyborg.postOnUI(delay, action);
+	}
+
+	@Override
+	public final void postOnUI(Runnable action) {
+		cyborg.postOnUI(action);
+	}
+
+	@Override
+	public final void removeAndPostOnUI(long delay, Runnable action) {
+		cyborg.removeAndPostOnUI(delay, action);
+	}
+
+	@Override
+	public final void removeAndPostOnUI(Runnable action) {
+		cyborg.removeAndPostOnUI(action);
+	}
+
+	@Override
+	public final void removeActionFromUI(Runnable action) {
+		cyborg.removeActionFromUI(action);
+	}
+
+	@Override
+	public final Handler getUI_Handler() {
+		return cyborg.getUI_Handler();
+	}
+
+	@Override
+	public final void toastDebug(String text) {
+		cyborg.toastDebug(text);
+	}
+
+	@Override
+	public final void toastShort(int stringId, Object... args) {
+		cyborg.toastShort(stringId, args);
+	}
+
+	@Override
+	public final void toastLong(int stringId, Object... args) {
+		cyborg.toastLong(stringId, args);
+	}
+
+	@Override
+	public final void toastShort(StringResourceResolver stringResolver) {
+		cyborg.toastShort(stringResolver);
+	}
+
+	@Override
+	public final void toastLong(StringResourceResolver stringResolver) {
+		cyborg.toastLong(stringResolver);
+	}
+
+	@Override
+	public void sendEvent(String category, String action, String label, long value) {
+		cyborg.sendEvent(category, action, label, value);
+	}
+
+	@Override
+	public void sendException(String description, Throwable t, boolean crash) {
+		cyborg.sendException(description, t, crash);
+	}
+
+	@Override
+	public void sendView(String viewName) {
+		cyborg.sendView(viewName);
+	}
+
+	public final <Type extends Module> Type getModule(Class<Type> moduleType) {
+		return cyborg.getModule(moduleType);
+	}
+
+	@Override
+	public final void vibrate(int repeat, long... interval) {
+		cyborg.vibrate(repeat, interval);
+	}
+
+	@Override
+	public final void vibrate(long ms) {
+		cyborg.vibrate(ms);
+	}
+
+	@Override
+	public final String convertNumericString(String numericString) {
+		return cyborg.convertNumericString(numericString);
+	}
+
+	@Override
+	public final InputStream getAsset(String assetName)
+			throws IOException {
+		return cyborg.getAsset(assetName);
+	}
+
+	@Override
+	public final String getString(int stringId, Object... params) {
+		return cyborg.getString(stringId, params);
+	}
+
+	@Override
+	public final String getString(StringResourceResolver stringResolver) {
+		return cyborg.getString(stringResolver);
+	}
+
+	@Override
+	public final String getPackageName() {
+		return cyborg.getPackageName();
+	}
+
+	@Override
+	public final boolean isDebug() {
+		return cyborg.isDebug();
+	}
+
+	@Override
+	public final boolean isDebugCertificate() {
+		return cyborg.isDebugCertificate();
+	}
+
+	@Override
+	public final void waitForDebugger() {
+		cyborg.waitForDebugger();
+	}
+
+	public final Animation loadAnimation(int animationId) {
+		return cyborg.loadAnimation(animationId);
+	}
+
+	@Override
+	public Context getApplicationContext() {
+		return cyborg.getApplicationContext();
+	}
+
+	@Override
+	public final Resources getResources() {
+		return cyborg.getResources();
+	}
+
+	public Drawable getDrawable(@DrawableRes int drawableId) {
+		if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			return getResources().getDrawable(drawableId, getActivity().getTheme());
+		}
+		return getResources().getDrawable(drawableId);
+	}
+
+	@Override
+	public final InputStream getRawResources(int resourceId) {
+		return getResources().openRawResource(resourceId);
+	}
+
+	@Override
+	public final float dimToPx(int type, float size) {
+		return cyborg.dimToPx(type, size);
+	}
+
+	@Override
+	public final Locale getLocale() {
+		return cyborg.getLocale();
+	}
+
+	@Override
+	public final float getDimension(int dimensionId) {
+		return cyborg.getDimension(dimensionId);
+	}
+
+	@Override
+	public final int getColor(int colorId) {
+		return cyborg.getColor(colorId);
+	}
+
+	@Override
+	public final ContentResolver getContentResolver() {
+		return cyborg.getContentResolver();
+	}
+
+	public final int dpToPx(int dp) {
+		return cyborg.dpToPx(dp);
+	}
+
+	@Override
+	public final void postActivityAction(ActivityStackAction action) {
+		cyborg.postActivityAction(action);
 	}
 }

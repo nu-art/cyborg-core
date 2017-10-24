@@ -38,6 +38,7 @@ public class UserActionsDelegatorImpl
 		implements UserActionsDelegator {
 
 	private final Cyborg cyborg;
+	private UserActionsDelegator[] modulesAssignableFrom;
 
 	public UserActionsDelegatorImpl(Cyborg cyborg) {
 		super();
@@ -45,7 +46,10 @@ public class UserActionsDelegatorImpl
 	}
 
 	private UserActionsDelegator[] getModulesAssignableFrom() {
-		return cyborg.getModulesAssignableFrom(UserActionsDelegator.class);
+		if (modulesAssignableFrom == null)
+			modulesAssignableFrom = cyborg.getModulesAssignableFrom(UserActionsDelegator.class);
+
+		return modulesAssignableFrom;
 	}
 
 	@Override
