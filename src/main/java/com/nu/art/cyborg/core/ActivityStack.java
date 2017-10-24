@@ -62,7 +62,7 @@ public final class ActivityStack
 
 	<ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
 		if (activity == null) {
-			logDebug("No Activity... will not dispatching UI Event: " + message);
+			logDebug("No Activity... will not dispatch UI Event: " + message);
 			return;
 		}
 

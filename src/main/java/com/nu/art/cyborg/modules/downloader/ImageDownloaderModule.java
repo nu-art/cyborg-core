@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.DownloaderBuilder;
 import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
@@ -58,6 +59,8 @@ public class ImageDownloaderModule
 
 		ImageDownloaderBuilder setTarget(ImageView target);
 
+		ImageDownloaderBuilder setCacheable(Cacheable cacheable);
+
 		ImageDownloaderBuilder onError(@DrawableRes int drawableId);
 
 		ImageDownloaderBuilder onError(Drawable errorDrawable);
@@ -69,6 +72,8 @@ public class ImageDownloaderModule
 		ImageDownloaderBuilder onBefore(Runnable runnable);
 
 		ImageDownloaderBuilder onAfter(Runnable runnable);
+
+		ImageDownloaderBuilder onError(Runnable runnable);
 
 		void download();
 	}
@@ -98,6 +103,10 @@ public class ImageDownloaderModule
 
 		private Runnable onAfter;
 
+		private Runnable onError;
+
+		private Cacheable cacheable;
+
 		public final ImageDownloaderBuilder setUrl(String url) {
 			this.url = url;
 			return this;
@@ -105,6 +114,11 @@ public class ImageDownloaderModule
 
 		public ImageDownloaderBuilder setDownloader(Downloader downloader) {
 			this.downloader = downloader;
+			return this;
+		}
+
+		public ImageDownloaderBuilder setCacheable(Cacheable cacheable) {
+			this.cacheable = cacheable;
 			return this;
 		}
 
@@ -160,6 +174,7 @@ public class ImageDownloaderModule
 
 		public final void download() {
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
+			downloaderBuilder.setCacheable(cacheable);
 			downloaderBuilder.onBefore(onBefore);
 			downloaderBuilder.onAfter(onAfter);
 			downloaderBuilder.setDownloader(downloader);
@@ -169,8 +184,8 @@ public class ImageDownloaderModule
 					if (cancelled)
 						return;
 
-					if(postDownloading!=null)
-					bitmap = postDownloading.map(bitmap);
+					if (postDownloading != null)
+						bitmap = postDownloading.map(bitmap);
 
 					final Bitmap finalBitmap = bitmap;
 					postOnUI(new Runnable() {
@@ -192,6 +207,13 @@ public class ImageDownloaderModule
 					postOnUI(new Runnable() {
 						@Override
 						public void run() {
+							processError();
+
+							if (onError != null)
+								onError.run();
+						}
+
+						private void processError() {
 							if (errorDrawableId != -1) {
 								target.setImageResource(errorDrawableId);
 								return;
@@ -217,6 +239,12 @@ public class ImageDownloaderModule
 		@Override
 		public ImageDownloaderBuilder onBefore(Runnable onBefore) {
 			this.onBefore = onBefore;
+			return this;
+		}
+
+		@Override
+		public ImageDownloaderBuilder onError(Runnable onError) {
+			this.onError = onError;
 			return this;
 		}
 

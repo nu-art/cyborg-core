@@ -18,12 +18,15 @@
 
 package com.nu.art.cyborg.modules;
 
-import com.nu.art.core.generics.Processor;
+import com.nu.art.core.GenericListener;
+import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.tools.StreamTools;
 import com.nu.art.core.utils.RunnableQueue;
 import com.nu.art.cyborg.core.CyborgModule;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -33,59 +36,121 @@ import java.io.InputStream;
 public class CacheModule
 		extends CyborgModule {
 
+	public class Cacheable {
+
+		private String key;
+
+		private String suffix;
+
+		private long interval;
+
+		public Cacheable setKey(String key) {
+			this.key = key;
+			return this;
+		}
+
+		public Cacheable setSuffix(String suffix) {
+			this.suffix = suffix;
+			return this;
+		}
+
+		public Cacheable setInterval(long interval) {
+			this.interval = interval;
+			return this;
+		}
+
+		public boolean isCached() {
+			return CacheModule.this.isCached(this);
+		}
+
+		public void cacheAsync(InputStream inputStream, CacheListener listener) {
+			CacheModule.this.cacheAsync(this, inputStream, listener);
+		}
+
+		public void cacheSync(InputStream inputStream)
+				throws IOException {
+			CacheModule.this.cacheSync(this, inputStream);
+		}
+
+		public void load(GenericListener<InputStream> listener) {
+			CacheModule.this.load(this, listener);
+		}
+	}
+
 	public interface CacheListener {
 
-		void onItemCacheError(String key, Exception e);
+		void onItemCacheError(Cacheable key, Exception e);
 
-		void onItemCacheCompleted(String key);
+		void onItemCacheCompleted(Cacheable key);
 	}
 
 	private RunnableQueue cacheQueue = new RunnableQueue();
+
+	private File filesDir;
 
 	private File cacheDir;
 
 	@Override
 	protected void init() {
+		filesDir = getApplicationContext().getFilesDir();
 		cacheDir = getApplicationContext().getCacheDir();
 		cacheQueue.createThreads("Caching Thread", 5);
 	}
 
-	private String convertKeyToFile(String key) {
-		return "" + key.hashCode();
+	private boolean isCached(Cacheable cacheable) {
+		File file = getFile(cacheable);
+		return file.exists() && file.isFile() && file.length() > 0;
 	}
 
-	public void cacheFile(final String key, final InputStream inputStream) {
+	private File getFile(Cacheable cacheable) {
+		return new File(cacheable.interval > 0 ? filesDir : cacheDir, cacheable.key.hashCode() + "." + cacheable.suffix);
+	}
+
+	private void cacheAsync(final Cacheable cacheable, final InputStream inputStream, final CacheListener listener) {
 		cacheQueue.addItem(new Runnable() {
 
 			@Override
 			public void run() {
-				File file = new File(cacheDir, convertKeyToFile(key));
 				try {
-					StreamTools.copy(inputStream, file);
-					dispatchCachingCompleted(key);
+					cacheSync(cacheable, inputStream);
+					listener.onItemCacheCompleted(cacheable);
 				} catch (final IOException e) {
-					dispatchCachingFailed(e, key);
+					listener.onItemCacheError(cacheable, e);
 				}
 			}
 		});
 	}
 
-	private void dispatchCachingFailed(final IOException e, final String key) {
-		dispatchModuleEvent("Error caching item: " + key, CacheListener.class, new Processor<CacheListener>() {
+	private void cacheSync(Cacheable cacheable, InputStream inputStream)
+			throws IOException {
+		File file = getFile(cacheable);
+		FileTools.delete(file);
+		FileTools.createNewFile(file);
 
-			@Override
-			public void process(CacheListener cacheListener) {
-				cacheListener.onItemCacheError(key, e);
+		try {
+			StreamTools.copy(inputStream, file);
+		} catch (IOException e) {
+			logError("Error caching stream... ", e);
+			try {
+				FileTools.delete(file);
+			} catch (IOException e1) {
+				logError("Error deleting cache file!", e1);
 			}
-		});
+			throw e;
+		}
 	}
 
-	private void dispatchCachingCompleted(final String key) {
-		dispatchModuleEvent("Caching done: " + key, CacheListener.class, new Processor<CacheListener>() {
+	private void load(final Cacheable cacheable, final GenericListener<InputStream> listener) {
+		cacheQueue.addItem(new Runnable() {
 
 			@Override
-			public void process(CacheListener cacheListener) {
-				cacheListener.onItemCacheCompleted(key);
+			public void run() {
+				File file = getFile(cacheable);
+				try {
+					listener.onSuccess(new FileInputStream(file));
+				} catch (FileNotFoundException e) {
+					listener.onError(e);
+				}
 			}
 		});
 	}
