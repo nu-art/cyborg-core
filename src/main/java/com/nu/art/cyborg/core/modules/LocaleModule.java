@@ -25,6 +25,7 @@ import android.os.Build.VERSION_CODES;
 import android.util.DisplayMetrics;
 
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.CyborgModule;
 
 import java.util.Locale;
@@ -101,5 +102,9 @@ public class LocaleModule
 	private interface OnLocaleChangedListener {
 
 		void onLocaleChanged(Locale locale);
+	}
+
+	public boolean isRightToLeft() {
+		return getResources().getBoolean(R.bool.is_right_to_left);
 	}
 }
