@@ -82,10 +82,10 @@ public class LocaleModule
 		Resources res = getResources();
 		Configuration conf = res.getConfiguration();
 		final Locale locale = newLocale.getLanguage();
+		Locale.setDefault(locale);
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
 			conf.setLocale(locale);
 			getApplicationContext().createConfigurationContext(conf);
-			return;
 		}
 
 		DisplayMetrics dm = res.getDisplayMetrics();
