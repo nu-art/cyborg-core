@@ -127,20 +127,29 @@ public abstract class BaseTransceiver
 		transmitter.post(new Runnable() {
 			@Override
 			public void run() {
-				if (socket == null) {
-					logWarning("Socket is null ignoring packet: " + packet);
-					return;
-				}
-
-				if (printToLog)
-					logInfo("Sending packet to remote device: " + packet);
 				try {
-					packetSerializer.serializePacket(socket.getOutputStream(), packet);
+					sendPacketSync(packet, printToLog);
 				} catch (IOException e) {
 					notifyError(e);
 				}
 			}
 		});
+	}
+
+	public void sendPacketSync(Packet packet)
+			throws IOException {
+		sendPacketSync(packet, true);
+	}
+
+	public void sendPacketSync(Packet packet, boolean printToLog)
+			throws IOException {
+		if (socket == null)
+			throw new IOException("Socket is null ignoring packet: " + packet);
+
+		if (printToLog)
+			logInfo("Sending packet to remote device: " + packet);
+
+		packetSerializer.serializePacket(socket.getOutputStream(), packet);
 	}
 
 	public void connect() {
