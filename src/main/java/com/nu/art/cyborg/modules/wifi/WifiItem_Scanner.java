@@ -65,7 +65,7 @@ public class WifiItem_Scanner
 		}
 	}
 
-	private ArrayList<ScannedWifiInfo> scanResults = new ArrayList<>();
+	private final ArrayList<ScannedWifiInfo> scanResults = new ArrayList<>();
 
 	private WifiManager wifiManager;
 
@@ -103,14 +103,16 @@ public class WifiItem_Scanner
 			scannedWifi.scanResult = result;
 		}
 
-		scanResults.clear();
-		scanResults.addAll(scannedWifis.values());
-		Collections.sort(scanResults, new Comparator<ScannedWifiInfo>() {
-			@Override
-			public int compare(ScannedWifiInfo o1, ScannedWifiInfo o2) {
-				return o1.strength.ordinal() < o2.strength.ordinal() ? 1 : -1;
-			}
-		});
+		synchronized (scanResults) {
+			scanResults.clear();
+			scanResults.addAll(scannedWifis.values());
+			Collections.sort(scanResults, new Comparator<ScannedWifiInfo>() {
+				@Override
+				public int compare(ScannedWifiInfo o1, ScannedWifiInfo o2) {
+					return o1.strength.ordinal() < o2.strength.ordinal() ? 1 : -1;
+				}
+			});
+		}
 
 		dispatchEvent("Wifi Scan Completed", OnWifiUIListener.class, new Processor<OnWifiUIListener>() {
 			@Override
