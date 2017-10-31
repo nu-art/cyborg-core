@@ -226,7 +226,6 @@ public abstract class BaseTransceiver
 	}
 
 	protected final void notifyError(Exception e) {
-		logError("Error in Transceiver", e);
 		for (TransceiverListener listener : listeners) {
 			listener.onError(e);
 		}

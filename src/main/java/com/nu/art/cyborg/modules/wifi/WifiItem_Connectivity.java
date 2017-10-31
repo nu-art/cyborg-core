@@ -22,6 +22,12 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiConfiguration.AuthAlgorithm;
+import android.net.wifi.WifiConfiguration.GroupCipher;
+import android.net.wifi.WifiConfiguration.KeyMgmt;
+import android.net.wifi.WifiConfiguration.PairwiseCipher;
+import android.net.wifi.WifiConfiguration.Protocol;
+import android.net.wifi.WifiConfiguration.Status;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
@@ -30,8 +36,11 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
 
 import java.util.List;
+
+import static com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode.EAP;
 
 /**
  * Created by tacb0ss on 12/07/2017.
@@ -135,18 +144,18 @@ public class WifiItem_Connectivity
 		wifiManager.disconnect();
 	}
 
-	final void connectToWifi(String wifiName, String password) {
+	final void connectToWifi(String wifiName, String password, WifiSecurityMode securityMode) {
 		if (wifiName == null)
 			throw new BadImplementationException("MUST provide wifiName");
 
 		removeWifi(wifiName);
 
-		final WifiConfiguration wifiConfig = new WifiConfiguration();
-		wifiConfig.SSID = "\"" + wifiName + "\"";
-		wifiConfig.preSharedKey = "\"" + password + "\"";
+		final WifiConfiguration wifiConfig = createWifiConfiguration(wifiName, password, securityMode);
 
 		int netId = wifiManager.addNetwork(wifiConfig);
-		if (netId == -1) {
+
+		boolean saved = wifiManager.saveConfiguration();
+		if (netId == -1 || !saved) {
 			dispatchGlobalEvent("Error while connecting to WiFi: " + wifiName, WifiConnectivityListener.class, new Processor<WifiConnectivityListener>() {
 				@Override
 				public void process(WifiConnectivityListener listener) {
@@ -156,10 +165,60 @@ public class WifiItem_Connectivity
 			return;
 		}
 
-		wifiManager.disconnect();
+		disconnectFromWifi();
 		wifiManager.enableNetwork(netId, true);
 		wifiManager.reconnect();
 		logInfo("Connecting to Wifi: " + wifiName);
+	}
+
+	private WifiConfiguration createWifiConfiguration(String wifiName, String password, WifiSecurityMode securityMode) {
+		WifiConfiguration wifiConfiguration = new WifiConfiguration();
+
+		wifiConfiguration.SSID = "\"" + wifiName + "\"";
+		switch (securityMode) {
+			case WEP:
+				wifiConfiguration.allowedKeyManagement.set(KeyMgmt.NONE);
+				wifiConfiguration.allowedProtocols.set(Protocol.RSN);
+				wifiConfiguration.allowedProtocols.set(Protocol.WPA);
+				wifiConfiguration.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+				wifiConfiguration.allowedAuthAlgorithms.set(AuthAlgorithm.SHARED);
+				wifiConfiguration.allowedPairwiseCiphers.set(PairwiseCipher.CCMP);
+				wifiConfiguration.allowedPairwiseCiphers.set(PairwiseCipher.TKIP);
+				wifiConfiguration.allowedGroupCiphers.set(GroupCipher.WEP40);
+				wifiConfiguration.allowedGroupCiphers.set(GroupCipher.WEP104);
+
+				if (password.matches("^[0-9a-fA-F]+$")) {
+					wifiConfiguration.wepKeys[0] = password;
+				} else {
+					wifiConfiguration.wepKeys[0] = "\"".concat(password).concat("\"");
+				}
+				wifiConfiguration.wepTxKeyIndex = 0;
+				break;
+
+			case EAP:
+			case PSK:
+				wifiConfiguration.preSharedKey = "\"" + password + "\"";
+				wifiConfiguration.hiddenSSID = true;
+				wifiConfiguration.status = Status.ENABLED;
+				wifiConfiguration.allowedGroupCiphers.set(GroupCipher.TKIP);
+				wifiConfiguration.allowedGroupCiphers.set(GroupCipher.CCMP);
+				wifiConfiguration.allowedKeyManagement.set(securityMode == EAP ? KeyMgmt.WPA_EAP : KeyMgmt.WPA_PSK);
+				wifiConfiguration.allowedPairwiseCiphers.set(PairwiseCipher.TKIP);
+				wifiConfiguration.allowedPairwiseCiphers.set(PairwiseCipher.CCMP);
+				wifiConfiguration.allowedProtocols.set(Protocol.RSN);
+				wifiConfiguration.allowedProtocols.set(Protocol.WPA);
+				break;
+
+			case OPEN:
+				wifiConfiguration.allowedKeyManagement.set(KeyMgmt.NONE);
+				break;
+
+			default:
+				wifiConfiguration.preSharedKey = "\"" + password + "\"";
+				break;
+		}
+
+		return wifiConfiguration;
 	}
 
 	final String getMyIpAddress() {

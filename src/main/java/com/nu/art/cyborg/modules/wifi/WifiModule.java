@@ -21,6 +21,7 @@ package com.nu.art.cyborg.modules.wifi;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Connectivity.WifiConnectivityState;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.ScannedWifiInfo;
+import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
 
 /**
  * Created by TacB0sS on 04-Jul 2017.
@@ -82,8 +83,8 @@ public class WifiModule
 		return WifiConnectivity.isConnectedToWifi();
 	}
 
-	public void connectToWifi(String wifiName, String password) {
-		WifiConnectivity.connectToWifi(wifiName, password);
+	public void connectToWifi(String wifiName, String password, WifiSecurityMode securityMode) {
+		WifiConnectivity.connectToWifi(wifiName, password, securityMode);
 	}
 
 	public void disconnectFromWifi() {

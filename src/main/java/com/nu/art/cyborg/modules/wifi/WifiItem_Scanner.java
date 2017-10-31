@@ -46,12 +46,32 @@ public class WifiItem_Scanner
 		void onScanCompleted();
 	}
 
+	public enum WifiSecurityMode {
+		WEP,
+		PSK,
+		EAP,
+		OPEN,
+		//
+		;
+
+		static WifiSecurityMode getSecurityMode(String capabilities) {
+			for (WifiSecurityMode mode : values()) {
+				if (capabilities.contains(mode.name()))
+					return mode;
+			}
+
+			return OPEN;
+		}
+	}
+
 	public enum WifiStrength {
 		VeryWeak,
 		Weak,
 		Medium,
 		Strong,
-		VeryStrong,;
+		VeryStrong,
+		//
+		;
 	}
 
 	public static class ScannedWifiInfo {
@@ -62,6 +82,10 @@ public class WifiItem_Scanner
 
 		public final String getName() {
 			return scanResult.SSID;
+		}
+
+		public WifiSecurityMode getSecurity() {
+			return WifiSecurityMode.getSecurityMode(scanResult.capabilities);
 		}
 	}
 
