@@ -202,6 +202,11 @@ public class CyborgActivityBridgeImpl
 		logLifeCycle("RestoreState");
 		for (CyborgController controller : controllerList) {
 			Bundle controllerBundle = inState.getBundle(controller.getStateTag());
+			if (controllerBundle == null) {
+				logWarning("Could not find State for controller: " + controller.getClass() + ", with key: " + controller.getStateTag());
+				continue;
+			}
+
 			controller.onRestoreInstanceState(controllerBundle);
 		}
 	}

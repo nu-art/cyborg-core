@@ -194,6 +194,7 @@ public final class AppDetailsModule
 				String certificateName = cert.getIssuerDN().getName();
 				DummyCertificate.Default.debuggable = certificateName.contains("Android Debug");
 			}
+
 			logInfo("Found Certificate: " + certificate.name());
 			debugSimulationMode = certificate.isDebugCertificate();
 			this.certificate = certificate;
