@@ -148,13 +148,13 @@ public class GenericDownloaderModule
 		}
 
 		public final void download() {
-			if (onBefore != null)
-				onBefore.run();
-
 			if (cacheable != null && cacheable.isCached()) {
 				loadFromCache();
 				return;
 			}
+
+			if (onBefore != null)
+				onBefore.run();
 
 			downloadFromUrl();
 		}
