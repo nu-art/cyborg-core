@@ -328,8 +328,24 @@ public class CyborgActivityBridgeImpl
 	public boolean onBackPressed() {
 		boolean toRet = false;
 		CyborgController[] controllers = controllerList;
+
+		// First check for stack controllers
 		for (int i = controllers.length - 1; i >= 0; i--) {
 			CyborgController controller = controllers[i];
+			if (!(controller instanceof CyborgStackController))
+				continue;
+
+			toRet |= controller.onBackPressed();
+			if (toRet)
+				return true;
+		}
+
+		// Now check for regular controllers
+		for (int i = controllers.length - 1; i >= 0; i--) {
+			CyborgController controller = controllers[i];
+
+			if (controller instanceof CyborgStackController)
+				continue;
 			toRet |= controller.onBackPressed();
 			if (toRet)
 				return true;
@@ -352,7 +368,10 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public final void addController(CyborgController controller) {
-		if(controller instanceof ItemRenderer)
+		if (controller instanceof ItemRenderer)
+			return;
+
+		if (controller instanceof InRendererCyborgController)
 			return;
 
 		controllerList = ArrayTools.appendElement(controllerList, controller);
@@ -361,7 +380,6 @@ public class CyborgActivityBridgeImpl
 			logDebug("Added controller(" + controllerList.length + "): " + controller);
 		}
 	}
-
 
 	@Override
 	public final void removeController(CyborgController controller) {

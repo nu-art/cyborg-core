@@ -599,8 +599,14 @@ public final class CyborgStackController
 
 	@Override
 	public boolean onBackPressed() {
+		StackLayer topLayer = getTopLayer();
+		if (topLayer != null && topLayer.controller != null)
+			if (topLayer.controller.onBackPressed())
+				return true;
+
 		if (!popOnBackPress || !focused)
 			return super.onBackPressed();
+
 		return popLast();
 	}
 
