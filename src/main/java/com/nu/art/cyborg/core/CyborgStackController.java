@@ -256,6 +256,7 @@ public final class CyborgStackController
 
 		void detachView() {
 			getFrameRootView().removeView(rootView);
+			rootView = null;
 			if (controller == null)
 				return;
 
@@ -439,6 +440,7 @@ public final class CyborgStackController
 		layersStack.add(targetLayerToBeAdded);
 
 		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeAdded.stackTransitionAnimator;
+
 		if (transitionAnimators == null) {
 			disposeLayer(originLayerToBeDisposed);
 			return;

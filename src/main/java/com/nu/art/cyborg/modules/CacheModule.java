@@ -146,10 +146,19 @@ public class CacheModule
 			@Override
 			public void run() {
 				File file = getFile(cacheable);
+				FileInputStream fis = null;
 				try {
-					listener.onSuccess(new FileInputStream(file));
+					fis = new FileInputStream(file);
+					listener.onSuccess(fis);
 				} catch (FileNotFoundException e) {
 					listener.onError(e);
+				} finally {
+					try {
+						if (fis != null)
+							fis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});

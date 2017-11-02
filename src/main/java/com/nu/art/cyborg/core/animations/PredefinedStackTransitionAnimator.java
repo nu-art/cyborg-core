@@ -24,6 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayer;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
@@ -86,13 +87,29 @@ public class PredefinedStackTransitionAnimator
 			animateLayer(inOrigin, originLayer.getRootView(), duration, null);
 	}
 
-	private void animateLayer(Animation animation, View view, int duration, AnimationListener listener) {
+	private void animateLayer(Animation animation, View view, int duration, final AnimationListener listener) {
 		if (animation == null)
 			return;
 
 		animation.setDuration(duration);
 		if (listener != null)
-			animation.setAnimationListener(listener);
+			animation.setAnimationListener(new AnimationListenerImpl() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+					listener.onAnimationStart(animation);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+					listener.onAnimationRepeat(animation);
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					listener.onAnimationEnd(animation);
+					animation.setAnimationListener(null);
+				}
+			});
 
 		view.startAnimation(animation);
 	}

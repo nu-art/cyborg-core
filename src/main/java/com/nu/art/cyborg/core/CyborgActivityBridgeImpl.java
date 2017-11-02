@@ -352,12 +352,16 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public final void addController(CyborgController controller) {
+		if(controller instanceof ItemRenderer)
+			return;
+
 		controllerList = ArrayTools.appendElement(controllerList, controller);
 		eventDispatcher.addListener(controller);
 		if (DebugActivityLifeCycle) {
 			logDebug("Added controller(" + controllerList.length + "): " + controller);
 		}
 	}
+
 
 	@Override
 	public final void removeController(CyborgController controller) {
