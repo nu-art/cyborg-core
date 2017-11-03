@@ -87,7 +87,8 @@ public class CyborgActivityBridgeImpl
 
 	private final Cyborg cyborg;
 
-	private KeyboardChangeListener keyboardChangeListener;
+
+//	private ArrayList<WeakReference<CyborgController>> controllers = new ArrayList<>();
 
 	private CyborgController[] controllerList = {};
 
@@ -175,7 +176,7 @@ public class CyborgActivityBridgeImpl
 		 **********************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		keyboardChangeListener = new KeyboardChangeListener(cyborg, activity);
+		new KeyboardChangeListener(cyborg, activity);
 		eventDispatcher.addListener(activity);
 		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
 		dispatchLifecycleEvent(LifeCycleState.OnCreate);
@@ -373,6 +374,8 @@ public class CyborgActivityBridgeImpl
 
 		if (controller instanceof InRendererCyborgController)
 			return;
+
+//		controllers.add(new WeakReference<>(controller));
 
 		controllerList = ArrayTools.appendElement(controllerList, controller);
 		eventDispatcher.addListener(controller);

@@ -240,6 +240,8 @@ public final class CyborgStackController
 			return this;
 		}
 
+		protected abstract void resume();
+
 		protected abstract void create();
 
 		public abstract void build();
@@ -348,10 +350,14 @@ public final class CyborgStackController
 				controller.onReady();
 			// --------------------------------------------------------------------
 
+			resume();
+			CyborgStackController.this.addNestedController(controller);
+		}
+
+		@Override
+		protected void resume() {
 			if (getState() == LifeCycleState.OnResume)
 				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
-
-			CyborgStackController.this.addNestedController(controller);
 		}
 
 		private void createLayoutLayer() {
@@ -497,9 +503,13 @@ public final class CyborgStackController
 		if (targetLayerToBeRemove == null)
 			return false;
 
-		final StackLayer originLayerToBeRestored = targetLayerToBeRemove.keepBackground ? null : getTopLayer();
+		final StackLayer originLayerToBeRestored = getTopLayer();
+
 		if (originLayerToBeRestored != null) {
-			originLayerToBeRestored.create();
+			if (targetLayerToBeRemove.keepBackground)
+				originLayerToBeRestored.resume();
+			else
+				originLayerToBeRestored.create();
 		}
 
 		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeRemove.stackTransitionAnimator;
