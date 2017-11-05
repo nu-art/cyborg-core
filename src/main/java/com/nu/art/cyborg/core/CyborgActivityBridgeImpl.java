@@ -233,7 +233,7 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onUserLeaveHint() {
-		logLifeCycle(screenName + ": onPause");
+		logLifeCycle(screenName + ": onUserLeaveHint");
 		dispatchLifecycleEvent(LifeCycleState.OnUserLeaveHint);
 	}
 

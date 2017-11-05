@@ -365,6 +365,9 @@ public abstract class CyborgController
 				onPause();
 				break;
 			case OnUserLeaveHint:
+				if (this.state == LifeCycleState.OnUserLeaveHint)
+					return;
+
 				onUserLeaveHint();
 				break;
 			case OnDestroy:
