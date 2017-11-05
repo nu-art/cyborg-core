@@ -359,7 +359,7 @@ public abstract class CyborgController
 				onResume();
 				break;
 			case OnPause:
-				if (this.state != LifeCycleState.OnResume)
+				if (this.state != LifeCycleState.OnResume && this.state != LifeCycleState.OnUserLeaveHint)
 					return;
 
 				onPause();
