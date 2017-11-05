@@ -34,13 +34,13 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 public class PowerModule
 		extends CyborgModule {
 
-	private static ChargingSource batteryChargingSource;
+	private ChargingSource batteryChargingSource;
 
-	private static ChargingState batteryChargingState;
+	private ChargingState batteryChargingState;
 
-	private static BatteryHealth batteryHealthState;
+	private BatteryHealth batteryHealthState;
 
-	private static int batteryPercentage;
+	private int batteryLevel;
 
 	private static final String[] DefaultActions = new String[]{
 			Intent.ACTION_POWER_CONNECTED,
@@ -56,7 +56,10 @@ public class PowerModule
 		None(0),
 		ChargingUSB(BatteryManager.BATTERY_PLUGGED_USB),
 		ChargingAC(BatteryManager.BATTERY_PLUGGED_AC),
-		ChargingWireless(BatteryManager.BATTERY_PLUGGED_WIRELESS);
+		ChargingWireless(4),
+		// BatteryManager.BATTERY_PLUGGED_WIRELESS
+		//
+		;
 
 		private final int status;
 
@@ -78,7 +81,9 @@ public class PowerModule
 		Charging(BatteryManager.BATTERY_STATUS_CHARGING),
 		Discharging(BatteryManager.BATTERY_STATUS_DISCHARGING),
 		NotCharging(BatteryManager.BATTERY_STATUS_NOT_CHARGING),
-		Full(BatteryManager.BATTERY_STATUS_FULL);
+		Full(BatteryManager.BATTERY_STATUS_FULL),
+		//
+		;
 
 		private final int status;
 
@@ -102,7 +107,9 @@ public class PowerModule
 		Dead(BatteryManager.BATTERY_HEALTH_DEAD),
 		OverVoltage(BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE),
 		UnspecifiedFailure(BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE),
-		Cold(BatteryManager.BATTERY_HEALTH_COLD);
+		Cold(BatteryManager.BATTERY_HEALTH_COLD),
+		//
+		;
 
 		private final int status;
 
@@ -125,17 +132,19 @@ public class PowerModule
 		registerReceiver(Power_IndicatorReceiver.class);
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	private void processBatteryChanged(Intent batteryStatusIntent) {
-		setChargingSource(ChargingSource.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)));
-		setChargingState(ChargingState.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)));
-		setBatteryHealthState(BatteryHealth.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)));
+		boolean hasChanged = false;
 
-		int level = batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-		int scale = batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-		if (level > 0 && scale > 0)
-			batteryPercentage = (int) ((level / (float) scale) * 100);
-		else
-			batteryPercentage = -1;
+
+		hasChanged |= setBatteryLevel(batteryStatusIntent);
+		hasChanged |= setChargingSource(batteryStatusIntent);
+		hasChanged |= setChargingState(batteryStatusIntent);
+		hasChanged |= setHealthState(batteryStatusIntent);
+
+
+		if (!hasChanged)
+			return;
 
 		dispatchGlobalEvent("Battery state changed.", BatteryStateListener.class, new Processor<BatteryStateListener>() {
 			@Override
@@ -143,6 +152,36 @@ public class PowerModule
 				batteryStateListener.onBatteryStateChanged();
 			}
 		});
+	}
+
+	private boolean setHealthState(Intent batteryStatusIntent) {
+		BatteryHealth _batteryHealthState = batteryHealthState;
+		batteryHealthState = BatteryHealth.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1));
+		return _batteryHealthState != batteryHealthState;
+	}
+
+	private boolean setChargingState(Intent batteryStatusIntent) {
+		ChargingState _batteryChargingState = batteryChargingState;
+		batteryChargingState = ChargingState.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1));
+		return _batteryChargingState != batteryChargingState;
+	}
+
+	private boolean setChargingSource(Intent batteryStatusIntent) {
+		ChargingSource _batteryChargingSource = batteryChargingSource;
+		batteryChargingSource = ChargingSource.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1));
+		return _batteryChargingSource != batteryChargingSource;
+	}
+
+	private boolean setBatteryLevel(Intent batteryStatusIntent) {
+		int level = batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+		int scale = batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+		int previousBatteryLevel = batteryLevel;
+		if (level > 0 && scale > 0)
+			batteryLevel = (int) ((level / (float) scale) * 100);
+		else
+			batteryLevel = -1;
+		return previousBatteryLevel != batteryLevel;
 	}
 
 	public interface BatteryStateListener {
@@ -174,18 +213,6 @@ public class PowerModule
 		}
 	}
 
-	private static void setChargingSource(ChargingSource source) {
-		batteryChargingSource = source;
-	}
-
-	private static void setChargingState(ChargingState chargingState) {
-		batteryChargingState = chargingState;
-	}
-
-	private static void setBatteryHealthState(BatteryHealth healthState) {
-		batteryHealthState = healthState;
-	}
-
 	public ChargingSource getChargingSource() {
 		return batteryChargingSource;
 	}
@@ -202,6 +229,6 @@ public class PowerModule
 	 * @return Battery charge percentange, 0 is empty, 100 is full.
 	 */
 	public int getBatteryPercentage() {
-		return batteryPercentage;
+		return batteryLevel;
 	}
 }
