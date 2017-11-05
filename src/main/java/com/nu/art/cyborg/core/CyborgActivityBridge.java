@@ -72,6 +72,8 @@ public interface CyborgActivityBridge {
 
 	void onPause();
 
+	void onUserLeaveHint();
+
 	void onSaveInstanceState(Bundle outState);
 
 	void onDestroy();

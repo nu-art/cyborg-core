@@ -364,6 +364,9 @@ public abstract class CyborgController
 
 				onPause();
 				break;
+			case OnUserLeaveHint:
+				onUserLeaveHint();
+				break;
 			case OnDestroy:
 				if (this.state != LifeCycleState.OnPause)
 					return;
@@ -380,6 +383,8 @@ public abstract class CyborgController
 	protected void onCreate() {}
 
 	protected void onResume() {}
+
+	protected void onUserLeaveHint() {}
 
 	protected void onPause() {}
 

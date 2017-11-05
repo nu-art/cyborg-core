@@ -31,4 +31,6 @@ public interface LifeCycleListener {
 	void onStop();
 
 	void onDestroy();
+
+	void onUserLeaveHint();
 }

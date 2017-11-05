@@ -172,6 +172,12 @@ public class CyborgActivity
 	}
 
 	@Override
+	protected void onUserLeaveHint() {
+		bridge.onUserLeaveHint();
+		super.onUserLeaveHint();
+	}
+
+	@Override
 	protected void onDestroy() {
 		bridge.onDestroy();
 		super.onDestroy();

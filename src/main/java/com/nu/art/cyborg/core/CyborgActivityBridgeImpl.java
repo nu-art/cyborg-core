@@ -87,8 +87,7 @@ public class CyborgActivityBridgeImpl
 
 	private final Cyborg cyborg;
 
-
-//	private ArrayList<WeakReference<CyborgController>> controllers = new ArrayList<>();
+	//	private ArrayList<WeakReference<CyborgController>> controllers = new ArrayList<>();
 
 	private CyborgController[] controllerList = {};
 
@@ -230,6 +229,12 @@ public class CyborgActivityBridgeImpl
 		if (addToStack)
 			cyborg.setActivityInForeground(null);
 		dispatchLifecycleEvent(LifeCycleState.OnPause);
+	}
+
+	@Override
+	public void onUserLeaveHint() {
+		logLifeCycle(screenName + ": onPause");
+		dispatchLifecycleEvent(LifeCycleState.OnUserLeaveHint);
 	}
 
 	@Override
@@ -375,7 +380,7 @@ public class CyborgActivityBridgeImpl
 		if (controller instanceof InRendererCyborgController)
 			return;
 
-//		controllers.add(new WeakReference<>(controller));
+		//		controllers.add(new WeakReference<>(controller));
 
 		controllerList = ArrayTools.appendElement(controllerList, controller);
 		eventDispatcher.addListener(controller);
