@@ -200,7 +200,7 @@ public class ImageDownloaderModule
 			});
 			downloaderBuilder.onError(new Processor<Throwable>() {
 				@Override
-				public void process(Throwable e) {
+				public void process(final Throwable e) {
 					if (cancelled)
 						return;
 
@@ -211,6 +211,8 @@ public class ImageDownloaderModule
 
 							if (onError != null)
 								onError.run();
+							else
+								logError("Error downloading image", e);
 						}
 
 						private void processError() {
