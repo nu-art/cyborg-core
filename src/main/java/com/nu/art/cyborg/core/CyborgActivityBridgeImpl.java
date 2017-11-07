@@ -48,6 +48,8 @@ import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.modular.core.EventDispatcher;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.nu.art.cyborg.core.CyborgActivity.DebugActivityLifeCycle;
@@ -88,8 +90,8 @@ public class CyborgActivityBridgeImpl
 	private final Cyborg cyborg;
 
 	//	private ArrayList<WeakReference<CyborgController>> controllers = new ArrayList<>();
-
-	private CyborgController[] controllerList = {};
+	ArrayList<WeakReference<CyborgController>> toBeRemoved = new ArrayList<>();
+	ArrayList<WeakReference<CyborgController>> _controllerList = new ArrayList<>();
 
 	private LifeCycleListener[] lifecycleListeners = {};
 
@@ -185,30 +187,58 @@ public class CyborgActivityBridgeImpl
 			ViewServer.get(activity).addWindow(activity);
 	}
 
+	interface ControllerProcessor {
+
+		boolean process(CyborgController controller);
+	}
+
+	private void processControllers(ControllerProcessor processor) {
+		for (WeakReference<CyborgController> ref : _controllerList) {
+			CyborgController controller = ref.get();
+			if (controller == null) {
+				toBeRemoved.add(ref);
+				continue;
+			}
+			processor.process(controller);
+		}
+
+		_controllerList.removeAll(toBeRemoved);
+		toBeRemoved.clear();
+	}
+
 	@Override
 	public void onNewIntent(Intent intent) {
 		logLifeCycle(screenName + ": onNewIntent");
 		handleIntent(intent);
 	}
 
-	private void handleIntent(Intent intent) {
-		for (CyborgController controller : controllerList) {
-			controller.handleIntent(intent);
-		}
+	private void handleIntent(final Intent intent) {
+		processControllers(new ControllerProcessor() {
+
+			@Override
+			public boolean process(CyborgController cyborgController) {
+				cyborgController.handleIntent(intent);
+				return false;
+			}
+		});
 	}
 
 	@Override
-	public void onRestoreInstanceState(Bundle inState) {
+	public void onRestoreInstanceState(final Bundle inState) {
 		logLifeCycle("RestoreState");
-		for (CyborgController controller : controllerList) {
-			Bundle controllerBundle = inState.getBundle(controller.getStateTag());
-			if (controllerBundle == null) {
-				logWarning("Could not find State for controller: " + controller.getClass() + ", with key: " + controller.getStateTag());
-				continue;
-			}
+		processControllers(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				Bundle controllerBundle = inState.getBundle(controller.getStateTag());
+				if (controllerBundle == null) {
+					logWarning("Could not find State for controller: " + controller.getClass() + ", with key: " + controller.getStateTag());
+					return false;
+				}
 
-			controller.onRestoreInstanceState(controllerBundle);
-		}
+				controller.onRestoreInstanceState(controllerBundle);
+				return false;
+			}
+		});
 	}
 
 	@Override
@@ -232,13 +262,17 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(final Bundle outState) {
 		logLifeCycle(screenName + ": SaveState");
-		for (CyborgController controller : controllerList) {
-			Bundle controllerBundle = new Bundle();
-			outState.putBundle(controller.getStateTag(), controllerBundle);
-			controller.onSaveInstanceState(controllerBundle);
-		}
+		processControllers(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				Bundle controllerBundle = new Bundle();
+				outState.putBundle(controller.getStateTag(), controllerBundle);
+				controller.onSaveInstanceState(controllerBundle);
+				return false;
+			}
+		});
 		savedState = true;
 	}
 
@@ -247,7 +281,6 @@ public class CyborgActivityBridgeImpl
 		logLifeCycle(screenName + ": onDestroy");
 		dispatchLifecycleEvent(LifeCycleState.OnDestroy);
 		ViewServer.get(activity).removeWindow(activity);
-		eventDispatcher.removeListener(activity);
 		destroyed = true;
 	}
 
@@ -270,116 +303,143 @@ public class CyborgActivityBridgeImpl
 				UI Events Callbacks
 		 **********************************/
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		boolean toRet = false;
-		for (CyborgController controller : controllerList) {
-			toRet |= controller.createMenuOptions(menu, activity.getMenuInflater());
-		}
-		return toRet;
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.createMenuOptions(menu, activity.getMenuInflater());
+			}
+		});
 	}
 
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		boolean toRet = false;
-		for (CyborgController controller : controllerList) {
-			toRet |= controller.onKeyDown(keyCode, event);
-		}
-		return toRet;
+	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onKeyDown(keyCode, event);
+			}
+		});
 	}
 
 	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		boolean toRet = false;
-		for (CyborgController controller : controllerList) {
-			toRet |= controller.onKeyUp(keyCode, event);
-		}
-		return toRet;
+	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onKeyUp(keyCode, event);
+			}
+		});
 	}
 
 	@Override
-	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-		boolean toRet = false;
-		for (CyborgController controller : controllerList) {
-			toRet |= controller.onKeyLongPress(keyCode, event);
-		}
-		return toRet;
+	public boolean onKeyLongPress(final int keyCode, final KeyEvent event) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onKeyLongPress(keyCode, event);
+			}
+		});
 	}
 
 	@Override
-	public boolean onKeyShortcut(int keyCode, KeyEvent event) {
-		boolean toRet = false;
-		for (CyborgController controller : controllerList) {
-			toRet |= controller.onKeyShortcut(keyCode, event);
-		}
-		return toRet;
+	public boolean onKeyShortcut(final int keyCode, final KeyEvent event) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onKeyShortcut(keyCode, event);
+			}
+		});
 	}
 
 	@Override
-	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		boolean toRet = false;
-		for (CyborgController controller : controllerList) {
-			toRet |= controller.onKeyMultiple(keyCode, repeatCount, event);
-		}
-		return toRet;
+	public boolean onKeyMultiple(final int keyCode, final int repeatCount, final KeyEvent event) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onKeyMultiple(keyCode, repeatCount, event);
+			}
+		});
 	}
 
 	@Override
 	@SuppressWarnings("ConstantConditions")
 	public boolean onBackPressed() {
-		boolean toRet = false;
-		CyborgController[] controllers = controllerList;
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onBackPressed();
+			}
+		});
+	}
 
+	private boolean processControllersPriority(ControllerProcessor processor) {
 		// First check for stack controllers
-		for (int i = controllers.length - 1; i >= 0; i--) {
-			CyborgController controller = controllers[i];
+		for (int i = _controllerList.size() - 1; i >= 0; i--) {
+			WeakReference<CyborgController> ref = _controllerList.get(i);
+			CyborgController controller = ref.get();
+			if (controller == null) {
+				toBeRemoved.add(ref);
+				continue;
+			}
+
 			if (!(controller instanceof CyborgStackController))
 				continue;
 
-			toRet |= controller.onBackPressed();
-			if (toRet)
+			if (processor.process(controller))
 				return true;
 		}
 
 		// Now check for regular controllers
-		for (int i = controllers.length - 1; i >= 0; i--) {
-			CyborgController controller = controllers[i];
+		for (int i = _controllerList.size() - 1; i >= 0; i--) {
+			WeakReference<CyborgController> ref = _controllerList.get(i);
+			CyborgController controller = ref.get();
+			if (controller == null) {
+				toBeRemoved.add(ref);
+				continue;
+			}
 
 			if (controller instanceof CyborgStackController)
 				continue;
-			toRet |= controller.onBackPressed();
-			if (toRet)
+
+			if (processor.process(controller))
 				return true;
 		}
-		return toRet;
+
+		_controllerList.removeAll(toBeRemoved);
+		toBeRemoved.clear();
+
+		return false;
 	}
 
 	@Override
 	public void onUserLeaveHint() {
-		CyborgController[] controllers = controllerList;
-		for (int i = controllers.length - 1; i >= 0; i--) {
-			CyborgController controller = controllers[i];
-			if (controller.onUserLeaveHint())
-				break;
-		}
+		processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onUserLeaveHint();
+			}
+		});
 	}
 
 	@Override
 	public void onUserInteraction() {
-		CyborgController[] controllers = controllerList;
-		for (int i = controllers.length - 1; i >= 0; i--) {
-			CyborgController controller = controllers[i];
-			if (controller.onUserInteraction())
-				break;
-		}
+		processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.onUserInteraction();
+			}
+		});
 	}
 
 	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		for (CyborgController controller : controllerList) {
-			if (controller.actionDelegator.onMenuItemClick(item))
-				return true;
-		}
-		return false;
+	public boolean onMenuItemSelected(int featureId, final MenuItem item) {
+		return processControllersPriority(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				return controller.actionDelegator.onMenuItemClick(item);
+			}
+		});
 	}
 
 	/* ********************************
@@ -395,21 +455,28 @@ public class CyborgActivityBridgeImpl
 			return;
 
 		//		controllers.add(new WeakReference<>(controller));
-
-		controllerList = ArrayTools.appendElement(controllerList, controller);
+		_controllerList.add(new WeakReference<>(controller));
 		eventDispatcher.addListener(controller);
 		if (DebugActivityLifeCycle) {
-			logDebug("Added controller(" + controllerList.length + "): " + controller);
+			logDebug("Added controller(" + _controllerList.size() + "): " + controller);
 		}
 	}
 
 	@Override
 	public final void removeController(CyborgController controller) {
-		controllerList = ArrayTools.removeElement(controllerList, controller);
-		eventDispatcher.removeListener(controller);
-		if (DebugActivityLifeCycle) {
-			logDebug("Removed controller(" + controllerList.length + "): " + controller);
+		for (WeakReference<CyborgController> ref : _controllerList) {
+			if (ref.get() == null) {
+				toBeRemoved.add(ref);
+				continue;
+			}
+
+			if (ref.get() == controller) {
+				toBeRemoved.add(ref);
+			}
 		}
+
+		_controllerList.removeAll(toBeRemoved);
+		toBeRemoved.clear();
 	}
 
 	@Override
@@ -523,11 +590,15 @@ public class CyborgActivityBridgeImpl
 		lifecycleListeners = ArrayTools.removeElement(lifecycleListeners, listener);
 	}
 
-	private synchronized void dispatchLifecycleEvent(LifeCycleState state) {
+	private synchronized void dispatchLifecycleEvent(final LifeCycleState state) {
 		this.state = state;
-		for (CyborgController controller : controllerList) {
-			controller.dispatchLifeCycleEvent(state);
-		}
+		processControllers(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				controller.dispatchLifeCycleEvent(state);
+				return false;
+			}
+		});
 
 		for (LifeCycleListener lifecycleListener : lifecycleListeners) {
 			state.process(lifecycleListener);
