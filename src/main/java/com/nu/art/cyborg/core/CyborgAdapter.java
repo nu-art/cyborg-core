@@ -38,7 +38,6 @@ import com.nu.art.cyborg.core.dataModels.DataModel.DataModelListener;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
 public class CyborgAdapter<Item>
@@ -51,7 +50,7 @@ public class CyborgAdapter<Item>
 
 	private final Cyborg cyborg;
 
-	private HashMap<Item, ItemRenderer<? extends Item>> renderers = new HashMap<>();
+//	private HashMap<Item, ItemRenderer<? extends Item>> renderers = new HashMap<>();
 
 	private DataModel<Item> dataModel;
 
@@ -173,17 +172,17 @@ public class CyborgAdapter<Item>
 			/*	TODO: understand why RecyclerView returns an already bounded ItemRenderer BEFORE the renderer's
 				view gets scrolled out of the view, preventing from concluding really whether or not we can dispose of the item*/
 			//			disposeItem(previousItem);
-			renderers.remove(previousItem);
+//			renderers.remove(previousItem);
 		}
-		renderers.remove(item);
-		renderers.put(item, renderer);
+//		renderers.remove(item);
+//		renderers.put(item, renderer);
 		renderer._setItem(item);
 		renderer.render();
 	}
 
-	public final ItemRenderer<? extends Item> getRendererForItem(Item item) {
-		return renderers.get(item);
-	}
+//	public final ItemRenderer<? extends Item> getRendererForItem(Item item) {
+//		return renderers.get(item);
+//	}
 
 	@Override
 	public void onDataSetChanged() {
@@ -269,7 +268,7 @@ public class CyborgAdapter<Item>
 			item = renderer.getItem();
 
 			logDebug("Destroy ViewPager Item: " + item);
-			renderers.remove(item);
+//			renderers.remove(item);
 			disposeItem(item);
 		}
 
@@ -460,9 +459,9 @@ public class CyborgAdapter<Item>
 			return getItemsCount();
 		}
 
-		public View getViewForPosition(int position) {
-			return renderers.get(getItemForPosition(position)).getRootView();
-		}
+//		public View getViewForPosition(int position) {
+//			return renderers.get(getItemForPosition(position)).getRootView();
+//		}
 
 		void invalidateDataModel() {
 			CyborgAdapter.this.invalidateDataModel();

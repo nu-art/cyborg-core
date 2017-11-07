@@ -90,8 +90,9 @@ public class CyborgActivityBridgeImpl
 	private final Cyborg cyborg;
 
 	//	private ArrayList<WeakReference<CyborgController>> controllers = new ArrayList<>();
-	ArrayList<WeakReference<CyborgController>> toBeRemoved = new ArrayList<>();
-	ArrayList<WeakReference<CyborgController>> _controllerList = new ArrayList<>();
+	private ArrayList<WeakReference<CyborgController>> toBeRemoved = new ArrayList<>();
+	@SuppressWarnings("unchecked")
+	private WeakReference<CyborgController>[] _controllerList = new WeakReference[0];
 
 	private LifeCycleListener[] lifecycleListeners = {};
 
@@ -202,7 +203,7 @@ public class CyborgActivityBridgeImpl
 			processor.process(controller);
 		}
 
-		_controllerList.removeAll(toBeRemoved);
+		ArrayTools.removeElements(_controllerList, toBeRemoved);
 		toBeRemoved.clear();
 	}
 
@@ -375,8 +376,8 @@ public class CyborgActivityBridgeImpl
 
 	private boolean processControllersPriority(ControllerProcessor processor) {
 		// First check for stack controllers
-		for (int i = _controllerList.size() - 1; i >= 0; i--) {
-			WeakReference<CyborgController> ref = _controllerList.get(i);
+		for (int i = _controllerList.length - 1; i >= 0; i--) {
+			WeakReference<CyborgController> ref = _controllerList[i];
 			CyborgController controller = ref.get();
 			if (controller == null) {
 				toBeRemoved.add(ref);
@@ -391,8 +392,8 @@ public class CyborgActivityBridgeImpl
 		}
 
 		// Now check for regular controllers
-		for (int i = _controllerList.size() - 1; i >= 0; i--) {
-			WeakReference<CyborgController> ref = _controllerList.get(i);
+		for (int i = _controllerList.length - 1; i >= 0; i--) {
+			WeakReference<CyborgController> ref = _controllerList[i];
 			CyborgController controller = ref.get();
 			if (controller == null) {
 				toBeRemoved.add(ref);
@@ -406,7 +407,7 @@ public class CyborgActivityBridgeImpl
 				return true;
 		}
 
-		_controllerList.removeAll(toBeRemoved);
+		ArrayTools.removeElements(_controllerList, toBeRemoved);
 		toBeRemoved.clear();
 
 		return false;
@@ -455,10 +456,10 @@ public class CyborgActivityBridgeImpl
 			return;
 
 		//		controllers.add(new WeakReference<>(controller));
-		_controllerList.add(new WeakReference<>(controller));
+		_controllerList = ArrayTools.appendElement(_controllerList, new WeakReference<>(controller));
 		eventDispatcher.addListener(controller);
 		if (DebugActivityLifeCycle) {
-			logDebug("Added controller(" + _controllerList.size() + "): " + controller);
+			logDebug("Added controller(" + _controllerList.length + "): " + controller);
 		}
 	}
 
@@ -475,7 +476,7 @@ public class CyborgActivityBridgeImpl
 			}
 		}
 
-		_controllerList.removeAll(toBeRemoved);
+		_controllerList = ArrayTools.removeElements(_controllerList, toBeRemoved);
 		toBeRemoved.clear();
 	}
 

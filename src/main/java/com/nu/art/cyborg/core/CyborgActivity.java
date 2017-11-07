@@ -131,7 +131,7 @@ public class CyborgActivity
 
 	@Override
 	public void onUserInteraction() {
-		bridge.onUserInteraction();
+//		bridge.onUserInteraction();
 		super.onUserInteraction();
 	}
 
