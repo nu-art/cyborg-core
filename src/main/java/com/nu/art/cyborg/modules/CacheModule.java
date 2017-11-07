@@ -42,6 +42,8 @@ public class CacheModule
 
 		private String suffix;
 
+		private String pathToDir;
+
 		private long interval;
 
 		public Cacheable setKey(String key) {
@@ -51,6 +53,11 @@ public class CacheModule
 
 		public Cacheable setSuffix(String suffix) {
 			this.suffix = suffix;
+			return this;
+		}
+
+		public Cacheable setPathToDir(String pathToDir) {
+			this.pathToDir = pathToDir;
 			return this;
 		}
 
@@ -99,11 +106,29 @@ public class CacheModule
 
 	private boolean isCached(Cacheable cacheable) {
 		File file = getFile(cacheable);
-		return file.exists() && file.isFile() && file.length() > 0;
+		if (!file.exists())
+			return false;
+
+		if (!file.isFile())
+			return false;
+
+		if (file.length() == 0)
+			return false;
+
+		if (cacheable.interval == 0)
+			return true;
+
+		return System.currentTimeMillis() - file.lastModified() > cacheable.interval;
 	}
 
 	private File getFile(Cacheable cacheable) {
-		return new File(cacheable.interval > 0 ? filesDir : cacheDir, cacheable.key.hashCode() + "." + cacheable.suffix);
+		File dir;
+		if (cacheable.pathToDir != null)
+			dir = new File(cacheable.pathToDir);
+		else
+			dir = cacheable.interval > 0 ? filesDir : cacheDir;
+
+		return new File(dir, cacheable.key.hashCode() + "." + cacheable.suffix);
 	}
 
 	private void cacheAsync(final Cacheable cacheable, final InputStream inputStream, final CacheListener listener) {
