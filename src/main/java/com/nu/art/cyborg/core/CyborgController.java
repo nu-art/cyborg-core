@@ -359,16 +359,10 @@ public abstract class CyborgController
 				onResume();
 				break;
 			case OnPause:
-				if (this.state != LifeCycleState.OnResume && this.state != LifeCycleState.OnUserLeaveHint)
+				if (this.state != LifeCycleState.OnResume)
 					return;
 
 				onPause();
-				break;
-			case OnUserLeaveHint:
-				if (this.state == LifeCycleState.OnUserLeaveHint)
-					return;
-
-				onUserLeaveHint();
 				break;
 			case OnDestroy:
 				if (this.state != LifeCycleState.OnPause)
@@ -387,8 +381,6 @@ public abstract class CyborgController
 
 	protected void onResume() {}
 
-	protected void onUserLeaveHint() {}
-
 	protected void onPause() {}
 
 	protected void onDestroy() {}
@@ -400,6 +392,14 @@ public abstract class CyborgController
 	protected void render() {}
 
 	public boolean onBackPressed() {
+		return false;
+	}
+
+	protected boolean onUserLeaveHint() {
+		return false;
+	}
+
+	protected boolean onUserInteraction() {
 		return false;
 	}
 

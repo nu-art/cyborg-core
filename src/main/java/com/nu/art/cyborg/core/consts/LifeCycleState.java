@@ -47,10 +47,4 @@ public enum LifeCycleState
 			toProcess.onDestroy();
 		}
 	},
-	OnUserLeaveHint() {
-		@Override
-		public void process(LifeCycleListener toProcess) {
-			toProcess.onUserLeaveHint();
-		}
-	},
 }

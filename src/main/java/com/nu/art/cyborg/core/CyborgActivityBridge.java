@@ -52,6 +52,10 @@ public interface CyborgActivityBridge {
 
 	boolean onBackPressed();
 
+	void onUserLeaveHint();
+
+	void onUserInteraction();
+
 	void onActivityResult(int requestCode, int resultCode, Intent data);
 
 	void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
@@ -71,8 +75,6 @@ public interface CyborgActivityBridge {
 	void onResume();
 
 	void onPause();
-
-	void onUserLeaveHint();
 
 	void onSaveInstanceState(Bundle outState);
 

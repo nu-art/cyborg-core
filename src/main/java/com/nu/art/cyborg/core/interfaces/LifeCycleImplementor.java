@@ -38,7 +38,4 @@ public class LifeCycleImplementor
 
 	@Override
 	public void onDestroy() {}
-
-	@Override
-	public void onUserLeaveHint() {}
 }

@@ -124,6 +124,18 @@ public class CyborgActivity
 	}
 
 	@Override
+	protected void onUserLeaveHint() {
+		bridge.onUserLeaveHint();
+		super.onUserLeaveHint();
+	}
+
+	@Override
+	public void onUserInteraction() {
+		bridge.onUserInteraction();
+		super.onUserInteraction();
+	}
+
+	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		boolean toRet = bridge.onMenuItemSelected(featureId, item);
 		return toRet | super.onMenuItemSelected(featureId, item);
@@ -169,12 +181,6 @@ public class CyborgActivity
 	protected void onPause() {
 		bridge.onPause();
 		super.onPause();
-	}
-
-	@Override
-	protected void onUserLeaveHint() {
-		bridge.onUserLeaveHint();
-		super.onUserLeaveHint();
 	}
 
 	@Override

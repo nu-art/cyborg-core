@@ -232,12 +232,6 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public void onUserLeaveHint() {
-		logLifeCycle(screenName + ": onUserLeaveHint");
-		dispatchLifecycleEvent(LifeCycleState.OnUserLeaveHint);
-	}
-
-	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		logLifeCycle(screenName + ": SaveState");
 		for (CyborgController controller : controllerList) {
@@ -357,6 +351,26 @@ public class CyborgActivityBridgeImpl
 				return true;
 		}
 		return toRet;
+	}
+
+	@Override
+	public void onUserLeaveHint() {
+		CyborgController[] controllers = controllerList;
+		for (int i = controllers.length - 1; i >= 0; i--) {
+			CyborgController controller = controllers[i];
+			if (controller.onUserLeaveHint())
+				break;
+		}
+	}
+
+	@Override
+	public void onUserInteraction() {
+		CyborgController[] controllers = controllerList;
+		for (int i = controllers.length - 1; i >= 0; i--) {
+			CyborgController controller = controllers[i];
+			if (controller.onUserInteraction())
+				break;
+		}
 	}
 
 	@Override
