@@ -30,7 +30,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
+import com.nu.art.cyborg.core.abs.Cyborg;
 
 import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
 
@@ -49,7 +51,8 @@ import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
  */
 @SuppressWarnings("unused")
 public class CyborgActivity
-		extends FragmentActivity {
+		extends FragmentActivity
+		implements ILogger {
 
 	/**
 	 * Should activity lifecycle be printed to the log
@@ -60,7 +63,11 @@ public class CyborgActivity
 
 	private final CyborgActivityBridge bridge;
 
+	protected final Cyborg cyborg;
+
 	private LayoutInflater layoutInflater;
+
+	private final ILogger logger;
 
 	public final CyborgActivityBridge getBridge() {
 		return bridge;
@@ -68,12 +75,13 @@ public class CyborgActivity
 
 	protected CyborgActivity(String screenName) {
 		super();
+		cyborg = CyborgBuilder.getInstance();
+		logger = cyborg.getLogger(this);
 		bridge = new CyborgActivityBridgeImpl(screenName, this);
 	}
 
 	public CyborgActivity() {
-		super();
-		bridge = new CyborgActivityBridgeImpl("NoName", this);
+		this("NoName");
 	}
 
 	public void reCreateScreen() {
@@ -131,7 +139,7 @@ public class CyborgActivity
 
 	@Override
 	public void onUserInteraction() {
-//		bridge.onUserInteraction();
+		//		bridge.onUserInteraction();
 		super.onUserInteraction();
 	}
 
@@ -239,5 +247,125 @@ public class CyborgActivity
 
 	protected final <Type> Type getViewById(@IdRes int viewId) {
 		return (Type) findViewById(viewId);
+	}
+
+	@Override
+	public void logVerbose(String verbose) {
+		if (logger != null)
+			logger.logVerbose(verbose);
+	}
+
+	@Override
+	public void logVerbose(String verbose, Object... params) {
+		if (logger != null)
+			logger.logVerbose(verbose, params);
+	}
+
+	@Override
+	public void logVerbose(Throwable e) {
+		if (logger != null)
+			logger.logVerbose(e);
+	}
+
+	@Override
+	public void logVerbose(String verbose, Throwable e) {
+		if (logger != null)
+			logger.logVerbose(verbose, e);
+	}
+
+	@Override
+	public void logDebug(String debug) {
+		if (logger != null)
+			logger.logDebug(debug);
+	}
+
+	@Override
+	public void logDebug(String debug, Object... params) {
+		if (logger != null)
+			logger.logDebug(debug, params);
+	}
+
+	@Override
+	public void logDebug(Throwable e) {
+		if (logger != null)
+			logger.logDebug(e);
+	}
+
+	@Override
+	public void logDebug(String debug, Throwable e) {
+		if (logger != null)
+			logger.logDebug(debug, e);
+	}
+
+	@Override
+	public void logInfo(String info) {
+		if (logger != null)
+			logger.logInfo(info);
+	}
+
+	@Override
+	public void logInfo(String info, Object... params) {
+		if (logger != null)
+			logger.logInfo(info, params);
+	}
+
+	@Override
+	public void logInfo(Throwable e) {
+		if (logger != null)
+			logger.logInfo(e);
+	}
+
+	@Override
+	public void logInfo(String info, Throwable e) {
+		if (logger != null)
+			logger.logInfo(info, e);
+	}
+
+	@Override
+	public void logWarning(String warning) {
+		if (logger != null)
+			logger.logWarning(warning);
+	}
+
+	@Override
+	public void logWarning(String warning, Object... params) {
+		if (logger != null)
+			logger.logWarning(warning, params);
+	}
+
+	@Override
+	public void logWarning(Throwable e) {
+		if (logger != null)
+			logger.logWarning(e);
+	}
+
+	@Override
+	public void logWarning(String warning, Throwable e) {
+		if (logger != null)
+			logger.logWarning(warning, e);
+	}
+
+	@Override
+	public void logError(String error) {
+		if (logger != null)
+			logger.logError(error);
+	}
+
+	@Override
+	public void logError(String error, Object... params) {
+		if (logger != null)
+			logger.logError(error, params);
+	}
+
+	@Override
+	public void logError(Throwable e) {
+		if (logger != null)
+			logger.logError(e);
+	}
+
+	@Override
+	public void logError(String error, Throwable e) {
+		if (logger != null)
+			logger.logError(error, e);
 	}
 }
