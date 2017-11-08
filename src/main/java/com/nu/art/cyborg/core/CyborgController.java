@@ -159,7 +159,8 @@ public abstract class CyborgController
 
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
-		logVerbose("Instantiated");
+		if (DebugPerformance)
+			logVerbose("Instantiated");
 		this.layoutId = layoutId;
 		cyborg = CyborgBuilder.getInstance();
 		actionDelegator = new ActionDelegator(cyborg);
