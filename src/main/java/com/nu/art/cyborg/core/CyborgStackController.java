@@ -438,6 +438,11 @@ public final class CyborgStackController
 			return;
 		}
 
+		// promote this stack in the hierarchy, so it will receive the events first.
+		// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
+		//		activityBridge.removeController(this);
+		//		activityBridge.addController(this);
+
 		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground ? null : getTopLayer();
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();

@@ -67,6 +67,7 @@ public class FontTypeSetter
 			logWarning("Could not find a font with a matching name: " + fontName);
 			return;
 		}
+
 		Typeface typeface = font.getTypeface(textview.getContext());
 		textview.setTypeface(typeface);
 	}

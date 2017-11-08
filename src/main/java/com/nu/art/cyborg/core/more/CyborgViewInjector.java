@@ -35,6 +35,7 @@ import com.nu.art.reflection.injector.AnnotatbleInjector;
 import com.nu.art.reflection.tools.ART_Tools;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 @SuppressWarnings( {
 											 "rawtypes",
@@ -44,6 +45,7 @@ public final class CyborgViewInjector
 		extends AnnotatbleInjector<ViewIdentifier, View, CyborgController>
 		implements ILogger {
 
+	private static final HashMap<Class<? extends CyborgController>, Field[]> cache = new HashMap<>();
 	/**
 	 * A map of rootView Id, to its rootView instance.
 	 */
@@ -74,8 +76,13 @@ public final class CyborgViewInjector
 
 	@Override
 	protected final Field[] extractFieldsFromInstance(Class<? extends CyborgController> controllerType) {
-		return ART_Tools
-				.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
+		Field[] fields = cache.get(controllerType);
+		if (fields == null) {
+			fields = ART_Tools
+					.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
+			cache.put(controllerType, fields);
+		}
+		return fields;
 	}
 
 	@Override

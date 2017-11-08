@@ -56,7 +56,10 @@ public abstract class ItemRenderer<ItemType>
 
 	@Override
 	public final void render() {
+		long startMs = System.currentTimeMillis();
 		renderItem(item);
+		if(DebugControllerLifeCycle)
+		logVerbose("Render duration: " + (System.currentTimeMillis() - startMs) + "ms");
 	}
 
 	protected abstract void renderItem(ItemType item);

@@ -90,6 +90,8 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Random;
 
+import static com.nu.art.cyborg.core.CyborgAdapter.DebugPerformance;
+
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
  * <ul>
@@ -157,6 +159,7 @@ public abstract class CyborgController
 
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
+		logVerbose("Instantiated");
 		this.layoutId = layoutId;
 		cyborg = CyborgBuilder.getInstance();
 		actionDelegator = new ActionDelegator(cyborg);
@@ -179,10 +182,21 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	private void injectMembers() {
+		if (DebugPerformance)
+			logVerbose("injectMembers");
 		CyborgViewInjector viewInjector = new CyborgViewInjector(rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
+
+		if (DebugPerformance)
+			logVerbose("viewInjector");
 		viewInjector.injectToInstance(this);
+
+		if (DebugPerformance)
+			logVerbose("moduleInjector");
 		moduleInjector.injectToInstance(this);
+
+		if (DebugPerformance)
+			logVerbose("done");
 	}
 
 	final void setState(LifeCycleState newState) {

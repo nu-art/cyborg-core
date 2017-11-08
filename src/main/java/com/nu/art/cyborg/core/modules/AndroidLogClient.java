@@ -18,8 +18,8 @@
 
 package com.nu.art.cyborg.core.modules;
 
-import com.nu.art.belog.BeLogged.LogEntry;
 import com.nu.art.belog.BeLoggedClient;
+import com.nu.art.belog.consts.LogLevel;
 
 /**
  * Created by TacB0sS on 28-Feb 2017.
@@ -30,51 +30,52 @@ public class AndroidLogClient
 	private static final StringBuffer buffer = new StringBuffer();
 
 	@Override
-	protected void log(LogEntry entry, String logEntry) {
-		String tagWithThread;
-		synchronized (buffer) {
-			buffer.append(entry.thread).append("/").append(entry.tag);
-			tagWithThread = buffer.toString();
-			buffer.setLength(0);
-		}
+	protected void log(final LogLevel level, final String thread, final String tag, final String message, final Throwable t) {
+		if (!isLoggable(level))
+			return;
 
-		if (entry.message != null)
-			switch (entry.level) {
+		String tagWithThread;
+		buffer.append(thread).append("/").append(tag);
+		tagWithThread = buffer.toString();
+		buffer.setLength(0);
+
+		if (message != null)
+			switch (level) {
 				case Assert:
 				case Error:
-					android.util.Log.e(tagWithThread, entry.message);
+					android.util.Log.e(tagWithThread, message);
 					break;
 				case Warning:
-					android.util.Log.w(tagWithThread, entry.message);
+					android.util.Log.w(tagWithThread, message);
 					break;
 				case Info:
-					android.util.Log.i(tagWithThread, entry.message);
+					android.util.Log.i(tagWithThread, message);
 					break;
 				case Debug:
-					android.util.Log.d(tagWithThread, entry.message);
+					android.util.Log.d(tagWithThread, message);
 					break;
 				case Verbose:
-					android.util.Log.v(tagWithThread, entry.message);
+					android.util.Log.v(tagWithThread, message);
 					break;
 			}
 
-		if (entry.t != null)
-			switch (entry.level) {
+		if (t != null)
+			switch (level) {
 				case Assert:
 				case Error:
-					android.util.Log.e(tagWithThread, "", entry.t);
+					android.util.Log.e(tagWithThread, "", t);
 					break;
 				case Warning:
-					android.util.Log.w(tagWithThread, "", entry.t);
+					android.util.Log.w(tagWithThread, "", t);
 					break;
 				case Info:
-					android.util.Log.i(tagWithThread, "", entry.t);
+					android.util.Log.i(tagWithThread, "", t);
 					break;
 				case Debug:
-					android.util.Log.d(tagWithThread, "", entry.t);
+					android.util.Log.d(tagWithThread, "", t);
 					break;
 				case Verbose:
-					android.util.Log.v(tagWithThread, "", entry.t);
+					android.util.Log.v(tagWithThread, "", t);
 					break;
 			}
 	}

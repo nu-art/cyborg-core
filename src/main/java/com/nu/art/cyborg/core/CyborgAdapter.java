@@ -44,13 +44,15 @@ public class CyborgAdapter<Item>
 		extends Logger
 		implements DataModelListener {
 
+	public static boolean DebugPerformance = false;
+
 	private final Class<? extends ItemRenderer<? extends Item>>[] renderersTypes;
 
 	private final CyborgController controller;
 
 	private final Cyborg cyborg;
 
-//	private HashMap<Item, ItemRenderer<? extends Item>> renderers = new HashMap<>();
+	//	private HashMap<Item, ItemRenderer<? extends Item>> renderers = new HashMap<>();
 
 	private DataModel<Item> dataModel;
 
@@ -88,6 +90,7 @@ public class CyborgAdapter<Item>
 
 	/**
 	 * Use the setResolver for better development experience...
+	 *
 	 * @param dataModel
 	 */
 	@Deprecated
@@ -113,10 +116,24 @@ public class CyborgAdapter<Item>
 
 	private ItemRenderer<? extends Item> createRendererForType(ViewGroup parent, int typeIndex) {
 		ItemRenderer<? extends Item> renderer = instantiateItemRendererType(typeIndex);
+		if (DebugPerformance)
+			logVerbose("setActivityBridge");
 		renderer.setActivityBridge(controller.activityBridge);
+
+		if (DebugPerformance)
+			logVerbose("_createView");
 		renderer._createView(LayoutInflater.from(parent.getContext()), parent);
+
+		if (DebugPerformance)
+			logVerbose("extractMembersImpl");
 		renderer.extractMembersImpl();
+
+		if (DebugPerformance)
+			logVerbose("setupRenderer");
 		setupRenderer(renderer);
+
+		if (DebugPerformance)
+			logVerbose("return");
 		return renderer;
 	}
 
@@ -172,17 +189,17 @@ public class CyborgAdapter<Item>
 			/*	TODO: understand why RecyclerView returns an already bounded ItemRenderer BEFORE the renderer's
 				view gets scrolled out of the view, preventing from concluding really whether or not we can dispose of the item*/
 			//			disposeItem(previousItem);
-//			renderers.remove(previousItem);
+			//			renderers.remove(previousItem);
 		}
-//		renderers.remove(item);
-//		renderers.put(item, renderer);
+		//		renderers.remove(item);
+		//		renderers.put(item, renderer);
 		renderer._setItem(item);
 		renderer.render();
 	}
 
-//	public final ItemRenderer<? extends Item> getRendererForItem(Item item) {
-//		return renderers.get(item);
-//	}
+	//	public final ItemRenderer<? extends Item> getRendererForItem(Item item) {
+	//		return renderers.get(item);
+	//	}
 
 	@Override
 	public void onDataSetChanged() {
@@ -268,7 +285,7 @@ public class CyborgAdapter<Item>
 			item = renderer.getItem();
 
 			logDebug("Destroy ViewPager Item: " + item);
-//			renderers.remove(item);
+			//			renderers.remove(item);
 			disposeItem(item);
 		}
 
@@ -459,9 +476,9 @@ public class CyborgAdapter<Item>
 			return getItemsCount();
 		}
 
-//		public View getViewForPosition(int position) {
-//			return renderers.get(getItemForPosition(position)).getRootView();
-//		}
+		//		public View getViewForPosition(int position) {
+		//			return renderers.get(getItemForPosition(position)).getRootView();
+		//		}
 
 		void invalidateDataModel() {
 			CyborgAdapter.this.invalidateDataModel();

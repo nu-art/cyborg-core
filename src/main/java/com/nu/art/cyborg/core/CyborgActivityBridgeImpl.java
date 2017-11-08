@@ -407,7 +407,7 @@ public class CyborgActivityBridgeImpl
 				return true;
 		}
 
-		ArrayTools.removeElements(_controllerList, toBeRemoved);
+		_controllerList = ArrayTools.removeElements(_controllerList, toBeRemoved);
 		toBeRemoved.clear();
 
 		return false;
@@ -477,6 +477,7 @@ public class CyborgActivityBridgeImpl
 		}
 
 		_controllerList = ArrayTools.removeElements(_controllerList, toBeRemoved);
+		eventDispatcher.removeListener(controller);
 		toBeRemoved.clear();
 	}
 
