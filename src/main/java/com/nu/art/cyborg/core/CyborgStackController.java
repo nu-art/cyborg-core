@@ -498,6 +498,10 @@ public final class CyborgStackController
 		processor.process((Type) controller);
 	}
 
+	public void setAsPriority() {
+		activityBridge.setPriorityStack(this);
+	}
+
 	public boolean popLast() {
 		if (animatingTransition) {
 			logWarning("NOT POPPING LAST LAYER... TRANSITION ANIMATION IN PROGRESS!!!");

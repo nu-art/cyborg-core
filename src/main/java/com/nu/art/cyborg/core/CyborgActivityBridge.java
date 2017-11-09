@@ -61,6 +61,9 @@ public interface CyborgActivityBridge {
 	void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
 
 	/* Controllers */
+
+	void setPriorityStack(CyborgStackController controller);
+
 	void addController(CyborgController controller);
 
 	void removeController(CyborgController controller);

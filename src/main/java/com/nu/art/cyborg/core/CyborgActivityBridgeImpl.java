@@ -93,6 +93,7 @@ public class CyborgActivityBridgeImpl
 	private ArrayList<WeakReference<CyborgController>> toBeRemoved = new ArrayList<>();
 	@SuppressWarnings("unchecked")
 	private WeakReference<CyborgController>[] _controllerList = new WeakReference[0];
+	private WeakReference<CyborgStackController> priorityStack;
 
 	private LifeCycleListener[] lifecycleListeners = {};
 
@@ -375,6 +376,11 @@ public class CyborgActivityBridgeImpl
 	}
 
 	private boolean processControllersPriority(ControllerProcessor processor) {
+		if (priorityStack != null) {
+			CyborgStackController stackController = priorityStack.get();
+			if (stackController != null && processor.process(stackController))
+				return true;
+		}
 		// First check for stack controllers
 		for (int i = _controllerList.length - 1; i >= 0; i--) {
 			WeakReference<CyborgController> ref = _controllerList[i];
@@ -446,6 +452,9 @@ public class CyborgActivityBridgeImpl
 	/* ********************************
 		Listeners
  	 **********************************/
+	public void setPriorityStack(CyborgStackController controller) {
+		priorityStack = new WeakReference<>(controller);
+	}
 
 	@Override
 	public final void addController(CyborgController controller) {

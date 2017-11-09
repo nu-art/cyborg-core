@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 
 import com.nu.art.cyborg.core.CyborgAdapter.PositionResolver;
 
+import static com.nu.art.cyborg.core.CyborgAdapter.DebugPerformance;
+
 /**
  * This is a very important class, it is used to render items in {@link CyborgAdapter}...see example project!
  *
@@ -58,8 +60,8 @@ public abstract class ItemRenderer<ItemType>
 	public final void render() {
 		long startMs = System.currentTimeMillis();
 		renderItem(item);
-		if(DebugControllerLifeCycle)
-		logVerbose("Render duration: " + (System.currentTimeMillis() - startMs) + "ms");
+		if (DebugPerformance)
+			logVerbose("Render duration: " + (System.currentTimeMillis() - startMs) + "ms");
 	}
 
 	protected abstract void renderItem(ItemType item);
