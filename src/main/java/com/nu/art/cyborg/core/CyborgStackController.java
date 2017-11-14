@@ -246,6 +246,8 @@ public final class CyborgStackController
 
 		protected abstract void create();
 
+		public abstract void append();
+
 		public abstract void build();
 
 		void restoreState() {
@@ -411,6 +413,10 @@ public final class CyborgStackController
 			return this;
 		}
 
+		public final void append() {
+			layersStack.add(this);
+		}
+
 		public final void build() {
 			long started = System.currentTimeMillis();
 
@@ -419,9 +425,8 @@ public final class CyborgStackController
 
 			push(this);
 
-				if (DebugPerformance)
+			if (DebugPerformance)
 				logDebug("Open Controller (" + controllerType + "): " + (System.currentTimeMillis() - started) + "ms");
-
 		}
 	}
 
