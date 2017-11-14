@@ -25,6 +25,12 @@ public class DateTimePicker {
 
 	private Activity activity;
 
+	/**
+	 * Create a date time picker
+	 * @param activity The owner activity for the picker
+	 * @param timestamp The initial timestamp to display for the date and time
+	 * @param listener The listener to be notified on when process completed.
+	 */
 	public DateTimePicker(Activity activity, long timestamp, OnDateTimeChangedListener listener) {
 		this.activity = activity;
 		this.listener = listener;
@@ -35,10 +41,16 @@ public class DateTimePicker {
 		return calendar.getTime().getTime();
 	}
 
+	/**
+	 * Show a date and time pickers
+	 */
 	public void dateAndTimePicker() {
 		datePicker(true);
 	}
 
+	/**
+	 * Show only a date picker
+	 */
 	public void datePicker() {
 		datePicker(false);
 	}
@@ -59,6 +71,9 @@ public class DateTimePicker {
 		datePickerDialog.show();
 	}
 
+	/**
+	 * Show only a time picker
+	 */
 	public void timePicker() {
 		TimePickerDialog timePickerDialog = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
 
