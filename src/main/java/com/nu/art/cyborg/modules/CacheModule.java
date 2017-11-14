@@ -46,34 +46,85 @@ public class CacheModule
 
 		private long interval;
 
+		/**
+		 * @param key The key that would be used to identify the cached item, can be any unique string you want.
+		 *
+		 * @return The instance {@link Cacheable} you currently edit
+		 */
 		public Cacheable setKey(String key) {
 			this.key = key;
 			return this;
 		}
 
+		/**
+		 * Apparently Android in some cases does not redetermine the file type dynamically, and adding a suffix help entities like the MediaPlayer, to play the
+		 * local cached file correctly
+		 *
+		 * @param suffix The file suffix would have
+		 *
+		 * @return The instance {@link Cacheable} you currently edit
+		 */
 		public Cacheable setSuffix(String suffix) {
 			this.suffix = suffix;
 			return this;
 		}
 
+		/**
+		 * @param pathToDir The path you would like to save the cached file to, if not specified, would be saved to the cache or files folder depends if an
+		 *                  interval
+		 *                  was specified.
+		 *
+		 * @return The instance {@link Cacheable} you currently edit
+		 */
 		public Cacheable setPathToDir(String pathToDir) {
 			this.pathToDir = pathToDir;
 			return this;
 		}
 
+		/**
+		 * If not specified, file would be saved to the app files folder and will be stored there, otherwise file would be saved to the app cache folder, and
+		 * Android would manage it lifespan.
+		 *
+		 * @param interval The interval the cache is valid for.
+		 *
+		 * @return The instance {@link Cacheable} you currently edit
+		 */
 		public Cacheable setInterval(long interval) {
 			this.interval = interval;
 			return this;
 		}
 
+		/**
+		 * @return Whether or not this item is cached.
+		 */
 		public boolean isCached() {
 			return CacheModule.this.isCached(this);
 		}
 
+		/**
+		 * @return The file pointing to the cached path of the item, <b>regardless if it is cached or not!!</b>
+		 */
+		public File getLocalCacheFile() {
+			return CacheModule.this.getFile(this);
+		}
+
+		/**
+		 * Cache the item on the cache queue pool.
+		 *
+		 * @param inputStream the input stream to cache.
+		 * @param listener    to be notified on when completed.
+		 */
 		public void cacheAsync(InputStream inputStream, CacheListener listener) {
 			CacheModule.this.cacheAsync(this, inputStream, listener);
 		}
 
+		/**
+		 * Cache the item on the calling thread.
+		 *
+		 * @param inputStream the input stream to cache.
+		 *
+		 * @throws IOException if something goes wrong.
+		 */
 		public void cacheSync(InputStream inputStream)
 				throws IOException {
 			CacheModule.this.cacheSync(this, inputStream);
@@ -97,11 +148,17 @@ public class CacheModule
 
 	private File cacheDir;
 
+	private int threadCount = 5;
+
 	@Override
 	protected void init() {
 		filesDir = getApplicationContext().getFilesDir();
 		cacheDir = getApplicationContext().getCacheDir();
-		cacheQueue.createThreads("Caching Thread", 5);
+		cacheQueue.createThreads("Caching Thread", threadCount);
+	}
+
+	public void setThreadCount(int threadCount) {
+		this.threadCount = threadCount;
 	}
 
 	private boolean isCached(Cacheable cacheable) {
