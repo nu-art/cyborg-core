@@ -45,6 +45,8 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
+
 /**
  * Created by TacB0sS on 25-Jun 2015.
  */
@@ -410,10 +412,16 @@ public final class CyborgStackController
 		}
 
 		public final void build() {
+			long started = System.currentTimeMillis();
+
 			if (refKey == null)
 				throw new ImplementationMissingException("MUST specify a refKey when using a layoutId");
 
 			push(this);
+
+				if (DebugPerformance)
+				logDebug("Open Controller (" + controllerType + "): " + (System.currentTimeMillis() - started) + "ms");
+
 		}
 	}
 

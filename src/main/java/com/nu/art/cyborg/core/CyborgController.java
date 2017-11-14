@@ -90,7 +90,8 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Random;
 
-import static com.nu.art.cyborg.core.CyborgAdapter.DebugPerformance;
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugControllerLifeCycle;
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
 
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
@@ -115,11 +116,6 @@ import static com.nu.art.cyborg.core.CyborgAdapter.DebugPerformance;
 public abstract class CyborgController
 		extends Logger
 		implements ICyborgController {
-
-	/**
-	 * Should controller lifecycle be printed to the log
-	 */
-	public static boolean DebugControllerLifeCycle = true;
 
 	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 

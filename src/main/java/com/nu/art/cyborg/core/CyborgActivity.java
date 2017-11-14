@@ -54,11 +54,6 @@ public class CyborgActivity
 		extends FragmentActivity
 		implements ILogger {
 
-	/**
-	 * Should activity lifecycle be printed to the log
-	 */
-	public static boolean DebugActivityLifeCycle = true;
-
 	protected final String TAG = getClass().getSimpleName();
 
 	private final CyborgActivityBridge bridge;

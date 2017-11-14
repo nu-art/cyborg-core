@@ -39,12 +39,13 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
 
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
+
 @SuppressWarnings("unchecked")
 public class CyborgAdapter<Item>
 		extends Logger
 		implements DataModelListener {
 
-	public static boolean DebugPerformance = false;
 
 	private final Class<? extends ItemRenderer<? extends Item>>[] renderersTypes;
 

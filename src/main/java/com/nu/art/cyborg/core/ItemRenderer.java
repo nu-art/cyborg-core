@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 
 import com.nu.art.cyborg.core.CyborgAdapter.PositionResolver;
 
-import static com.nu.art.cyborg.core.CyborgAdapter.DebugPerformance;
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
 
 /**
  * This is a very important class, it is used to render items in {@link CyborgAdapter}...see example project!

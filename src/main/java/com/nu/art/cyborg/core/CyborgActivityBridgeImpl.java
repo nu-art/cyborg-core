@@ -52,7 +52,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.nu.art.cyborg.core.CyborgActivity.DebugActivityLifeCycle;
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugActivityLifeCycle;
 
 /**
  * Created by TacB0sS on 19-Jun 2015.
