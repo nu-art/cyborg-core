@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +46,6 @@ import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
 public class CyborgAdapter<Item>
 		extends Logger
 		implements DataModelListener {
-
 
 	private final Class<? extends ItemRenderer<? extends Item>>[] renderersTypes;
 
@@ -121,9 +121,18 @@ public class CyborgAdapter<Item>
 			logVerbose("setActivityBridge");
 		renderer.setActivityBridge(controller.activityBridge);
 
-		if (DebugPerformance)
-			logVerbose("_createView");
-		renderer._createView(LayoutInflater.from(parent.getContext()), parent);
+		try {
+			if (DebugPerformance)
+				logVerbose("_createView");
+			renderer._createView(LayoutInflater.from(parent.getContext()), parent);
+		} catch (Throwable e) {
+			while (e.getCause() != null) {
+				e = e.getCause();
+			}
+			Log.e("CYBORG", "As Android's exception handling is crappy, here is the reason for the failure: ", e);
+			//noinspection ConstantConditions
+			throw (RuntimeException) e;
+		}
 
 		if (DebugPerformance)
 			logVerbose("extractMembersImpl");
@@ -261,7 +270,6 @@ public class CyborgAdapter<Item>
 		private <ItemToRender extends Item> void setItem(ItemRenderer<ItemToRender> renderer, final int position) {
 			renderer.setPositionResolver(createPositionResolver(position));
 			ItemToRender item = (ItemToRender) getItemForPosition(position);
-			logDebug("Creating ViewPager Item: " + item);
 			renderer._setItem(item);
 		}
 
