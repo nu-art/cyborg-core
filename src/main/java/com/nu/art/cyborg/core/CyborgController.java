@@ -153,6 +153,8 @@ public abstract class CyborgController
 
 	protected CyborgActivityBridge activityBridge;
 
+	private boolean animatedIn;
+
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
 		if (DebugPerformance)
@@ -387,6 +389,17 @@ public abstract class CyborgController
 
 		setState(newState);
 	}
+
+	protected boolean isAnimatedIn() {
+		return animatedIn;
+	}
+
+	final void _onAnimatedIn() {
+		animatedIn = true;
+		onAnimatedIn();
+	}
+
+	protected void onAnimatedIn() {}
 
 	protected void onCreate() {}
 

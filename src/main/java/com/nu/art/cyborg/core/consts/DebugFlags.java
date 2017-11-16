@@ -6,7 +6,7 @@ package com.nu.art.cyborg.core.consts;
 
 public class DebugFlags {
 
-	public static boolean DebugPerformance = true;
-	public static boolean DebugActivityLifeCycle = true;
-	public static boolean DebugControllerLifeCycle = true;
+	public static boolean DebugPerformance = false;
+	public static boolean DebugActivityLifeCycle = false;
+	public static boolean DebugControllerLifeCycle = false;
 }

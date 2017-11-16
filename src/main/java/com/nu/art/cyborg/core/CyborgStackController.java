@@ -300,6 +300,13 @@ public final class CyborgStackController
 		public CyborgController getController() {
 			return controller;
 		}
+
+		private void onAnimatedIn() {
+			if(controller ==null)
+				return;
+
+			controller._onAnimatedIn();
+		}
 	}
 
 	public class StackLayerBuilder
@@ -490,6 +497,7 @@ public final class CyborgStackController
 							disposeLayer(originLayerToBeDisposed);
 
 						setInAnimationState(false);
+						targetLayerToBeAdded.onAnimatedIn();
 					}
 				};
 

@@ -33,8 +33,8 @@ public class ThreadsModule
 		extends CyborgModule {
 
 	/**
-	 * This is only for a quick one time action... if you have a bulk of action to perform, or multiple individual
-	 * method, then create your own damn thread key! <br>
+	 * This key is for a quick repetitive or one shot actions <b>ONLY</b>,
+	 * If your need is a blocking action, or you have a bulk of multiple actions, then create your own damn dedicated thread key! <br>
 	 * <br>
 	 * <b>Use this wisely</b>
 	 */
@@ -58,6 +58,17 @@ public class ThreadsModule
 			defaultHandlers.put(threadName, handler);
 		}
 		return handler;
+	}
+
+	public Handler getDefaultHandler(String threadName, final int threadPriority) {
+		Handler defaultHandler = getDefaultHandler(threadName);
+		defaultHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				android.os.Process.setThreadPriority(threadPriority);
+			}
+		});
+		return defaultHandler;
 	}
 
 	private Looper getLooper(String threadName) {
