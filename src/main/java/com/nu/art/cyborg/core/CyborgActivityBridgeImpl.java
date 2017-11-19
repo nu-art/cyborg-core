@@ -42,6 +42,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
@@ -509,9 +510,8 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> eventType, final Processor<ListenerType> processor) {
+	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
 		logDebug("Dispatching UI Event: " + message);
-
 		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event: " + message);
 		activity.runOnUiThread(new Runnable() {
 
@@ -520,7 +520,8 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				eventDispatcher.dispatchEvent(whoCalledThis, eventType, processor);
+				Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(listenerType, processor);
+				eventDispatcher.dispatchEvent(whoCalledThis, _listenerType, processor);
 			}
 		});
 	}

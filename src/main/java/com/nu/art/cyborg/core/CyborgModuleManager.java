@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core;
 import com.nu.art.belog.BeLogged;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.modular.core.Module;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.modular.core.ModuleManager;
 
 /**
@@ -37,19 +37,9 @@ public final class CyborgModuleManager
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <ParentType> void dispatchModuleEvent(String message, Class<ParentType> parentType, Processor<ParentType> processor) {
-		for (Module module : getOrderedModules()) {
-			if (!parentType.isAssignableFrom(module.getClass()))
-				continue;
-
-			try {
-				processor.process((ParentType) module);
-			} catch (Throwable t) {
-				String errorMessage = "Error while processing module event:\n   parentType: " + parentType.getSimpleName() + "\n   moduleType: " + module.getClass()
-						.getSimpleName();
-				logger.logError(errorMessage, t);
-			}
-		}
+	protected <ListenerType> void dispatchModuleEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(listenerType, processor);
+		super.dispatchModuleEvent(message, _listenerType, processor);
 	}
 
 	@Override
