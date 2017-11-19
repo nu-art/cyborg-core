@@ -149,7 +149,7 @@ final class CyborgImpl
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		printApplicationStarted();
 
-		DebugFlags.paramExtractor = new ExtractGenericParamFromProcessor();
+		DebugFlags.paramExtractor = new ExtractGenericParamFromProcessor().initGenericParamExtractionFromProcessorTesting();
 		builder.buildMainManager();
 
 		if (!inEditMode) {

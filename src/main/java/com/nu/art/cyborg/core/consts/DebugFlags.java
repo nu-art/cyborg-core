@@ -25,7 +25,7 @@ public class DebugFlags {
 
 		private Field resolvedTypesField;
 
-		public void initGenericParamExtractionFromProcessorTesting() {
+		public ExtractGenericParamFromProcessor() {
 			try {
 				Class<?> parameterizedType = Class.forName("libcore.reflect.ParameterizedTypeImpl");
 				argsField = parameterizedType.getDeclaredField("args");
