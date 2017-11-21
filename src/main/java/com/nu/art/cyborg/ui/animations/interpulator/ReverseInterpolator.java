@@ -23,8 +23,14 @@ import android.view.animation.Interpolator;
 public class ReverseInterpolator
 		implements Interpolator {
 
+	private Interpolator interpolator;
+
+	public ReverseInterpolator(Interpolator interpolator) {
+		this.interpolator = interpolator;
+	}
+
 	@Override
 	public float getInterpolation(float paramFloat) {
-		return Math.abs(paramFloat - 1f);
+		return Math.abs(interpolator.getInterpolation(paramFloat) - 1f);
 	}
 }

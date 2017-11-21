@@ -31,12 +31,14 @@ import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
+import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
@@ -53,11 +55,17 @@ import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
 public final class CyborgStackController
 		extends CyborgController {
 
-	public interface StackTransitionAnimator {
+	public static abstract class StackTransitionAnimator {
 
-		void animateIn(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
+		protected Interpolator interpolator = Tools.LinearInterpolator;
 
-		void animateOut(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
+		protected void setInterpolator(Interpolator interpolator) {
+			this.interpolator = interpolator;
+		}
+
+		protected abstract void animateIn(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
+
+		protected abstract void animateOut(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
 	}
 
 	private LayoutInflater inflater;
@@ -195,6 +203,8 @@ public final class CyborgStackController
 
 		protected boolean keepInStack = true;
 
+		private Interpolator interpolator;
+
 		private StackLayer() {
 			if (defaultTransition != null) {
 				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
@@ -209,6 +219,11 @@ public final class CyborgStackController
 		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
 		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
 			this.stackTransitionAnimator = stackTransitionAnimators;
+			return this;
+		}
+
+		public final StackLayer setAnimationInterpolator(Interpolator interpolator) {
+			this.interpolator = interpolator;
 			return this;
 		}
 
@@ -302,7 +317,7 @@ public final class CyborgStackController
 		}
 
 		private void onAnimatedIn() {
-			if(controller ==null)
+			if (controller == null)
 				return;
 
 			controller._onAnimatedIn();
@@ -502,6 +517,10 @@ public final class CyborgStackController
 				};
 
 				for (StackTransitionAnimator animator : transitionAnimators) {
+					Interpolator interpolator = targetLayerToBeAdded.interpolator;
+					if (interpolator != null)
+						animator.setInterpolator(interpolator);
+
 					// All Animations are performed together, the listener MUST be called only once
 					animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
 							animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
@@ -573,6 +592,10 @@ public final class CyborgStackController
 				};
 
 				for (StackTransitionAnimator animator : transitionAnimators) {
+					Interpolator interpolator = targetLayerToBeRemove.interpolator;
+					if (interpolator != null)
+						animator.setInterpolator(interpolator);
+
 					// All Animations are performed together, the listener MUST be called only once
 					animator.animateOut(originLayerToBeRestored, targetLayerToBeRemove, duration,
 							animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);

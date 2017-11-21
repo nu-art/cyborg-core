@@ -43,7 +43,7 @@ import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
  * Created by TacB0sS on 30-Apr 2016.
  */
 public class FloatingViewTransitionAnimator
-		implements StackTransitionAnimator {
+		extends StackTransitionAnimator {
 
 	private final Function<StackLayer, View> getOriginView;
 
