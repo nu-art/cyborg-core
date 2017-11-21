@@ -91,6 +91,8 @@ public class WifiItem_Scanner
 
 	private final ArrayList<ScannedWifiInfo> scanResults = new ArrayList<>();
 
+	private boolean scanning;
+
 	private WifiManager wifiManager;
 
 	@Override
@@ -100,6 +102,19 @@ public class WifiItem_Scanner
 
 	void startScan() {
 		wifiManager.startScan();
+	}
+
+	boolean hasAccessPoint(String wifiName) {
+		synchronized (scanResults) {
+			for (ScannedWifiInfo scanResult : scanResults) {
+				if (!scanResult.getName().equals(wifiName))
+					continue;
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	void onScanCompleted() {
@@ -151,10 +166,15 @@ public class WifiItem_Scanner
 	}
 
 	void enable(boolean enable) {
-		if (enable)
+		if (scanning == enable)
+			return;
+
+		if (enable) {
 			cyborg.registerReceiver(WifiNetworksReceiver.class, WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-		else
+			startScan();
+		} else
 			cyborg.unregisterReceiver(WifiNetworksReceiver.class);
+		scanning = enable;
 	}
 
 	public static class WifiNetworksReceiver
