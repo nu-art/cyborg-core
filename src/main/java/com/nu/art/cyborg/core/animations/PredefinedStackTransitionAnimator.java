@@ -36,7 +36,7 @@ import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
  * Created by TacB0sS on 19-Jul 2015.
  */
 public class PredefinedStackTransitionAnimator
-		implements StackTransitionAnimator {
+		extends StackTransitionAnimator {
 
 	private Animation outOrigin;
 
@@ -64,7 +64,12 @@ public class PredefinedStackTransitionAnimator
 		inTarget = transitionHelper.getTargetAnimationInstance(context, orientation, reverse);
 		outOrigin = transitionHelper.getOriginAnimationInstance(context, orientation, reverse);
 
-		ReverseInterpolator reverseInterpolator = new ReverseInterpolator();
+		if (inTarget != null)
+			inTarget.setInterpolator(interpolator);
+		if (outOrigin != null)
+			outOrigin.setInterpolator(interpolator);
+
+		ReverseInterpolator reverseInterpolator = new ReverseInterpolator(interpolator);
 		if (outTarget != null)
 			outTarget.setInterpolator(reverseInterpolator);
 		if (inOrigin != null)

@@ -7,10 +7,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
-/**
- * Created by tacb0ss on 14/11/2017.
- */
-
 public class DebugFlags {
 
 	public static boolean DebugPerformance = false;

@@ -34,11 +34,11 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 public class PowerModule
 		extends CyborgModule {
 
-	private ChargingSource batteryChargingSource;
+	private ChargingSource chargingSource;
 
-	private ChargingState batteryChargingState;
+	private ChargingState chargingState;
 
-	private BatteryHealth batteryHealthState;
+	private BatteryHealth batteryHealth;
 
 	private int batteryLevel;
 
@@ -155,21 +155,21 @@ public class PowerModule
 	}
 
 	private boolean setHealthState(Intent batteryStatusIntent) {
-		BatteryHealth _batteryHealthState = batteryHealthState;
-		batteryHealthState = BatteryHealth.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1));
-		return _batteryHealthState != batteryHealthState;
+		BatteryHealth _batteryHealthState = batteryHealth;
+		batteryHealth = BatteryHealth.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1));
+		return _batteryHealthState != batteryHealth;
 	}
 
 	private boolean setChargingState(Intent batteryStatusIntent) {
-		ChargingState _batteryChargingState = batteryChargingState;
-		batteryChargingState = ChargingState.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1));
-		return _batteryChargingState != batteryChargingState;
+		ChargingState _batteryChargingState = chargingState;
+		chargingState = ChargingState.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1));
+		return _batteryChargingState != chargingState;
 	}
 
 	private boolean setChargingSource(Intent batteryStatusIntent) {
-		ChargingSource _batteryChargingSource = batteryChargingSource;
-		batteryChargingSource = ChargingSource.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1));
-		return _batteryChargingSource != batteryChargingSource;
+		ChargingSource _batteryChargingSource = chargingSource;
+		chargingSource = ChargingSource.getState(batteryStatusIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1));
+		return _batteryChargingSource != chargingSource;
 	}
 
 	private boolean setBatteryLevel(Intent batteryStatusIntent) {
@@ -214,15 +214,15 @@ public class PowerModule
 	}
 
 	public ChargingSource getChargingSource() {
-		return batteryChargingSource;
+		return chargingSource;
 	}
 
-	public ChargingState getBatteryChargingState() {
-		return batteryChargingState;
+	public ChargingState getChargingState() {
+		return chargingState;
 	}
 
-	public BatteryHealth getBatteryHealthState() {
-		return batteryHealthState;
+	public BatteryHealth getBatteryHealth() {
+		return batteryHealth;
 	}
 
 	/**

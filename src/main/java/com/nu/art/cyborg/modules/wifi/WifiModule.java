@@ -126,4 +126,8 @@ public class WifiModule
 	public void deleteAllWifiConfigurations() {
 		WifiConnectivity.deleteAllWifiConfigurations();
 	}
+
+	public boolean hasAccessPoint(String wifiName) {
+		return WifiNetworkScanner.hasAccessPoint(wifiName);
+	}
 }

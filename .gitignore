@@ -7,3 +7,4 @@
 gradle
 *.iml
 target
+src/main/java/com/nu/art/cyborg/core/modules/media/
