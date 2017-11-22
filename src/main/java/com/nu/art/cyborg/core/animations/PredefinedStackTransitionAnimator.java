@@ -63,21 +63,15 @@ public class PredefinedStackTransitionAnimator
 
 		inTarget = transitionHelper.getTargetAnimationInstance(context, orientation, reverse);
 		outOrigin = transitionHelper.getOriginAnimationInstance(context, orientation, reverse);
+	}
 
+	@Override
+	public void animateIn(StackLayer originLayer, StackLayer targetLayer, int duration, AnimationListener listener) {
 		if (inTarget != null)
 			inTarget.setInterpolator(interpolator);
 		if (outOrigin != null)
 			outOrigin.setInterpolator(interpolator);
 
-		ReverseInterpolator reverseInterpolator = new ReverseInterpolator(interpolator);
-		if (outTarget != null)
-			outTarget.setInterpolator(reverseInterpolator);
-		if (inOrigin != null)
-			inOrigin.setInterpolator(reverseInterpolator);
-	}
-
-	@Override
-	public void animateIn(StackLayer originLayer, StackLayer targetLayer, int duration, AnimationListener listener) {
 		if (originLayer != null)
 			animateLayer(outOrigin, originLayer.getRootView(), duration, null);
 
@@ -86,6 +80,11 @@ public class PredefinedStackTransitionAnimator
 
 	@Override
 	public void animateOut(StackLayer originLayer, StackLayer targetLayer, int duration, AnimationListener listener) {
+		if (outTarget != null)
+			outTarget.setInterpolator(reverseInterpolator);
+		if (inOrigin != null)
+			inOrigin.setInterpolator(reverseInterpolator);
+
 		animateLayer(outTarget, targetLayer.getRootView(), duration, listener);
 
 		if (originLayer != null)

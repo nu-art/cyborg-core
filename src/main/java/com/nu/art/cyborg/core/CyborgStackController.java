@@ -42,6 +42,7 @@ import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.InvocationTargetException;
@@ -58,9 +59,11 @@ public final class CyborgStackController
 	public static abstract class StackTransitionAnimator {
 
 		protected Interpolator interpolator = Tools.LinearInterpolator;
+		protected Interpolator reverseInterpolator = new ReverseInterpolator(Tools.LinearInterpolator);
 
 		protected void setInterpolator(Interpolator interpolator) {
 			this.interpolator = interpolator;
+			this.reverseInterpolator = new ReverseInterpolator(interpolator);
 		}
 
 		protected abstract void animateIn(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
