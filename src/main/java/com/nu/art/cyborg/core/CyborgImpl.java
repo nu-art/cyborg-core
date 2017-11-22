@@ -53,6 +53,8 @@ import com.nu.art.cyborg.common.utils.GenericServiceConnection.ServiceConnection
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.core.consts.DebugFlags;
+import com.nu.art.cyborg.core.consts.DebugFlags.ExtractGenericParamFromProcessor;
 import com.nu.art.cyborg.core.modules.AndroidLogClient;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
@@ -147,6 +149,7 @@ final class CyborgImpl
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		printApplicationStarted();
 
+		DebugFlags.paramExtractor = new ExtractGenericParamFromProcessor();
 		builder.buildMainManager();
 
 		if (!inEditMode) {

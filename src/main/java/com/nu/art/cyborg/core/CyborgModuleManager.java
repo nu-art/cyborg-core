@@ -18,10 +18,9 @@
 
 package com.nu.art.cyborg.core;
 
-import com.nu.art.belog.BeLogged;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.generics.Processor;
-import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.modular.core.Module;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.modular.core.ModuleManager;
 
 /**
@@ -30,30 +29,23 @@ import com.nu.art.modular.core.ModuleManager;
 public final class CyborgModuleManager
 		extends ModuleManager {
 
-	private ILogger logger;
-
 	CyborgModuleManager() {
 		super();
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <ParentType> void dispatchModuleEvent(String message, Class<ParentType> parentType, Processor<ParentType> processor) {
-		for (Module module : getOrderedModules()) {
-			if (!parentType.isAssignableFrom(module.getClass()))
-				continue;
+	protected <ListenerType> void dispatchModuleEvent(String message, Processor<ListenerType> processor) {
+		Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(null, processor);
+		if (_listenerType == null)
+			throw new MUST_NeverHappenedException("Cannot resolve processor type from instance, " + processor.getClass().getSimpleName());
 
-			try {
-				processor.process((ParentType) module);
-			} catch (Throwable t) {
-				String errorMessage = "Error while processing module event:\n   parentType: " + parentType.getSimpleName() + "\n   moduleType: " + module.getClass()
-						.getSimpleName();
-				logger.logError(errorMessage, t);
-			}
-		}
+		super.dispatchModuleEvent(message, _listenerType, processor);
 	}
 
-	@Override
-	protected void onBuildCompleted() {
-		logger = BeLogged.getInstance().getLogger(this);
+	@SuppressWarnings("unchecked")
+	protected <ListenerType> void dispatchModuleEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		dispatchModuleEvent(message,processor);
+//		Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(listenerType, processor);
+//		super.dispatchModuleEvent(message, _listenerType, processor);
 	}
 }
