@@ -21,20 +21,11 @@ package com.nu.art.cyborg.common.utils;
 import android.app.Activity;
 import android.graphics.Rect;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 
 import java.util.Random;
 
 @SuppressWarnings("WeakerAccess")
 public final class Tools {
-
-	public static final LinearInterpolator LinearInterpolator = new LinearInterpolator();
-	public static final AccelerateDecelerateInterpolator AccelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
-	public static final AccelerateInterpolator AccelerateInterpolator = new AccelerateInterpolator();
-	public static final DecelerateInterpolator DecelerateInterpolator = new DecelerateInterpolator();
 
 	private static final Random random = new Random();
 

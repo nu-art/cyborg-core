@@ -38,7 +38,7 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
-import com.nu.art.cyborg.common.utils.Tools;
+import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
@@ -58,8 +58,8 @@ public final class CyborgStackController
 
 	public static abstract class StackTransitionAnimator {
 
-		protected Interpolator interpolator = Tools.LinearInterpolator;
-		protected Interpolator reverseInterpolator = new ReverseInterpolator(Tools.LinearInterpolator);
+		protected Interpolator interpolator = Interpolators.LinearInterpolator;
+		protected Interpolator reverseInterpolator = new ReverseInterpolator(Interpolators.LinearInterpolator);
 
 		protected void setInterpolator(Interpolator interpolator) {
 			this.interpolator = interpolator;
