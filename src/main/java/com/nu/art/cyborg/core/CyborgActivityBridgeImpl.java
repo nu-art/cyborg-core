@@ -36,6 +36,7 @@ import android.widget.FrameLayout;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
@@ -511,6 +512,11 @@ public class CyborgActivityBridgeImpl
 
 	@SuppressWarnings("unchecked")
 	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		dispatchEvent(message, processor);
+	}
+
+	@SuppressWarnings("unchecked")
+	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
 		logDebug("Dispatching UI Event: " + message);
 		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event: " + message);
 		activity.runOnUiThread(new Runnable() {
@@ -520,7 +526,10 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(listenerType, processor);
+				Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(null, processor);
+				if (_listenerType == null)
+					throw new MUST_NeverHappenedException("Cannot resolve processor type from instance, " + processor.getClass().getSimpleName());
+
 				eventDispatcher.dispatchEvent(whoCalledThis, _listenerType, processor);
 			}
 		});
