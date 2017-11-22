@@ -60,13 +60,13 @@ public final class ActivityStack
 		}
 	}
 
-	<ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+	<ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor) {
 		if (activity == null) {
 			logDebug("No Activity... will not dispatch UI Event: " + message);
 			return;
 		}
 
-		activity.dispatchEvent(message, listenerType, processor);
+		activity.dispatchEvent(message, processor);
 	}
 
 	private PoolQueue<ActivityStackAction> queue = new PoolQueue<ActivityStackAction>() {

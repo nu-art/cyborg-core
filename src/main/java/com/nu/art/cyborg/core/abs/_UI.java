@@ -78,11 +78,10 @@ public interface _UI {
 	 * Dispatch event to the UI.
 	 *
 	 * @param message        A log message to accompany the event.
-	 * @param listenerType   The listener type entities need to implement to receive the event.
-	 * @param processor      A processor on how ti handle the event.
+	 * @param processor      A processor on how to handle the event.
 	 * @param <ListenerType> A generic bound to the listener type
 	 */
-	<ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor);
+	<ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor);
 
 	/**
 	 * Utility api to load animations

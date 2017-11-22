@@ -47,8 +47,10 @@ import java.util.Locale;
  *
  * @param <_ModuleType> Type of the {@link CyborgModule} to use in this WidgetProvider.
  */
-@SuppressWarnings( {"unused", "NullableProblems"
-				   })
+@SuppressWarnings( {
+											 "unused",
+											 "NullableProblems"
+									 })
 public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 		extends AppWidgetProvider
 		implements ICyborgModule, ILogger {
@@ -306,10 +308,18 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 		cyborg.postActivityAction(action);
 	}
 
-	@Override
+	/**
+	 * Use the one without the listenerType parameter
+	 */
+	@Deprecated
 	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		logDebug("Dispatching UI Event: " + message);
-		cyborg.dispatchEvent(message, listenerType, processor);
+		dispatchEvent(message, processor);
+	}
+
+	@Override
+	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
+		logInfo("Dispatching UI Event: " + message);
+		cyborg.dispatchEvent(message, processor);
 	}
 
 	@Override

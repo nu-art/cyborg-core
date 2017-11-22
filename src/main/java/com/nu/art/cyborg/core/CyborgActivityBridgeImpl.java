@@ -511,11 +511,6 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		dispatchEvent(message, processor);
-	}
-
-	@SuppressWarnings("unchecked")
 	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
 		logDebug("Dispatching UI Event: " + message);
 		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event: " + message);

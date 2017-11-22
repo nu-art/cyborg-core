@@ -111,7 +111,7 @@ public class KeyboardChangeListener {
 					return;
 
 				wasOpened = isShown;
-				cyborg.dispatchEvent("Keyboard visibility changed: " + isShown, OnKeyboardVisibilityListener.class, new Processor<OnKeyboardVisibilityListener>() {
+				cyborg.dispatchEvent("Keyboard visibility changed: " + isShown, new Processor<OnKeyboardVisibilityListener>() {
 					@Override
 					public void process(OnKeyboardVisibilityListener listener) {
 						listener.onVisibilityChanged(isShown);

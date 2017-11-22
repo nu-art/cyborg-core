@@ -630,8 +630,8 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final <ListenerType> void dispatchEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		activityStackHandler.dispatchEvent(message, listenerType, processor);
+	public final <ListenerType> void dispatchEvent(final String message, final Processor<ListenerType> processor) {
+		activityStackHandler.dispatchEvent(message, processor);
 	}
 
 	@Override

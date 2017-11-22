@@ -240,15 +240,23 @@ public abstract class CyborgModuleItem
 		cyborg.postActivityAction(action);
 	}
 
-	@Override
+	/**
+	 * Use the one without the listenerType parameter
+	 */
+	@Deprecated
 	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		logDebug("Dispatching UI Event: " + message);
-		cyborg.dispatchEvent(message, listenerType, processor);
+		dispatchEvent(message, processor);
+	}
+
+	@Override
+	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
+		logInfo("Dispatching UI Event: " + message);
+		cyborg.dispatchEvent(message, processor);
 	}
 
 	public final <ListenerType> void dispatchGlobalEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
 		dispatchModuleEvent(message, listenerType, processor);
-		dispatchEvent(message, listenerType, processor);
+		dispatchEvent(message, processor);
 	}
 
 	@Override

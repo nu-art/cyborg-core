@@ -930,9 +930,17 @@ public abstract class CyborgController
 		}
 	}
 
-	@Override
+	/**
+	 * Use the one without the listenerType parameter
+	 */
+	@Deprecated
 	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
-		activityBridge.dispatchEvent(message, listenerType, processor);
+		dispatchEvent(message, processor);
+	}
+
+	@Override
+	public final <ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor) {
+		activityBridge.dispatchEvent(message, processor);
 	}
 
 	@Override
