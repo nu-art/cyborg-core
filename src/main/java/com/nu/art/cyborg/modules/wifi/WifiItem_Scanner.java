@@ -153,7 +153,7 @@ public class WifiItem_Scanner
 			});
 		}
 
-		dispatchEvent("Wifi Scan Completed", OnWifiUIListener.class, new Processor<OnWifiUIListener>() {
+		dispatchEvent("Wifi Scan Completed", new Processor<OnWifiUIListener>() {
 			@Override
 			public void process(OnWifiUIListener listener) {
 				listener.onScanCompleted();
