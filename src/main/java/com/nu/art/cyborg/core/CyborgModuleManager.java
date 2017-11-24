@@ -44,8 +44,6 @@ public final class CyborgModuleManager
 
 	@SuppressWarnings("unchecked")
 	protected <ListenerType> void dispatchModuleEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
-		dispatchModuleEvent(message,processor);
-//		Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(listenerType, processor);
-//		super.dispatchModuleEvent(message, _listenerType, processor);
+		dispatchModuleEvent(message, processor);
 	}
 }

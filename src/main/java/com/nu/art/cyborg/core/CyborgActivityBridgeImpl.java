@@ -111,7 +111,7 @@ public class CyborgActivityBridgeImpl
 
 	private LayoutInflater layoutInflater;
 
-	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher");
+	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher").own();
 
 	CyborgActivityBridgeImpl(String screenName, CyborgActivity activity) {
 		this.activity = activity;
