@@ -215,7 +215,7 @@ public final class ImageUtilsModule
 
 		if (resultCode != Activity.RESULT_OK) {
 			logInfo("User Cancelled Image Selection");
-			dispatchEvent("Image selection action cancelled", OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
+			dispatchEvent("Image selection action cancelled", new Processor<OnImageSelectedListener>() {
 				@Override
 				public void process(OnImageSelectedListener listener) {
 					listener.onActionCancelled();
@@ -232,7 +232,7 @@ public final class ImageUtilsModule
 
 		Cursor cursor = getContentResolver().query(_uri, new String[]{MediaColumns.DATA}, null, null, null);
 		if (cursor == null) {
-			dispatchEvent("Image selection action error", OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
+			dispatchEvent("Image selection action error", new Processor<OnImageSelectedListener>() {
 				@Override
 				public void process(OnImageSelectedListener listener) {
 					listener.onActionError();
@@ -245,7 +245,7 @@ public final class ImageUtilsModule
 
 		final String uriToImage = cursor.getString(0);
 		cursor.close();
-		dispatchEvent("User Had Picked an Image: " + uriToImage, OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
+		dispatchEvent("User Had Picked an Image: " + uriToImage, new Processor<OnImageSelectedListener>() {
 			@Override
 			public void process(OnImageSelectedListener listener) {
 				listener.onImageSelected(uriToImage);
