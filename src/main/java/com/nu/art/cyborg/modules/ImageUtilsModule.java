@@ -177,37 +177,6 @@ public final class ImageUtilsModule
 		return images;
 	}
 
-	/*public Drawable cropRoundedImage(Uri photoUri)
-			throws FileNotFoundException {
-
-		InputStream inputStream = null;
-		try {
-			inputStream = getContentResolver().openInputStream(photoUri);
-			Bitmap image = BitmapFactory.decodeStream(inputStream);
-			return cropRoundedImage(image);
-		} finally {
-			try {
-				if (inputStream != null)
-					inputStream.close();
-			} catch (IOException e) {
-				logError("Failed to close photo uri input stream", e);
-			}
-		}
-	}
-
-	@NonNull
-	public Drawable cropRoundedImage(Bitmap image) {
-		RoundedBitmapDrawable roundedImage;
-		int originalWidth = image.getWidth();
-		int originalHeight = image.getHeight();
-
-		int dimen = Math.min(originalWidth, originalHeight);
-		image = Bitmap.createBitmap(image, (originalWidth - dimen) / 2, (originalHeight - dimen) / 2, dimen, dimen);
-
-		roundedImage = RoundedBitmapDrawableFactory.create(getResources(), image);
-		roundedImage.setCornerRadius(dimen / 2.0f);
-		return roundedImage;
-	}*/
 	@Override
 	public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode != SELECT_PICTURE)
@@ -215,7 +184,7 @@ public final class ImageUtilsModule
 
 		if (resultCode != Activity.RESULT_OK) {
 			logInfo("User Cancelled Image Selection");
-			dispatchEvent("Image selection action cancelled", new Processor<OnImageSelectedListener>() {
+			dispatchEvent("Image selection action cancelled", OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
 				@Override
 				public void process(OnImageSelectedListener listener) {
 					listener.onActionCancelled();
@@ -232,7 +201,7 @@ public final class ImageUtilsModule
 
 		Cursor cursor = getContentResolver().query(_uri, new String[]{MediaColumns.DATA}, null, null, null);
 		if (cursor == null) {
-			dispatchEvent("Image selection action error", new Processor<OnImageSelectedListener>() {
+			dispatchEvent("Image selection action error", OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
 				@Override
 				public void process(OnImageSelectedListener listener) {
 					listener.onActionError();
@@ -245,7 +214,7 @@ public final class ImageUtilsModule
 
 		final String uriToImage = cursor.getString(0);
 		cursor.close();
-		dispatchEvent("User Had Picked an Image: " + uriToImage, new Processor<OnImageSelectedListener>() {
+		dispatchEvent("User Had Picked an Image: " + uriToImage, OnImageSelectedListener.class, new Processor<OnImageSelectedListener>() {
 			@Override
 			public void process(OnImageSelectedListener listener) {
 				listener.onImageSelected(uriToImage);
