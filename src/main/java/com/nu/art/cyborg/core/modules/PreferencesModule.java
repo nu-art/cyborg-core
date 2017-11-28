@@ -343,7 +343,12 @@ public final class PreferencesModule
 			if (value == null)
 				return null;
 
-			return Enum.valueOf(enumType, value);
+			try {
+				return Enum.valueOf(enumType, value);
+			} catch (Exception e) {
+				key.delete();
+				return get();
+			}
 		}
 
 		public void set(EnumType value) {
