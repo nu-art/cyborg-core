@@ -1,6 +1,6 @@
 # What is Cyborg?
 
-Cyborg is a framework layer over Android, one that will save you at least 50% of development time, and the code you are used to write while developing Android.
+Cyborg is a framework layer over Android, one that will save you at least 50% of development time, code and Android bugs that you are used to while developing "pure" Android.
 
 If you are an Android developer then you know the pain of an Android Application birth, the logs, the screens, the lists, view pagers, recyclers, adapters, activities, fragments, services, intents and just the thought about all this code you need to write(or copy) AGAIN, is simply depressing! (Boiler plate anyone)
 
