@@ -471,10 +471,10 @@ public final class CyborgStackController
 	}
 
 	private void push(final StackLayer targetLayerToBeAdded) {
-		if (animatingTransition) {
-			logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
-			return;
-		}
+//		if (animatingTransition) {
+//			logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
+//			return;
+//		}
 
 		// promote this stack in the hierarchy, so it will receive the events first.
 		// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
@@ -546,10 +546,10 @@ public final class CyborgStackController
 	}
 
 	public boolean popLast() {
-		if (animatingTransition) {
-			logWarning("NOT POPPING LAST LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
-			return true;
-		}
+//		if (animatingTransition) {
+//			logWarning("NOT POPPING LAST LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
+//			return true;
+//		}
 
 		final StackLayer targetLayerToBeRemove = getAndRemoveTopLayer();
 		if (targetLayerToBeRemove == null)
