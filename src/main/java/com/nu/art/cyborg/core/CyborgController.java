@@ -44,6 +44,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.Animation;
@@ -169,6 +170,22 @@ public abstract class CyborgController
 		for (CyborgController nestedController : nestedControllers) {
 			nestedController.setBusyState(busyState);
 		}
+	}
+
+	/**
+	 * Will cause the root view of the controller to capture all the touch events, and will not propagate the event to the parent views in the view
+	 * hierarchy.
+	 *
+	 * Common use case would be the background of dialogs, once user clicks the shaded area you can block the click events from propagating to the under visible
+	 * view.
+	 */
+	protected final void blockClickEvents() {
+		rootView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
 	}
 
 	protected boolean canExecute() {
