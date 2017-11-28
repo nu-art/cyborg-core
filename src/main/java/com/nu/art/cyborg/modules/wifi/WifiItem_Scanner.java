@@ -166,15 +166,17 @@ public class WifiItem_Scanner
 	}
 
 	void enable(boolean enable) {
-		if (scanning == enable)
-			return;
+		if (scanning != enable) {
+			if (enable) {
+				cyborg.registerReceiver(WifiNetworksReceiver.class, WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+			} else
+				cyborg.unregisterReceiver(WifiNetworksReceiver.class);
 
-		if (enable) {
-			cyborg.registerReceiver(WifiNetworksReceiver.class, WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+			scanning = enable;
+		}
+
+		if (enable)
 			startScan();
-		} else
-			cyborg.unregisterReceiver(WifiNetworksReceiver.class);
-		scanning = enable;
 	}
 
 	public static class WifiNetworksReceiver

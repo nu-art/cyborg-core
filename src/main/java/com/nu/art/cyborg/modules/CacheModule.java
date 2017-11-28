@@ -206,14 +206,22 @@ public class CacheModule
 	private void cacheSync(Cacheable cacheable, InputStream inputStream)
 			throws IOException {
 		File file = getFile(cacheable);
-		FileTools.delete(file);
-		FileTools.createNewFile(file);
+		File tempFile = new File(file.getParentFile(), "_" + file.getName());
 
 		try {
-			StreamTools.copy(inputStream, file);
+			// save the stream into a local temp file.
+			FileTools.delete(tempFile);
+			FileTools.createNewFile(tempFile);
+			StreamTools.copy(inputStream, tempFile);
+
+			// Rename the file to the final expected name.
+			FileTools.delete(file);
+			FileTools.renameFile(tempFile, file);
 		} catch (IOException e) {
 			logError("Error caching stream... ", e);
+
 			try {
+				FileTools.delete(tempFile);
 				FileTools.delete(file);
 			} catch (IOException e1) {
 				logError("Error deleting cache file!", e1);

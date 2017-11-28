@@ -342,6 +342,7 @@ public final class PreferencesModule
 			String value = key.get();
 			if (value == null)
 				return null;
+
 			return Enum.valueOf(enumType, value);
 		}
 
