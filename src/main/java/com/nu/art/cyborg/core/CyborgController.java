@@ -364,6 +364,10 @@ public abstract class CyborgController
 		getModule(AttributeModule.class).setAttributes(context, attrs, this);
 	}
 
+	protected boolean isInEditMode() {
+		return rootView.isInEditMode();
+	}
+
 	protected void onReady() {}
 
 	final void dispatchLifeCycleEvent(LifeCycleState newState) {

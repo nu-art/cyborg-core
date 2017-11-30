@@ -39,11 +39,6 @@ public abstract class ItemRenderer<ItemType>
 
 	private PositionResolver positionResolver;
 
-	@SuppressWarnings("UnusedDeclaration")
-	protected ItemRenderer() {
-		this(-1);
-	}
-
 	protected ItemRenderer(@LayoutRes int layoutId) {
 		super(layoutId);
 	}
