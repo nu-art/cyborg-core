@@ -59,7 +59,7 @@ public abstract class ItemRenderer<ItemType>
 			logVerbose("Render duration: " + (System.currentTimeMillis() - startMs) + "ms");
 	}
 
-	protected abstract void renderItem(ItemType item);
+	protected abstract void renderItem(ItemType itemType);
 
 	@Override
 	protected View createView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
