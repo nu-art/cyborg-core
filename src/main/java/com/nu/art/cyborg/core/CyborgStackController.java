@@ -471,10 +471,10 @@ public final class CyborgStackController
 	}
 
 	private void push(final StackLayer targetLayerToBeAdded) {
-//		if (animatingTransition) {
-//			logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
-//			return;
-//		}
+		//		if (animatingTransition) {
+		//			logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
+		//			return;
+		//		}
 
 		// promote this stack in the hierarchy, so it will receive the events first.
 		// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
@@ -519,6 +519,10 @@ public final class CyborgStackController
 					}
 				};
 
+				targetLayerToBeAdded.getRootView().clearAnimation();
+				if (originLayerToBeDisposed != null)
+					originLayerToBeDisposed.getRootView().clearAnimation();
+
 				for (StackTransitionAnimator animator : transitionAnimators) {
 					Interpolator interpolator = targetLayerToBeAdded.interpolator;
 					if (interpolator != null)
@@ -546,10 +550,10 @@ public final class CyborgStackController
 	}
 
 	public boolean popLast() {
-//		if (animatingTransition) {
-//			logWarning("NOT POPPING LAST LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
-//			return true;
-//		}
+		//		if (animatingTransition) {
+		//			logWarning("NOT POPPING LAST LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
+		//			return true;
+		//		}
 
 		final StackLayer targetLayerToBeRemove = getAndRemoveTopLayer();
 		if (targetLayerToBeRemove == null)
@@ -593,6 +597,10 @@ public final class CyborgStackController
 						setInAnimationState(false);
 					}
 				};
+
+				targetLayerToBeRemove.getRootView().clearAnimation();
+				if (originLayerToBeRestored != null)
+					originLayerToBeRestored.getRootView().clearAnimation();
 
 				for (StackTransitionAnimator animator : transitionAnimators) {
 					Interpolator interpolator = targetLayerToBeRemove.interpolator;
@@ -648,6 +656,7 @@ public final class CyborgStackController
 		if (layerToBeDisposed == null)
 			return;
 
+		logDebug("Disposing layer");
 		layerToBeDisposed.saveState();
 
 		if (layerToBeDisposed.controller != null && !layerToBeDisposed.controller.keepInStack)

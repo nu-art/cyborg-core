@@ -112,11 +112,34 @@ public final class CyborgBuilder {
 		attributesManager.setAttributes(context, attrs, object);
 	}
 
+	/**
+	 * This method is <b>ONLY</b> for refactoring purposes.<Br>
+	 * In a perfect world, all the entities(Modules, Controllers, BroadcastReceivers, e.g.) in an app would use Cyborg's infra and will have access to the
+	 * framework API to get modules, and plenty of other convenient API, but in the meanwhile, while you refactor your app to use Cyborg, you can call this api in
+	 * order to break pieces of your code at a time, and not completely
+	 *
+	 * @param moduleType   The module type you want to get.
+	 * @param context      You application context.
+	 * @param <ModuleType> The generic module type
+	 *
+	 * @return The module instance mapped to the provided class
+	 */
 	@Deprecated
 	public static <ModuleType extends Module> ModuleType getModule(Context context, Class<ModuleType> moduleType) {
 		return getCyborg(context).getModule(moduleType);
 	}
 
+	/**
+	 * This method is <b>ONLY</b> for refactoring purposes.<Br>
+	 * In a perfect world, all the entities(Modules, Controllers, BroadcastReceivers, e.g.) in an app would use Cyborg's infra and will have access to the
+	 * framework API to get modules, and plenty of other convenient API, but in the meanwhile, while you refactor your app to use Cyborg, you can call this api in
+	 * order to break pieces of your code at a time, and not completely
+	 *
+	 * @param moduleType   The module type you want to get.
+	 * @param <ModuleType> The generic module type
+	 *
+	 * @return The module instance mapped to the provided class
+	 */
 	@Deprecated
 	public static <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
 		return getInstance().getModule(moduleType);

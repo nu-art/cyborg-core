@@ -18,8 +18,16 @@
 
 package com.nu.art.cyborg.core.modules;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.view.Display;
+import android.view.WindowManager;
 
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
@@ -98,5 +106,26 @@ public final class DeviceDetailsModule
 			return ScreenOrientation.Portrait;
 		}
 		return ScreenOrientation.Landscape;
+	}
+
+	@SuppressLint("NewApi")
+	public void setBrightness(Activity activity, float brightness) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+			WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+			lp.screenBrightness = brightness;
+			activity.getWindow().setAttributes(lp);
+			return;
+		}
+
+		if (Settings.System.canWrite(getApplicationContext())) {
+			ContentResolver cResolver = this.getApplicationContext().getContentResolver();
+			Settings.System.putInt(cResolver, Settings.System.SCREEN_BRIGHTNESS, (int) (brightness * 255));
+			return;
+		}
+
+			Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+		intent.setData(Uri.parse("package:" + this.getPackageName()));
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		activity.startActivity(intent);
 	}
 }

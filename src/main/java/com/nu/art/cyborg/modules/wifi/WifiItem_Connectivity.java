@@ -148,13 +148,21 @@ public class WifiItem_Connectivity
 		if (wifiName == null)
 			throw new BadImplementationException("MUST provide wifiName");
 
-		removeWifi(wifiName);
+		int netId = -1;
+		boolean saved = true;
+		for (WifiConfiguration configuration : wifiManager.getConfiguredNetworks()) {
+			if (configuration.SSID.equals("\"" + wifiName + "\""))
+				netId = configuration.networkId;
+		}
 
-		final WifiConfiguration wifiConfig = createWifiConfiguration(wifiName, password, securityMode);
+		if (netId == -1) {
+			removeWifi(wifiName);
 
-		int netId = wifiManager.addNetwork(wifiConfig);
+			final WifiConfiguration wifiConfig = createWifiConfiguration(wifiName, password, securityMode);
+			netId = wifiManager.addNetwork(wifiConfig);
+			saved = wifiManager.saveConfiguration();
+		}
 
-		boolean saved = wifiManager.saveConfiguration();
 		if (netId == -1 || !saved) {
 			dispatchGlobalEvent("Error while connecting to WiFi: " + wifiName, WifiConnectivityListener.class, new Processor<WifiConnectivityListener>() {
 				@Override

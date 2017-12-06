@@ -148,6 +148,9 @@ public class WifiItem_Scanner
 			Collections.sort(scanResults, new Comparator<ScannedWifiInfo>() {
 				@Override
 				public int compare(ScannedWifiInfo o1, ScannedWifiInfo o2) {
+					if (o1.strength.ordinal() == o2.strength.ordinal())
+						return 0;
+
 					return o1.strength.ordinal() < o2.strength.ordinal() ? 1 : -1;
 				}
 			});
@@ -188,7 +191,11 @@ public class WifiItem_Scanner
 
 		@Override
 		protected void onReceive(Intent intent, WifiModule module) {
-			switch (intent.getAction()) {
+			String action = intent.getAction();
+			if (action == null)
+				return;
+
+			switch (action) {
 				case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
 					module.onScanCompleted();
 					break;
