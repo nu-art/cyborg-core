@@ -53,6 +53,11 @@ public class WifiClientTransceiver
 	}
 
 	@Override
+	protected String extraLog() {
+		return serverIpAddress + ":" + port;
+	}
+
+	@Override
 	public String getRemoteAddress() {
 		return serverIpAddress;
 	}

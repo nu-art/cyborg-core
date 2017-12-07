@@ -192,9 +192,13 @@ public abstract class BaseTransceiver
 		if (state == newState)
 			return;
 
-		logDebug("State changed: " + state + " => " + newState);
+		logDebug("State changed: " + state + " => " + newState + ": " + extraLog());
 		this.state = newState;
 		notifyStateChanged(newState);
+	}
+
+	protected String extraLog() {
+		return "";
 	}
 
 	protected abstract SocketWrapper connectImpl()

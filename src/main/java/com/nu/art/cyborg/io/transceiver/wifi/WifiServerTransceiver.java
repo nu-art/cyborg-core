@@ -28,7 +28,6 @@ import java.net.Socket;
 public final class WifiServerTransceiver
 		extends WifiTransceiver {
 
-
 	private ServerSocket serverSocket;
 
 	private String remoteAddress;
@@ -54,6 +53,11 @@ public final class WifiServerTransceiver
 		} catch (IOException e) {
 			notifyError(e);
 		}
+	}
+
+	@Override
+	protected String extraLog() {
+		return "Port: " + port;
 	}
 
 	@Override
