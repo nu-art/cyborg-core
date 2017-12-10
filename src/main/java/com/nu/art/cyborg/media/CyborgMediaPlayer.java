@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.modules.media;
+package com.nu.art.cyborg.media;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
