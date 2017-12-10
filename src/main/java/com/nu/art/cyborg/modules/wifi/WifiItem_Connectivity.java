@@ -150,10 +150,12 @@ public class WifiItem_Connectivity
 
 		int netId = -1;
 		boolean saved = true;
-		for (WifiConfiguration configuration : wifiManager.getConfiguredNetworks()) {
-			if (configuration.SSID.equals("\"" + wifiName + "\""))
-				netId = configuration.networkId;
-		}
+		List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
+		if (configuredNetworks != null)
+			for (WifiConfiguration configuration : configuredNetworks) {
+				if (configuration.SSID.equals("\"" + wifiName + "\""))
+					netId = configuration.networkId;
+			}
 
 		if (netId == -1) {
 			removeWifi(wifiName);
