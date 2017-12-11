@@ -22,6 +22,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -54,10 +55,14 @@ public final class DeviceDetailsModule
 
 	private String androidId;
 
+	private Point screenResolution = new Point();
+
 	@Override
 	protected void init() {
 		int screenLayout = cyborg.getResources().getConfiguration().screenLayout;
 		screenSize = DeviceScreenSize.getValueByScreenLayout(screenLayout);
+
+		getSystemService(WindowService).getDefaultDisplay().getSize(screenResolution);
 
 		//float density = cyborg.getResources().getDisplayMetrics().density;
 		String densityString = getString(R.string.Density);
@@ -78,6 +83,7 @@ public final class DeviceDetailsModule
 		logInfo("    Device values folder: " + deviceValues.getFolderName());
 		logInfo("    Screen Density: " + screenDensity.name());
 		logInfo("    Screen Size: " + screenSize.name());
+		logInfo("    Screen Resolution: " + screenResolution.x + "x" + screenResolution.y+" [pixels]");
 	}
 
 	public final boolean isSuperUser() {
@@ -123,7 +129,7 @@ public final class DeviceDetailsModule
 			return;
 		}
 
-			Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+		Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
 		intent.setData(Uri.parse("package:" + this.getPackageName()));
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		activity.startActivity(intent);
