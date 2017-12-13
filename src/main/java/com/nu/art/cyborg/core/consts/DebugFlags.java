@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 public class DebugFlags {
 
 	public static boolean DebugPerformance = false;
+	public static boolean DebugStack = false;
 	public static boolean DebugActivityLifeCycle = false;
 	public static boolean DebugControllerLifeCycle = false;
 	public static ExtractGenericParamFromProcessor paramExtractor;

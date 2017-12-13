@@ -49,6 +49,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
+import static com.nu.art.cyborg.core.consts.DebugFlags.DebugStack;
 
 /**
  * Created by TacB0sS on 25-Jun 2015.
@@ -325,6 +326,11 @@ public final class CyborgStackController
 
 			controller._onAnimatedIn();
 		}
+
+		@Override
+		public String toString() {
+			return refKey;
+		}
 	}
 
 	public class StackLayerBuilder
@@ -471,10 +477,10 @@ public final class CyborgStackController
 	}
 
 	private void push(final StackLayer targetLayerToBeAdded) {
-		//		if (animatingTransition) {
-		//			logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
-		//			return;
-		//		}
+		if (animatingTransition) {
+			if (DebugStack)
+				logWarning("NOT PUSHING NEW LAYER... TRANSITION ANIMATION IN PROGRESS!!!");
+		}
 
 		// promote this stack in the hierarchy, so it will receive the events first.
 		// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
@@ -656,7 +662,9 @@ public final class CyborgStackController
 		if (layerToBeDisposed == null)
 			return;
 
-		logDebug("Disposing layer");
+		if (DebugStack)
+			logWarning("disposeLayer: " + layerToBeDisposed);
+
 		layerToBeDisposed.saveState();
 
 		if (layerToBeDisposed.controller != null && !layerToBeDisposed.controller.keepInStack)
