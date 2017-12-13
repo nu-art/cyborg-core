@@ -46,7 +46,6 @@ public class CyborgMediaPlayer
 	private static final int ERROR_TIMED_OUT = 100;
 
 	private final Thread ownerThread = Thread.currentThread();
-	private String key;
 	private MediaBuilder builder;
 	private MediaPlayer mediaPlayer;
 	private TimeoutError timeoutError;
@@ -66,8 +65,8 @@ public class CyborgMediaPlayer
 		return new MediaBuilder();
 	}
 
-	public boolean isTag(String key) {
-		return builder.tag.equals(key);
+	public boolean isSameMediaId(String mediaId) {
+		return builder != null && builder.mediaId.equals(mediaId);
 	}
 
 	public enum PlayerState {
@@ -76,16 +75,6 @@ public class CyborgMediaPlayer
 		Prepared,
 		Playing,
 		Disposing,
-	}
-
-	public final String getKey() {
-		return key;
-	}
-
-	final CyborgMediaPlayer setKey(String key) {
-		this.key = key;
-		setTag(getClass().getSimpleName() + "-" + key);
-		return this;
 	}
 
 	public void setSurface(Surface surface) {
@@ -337,11 +326,6 @@ public class CyborgMediaPlayer
 			throw new BadImplementationException("Must be called on thread: " + ownerThread.getName() + "!!");
 	}
 
-	@Override
-	public String toString() {
-		return key;
-	}
-
 	public boolean isPaused() {
 		return isState(PlayerState.Prepared);
 	}
@@ -399,7 +383,7 @@ public class CyborgMediaPlayer
 
 	public class MediaBuilder {
 
-		private Object tag;
+		private Object mediaId;
 
 		private Uri url;
 
@@ -420,8 +404,8 @@ public class CyborgMediaPlayer
 			return this;
 		}
 
-		public MediaBuilder setTag(Object tag) {
-			this.tag = tag;
+		public MediaBuilder setMediaId(Object mediaId) {
+			this.mediaId = mediaId;
 			return this;
 		}
 
@@ -444,8 +428,8 @@ public class CyborgMediaPlayer
 
 		public MediaBuilder setUri(Uri uri) {
 			this.url = uri;
-			if (tag == null)
-				tag = url;
+			if (mediaId == null)
+				mediaId = url;
 			return this;
 		}
 
@@ -502,7 +486,7 @@ public class CyborgMediaPlayer
 
 	private void scheduleMediaTimeout(int timeout) {
 		removeTimeoutTrigger();
-		postOnUI(timeout, timeoutError = new TimeoutError(builder != null ? builder.tag : "No Tag"));
+		postOnUI(timeout, timeoutError = new TimeoutError(builder != null ? builder.mediaId : "No Tag"));
 
 		logDebug("Scheduling media timeout(" + timeout + ") for: " + timeoutError.tag);
 	}
