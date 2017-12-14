@@ -304,6 +304,8 @@ public class CyborgMediaPlayer
 	 */
 	public synchronized void dispose() {
 		assertThread();
+		if(isState(PlayerState.Idle))
+			return;
 
 		boolean wasPlaying = isState(PlayerState.Playing);
 		removeTimeoutTrigger();
@@ -457,6 +459,8 @@ public class CyborgMediaPlayer
 
 		public void prepare() {
 			assertThread();
+
+			dispose();
 
 			logInfo("Preparing: " + url + " | Seek Position: " + positionMs);
 			CyborgMediaPlayer.this.builder = this;
