@@ -350,7 +350,7 @@ public abstract class CyborgController
 	/**
 	 * @return The root view of the controller.
 	 */
-	protected final View getRootView() {
+	public final View getRootView() {
 		return rootView;
 	}
 
