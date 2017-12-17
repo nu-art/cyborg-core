@@ -152,4 +152,5 @@ public class ClipboardModule
 		});
 		oldText = newText;
 	}
+
 }

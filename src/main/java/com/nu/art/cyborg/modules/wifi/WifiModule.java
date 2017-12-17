@@ -18,10 +18,21 @@
 
 package com.nu.art.cyborg.modules.wifi;
 
+import android.annotation.SuppressLint;
+import android.app.admin.DeviceAdminReceiver;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.net.wifi.WifiInfo;
+import android.os.Build;
+
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Connectivity.WifiConnectivityState;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.ScannedWifiInfo;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
+
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by TacB0sS on 04-Jul 2017.
@@ -129,5 +140,62 @@ public class WifiModule
 
 	public boolean hasAccessPoint(String wifiName) {
 		return WifiNetworkScanner.hasAccessPoint(wifiName);
+	}
+
+	@SuppressLint( {
+										 "HardwareIds",
+										 "MissingPermission"
+								 })
+	public  String calculateMacAddress() {
+		String macAddress = null;
+		if (Build.VERSION.SDK_INT < 23) {
+			// generate a unique id from MAC address of the WiFi
+			WifiInfo info = getSystemService(WifiService).getConnectionInfo();
+			return info.getMacAddress();
+		}
+		try {
+			List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+			for (NetworkInterface nif : all) {
+				if (!nif.getName().equalsIgnoreCase("wlan0"))
+					continue;
+
+				byte[] macBytes = nif.getHardwareAddress();
+				if (macBytes == null) {
+					macAddress = "";
+					continue;
+				}
+
+				StringBuilder res1 = new StringBuilder();
+
+				for (byte b : macBytes) {
+					if (b == 0x00)
+						res1.append("00" + ":");
+					else
+						res1.append(String.format("%02x:", b));
+				}
+
+				if (res1.length() > 0) {
+					res1.deleteCharAt(res1.length() - 1);
+				}
+
+				macAddress = res1.toString();
+				return macAddress;
+			}
+		} catch (Exception e) {
+			// TODO What ddo weo we do once unable to get wifi mac
+			logError("Error calculating the Wifi mac address exception", e);
+		}
+
+		//"Android For Work" code, added in version 24, needs more research.
+		if (Build.VERSION.SDK_INT > 23) {
+			DeviceAdminReceiver admin = new DeviceAdminReceiver();
+			DevicePolicyManager devicepolicymanager = admin.getManager(getApplicationContext());
+			ComponentName name1 = admin.getWho(getApplicationContext());
+			if (devicepolicymanager.isAdminActive(name1)) {
+				macAddress = devicepolicymanager.getWifiMacAddress(name1);
+			}
+		}
+
+		return macAddress;
 	}
 }

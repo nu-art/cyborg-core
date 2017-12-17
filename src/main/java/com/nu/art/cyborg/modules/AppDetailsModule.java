@@ -123,17 +123,17 @@ public final class AppDetailsModule
 		md.update(certificateBytes);
 		byte[] digest = md.digest();
 
-		String toRet = "";
+		StringBuilder toRet = new StringBuilder();
 		for (int i = 0; i < digest.length; i++) {
 			if (i != 0)
-				toRet += ":";
+				toRet.append(":");
 			int b = digest[i] & 0xff;
 			String hex = Integer.toHexString(b);
 			if (hex.length() == 1)
-				toRet += "0";
-			toRet += hex;
+				toRet.append("0");
+			toRet.append(hex);
 		}
-		return toRet;
+		return toRet.toString();
 	}
 
 	public final void setSimulateProduction(boolean debugSimulationMode) {

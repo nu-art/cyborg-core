@@ -77,13 +77,17 @@ public final class DeviceDetailsModule
 		androidId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 	}
 
+	public Point getScreenResolution() {
+		return screenResolution;
+	}
+
 	@Override
 	protected void printModuleDetails() {
 		logInfo("    Android Device Id: " + androidId);
 		logInfo("    Device values folder: " + deviceValues.getFolderName());
 		logInfo("    Screen Density: " + screenDensity.name());
 		logInfo("    Screen Size: " + screenSize.name());
-		logInfo("    Screen Resolution: " + screenResolution.x + "x" + screenResolution.y+" [pixels]");
+		logInfo("    Screen Resolution: " + screenResolution.x + "x" + screenResolution.y + " [pixels]");
 	}
 
 	public final boolean isSuperUser() {
