@@ -84,7 +84,14 @@ public class WifiItem_Connectivity
 	}
 
 	final boolean isConnectedToWifi() {
-		NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		NetworkInfo wifiNetworkInfo = null;
+		try {
+			wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		} catch (Exception e) {
+			logWarning("Error while getting wifi network info",e);
+			return false;
+		}
+
 		if (wifiNetworkInfo == null || !wifiNetworkInfo.isConnected())
 			return false;
 
