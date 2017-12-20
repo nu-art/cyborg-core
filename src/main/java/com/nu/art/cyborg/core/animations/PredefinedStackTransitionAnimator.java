@@ -30,7 +30,6 @@ import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.BaseTransitionHelper;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
-import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
 
 /**
  * Created by TacB0sS on 19-Jul 2015.
@@ -72,10 +71,11 @@ public class PredefinedStackTransitionAnimator
 		if (outOrigin != null)
 			outOrigin.setInterpolator(interpolator);
 
-		if (originLayer != null)
+		if (originLayer != null && originLayer.getRootView() != null)
 			animateLayer(outOrigin, originLayer.getRootView(), duration, null);
 
-		animateLayer(inTarget, targetLayer.getRootView(), duration, listener);
+		if (targetLayer.getRootView() != null)
+			animateLayer(inTarget, targetLayer.getRootView(), duration, listener);
 	}
 
 	@Override

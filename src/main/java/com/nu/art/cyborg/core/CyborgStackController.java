@@ -36,7 +36,9 @@ import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
@@ -210,6 +212,8 @@ public final class CyborgStackController
 
 		private Interpolator interpolator;
 
+		private boolean toBeDisposed;
+
 		private StackLayer() {
 			if (defaultTransition != null) {
 				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
@@ -341,12 +345,52 @@ public final class CyborgStackController
 		if (!DebugStack)
 			return;
 
+		logWarning(" Views Tags: " + Arrays.toString(getViewsTags()));
+		logWarning("Layers Tags: " + Arrays.toString(getStackLayersTags()));
+	}
+
+	public final String[] getViewsTags() {
 		int childCount = getFrameRootView().getChildCount();
-		String[] views = new String[childCount];
+		String[] viewsTags = new String[childCount];
 		for (int i = 0; i < childCount; i++) {
-			views[i] = ((CyborgController) getFrameRootView().getChildAt(i).getTag()).getStateTag();
+			viewsTags[i] = ((CyborgController) getFrameRootView().getChildAt(i).getTag()).getStateTag();
 		}
-		logWarning("Tags: " + Arrays.toString(views));
+		return viewsTags;
+	}
+
+	public final String[] getStackLayersTags() {
+		return ArrayTools.map(String.class, new Function<StackLayer, String>() {
+
+			@Override
+			public String map(StackLayer stackLayer) {
+				return stackLayer.refKey;
+			}
+		}, ArrayTools.asArray(layersStack, StackLayer.class));
+	}
+
+	private StackLayer getTopLayer() {
+		return getTopLayer(false);
+	}
+
+	private StackLayer getAndRemoveTopLayer() {
+		return getTopLayer(true);
+	}
+
+	private StackLayer getTopLayer(boolean remove) {
+		StackLayer layer = layersStack.size() == (withRoot && remove ? 1 : 0) ? null : layersStack.get(layersStack.size() - 1);
+
+		if (remove)
+			removeStackLayer(layer);
+
+		return layer;
+	}
+
+	private void addStackLayer(StackLayer stackLayer) {
+		layersStack.add(stackLayer);
+	}
+
+	private void removeStackLayer(StackLayer stackLayer) {
+		layersStack.remove(stackLayer);
 	}
 
 	public class StackLayerBuilder
@@ -370,8 +414,6 @@ public final class CyborgStackController
 				createControllerLayer();
 			else
 				throw new BadImplementationException("Stack Layer was not configured properly");
-
-			printStateTags();
 		}
 
 		private void createControllerLayer() {
@@ -466,8 +508,13 @@ public final class CyborgStackController
 			return this;
 		}
 
+		/**
+		 * Use this API to add potential screen to your stack to allow your user to navigate back.
+		 * for example when a user presses on a notification.. in most cases you'd like to take them deep into the application,
+		 * this API allows you to defined the breadcrumbs of the back navigation.
+		 */
 		public final void append() {
-			layersStack.add(this);
+			addStackLayer(this);
 		}
 
 		public final void build() {
@@ -513,7 +560,7 @@ public final class CyborgStackController
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();
 
-		layersStack.add(targetLayerToBeAdded);
+		addStackLayer(targetLayerToBeAdded);
 		targetLayerToBeAdded.create();
 
 		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeAdded.stackTransitionAnimator;
@@ -531,13 +578,13 @@ public final class CyborgStackController
 			originLayerToBeDisposed.getRootView().clearAnimation();
 
 			// remove the layer from the stack if at the end of this transition it should not be there.
-			if (originLayerToBeDisposed.controller != null && !originLayerToBeDisposed.controller.keepInStack)
-				layersStack.remove(originLayerToBeDisposed);
+			if (originLayerToBeDisposed.controller != null)
+				originLayerToBeDisposed.toBeDisposed = true;
 		}
 
 		if (transitionAnimators == null) {
 			// if there is no animation transitioning between the two layer, just dispose the older layer
-			disposeLayer(originLayerToBeDisposed);
+			alignChildViewsToStack();
 			return;
 		}
 
@@ -563,9 +610,9 @@ public final class CyborgStackController
 						if (originLayerToBeDisposed != null) {
 							if (DebugStack)
 								logInfo("disposing-push: " + originLayerToBeDisposed);
-
-							disposeLayer(originLayerToBeDisposed);
 						}
+
+						alignChildViewsToStack();
 
 						setInAnimationState(false);
 						targetLayerToBeAdded.onAnimatedIn();
@@ -583,6 +630,28 @@ public final class CyborgStackController
 				}
 			}
 		});
+	}
+
+	private final ArrayList<StackLayer> toBeDisposed = new ArrayList<>();
+
+	private void alignChildViewsToStack() {
+		for (StackLayer stackLayer : layersStack) {
+			if (!stackLayer.toBeDisposed)
+				continue;
+
+			toBeDisposed.add(stackLayer);
+		}
+
+		for (StackLayer stackLayer : toBeDisposed) {
+			disposeLayer(stackLayer);
+			if (stackLayer.keepInStack)
+				continue;
+
+			layersStack.remove(stackLayer);
+		}
+
+		toBeDisposed.clear();
+		printStateTags();
 	}
 
 	private void setInAnimationState(boolean animating) {
@@ -692,32 +761,19 @@ public final class CyborgStackController
 		return true;
 	}
 
-	private StackLayer getTopLayer() {
-		return getTopLayer(false);
-	}
-
-	private StackLayer getAndRemoveTopLayer() {
-		return getTopLayer(true);
-	}
-
-	private StackLayer getTopLayer(boolean remove) {
-		StackLayer layer = layersStack.size() == (withRoot && remove ? 1 : 0) ? null : layersStack.get(layersStack.size() - 1);
-
-		if (remove)
-			layersStack.remove(layer);
-
-		return layer;
-	}
-
 	private void disposeLayer(StackLayer layerToBeDisposed) {
-		if (layerToBeDisposed == null)
+		if (layerToBeDisposed == null) {
+			logError("Will not dispose - layer is null");
 			return;
+		}
 
 		/* in the case that we push two screens and press back..
 		 * the layer we pop will be disposed when the onAnimationEnd of the last push would be called
 		 */
-		if (getTopLayer() == layerToBeDisposed)
+		if (getTopLayer() == layerToBeDisposed) {
+			logError("Will not dispose: " + layerToBeDisposed);
 			return;
+		}
 
 		layerToBeDisposed.saveState();
 		layerToBeDisposed.detachView();
@@ -741,9 +797,5 @@ public final class CyborgStackController
 			return super.onBackPressed();
 
 		return popLast();
-	}
-
-	public StackLayer[] getStackListTags() {
-		return layersStack.toArray(new StackLayer[layersStack.size()]);
 	}
 }
