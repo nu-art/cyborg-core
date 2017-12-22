@@ -43,7 +43,7 @@ public class FontTypeSetter
 	private SupportedFont[] fonts = {};
 
 	public FontTypeSetter() {
-		super(TextView.class, R.styleable.CustomFont, R.styleable.CustomFont_font);
+		super(TextView.class, R.styleable.CustomFont, R.styleable.CustomFont_cyborgFont);
 	}
 
 	public void addFonts(SupportedFont... fonts) {

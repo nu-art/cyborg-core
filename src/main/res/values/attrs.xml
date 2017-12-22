@@ -29,7 +29,7 @@
     </attr>
 
     <declare-styleable name="CustomFont">
-        <attr name="font" format="string"/>
+        <attr name="cyborgFont" format="string"/>
     </declare-styleable>
 
     <declare-styleable name="CyborgView">

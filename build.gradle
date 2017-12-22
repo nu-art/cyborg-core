@@ -19,7 +19,6 @@ apply plugin: 'com.android.library'
 
 android {
     apply from: '../dev-tools/gradle/common-cyborg-lib.gradle'
-    compileSdkVersion 25
 }
 
 if (project.hasProperty("configureUploadAndroidLibArtifact")) {
