@@ -643,6 +643,7 @@ public final class CyborgStackController
 		}
 
 		boolean keepInStack;
+
 		for (StackLayer stackLayer : toBeDisposed) {
 			if (stackLayer.controller == null)
 				// if there is no controller for this layer, take the boolean set in the layer
