@@ -27,7 +27,10 @@ if (project.hasProperty("configureUploadAndroidLibArtifact")) {
 
 
 dependencies {
-    compile(resolveDependency('module-manager', 'com.nu-art-software', "${NU_ART_VERSION}"))
-    compile "com.android.support:support-v4:${ANDROID_SUPPORT_VERSION}"
-    compile "com.android.support:recyclerview-v7:${ANDROID_SUPPORT_VERSION}"
+    _api(resolveDependency('module-manager', 'com.nu-art-software', "${NU_ART_VERSION}"))
+    _api(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
+    _api(resolveDependency('reflection', 'com.nu-art-software', "${NU_ART_VERSION}"))
+    _api(resolveDependency('nu-art-core', 'com.nu-art-software', "${NU_ART_VERSION}"))
+    _api "com.android.support:support-v4:${ANDROID_SUPPORT_VERSION}"
+    _api "com.android.support:recyclerview-v7:${ANDROID_SUPPORT_VERSION}"
 }

@@ -642,12 +642,20 @@ public final class CyborgStackController
 			toBeDisposed.add(stackLayer);
 		}
 
+		boolean keepInStack;
 		for (StackLayer stackLayer : toBeDisposed) {
-			disposeLayer(stackLayer);
-			if (stackLayer.keepInStack)
-				continue;
+			if (stackLayer.controller == null)
+				// if there is no controller for this layer, take the boolean set in the layer
+				keepInStack = stackLayer.keepInStack;
+			else
+				// in case there is a controller, use the boolean within that controller
+				keepInStack = stackLayer.controller.keepInStack;
 
-			layersStack.remove(stackLayer);
+			disposeLayer(stackLayer);
+			stackLayer.toBeDisposed = false;
+
+			if (!keepInStack)
+				layersStack.remove(stackLayer);
 		}
 
 		toBeDisposed.clear();
