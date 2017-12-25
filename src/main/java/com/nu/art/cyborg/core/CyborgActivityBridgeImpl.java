@@ -520,7 +520,7 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				eventDispatcher.dispatchEvent(whoCalledThis, processor);
+					eventDispatcher.dispatchEvent(whoCalledThis, processor);
 			}
 		});
 	}
