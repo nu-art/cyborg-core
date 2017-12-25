@@ -61,7 +61,7 @@ public class LocationModule
 	@Override
 	public void onLocationChanged(final Location location) {
 		logInfo("location: onLocationChanged");
-		dispatchGlobalEvent("update location to: " + location, OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
+		dispatchGlobalEvent("update location to: " + location, new Processor<OnLocationUpdatedListener>() {
 			@Override
 			public void process(OnLocationUpdatedListener listener) {
 				listener.onLocationUpdated(location);
@@ -184,7 +184,7 @@ public class LocationModule
 
 		if (bestLocation == null) {
 			toastDebug("Could not find location");
-			dispatchGlobalEvent("location update error", OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
+			dispatchGlobalEvent("location update error", new Processor<OnLocationUpdatedListener>() {
 				@Override
 				public void process(OnLocationUpdatedListener listener) {
 					listener.onLocationUpdateError();
@@ -194,7 +194,7 @@ public class LocationModule
 		}
 
 		final Location location = bestLocation;
-		dispatchGlobalEvent("update location to: " + location, OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
+		dispatchGlobalEvent("update location to: " + location, new Processor<OnLocationUpdatedListener>() {
 			@Override
 			public void process(OnLocationUpdatedListener listener) {
 				listener.onLocationUpdated(location);

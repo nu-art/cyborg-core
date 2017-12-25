@@ -32,8 +32,7 @@ public final class StackAPI
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "delay")
+	@JavascriptBridgeMethod(methodName = "delay")
 	public final void delay(int ms) {
 		try {
 			Thread.sleep(ms);
@@ -44,23 +43,20 @@ public final class StackAPI
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "onScriptCompleted")
+	@JavascriptBridgeMethod(methodName = "onScriptCompleted")
 	public final void onScriptCompleted(String actionName) {
 		JavascriptStack.getInstance().logDebug("JavascriptStack - Completed: " + actionName);
 		JavascriptStack.getInstance().releaseJavaScriptExecutionThread();
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "sendEvent")
+	@JavascriptBridgeMethod(methodName = "sendEvent")
 	public final void sendEvent(String category, String action, String label, long count) {
 		JavascriptStack.getInstance().sendEvent(category, action, label, count);
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "onScriptError")
+	@JavascriptBridgeMethod(methodName = "onScriptError")
 	public final void onScriptError(String actionName, String err) {
 		JavascriptStack.getInstance().logDebug("JavascriptStack - Completed: " + actionName + ", Error: " + err);
 		JavascriptStack.getInstance().releaseJavaScriptExecutionThread();

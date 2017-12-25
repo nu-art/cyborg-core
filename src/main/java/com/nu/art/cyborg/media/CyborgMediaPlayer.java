@@ -304,7 +304,7 @@ public class CyborgMediaPlayer
 	 */
 	public synchronized void dispose() {
 		assertThread();
-		if(isState(PlayerState.Idle))
+		if (isState(PlayerState.Idle))
 			return;
 
 		boolean wasPlaying = isState(PlayerState.Playing);

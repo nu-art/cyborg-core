@@ -24,5 +24,4 @@ interface _LifeCycleLogger {
 	 * Should webview JS Stack details be printed to the log
 	 */
 	boolean LogDebug_WebJavascriptStack = false;
-
 }

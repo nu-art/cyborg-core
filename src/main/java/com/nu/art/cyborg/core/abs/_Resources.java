@@ -96,14 +96,16 @@ public interface _Resources {
 
 	/**
 	 * @param resourceId The desired resource id.
+	 *
 	 * @return Resource input stream of the provided resource id.
 	 */
 	InputStream getRawResources(int resourceId);
 
 	/**
-	 *
 	 * @param assetName The desired asset's Name.
+	 *
 	 * @return Asset input stream of the provided assetName.
+	 *
 	 * @throws IOException if something goes wrong...
 	 */
 	InputStream getAsset(String assetName)
@@ -121,12 +123,14 @@ public interface _Resources {
 
 	/**
 	 * @param dimensionId The desired dimension id.
+	 *
 	 * @return The value of the provided dimension id.
 	 */
 	float getDimension(int dimensionId);
 
 	/**
 	 * @param colorId The desired color id.
+	 *
 	 * @return The value of the provided color id.
 	 */
 	int getColor(int colorId);
@@ -134,6 +138,7 @@ public interface _Resources {
 	/**
 	 * @param type The type of provided dimension.
 	 * @param size The value of the dimension
+	 *
 	 * @return the size in pixels.
 	 */
 	float dimToPx(int type, float size);

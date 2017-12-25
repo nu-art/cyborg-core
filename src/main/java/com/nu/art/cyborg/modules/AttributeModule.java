@@ -84,7 +84,6 @@ public final class AttributeModule
 
 		protected void init() {}
 
-
 		@SuppressWarnings( {
 													 "unchecked",
 													 "UnusedParameters"

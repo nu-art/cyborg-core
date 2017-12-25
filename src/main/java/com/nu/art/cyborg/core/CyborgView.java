@@ -75,7 +75,7 @@ public class CyborgView
 
 	public CyborgView(CyborgActivity activity, Class<? extends CyborgController> controllerType) {
 		super(activity);
-		this.controller=ReflectiveTools.newInstance(controllerType);
+		this.controller = ReflectiveTools.newInstance(controllerType);
 		initController();
 		controller.onReady();
 	}
@@ -139,7 +139,6 @@ public class CyborgView
 		controller.extractMembersImpl();
 
 		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-
 	}
 
 	final void initController(AttributeSet attrs, int defStyle) {

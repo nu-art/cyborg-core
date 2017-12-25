@@ -27,9 +27,8 @@ import com.nu.art.cyborg.core.modules.PreferencesModule.IntegerPreference;
 /**
  * Created by TacB0sS on 28-Feb 2017.
  */
-@ModuleDescriptor(
-		usesPermissions = {},
-		dependencies = {AppDetailsModule.class})
+@ModuleDescriptor(usesPermissions = {},
+									dependencies = {AppDetailsModule.class})
 
 public class UpgradeModule
 		extends CyborgModule {
@@ -53,7 +52,7 @@ public class UpgradeModule
 	}
 
 	private void dispatchOnAppUpgraded(final int previousVersionCode, final int versionCode) {
-		dispatchModuleEvent("Application upgraded: " + previousVersionCode + " ==> " + versionCode, OnAppUpgradedListener.class, new Processor<OnAppUpgradedListener>() {
+		dispatchModuleEvent("Application upgraded: " + previousVersionCode + " ==> " + versionCode, new Processor<OnAppUpgradedListener>() {
 
 			@Override
 			public void process(OnAppUpgradedListener listener) {

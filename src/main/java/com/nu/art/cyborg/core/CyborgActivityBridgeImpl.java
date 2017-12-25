@@ -36,14 +36,12 @@ import android.widget.FrameLayout;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
-import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
@@ -54,6 +52,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.nu.art.cyborg.core.abs.Cyborg.paramExtractor;
 import static com.nu.art.cyborg.core.consts.DebugFlags.DebugActivityLifeCycle;
 
 /**
@@ -111,7 +110,7 @@ public class CyborgActivityBridgeImpl
 
 	private LayoutInflater layoutInflater;
 
-	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher").own();
+	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher", paramExtractor).own();
 
 	CyborgActivityBridgeImpl(String screenName, CyborgActivity activity) {
 		this.activity = activity;
@@ -495,7 +494,7 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		cyborg
-				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
+				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
 					@Override
 					public void process(OnActivityResultListener listener) {
 						listener.onActivityResult(requestCode, resultCode, data);
@@ -521,11 +520,7 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(null, processor);
-				if (_listenerType == null)
-					throw new MUST_NeverHappenedException("Cannot resolve processor type from instance, " + processor.getClass().getSimpleName());
-
-				eventDispatcher.dispatchEvent(whoCalledThis, _listenerType, processor);
+				eventDispatcher.dispatchEvent(whoCalledThis, processor);
 			}
 		});
 	}

@@ -30,7 +30,10 @@ import static java.lang.annotation.ElementType.TYPE;
 /**
  * @author TacB0sS
  */
-@Target( {FIELD, TYPE})
+@Target( {
+						 FIELD,
+						 TYPE
+				 })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Restorable {
 

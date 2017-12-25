@@ -146,7 +146,7 @@ public class WifiModule
 										 "HardwareIds",
 										 "MissingPermission"
 								 })
-	public  String calculateMacAddress() {
+	public String calculateMacAddress() {
 		String macAddress = null;
 		if (Build.VERSION.SDK_INT < 23) {
 			// generate a unique id from MAC address of the WiFi

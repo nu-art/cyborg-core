@@ -50,8 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@ModuleDescriptor(
-		usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {})
 public final class UtilsModule
 		extends CyborgModule
 		implements AnalyticsConstants {

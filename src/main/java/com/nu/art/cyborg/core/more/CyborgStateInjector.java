@@ -86,9 +86,8 @@ public final class CyborgStateInjector
 		if (key.length() == 0)
 			key = keyPrefix + field.getName();
 
-		if(!data.containsKey(key))
+		if (!data.containsKey(key))
 			return value;
-
 
 		if (annotation.parserType() != TypeParser.class)
 			return deserializeWithParser(annotation, fieldType, annotation.parserType(), data, key);

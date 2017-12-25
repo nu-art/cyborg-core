@@ -29,14 +29,18 @@ import android.content.res.Configuration;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
+import com.nu.art.cyborg.common.utils.AndroidProcessorGenericParamExtractor;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.modular.core.EventDispatcher.ProcessorGenericParamExtractor;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface Cyborg
 		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, _SystemServices, ModuleManagerDelegator {
+
+	ProcessorGenericParamExtractor paramExtractor = new AndroidProcessorGenericParamExtractor();
 
 	/**
 	 * @return The application instance of the app
@@ -176,9 +180,8 @@ public interface Cyborg
 	 * they are for!
 	 *
 	 * @param message        A log message to accompany the event.
-	 * @param listenerType   The listener type entities need to implement to receive the event.
 	 * @param processor      A processor on how ti handle the event.
 	 * @param <ListenerType> A generic bound to the listener type
 	 */
-	<ListenerType> void dispatchModuleEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor);
+	<ListenerType> void dispatchModuleEvent(final String message, final Processor<ListenerType> processor);
 }

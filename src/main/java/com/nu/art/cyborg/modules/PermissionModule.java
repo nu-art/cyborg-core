@@ -68,7 +68,7 @@ public class PermissionModule
 		String[] rejectedPermissions = getRejectedPermissions(permissions);
 
 		if (rejectedPermissions.length == 0) {
-			dispatchModuleEvent("All Permissions Granted", PermissionResultListener.class, new Processor<PermissionResultListener>() {
+			dispatchModuleEvent("All Permissions Granted", new Processor<PermissionResultListener>() {
 				@Override
 				public void process(PermissionResultListener listener) {
 					listener.onAllPermissionsGranted(requestCode);
@@ -97,7 +97,7 @@ public class PermissionModule
 				}
 
 				String message = "Permissions request: " + (grantResults.length - rejected.size()) + "/" + grantResults.length + " Granted";
-				dispatchModuleEvent(message, PermissionResultListener.class, new Processor<PermissionResultListener>() {
+				dispatchModuleEvent(message, new Processor<PermissionResultListener>() {
 					@Override
 					public void process(PermissionResultListener listener) {
 						if (rejected.size() > 0)

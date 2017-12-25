@@ -42,7 +42,8 @@ public enum PredefinedTransitions
 	Scale(ScaleTransition.class),
 	Cube(CubeTransition.class),
 	Fade(R.anim.push_fade_in, R.anim.pop_fade_out),
-	None(null),//
+	None(null),
+	//
 	;
 
 	private final int targetAnimation;

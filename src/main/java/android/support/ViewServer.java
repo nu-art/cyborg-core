@@ -305,8 +305,7 @@ public class ViewServer
 	public void addWindow(Activity activity) {
 		String name = activity.getTitle().toString();
 		if (TextUtils.isEmpty(name)) {
-			name = activity.getClass().getCanonicalName() +
-					"/0x" + System.identityHashCode(activity);
+			name = activity.getClass().getCanonicalName() + "/0x" + System.identityHashCode(activity);
 		} else {
 			name += "(" + activity.getClass().getCanonicalName() + ")";
 		}
@@ -329,8 +328,8 @@ public class ViewServer
 	 * Invoke this method to register a new rootView hierarchy.
 	 *
 	 * @param view A rootView that belongs to the rootView hierarchy/window to register
-	 *
 	 * @param name The name of the rootView hierarchy/window to register
+	 *
 	 * @see #removeWindow(View)
 	 */
 	public void addWindow(View view, String name) {
@@ -686,8 +685,7 @@ public class ViewServer
 					out.flush();
 				}
 			} catch (Exception e) {
-				Log.w(LOG_TAG, "Could not send command " + command +
-						" with parameters " + parameters, e);
+				Log.w(LOG_TAG, "Could not send command " + command + " with parameters " + parameters, e);
 				success = false;
 			} finally {
 				if (out != null) {

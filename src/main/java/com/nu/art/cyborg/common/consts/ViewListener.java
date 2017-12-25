@@ -60,8 +60,7 @@ public enum ViewListener {
 	/**
 	 * Don't Ever use this... use the on click and get the view check state.
 	 */
-	@Deprecated
-	OnCheckChanged(ListenersMethods._SetOnCheckChangedListener, CompoundButton.class, OnCheckedChangeListener.class),
+	@Deprecated OnCheckChanged(ListenersMethods._SetOnCheckChangedListener, CompoundButton.class, OnCheckedChangeListener.class),
 
 	/**
 	 * Adds an {@link OnSeekBarChangeListener} to a {@link SeekBar} rootView instance.

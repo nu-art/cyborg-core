@@ -27,9 +27,10 @@ public class DateTimePicker {
 
 	/**
 	 * Create a date time picker
-	 * @param activity The owner activity for the picker
+	 *
+	 * @param activity  The owner activity for the picker
 	 * @param timestamp The initial timestamp to display for the date and time
-	 * @param listener The listener to be notified on when process completed.
+	 * @param listener  The listener to be notified on when process completed.
 	 */
 	public DateTimePicker(Activity activity, long timestamp, OnDateTimeChangedListener listener) {
 		this.activity = activity;

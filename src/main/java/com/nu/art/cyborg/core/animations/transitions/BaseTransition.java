@@ -41,10 +41,16 @@ public abstract class BaseTransition
 
 	@Documented
 	@Retention(SOURCE)
-	@Target( {PARAMETER, FIELD, LOCAL_VARIABLE})
-	@IntDef( {ORIENTATION_HORIZONTAL, ORIENTATION_VERTICAL})
-	public @interface TransitionOrientation {
-	}
+	@Target( {
+							 PARAMETER,
+							 FIELD,
+							 LOCAL_VARIABLE
+					 })
+	@IntDef( {
+							 ORIENTATION_HORIZONTAL,
+							 ORIENTATION_VERTICAL
+					 })
+	public @interface TransitionOrientation {}
 
 	public interface BaseTransitionHelper {
 

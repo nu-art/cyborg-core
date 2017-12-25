@@ -55,8 +55,7 @@ public abstract class CyborgServiceBase
 
 	@Override
 	public void onCreate() {
-		logInfo("Service created " + super.toString()
-																			.split("@")[1]);
+		logInfo("Service created " + super.toString().split("@")[1]);
 	}
 
 	protected abstract BaseBinder createBinder();

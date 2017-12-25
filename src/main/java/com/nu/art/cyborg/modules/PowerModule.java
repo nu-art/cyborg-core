@@ -136,17 +136,15 @@ public class PowerModule
 	private void processBatteryChanged(Intent batteryStatusIntent) {
 		boolean hasChanged = false;
 
-
 		hasChanged |= setBatteryLevel(batteryStatusIntent);
 		hasChanged |= setChargingSource(batteryStatusIntent);
 		hasChanged |= setChargingState(batteryStatusIntent);
 		hasChanged |= setHealthState(batteryStatusIntent);
 
-
 		if (!hasChanged)
 			return;
 
-		dispatchGlobalEvent("Battery state changed.", BatteryStateListener.class, new Processor<BatteryStateListener>() {
+		dispatchGlobalEvent("Battery state changed.", new Processor<BatteryStateListener>() {
 			@Override
 			public void process(BatteryStateListener batteryStateListener) {
 				batteryStateListener.onBatteryStateChanged();

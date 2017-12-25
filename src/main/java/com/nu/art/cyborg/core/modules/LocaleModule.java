@@ -91,7 +91,7 @@ public class LocaleModule
 		DisplayMetrics dm = res.getDisplayMetrics();
 		conf.locale = locale;
 		res.updateConfiguration(conf, dm);
-		dispatchModuleEvent("Changed the Locale to: " + locale, OnLocaleChangedListener.class, new Processor<OnLocaleChangedListener>() {
+		dispatchModuleEvent("Changed the Locale to: " + locale, new Processor<OnLocaleChangedListener>() {
 			@Override
 			public void process(OnLocaleChangedListener listener) {
 				listener.onLocaleChanged(locale);

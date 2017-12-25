@@ -32,36 +32,31 @@ public final class LogAPI
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "logV")
+	@JavascriptBridgeMethod(methodName = "logV")
 	public final void logV(String logMessage) {
 		JavascriptStack.getInstance().logVerbose(logMessage);
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "logD")
+	@JavascriptBridgeMethod(methodName = "logD")
 	public final void logD(String logMessage) {
 		JavascriptStack.getInstance().logDebug(logMessage);
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "logI")
+	@JavascriptBridgeMethod(methodName = "logI")
 	public final void logI(String logMessage) {
 		JavascriptStack.getInstance().logInfo(logMessage);
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "logW")
+	@JavascriptBridgeMethod(methodName = "logW")
 	public final void logW(String logMessage) {
 		JavascriptStack.getInstance().logWarning(logMessage);
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "logE")
+	@JavascriptBridgeMethod(methodName = "logE")
 	public final void logE(String logMessage) {
 		JavascriptStack.getInstance().logError(logMessage);
 	}

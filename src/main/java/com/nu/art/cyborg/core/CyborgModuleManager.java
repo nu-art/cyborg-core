@@ -18,10 +18,10 @@
 
 package com.nu.art.cyborg.core;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.generics.Processor;
-import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.modular.core.ModuleManager;
+
+import static com.nu.art.cyborg.core.abs.Cyborg.paramExtractor;
 
 /**
  * This is an internal object.
@@ -30,20 +30,10 @@ public final class CyborgModuleManager
 		extends ModuleManager {
 
 	CyborgModuleManager() {
-		super();
+		super(paramExtractor);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <ListenerType> void dispatchModuleEvent(String message, Processor<ListenerType> processor) {
-		Class<ListenerType> _listenerType = DebugFlags.paramExtractor.extractGenericTypeFromProcessorTest(null, processor);
-		if (_listenerType == null)
-			throw new MUST_NeverHappenedException("Cannot resolve processor type from instance, " + processor.getClass().getSimpleName());
-
-		super.dispatchModuleEvent(message, _listenerType, processor);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected <ListenerType> void dispatchModuleEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
-		dispatchModuleEvent(message, processor);
+	protected final <ParentType> void dispatchModuleEvent(String message, Processor<ParentType> processor) {
+		super.dispatchModuleEvent(message, processor);
 	}
 }

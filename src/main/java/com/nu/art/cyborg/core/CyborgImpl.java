@@ -53,8 +53,6 @@ import com.nu.art.cyborg.common.utils.GenericServiceConnection.ServiceConnection
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.consts.DebugFlags;
-import com.nu.art.cyborg.core.consts.DebugFlags.ExtractGenericParamFromProcessor;
 import com.nu.art.cyborg.core.modules.AndroidLogClient;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
@@ -149,7 +147,6 @@ final class CyborgImpl
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		printApplicationStarted();
 
-		DebugFlags.paramExtractor = new ExtractGenericParamFromProcessor();
 		builder.buildMainManager();
 
 		if (!inEditMode) {
@@ -302,7 +299,7 @@ final class CyborgImpl
 	@Override
 	public final void sendView(final String viewName) {
 		String message = "Analytics Screen: " + viewName;
-		moduleManager.dispatchModuleEvent(message, IAnalyticsModule.class, new Processor<IAnalyticsModule>() {
+		moduleManager.dispatchModuleEvent(message, new Processor<IAnalyticsModule>() {
 
 			@Override
 			public void process(IAnalyticsModule module) {
@@ -314,7 +311,7 @@ final class CyborgImpl
 	@Override
 	public final void sendEvent(final String category, final String action, final String label, final long value) {
 		String message = "Analytics Event: " + category + " - " + action + " - " + label + " - " + value;
-		moduleManager.dispatchModuleEvent(message, IAnalyticsModule.class, new Processor<IAnalyticsModule>() {
+		moduleManager.dispatchModuleEvent(message, new Processor<IAnalyticsModule>() {
 
 			@Override
 			public void process(IAnalyticsModule module) {
@@ -326,7 +323,7 @@ final class CyborgImpl
 	@Override
 	public final void sendException(final String description, final Throwable t, final boolean crash) {
 		String message = "Analytics Exception: " + description;
-		moduleManager.dispatchModuleEvent(message, IAnalyticsModule.class, new Processor<IAnalyticsModule>() {
+		moduleManager.dispatchModuleEvent(message, new Processor<IAnalyticsModule>() {
 
 			@Override
 			public void process(IAnalyticsModule module) {
@@ -635,8 +632,8 @@ final class CyborgImpl
 	}
 
 	@Override
-	public final <ListenerType> void dispatchModuleEvent(final String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		moduleManager.dispatchModuleEvent(message, listenerType, processor);
+	public final <ListenerType> void dispatchModuleEvent(final String message, final Processor<ListenerType> processor) {
+		moduleManager.dispatchModuleEvent(message, processor);
 	}
 
 	@Override

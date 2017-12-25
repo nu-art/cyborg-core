@@ -297,8 +297,7 @@ public class CyborgWebView
 							File outputFile;
 							int counter = 0;
 							while (true) {
-								outputFile = new File(Storage.getDefaultStorage()
-										.getPath() + "/Download", fileName + (counter == 0 ? "" : "(" + counter + ")"));
+								outputFile = new File(Storage.getDefaultStorage().getPath() + "/Download", fileName + (counter == 0 ? "" : "(" + counter + ")"));
 								if (!outputFile.exists())
 									break;
 							}

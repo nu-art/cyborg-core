@@ -39,8 +39,7 @@ public final class WebViewAPI
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "onWindowLoaded")
+	@JavascriptBridgeMethod(methodName = "onWindowLoaded")
 	public void onWindowLoaded(String url) {
 		if (CyborgWebView.DEBUG)
 			JavascriptStack.getInstance().logInfo("DEBUG-LOG: onWindowLoaded (url: " + url + ")");
@@ -49,8 +48,7 @@ public final class WebViewAPI
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "clickOnElement")
+	@JavascriptBridgeMethod(methodName = "clickOnElement")
 	public void clickOnElement(final int x, final int y) {
 		if (CyborgWebView.DEBUG)
 			JavascriptStack.getInstance().logInfo("DEBUG-LOG: clickOnElement (point: [" + x + ", " + y + "])");
@@ -63,8 +61,7 @@ public final class WebViewAPI
 				int metaState = 0;
 				float size = 0.4f;
 				float pressure = 1f;
-				MotionEvent motionEventDown = MotionEvent
-						.obtain(downTime, downTime + 100, MotionEvent.ACTION_DOWN, x, y, pressure, size, metaState, 0.1f, 0.1f, 1, 0);
+				MotionEvent motionEventDown = MotionEvent.obtain(downTime, downTime + 100, MotionEvent.ACTION_DOWN, x, y, pressure, size, metaState, 0.1f, 0.1f, 1, 0);
 				// MotionEvent motionEventDown = MotionEvent.obtain(downTime, downTime + 100, MotionEvent.ACTION_MOVE,
 				// x, y, metaState); // onPageFinished(PageWebView.this,
 				webView.dispatchTouchEvent(motionEventDown);
@@ -77,8 +74,7 @@ public final class WebViewAPI
 				int metaState = 0;
 				float size = 0.4f;
 				float pressure = 1f;
-				MotionEvent motionEventUp = MotionEvent
-						.obtain(downTime, downTime + 100, MotionEvent.ACTION_UP, x, y, pressure, size, metaState, 0.1f, 0.1f, 1, 0);
+				MotionEvent motionEventUp = MotionEvent.obtain(downTime, downTime + 100, MotionEvent.ACTION_UP, x, y, pressure, size, metaState, 0.1f, 0.1f, 1, 0);
 				// MotionEvent motionEventUp = MotionEvent.obtain(downTime, downTime + 160, MotionEvent.ACTION_UP, x, y,
 				// metaState); // onPageFinished(PageWebView.this,
 				webView.dispatchTouchEvent(motionEventUp);
@@ -87,22 +83,19 @@ public final class WebViewAPI
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "getWidth")
+	@JavascriptBridgeMethod(methodName = "getWidth")
 	public int getWidth() {
 		return webView.getWidth();
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "getHeight")
+	@JavascriptBridgeMethod(methodName = "getHeight")
 	public int getHeight() {
 		return webView.getHeight();
 	}
 
 	@JavascriptInterface
-	@JavascriptBridgeMethod(
-			methodName = "onScriptErrorListener")
+	@JavascriptBridgeMethod(methodName = "onScriptErrorListener")
 	public void onScriptErrorListener(String err) {
 		if (CyborgWebView.DEBUG)
 			JavascriptStack.getInstance().logInfo("DEBUG-LOG: onScriptErrorListener (err: " + err + ")");

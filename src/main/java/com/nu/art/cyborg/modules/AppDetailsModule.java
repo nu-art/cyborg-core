@@ -205,7 +205,7 @@ public final class AppDetailsModule
 	}
 
 	public final void onBootCompleted() {
-		dispatchModuleEvent("Boot completed", OnBootCompletedListener.class, new Processor<OnBootCompletedListener>() {
+		dispatchModuleEvent("Boot completed", new Processor<OnBootCompletedListener>() {
 			@Override
 			public void process(OnBootCompletedListener onBootCompletedListener) {
 				onBootCompletedListener.onBootCompleted();

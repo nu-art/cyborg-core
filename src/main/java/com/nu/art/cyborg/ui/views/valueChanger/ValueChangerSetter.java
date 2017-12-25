@@ -33,8 +33,10 @@ public class ValueChangerSetter
 		extends AttributesSetter<ValueChanger> {
 
 	private static int[] ids = {//
-			R.styleable.ValueChanger_deltaValue,//
-			R.styleable.ValueChanger_value,//
+			R.styleable.ValueChanger_deltaValue,
+			//
+			R.styleable.ValueChanger_value,
+			//
 			R.styleable.ValueChanger_label
 	};
 
