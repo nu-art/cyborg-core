@@ -353,7 +353,12 @@ public final class CyborgStackController
 		int childCount = getFrameRootView().getChildCount();
 		String[] viewsTags = new String[childCount];
 		for (int i = 0; i < childCount; i++) {
-			viewsTags[i] = ((CyborgController) getFrameRootView().getChildAt(i).getTag()).getStateTag();
+			View childAt = getFrameRootView().getChildAt(i);
+			CyborgController controller = (CyborgController) childAt.getTag();
+			if (controller != null)
+				viewsTags[i] = controller.getStateTag();
+			else
+				viewsTags[i] = childAt.getId() + "-" + childAt.getClass().getSimpleName();
 		}
 		return viewsTags;
 	}
@@ -578,8 +583,7 @@ public final class CyborgStackController
 			originLayerToBeDisposed.getRootView().clearAnimation();
 
 			// remove the layer from the stack if at the end of this transition it should not be there.
-			if (originLayerToBeDisposed.controller != null)
-				originLayerToBeDisposed.toBeDisposed = true;
+			originLayerToBeDisposed.toBeDisposed = true;
 		}
 
 		if (transitionAnimators == null) {
