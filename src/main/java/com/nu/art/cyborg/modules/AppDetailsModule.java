@@ -178,7 +178,11 @@ public final class AppDetailsModule
 			Signature sig = packageInfo.signatures[0];
 			String md5Fingerprint = doFingerprint(sig.toByteArray(), "MD5");
 			Type[] certificateList = (Type[]) ReflectiveTools.getEnumValues(certificateType);
-			logDebug("Certificate found: " + md5Fingerprint);
+			logDebug("Certificate found  (MD5) => " + md5Fingerprint);
+			try {
+				logDebug("Certificate found  (SHA1) => " + doFingerprint(sig.toByteArray(), "SHA-1"));
+			} catch (Exception ignore) {
+			}
 			for (Type type : certificateList) {
 				CyborgAppCertificate _certificate = (CyborgAppCertificate) type;
 				logDebug("Certificate(" + _certificate + "): " + _certificate.getMD5());
