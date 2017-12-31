@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core.abs;
 
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -87,6 +86,7 @@ public interface _Resources {
 	 *
 	 * @return the provided dp value in pixels
 	 */
+
 	int dpToPx(int dp);
 
 	/**

@@ -31,6 +31,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
@@ -129,12 +130,8 @@ final class CyborgImpl
 		if (loaded)
 			throw new BadImplementationException("Trying to load Cyborg for the second time!");
 
-		try {
-			meta = new AppMeta();
-			meta.populate();
-		} catch (NameNotFoundException e) {
-			throw new MUST_NeverHappenedException("Can find my own package???");
-		}
+		meta = new AppMeta();
+		meta.populate();
 
 		CyborgModulesBuilder builder = new CyborgModulesBuilder(modulesPacks);
 		builder.setCyborg(this);
@@ -353,6 +350,12 @@ final class CyborgImpl
 	/*
 	 * App MetaData
 	 */
+
+	@Override
+	public String getValueFromManifest(String key) {
+		return meta.metaData.getString(key, "");
+	}
+
 	@Override
 	public final String getPackageName() {
 		return meta.packageName;
@@ -651,21 +654,30 @@ final class CyborgImpl
 
 		private int versionCode;
 
+		private Bundle metaData;
+
 		public AppMeta() {
 		}
 
-		private void populate()
-				throws NameNotFoundException {
+		private void populate() {
 			packageName = applicationRef.get().getPackageName();
 			if (getPackageManager() != null) {
-				PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_META_DATA);
-				ApplicationInfo info = getPackageManager().getApplicationInfo(getPackageName(), 0);
+				PackageInfo packageInfo;
+				ApplicationInfo info;
+				try {
+					packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_META_DATA);
+					info = getPackageManager().getApplicationInfo(getPackageName(), 0);
+				} catch (NameNotFoundException e) {
+					throw new MUST_NeverHappenedException("Could not find my own package");
+				}
 
 				if (info == null)
 					// we are in edit mode
 					name = "NoName";
-				else
+				else {
 					name = info.name;
+					this.metaData = info.metaData;
+				}
 
 				if (packageInfo == null) {
 					// we are in edit mode

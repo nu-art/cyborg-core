@@ -341,6 +341,10 @@ public abstract class CyborgModule
 		cyborg.sendView(viewName);
 	}
 
+	public final String getValueFromManifest(String key) {
+		return cyborg.getValueFromManifest(key);
+	}
+
 	@Override
 	@SuppressWarnings( {
 												 "rawtypes",

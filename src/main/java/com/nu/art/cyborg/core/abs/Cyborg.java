@@ -184,4 +184,13 @@ public interface Cyborg
 	 * @param <ListenerType> A generic bound to the listener type
 	 */
 	<ListenerType> void dispatchModuleEvent(final String message, final Processor<ListenerType> processor);
+
+	/**
+	 * Will return the value associated with the MetaData tag from the manifest
+	 *
+	 * @param key The tag key
+	 *
+	 * @return The tag value
+	 */
+	String getValueFromManifest(String key);
 }
