@@ -7,11 +7,13 @@ import android.media.MediaRecorder;
 import android.media.MediaRecorder.AudioSource;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Condition;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
@@ -25,6 +27,8 @@ import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Rec
 
 public class CyborgAudioRecorder
 		extends CyborgModule {
+
+	public static final String DebugFlag = "Debug_CyborgAudioRecorder";
 
 	public enum AudioChannelType {
 		CHANNEL_IN_MONO(AudioFormat.CHANNEL_IN_MONO),
@@ -50,10 +54,9 @@ public class CyborgAudioRecorder
 	}
 
 	public enum EncodingType {
-		ENCODING_INVALID(AudioFormat.ENCODING_INVALID),
-		ENCODING_DEFAULT(AudioFormat.ENCODING_DEFAULT),
 		ENCODING_PCM_16BIT(AudioFormat.ENCODING_PCM_16BIT),
 		ENCODING_PCM_8BIT(AudioFormat.ENCODING_PCM_8BIT),
+		ENCODING_DEFAULT(AudioFormat.ENCODING_DEFAULT),
 		ENCODING_PCM_FLOAT(AudioFormat.ENCODING_PCM_FLOAT),
 		ENCODING_AC3(AudioFormat.ENCODING_AC3),
 		ENCODING_E_AC3(AudioFormat.ENCODING_E_AC3),
@@ -69,8 +72,8 @@ public class CyborgAudioRecorder
 	}
 
 	public enum AudioSourceType {
-		DEFAULT(MediaRecorder.AudioSource.DEFAULT),
 		MIC(MediaRecorder.AudioSource.MIC),
+		DEFAULT(MediaRecorder.AudioSource.DEFAULT),
 		CAMCORDER(MediaRecorder.AudioSource.CAMCORDER),
 		VOICE_RECOGNITION(MediaRecorder.AudioSource.VOICE_RECOGNITION),
 		VOICE_COMMUNICATION(MediaRecorder.AudioSource.VOICE_COMMUNICATION),
@@ -215,6 +218,9 @@ public class CyborgAudioRecorder
 	}
 
 	private void prepare(RecorderBuilder builder) {
+		logInfo("Starting Recorder: " + //
+				getRecorderBuilderDetails(builder));
+
 		if (audioRecord != null) {
 			dispatchErrorAlreadyRecording();
 			return;
@@ -223,6 +229,8 @@ public class CyborgAudioRecorder
 		int bufferSize;
 		try {
 			bufferSize = builder.calculateBufferSize();
+			if (DebugFlags.isDebuggableFlag(DebugFlag))
+				logDebug("BufferSize: " + bufferSize);
 		} catch (AudioRecordingException e) {
 			dispatchErrorGettingBufferSize(e);
 			setState(Idle);
@@ -241,14 +249,22 @@ public class CyborgAudioRecorder
 		recordImpl(bufferSize, builder.sampleRate);
 	}
 
+	@NonNull
+	private String getRecorderBuilderDetails(RecorderBuilder builder) {
+		return "\n  recordingSource: " + builder.recordingSource + //
+				"\n  recordingChannel: " + builder.recordingChannel + //
+				"\n  recordingEncoding: " + builder.recordingEncoding +//
+				"\n  sampleRate: " + builder.sampleRate;
+	}
+
 	private void recordImpl(int bufferSize, int sampleRate) {
 		audioRecord.startRecording();
 		setState(Recording);
 
 		while (true) {
 			int byteRead;
-			ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize);
-			byteRead = audioRecord.read(buffer, bufferSize);
+			ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize * 2);
+			byteRead = audioRecord.read(buffer, bufferSize * 2);
 
 			if (byteRead <= 0) {
 				dispatchErrorReadingBuffer();
@@ -348,8 +364,7 @@ public class CyborgAudioRecorder
 			return this;
 		}
 
-		public void startRecording()
-				throws AudioRecordingException {
+		public final void startRecording() {
 			recorderHandler.post(this);
 		}
 
@@ -387,10 +402,7 @@ public class CyborgAudioRecorder
 
 			if (error != null)
 				throw new AudioRecordingException("Error getting min buffer size: " +//
-						"\n  error: " + error.name() + //
-						"\n  sampleRate: " + sampleRate + //
-						"\n  recordingChannel: " + recordingChannel + //
-						"\n  recordingEncoding: " + recordingEncoding);
+						"\n  error: " + error.name());
 		}
 	}
 
