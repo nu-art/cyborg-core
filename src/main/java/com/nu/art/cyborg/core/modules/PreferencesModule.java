@@ -311,35 +311,39 @@ public final class PreferencesModule
 		}
 	}
 
-	public final class PreferenceEnum<EnumType extends Enum<EnumType>>
+	public final class EnumPreference<EnumType extends Enum<EnumType>>
 			implements Getter<EnumType> {
 
 		private final StringPreference key;
 
 		private final Class<EnumType> enumType;
 
-		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue) {
+		public EnumPreference(String key, Class<EnumType> enumType, EnumType defaultValue) {
 			this(key, enumType, defaultValue, null);
 		}
 
-		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, long expires) {
+		public EnumPreference(String key, Class<EnumType> enumType, EnumType defaultValue, long expires) {
 			this(key, enumType, defaultValue, expires, null);
 		}
 
-		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, String storageGroup) {
+		public EnumPreference(String key, Class<EnumType> enumType, EnumType defaultValue, String storageGroup) {
 			this(key, enumType, defaultValue, -1, storageGroup);
 		}
 
 		@SuppressWarnings("unchecked")
-		public PreferenceEnum(String key, Class<EnumType> enumType, EnumType defaultValue, long expires, String storageGroup) {
+		public EnumPreference(String key, Class<EnumType> enumType, EnumType defaultValue, long expires, String storageGroup) {
 			this.key = new StringPreference(key, defaultValue == null ? null : defaultValue.name(), expires, storageGroup);
 			this.enumType = enumType;
 		}
 
+		public EnumType get() {
+			return get(true);
+		}
+
 		@NonNull
 		@SuppressWarnings("ConstantConditions")
-		public EnumType get() {
-			String value = key.get();
+		public EnumType get(boolean printToLog) {
+			String value = key.get(printToLog);
 			if (value == null)
 				return null;
 
