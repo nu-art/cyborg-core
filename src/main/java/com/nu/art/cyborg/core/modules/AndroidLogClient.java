@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core.modules;
 
 import com.nu.art.belog.BeLoggedClient;
 import com.nu.art.belog.consts.LogLevel;
+import com.nu.art.core.tools.ExceptionTools;
 
 /**
  * Created by TacB0sS on 28-Feb 2017.
@@ -63,19 +64,24 @@ public class AndroidLogClient
 			switch (level) {
 				case Assert:
 				case Error:
-					android.util.Log.e(tagWithThread, "", t);
+					android.util.Log.e(tagWithThread, t.getMessage());
+					android.util.Log.e(tagWithThread, ExceptionTools.getStackTrace(t));
 					break;
 				case Warning:
-					android.util.Log.w(tagWithThread, "", t);
+					android.util.Log.w(tagWithThread, t.getMessage());
+					android.util.Log.w(tagWithThread, ExceptionTools.getStackTrace(t));
 					break;
 				case Info:
-					android.util.Log.i(tagWithThread, "", t);
+					android.util.Log.i(tagWithThread, t.getMessage());
+					android.util.Log.i(tagWithThread, ExceptionTools.getStackTrace(t));
 					break;
 				case Debug:
-					android.util.Log.d(tagWithThread, "", t);
+					android.util.Log.d(tagWithThread, t.getMessage());
+					android.util.Log.d(tagWithThread, ExceptionTools.getStackTrace(t));
 					break;
 				case Verbose:
-					android.util.Log.v(tagWithThread, "", t);
+					android.util.Log.v(tagWithThread, t.getMessage());
+					android.util.Log.v(tagWithThread, ExceptionTools.getStackTrace(t));
 					break;
 			}
 	}
