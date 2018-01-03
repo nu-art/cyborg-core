@@ -385,7 +385,7 @@ public class CyborgMediaPlayer
 
 	public class MediaBuilder {
 
-		private Object mediaId;
+		private String mediaId;
 
 		private Uri uri;
 
@@ -406,7 +406,7 @@ public class CyborgMediaPlayer
 			return this;
 		}
 
-		public MediaBuilder setMediaId(Object mediaId) {
+		public MediaBuilder setMediaId(String mediaId) {
 			this.mediaId = mediaId;
 			return this;
 		}
