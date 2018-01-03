@@ -65,7 +65,7 @@ public class CyborgMediaPlayer
 		return new MediaBuilder();
 	}
 
-	public boolean isSameMediaId(String mediaId) {
+	public boolean isSameMediaId(Object mediaId) {
 		return builder != null && builder.mediaId.equals(mediaId);
 	}
 
@@ -385,7 +385,7 @@ public class CyborgMediaPlayer
 
 	public class MediaBuilder {
 
-		private String mediaId;
+		private Object mediaId;
 
 		private Uri uri;
 
@@ -406,7 +406,7 @@ public class CyborgMediaPlayer
 			return this;
 		}
 
-		public MediaBuilder setMediaId(String mediaId) {
+		public MediaBuilder setMediaId(Object mediaId) {
 			this.mediaId = mediaId;
 			return this;
 		}
