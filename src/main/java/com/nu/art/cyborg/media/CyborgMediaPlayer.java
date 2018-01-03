@@ -387,7 +387,7 @@ public class CyborgMediaPlayer
 
 		private Object mediaId;
 
-		private Uri url;
+		private Uri uri;
 
 		private int positionMs;
 
@@ -417,8 +417,7 @@ public class CyborgMediaPlayer
 		}
 
 		public MediaBuilder setUri(String url) {
-			setUri(Uri.parse(url));
-			return this;
+			return setUri(Uri.parse(url));
 		}
 
 		public MediaBuilder addHeader(String key, String value) {
@@ -429,9 +428,9 @@ public class CyborgMediaPlayer
 		}
 
 		public MediaBuilder setUri(Uri uri) {
-			this.url = uri;
+			this.uri = uri;
 			if (mediaId == null)
-				mediaId = url;
+				mediaId = this.uri.toString();
 			return this;
 		}
 
@@ -462,16 +461,16 @@ public class CyborgMediaPlayer
 
 			dispose();
 
-			logInfo("Preparing: " + url + " | Seek Position: " + positionMs);
+			logInfo("Preparing: " + uri + " | Seek Position: " + positionMs);
 			CyborgMediaPlayer.this.builder = this;
 			CyborgMediaPlayer.this.listener = listener;
 			removeTimeoutTrigger();
 			try {
 				mediaPlayer.setLooping(isLooping);
 				if (headers == null)
-					mediaPlayer.setDataSource(getApplicationContext(), url);
+					mediaPlayer.setDataSource(getApplicationContext(), uri);
 				else
-					mediaPlayer.setDataSource(getApplicationContext(), url, headers);
+					mediaPlayer.setDataSource(getApplicationContext(), uri, headers);
 
 				scheduleTimeout(timeout);
 				setState(PlayerState.Preparing);
@@ -483,7 +482,7 @@ public class CyborgMediaPlayer
 		}
 
 		public MediaBuilder setUri(@IdRes int resId) {
-			url = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + resId);
+			uri = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + resId);
 			return this;
 		}
 	}
@@ -504,7 +503,7 @@ public class CyborgMediaPlayer
 
 		@Override
 		public void onPrepared(MediaPlayer mp) {
-			if (builder != null && new File(builder.url.toString()).exists())
+			if (builder != null && new File(builder.uri.toString()).exists())
 				removeTimeoutTrigger();
 
 			setState(PlayerState.Prepared);
