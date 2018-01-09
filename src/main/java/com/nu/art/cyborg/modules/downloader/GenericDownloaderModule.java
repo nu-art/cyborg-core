@@ -170,7 +170,12 @@ public class GenericDownloaderModule
 					}
 
 					try {
-						cacheable.cacheSync(inputStream);
+						boolean wasCached = cacheable.cacheSync(inputStream);
+						if (!wasCached) {
+							handleResponse(inputStream);
+							return;
+						}
+
 						loadFromCache();
 					} catch (IOException e) {
 						onError(e);
