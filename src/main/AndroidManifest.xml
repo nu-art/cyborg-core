@@ -20,7 +20,8 @@
 <manifest
     package="com.nu.art.cyborg"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@android:style/Theme.NoTitleBar">
+    android:theme="@android:style/Theme.NoTitleBar"
+    >
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -45,7 +46,8 @@
 
         <receiver
             android:name="com.nu.art.cyborg.common.utils.BootStarterReceiver"
-            android:enabled="false">
+            android:enabled="false"
+            >
 
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

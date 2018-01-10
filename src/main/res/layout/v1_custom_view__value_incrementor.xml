@@ -17,11 +17,13 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
 
     <TextView
         android:id="@+id/DecrementButton"
@@ -38,7 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <TextView
             android:id="@+id/label"
@@ -47,7 +50,8 @@
             android:gravity="center"
             android:text="label"
             android:textSize="11sp"
-            tools:ignore="SmallSp"/>
+            tools:ignore="SmallSp"
+            />
 
         <EditText
             android:id="@+id/value"
@@ -55,7 +59,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="0.0f"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            />
 
 
     </LinearLayout>

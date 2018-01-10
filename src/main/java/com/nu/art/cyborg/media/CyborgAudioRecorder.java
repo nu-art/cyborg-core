@@ -218,8 +218,7 @@ public class CyborgAudioRecorder
 	}
 
 	private void prepare(RecorderBuilder builder) {
-		logInfo("Starting Recorder: " + //
-				getRecorderBuilderDetails(builder));
+		logInfo("Starting Recorder: " + getRecorderBuilderDetails(builder));
 
 		if (audioRecord != null) {
 			dispatchErrorAlreadyRecording();
