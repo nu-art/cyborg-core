@@ -656,7 +656,7 @@ public final class CyborgStackController
 				// in case there is a controller, use the boolean within that controller
 				keepInStack = stackLayer.controller.keepInStack;
 
-			disposeLayer(stackLayer,true);
+			disposeLayer(stackLayer, true);
 			stackLayer.toBeDisposed = false;
 
 			if (!keepInStack)
@@ -703,7 +703,7 @@ public final class CyborgStackController
 			public void onAnimationEnd(Animation animation) {
 				if (DebugStack)
 					logDebug("disposing-pop: " + targetLayerToBeRemove);
-				disposeLayer(targetLayerToBeRemove,false);
+				disposeLayer(targetLayerToBeRemove, false);
 
 				if (originLayerToBeRestored != null)
 					originLayerToBeRestored.onAnimatedIn();
