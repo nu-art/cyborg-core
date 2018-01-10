@@ -358,11 +358,14 @@ public final class TouchAnalyzer
 		boolean clicked = distance < ClickRadius && pressInterval < ClickInterval;
 		boolean longClicked = distance < LongClickRadius && pressInterval > LongClickInterval && pressInterval < LongClickMaxInterval;
 		boolean doubleClicked = eventData.initAt - eventData.clickedAt < DoubleClickInterval && clicked;
-		if (DebugAnalyzer)
-			logDebug("pointer: %d, distance: %.3f px^2, interval: " + pressInterval + "ms => " + (clicked ? "Clicked, " : "") + (longClicked ? "Long Clicked, "
-																																																																			 : "") + (doubleClicked
-																																																																								? "Double Clicked"
-																																																																								: ""), eventData.index, distance);
+
+		if (DebugAnalyzer) {
+			String label = clicked ? "Clicked, " : "";
+			label = longClicked ? "Long Clicked, " : label;
+			label = doubleClicked ? "Double Clicked" : label;
+			logDebug("pointer: %d, distance: %.3f px^2, interval: " + pressInterval + "ms => " + label, eventData.index, distance);
+		}
+
 		if (doubleClicked) {
 			dispatchOnDoubleClick(eventData.index, eventData.initX + dx / 2, eventData.initY + dy / 2);
 		} else if (clicked) {
