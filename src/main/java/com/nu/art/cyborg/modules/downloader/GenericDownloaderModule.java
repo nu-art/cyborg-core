@@ -22,6 +22,7 @@ import com.nu.art.core.GenericListener;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
+import com.nu.art.cyborg.modules.CacheModule.UnableToCacheException;
 import com.nu.art.modular.core.Module;
 
 import java.io.IOException;
@@ -170,14 +171,13 @@ public class GenericDownloaderModule
 					}
 
 					try {
-						boolean wasCached = cacheable.cacheSync(inputStream);
-						if (!wasCached) {
-							handleResponse(inputStream);
-							return;
-						}
-
+						cacheable.cacheSync(inputStream);
 						loadFromCache();
+					} catch (UnableToCacheException e) {
+						logWarning("COULD NOT CACHE... " + e.getMessage());
+						handleResponse(inputStream);
 					} catch (IOException e) {
+						logError("Error caching stream... ", e);
 						onError(e);
 					}
 				}

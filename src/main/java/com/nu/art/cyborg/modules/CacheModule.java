@@ -146,9 +146,9 @@ public class CacheModule
 		 *
 		 * @throws IOException if the item must be cached, and you cannot recover from an error.
 		 */
-		public boolean cacheSync(InputStream inputStream)
+		public void cacheSync(InputStream inputStream)
 				throws IOException {
-			return CacheModule.this.cacheSync(this, inputStream);
+			CacheModule.this.cacheSync(this, inputStream);
 		}
 
 		public void load(GenericListener<InputStream> listener) {
@@ -234,7 +234,7 @@ public class CacheModule
 		});
 	}
 
-	private boolean cacheSync(Cacheable cacheable, InputStream inputStream)
+	private void cacheSync(Cacheable cacheable, InputStream inputStream)
 			throws IOException {
 		File file = getFile(cacheable);
 		File tempFile = new File(file.getParentFile(), "_" + file.getName());
@@ -244,11 +244,10 @@ public class CacheModule
 			FileTools.delete(tempFile);
 			FileTools.createNewFile(tempFile);
 		} catch (IOException e) {
-			logError("Error creating file... ", e);
 			if (cacheable.must)
 				throw e;
 
-			return false;
+			throw new UnableToCacheException("Error Caching cacheable: " + cacheable.key + " => " + tempFile.getAbsolutePath());
 		}
 
 		try {
@@ -256,7 +255,6 @@ public class CacheModule
 			// Rename the file to the final expected name.
 			FileTools.delete(file);
 			FileTools.renameFile(tempFile, file);
-			return true;
 		} catch (IOException e) {
 			logError("Error caching stream... ", e);
 
@@ -292,5 +290,21 @@ public class CacheModule
 				}
 			}
 		});
+	}
+
+	public static class UnableToCacheException
+			extends IOException {
+
+		public UnableToCacheException(String message) {
+			super(message);
+		}
+
+		public UnableToCacheException(String message, Throwable cause) {
+			super(message, cause);
+		}
+
+		public UnableToCacheException(Throwable cause) {
+			super(cause);
+		}
 	}
 }
