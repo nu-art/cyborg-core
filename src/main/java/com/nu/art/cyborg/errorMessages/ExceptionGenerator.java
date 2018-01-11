@@ -44,8 +44,8 @@ public class ExceptionGenerator {
 
 	public static BadImplementationException invalidControllerClassNameSpecified(String className, ClassNotFoundException e) {
 		return new BadImplementationException("Expected a controller class FQN, but the value did not match to a class:\n" //
-				+ "value found: " + className + "\n" //
-				+ "if this is an issue of refactoring, please go and favorite this feature request: " + ErrorLinks.ClassNameRefactoringNotAppliedToXML, e);
+																							+ "value found: " + className + "\n" //
+																							+ "if this is an issue of refactoring, please go and favorite this feature request: " + ErrorLinks.ClassNameRefactoringNotAppliedToXML, e);
 	}
 
 	public static BadImplementationException didNotProvideLayoutIdOrCustomView(CyborgController cyborgController) {

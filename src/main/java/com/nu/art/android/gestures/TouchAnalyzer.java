@@ -240,8 +240,7 @@ public final class TouchAnalyzer
 		}
 		if (action != 2) {
 			if (DebugAnalyzer)
-				logDebug("Action: " + action + ", Action Masked: " + actionMasked + ", Index: " + actionIndex + ", Pointers: " + event
-						.getPointerCount() + ", MaxPointers: " + maxPointerInSession);
+				logDebug("Action: " + action + ", Action Masked: " + actionMasked + ", Index: " + actionIndex + ", Pointers: " + event.getPointerCount() + ", MaxPointers: " + maxPointerInSession);
 		}
 		if (analyzingListener != null)
 			analyzingListener.onTouchEvent(eventsData, maxPointerInSession);

@@ -94,8 +94,7 @@ public class CyborgRecycler
 		@Override
 		public boolean supportsPredictiveItemAnimations() {
 			Adapter adapter = getAdapter();
-			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super
-					.supportsPredictiveItemAnimations();
+			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super.supportsPredictiveItemAnimations();
 		}
 	}
 

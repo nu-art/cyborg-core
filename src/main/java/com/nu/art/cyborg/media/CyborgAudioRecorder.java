@@ -401,7 +401,7 @@ public class CyborgAudioRecorder
 
 			if (error != null)
 				throw new AudioRecordingException("Error getting min buffer size: " +//
-						"\n  error: " + error.name());
+																							"\n  error: " + error.name());
 		}
 	}
 

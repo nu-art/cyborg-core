@@ -325,7 +325,7 @@ public abstract class CyborgController
 
 		if (!(view instanceof ViewGroup))
 			throw new BadImplementationException("The provided viewId is to a " + view.getClass()
-					.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
+																																								.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
 
 		((ViewGroup) view).removeAllViews();
 		((ViewGroup) view).addView(viewToInject);

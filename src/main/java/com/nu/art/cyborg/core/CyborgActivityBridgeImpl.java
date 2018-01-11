@@ -459,13 +459,6 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public final void addController(CyborgController controller) {
-		if (controller instanceof ItemRenderer)
-			return;
-
-		if (controller instanceof InRendererCyborgController)
-			return;
-
-		//		controllers.add(new WeakReference<>(controller));
 		_controllerList = ArrayTools.appendElement(_controllerList, new WeakReference<>(controller));
 		eventDispatcher.addListener(controller);
 		if (DebugActivityLifeCycle) {
@@ -493,19 +486,17 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg
-				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
-					@Override
-					public void process(OnActivityResultListener listener) {
-						listener.onActivityResult(requestCode, resultCode, data);
-					}
-				});
+		cyborg.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
+			@Override
+			public void process(OnActivityResultListener listener) {
+				listener.onActivityResult(requestCode, resultCode, data);
+			}
+		});
 	}
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays
-				.toString(grantResults));
+		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays.toString(grantResults));
 		getModule(PermissionModule.class).onPermissionsResult(requestCode, permissions, grantResults);
 	}
 
