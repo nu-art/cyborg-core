@@ -135,8 +135,8 @@ public enum ViewListener {
 			listenerMethod = methodOwnerType.getDeclaredMethod(listenerMethodName, methodArguments);
 			listenerMethod.setAccessible(true);
 		} catch (Throwable e) {
-			String parametersType = ReflectiveTools.parseParametersType(methodArguments);
-			String msg = "Failed to get method: " + listenerMethodName + "(" + parametersType + "), for type: " + methodOwnerType;
+			String parameterType = ReflectiveTools.parseParametersType(methodArguments);
+			String msg = "Failed to get method: " + listenerMethodName + "(" + parameterType + "), for type: " + methodOwnerType;
 			Log.e("ViewListener", msg, e);
 			throw new MUST_NeverHappenedException(msg, e);
 		}

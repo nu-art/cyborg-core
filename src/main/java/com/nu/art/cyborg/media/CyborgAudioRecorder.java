@@ -1,5 +1,6 @@
 package com.nu.art.cyborg.media;
 
+import android.Manifest.permission;
 import android.annotation.TargetApi;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -220,6 +221,11 @@ public class CyborgAudioRecorder
 	private void prepare(RecorderBuilder builder) {
 		logInfo("Starting Recorder: " + getRecorderBuilderDetails(builder));
 
+		if (!checkUsesPermission(permission.RECORD_AUDIO)) {
+			dispatchErrorNoPermission();
+			return;
+		}
+
 		if (audioRecord != null) {
 			dispatchErrorAlreadyRecording();
 			return;
@@ -325,6 +331,15 @@ public class CyborgAudioRecorder
 		});
 	}
 
+	private void dispatchErrorNoPermission() {
+		dispatchModuleEvent("Error Starting Audio Recorder - No Permission", new Processor<AudioRecorderErrorListener>() {
+			@Override
+			public void process(AudioRecorderErrorListener listener) {
+
+			}
+		});
+	}
+
 	@SuppressWarnings("unused")
 	public class RecorderBuilder
 			implements Runnable {
@@ -374,7 +389,7 @@ public class CyborgAudioRecorder
 				checkForBufferError(bufferSize);
 
 			// this 1024 might need to be a calculated value according to the builder configuration... not sure AT ALL.. but just a thought... need ot ask an expert about it!
-			while (bufferSize < 1024)
+			while (bufferSize < 4096)
 				bufferSize *= 2;
 
 			return bufferSize;
