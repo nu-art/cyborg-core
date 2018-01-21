@@ -20,6 +20,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Idle;
@@ -29,7 +30,7 @@ import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Rec
 public class CyborgAudioRecorder
 		extends CyborgModule {
 
-	public static final String DebugFlag = "Debug_CyborgAudioRecorder";
+	public static final String DebugFlag = "Debug_" + CyborgAudioRecorder.class.getSimpleName();
 
 	public enum AudioChannelType {
 		CHANNEL_IN_MONO(AudioFormat.CHANNEL_IN_MONO),
@@ -129,6 +130,11 @@ public class CyborgAudioRecorder
 		void onError();
 	}
 
+	public interface AudioRecorderStateListener {
+
+		void onAudioRecorderStateChanged();
+	}
+
 	private static final int SampleRate = 16000;
 	private static final int RecordingEncoding = AudioFormat.ENCODING_PCM_16BIT;
 	private static final int RecordingChannel = AudioFormat.CHANNEL_IN_MONO;
@@ -139,7 +145,7 @@ public class CyborgAudioRecorder
 	private RecorderBuilder currentBuilder;
 	private Handler recorderHandler;
 	private AudioBufferProcessor[] listeners = {};
-	private final Object sync = new Object();
+	private AtomicBoolean record = new AtomicBoolean(false);
 
 	private ArrayList<ByteBuffer> buffer = new ArrayList<ByteBuffer>() {
 		@Override
@@ -166,7 +172,16 @@ public class CyborgAudioRecorder
 
 	public void setState(AudioRecorderState state) {
 		AudioRecorderState previousState = this.state.getAndSet(state);
-		logInfo("State: " + previousState + " => " + state);
+		dispatchGlobalEvent("State: " + previousState + " => " + state, new Processor<AudioRecorderStateListener>() {
+			@Override
+			public void process(AudioRecorderStateListener listener) {
+				listener.onAudioRecorderStateChanged();
+			}
+		});
+	}
+
+	public AudioRecorderState getState() {
+		return state.get();
 	}
 
 	public final boolean isState(AudioRecorderState state) {
@@ -184,24 +199,13 @@ public class CyborgAudioRecorder
 		listeners = ArrayTools.removeElement(listeners, listener);
 	}
 
-	public final boolean isRecording() {
-		return isState(Recording);
-	}
-
-	public final void stopRecording() {
-		synchronized (sync) {
-			if (audioRecord == null)
-				return;
-
-			logInfo("Called Stop Recording...");
-			audioRecord.stop();
-		}
-	}
-
 	private void process(ByteBuffer buffer, int byteRead, int sampleRate) {
 		this.buffer.add(buffer);
 		while (this.buffer.size() > currentBuilder.maxBufferSize)
 			this.buffer.remove(0);
+
+		if (DebugFlags.isDebuggableFlag(DebugFlag))
+			logDebug("Recording buffer, buffer size(" + this.buffer.size() + "), listeners size(" + listeners.length + ")");
 
 		for (AudioBufferProcessor listener : listeners) {
 			listener.process(this.buffer, byteRead, sampleRate);
@@ -223,11 +227,6 @@ public class CyborgAudioRecorder
 
 		if (!checkUsesPermission(permission.RECORD_AUDIO)) {
 			dispatchErrorNoPermission();
-			return;
-		}
-
-		if (audioRecord != null) {
-			dispatchErrorAlreadyRecording();
 			return;
 		}
 
@@ -266,12 +265,12 @@ public class CyborgAudioRecorder
 		audioRecord.startRecording();
 		setState(Recording);
 
-		while (true) {
+		while (record.get()) {
 			int byteRead;
 			ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize * 2);
 			byteRead = audioRecord.read(buffer, bufferSize * 2);
 
-			if (byteRead <= 0) {
+			if (record.get() && byteRead <= 0) {
 				dispatchErrorReadingBuffer();
 				break;
 			}
@@ -279,20 +278,20 @@ public class CyborgAudioRecorder
 			process(buffer, byteRead, sampleRate);
 		}
 
-		synchronized (sync) {
-			try {
-				audioRecord.stop();
-			} catch (IllegalStateException e) {
-				logWarning("Error stopping... is this message really needed ???????", e);
-			}
-			try {
-				audioRecord.release();
-			} catch (Exception e) {
-				logWarning("Error releasing... is this message really needed ???????", e);
-			}
-			audioRecord = null;
-			setState(Idle);
+		try {
+			audioRecord.stop();
+		} catch (IllegalStateException e) {
+			logWarning("Error stopping... is this message really needed ???????", e);
 		}
+
+		try {
+			audioRecord.release();
+		} catch (Exception e) {
+			logWarning("Error releasing... is this message really needed ???????", e);
+		}
+
+		audioRecord = null;
+		setState(Idle);
 	}
 
 	private void dispatchErrorReadingBuffer() {
@@ -315,15 +314,6 @@ public class CyborgAudioRecorder
 
 	private void dispatchErrorGettingBufferSize(AudioRecordingException e) {
 		dispatchModuleEvent("Error getting audio buffer size", new Processor<AudioRecorderErrorListener>() {
-			@Override
-			public void process(AudioRecorderErrorListener listener) {
-
-			}
-		});
-	}
-
-	private void dispatchErrorAlreadyRecording() {
-		dispatchModuleEvent("Error Starting Audio Recorder - Already recording", new Processor<AudioRecorderErrorListener>() {
 			@Override
 			public void process(AudioRecorderErrorListener listener) {
 
@@ -379,6 +369,13 @@ public class CyborgAudioRecorder
 		}
 
 		public final void startRecording() {
+			if (record.get()) {
+				logDebug("Already recording...");
+				return;
+			}
+
+			record.set(true);
+			setState(Preparing);
 			recorderHandler.post(this);
 		}
 
@@ -397,7 +394,11 @@ public class CyborgAudioRecorder
 
 		@Override
 		public void run() {
-			setState(Preparing);
+			if (!record.get()) {
+				logDebug("Recorder was already stopped before it even begun... aborting");
+				return;
+			}
+
 			prepare(this);
 		}
 
@@ -418,6 +419,16 @@ public class CyborgAudioRecorder
 				throw new AudioRecordingException("Error getting min buffer size: " +//
 																							"\n  error: " + error.name());
 		}
+	}
+
+	public final void stopRecording() {
+		recorderHandler.removeCallbacksAndMessages(null);
+		record.set(false);
+
+		if (audioRecord == null)
+			return;
+
+		logInfo("Called Stop Recording...");
 	}
 
 	public class AudioRecordingException

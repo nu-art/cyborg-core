@@ -6,14 +6,7 @@ public class DebugFlags {
 
 	private static final HashSet<String> debugFlags = new HashSet<>();
 
-	@Deprecated
-	public static boolean DebugPerformance = false;
-	@Deprecated
-	public static boolean DebugStack = false;
-	@Deprecated
-	public static boolean DebugActivityLifeCycle = false;
-	@Deprecated
-	public static boolean DebugControllerLifeCycle = false;
+	public static String Performance = "Debugging_Performance";
 
 	public static void addDebugFlag(String flag) {
 		debugFlags.add(flag);

@@ -60,7 +60,7 @@ public abstract class BaseTransceiver
 				listen = true;
 				while (listen) {
 					setState(Connecting);
-					receiver.removeCallbacks(null);
+					receiver.removeCallbacksAndMessages(null);
 
 					socket = connectImpl();
 					setState(Connected);

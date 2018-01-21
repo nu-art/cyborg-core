@@ -68,7 +68,7 @@ public class PermissionModule
 		String[] rejectedPermissions = getRejectedPermissions(permissions);
 
 		if (rejectedPermissions.length == 0) {
-			dispatchModuleEvent("All Permissions Granted", new Processor<PermissionResultListener>() {
+			dispatchGlobalEvent("All Permissions Granted", new Processor<PermissionResultListener>() {
 				@Override
 				public void process(PermissionResultListener listener) {
 					listener.onAllPermissionsGranted(requestCode);
