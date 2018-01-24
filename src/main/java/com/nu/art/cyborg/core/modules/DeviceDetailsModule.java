@@ -78,6 +78,7 @@ public final class DeviceDetailsModule
 	}
 
 	public Point getScreenResolution() {
+		getSystemService(WindowService).getDefaultDisplay().getSize(screenResolution);
 		return screenResolution;
 	}
 
