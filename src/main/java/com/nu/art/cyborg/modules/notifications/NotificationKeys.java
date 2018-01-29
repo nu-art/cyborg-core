@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.notifications;
+package com.nu.art.cyborg.modules.notifications;
 
 /**
  * Created by TacB0sS on 11-Jun 2016.

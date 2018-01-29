@@ -42,7 +42,7 @@
             android:windowSoftInputMode="stateHidden"
             />
 
-        <receiver android:name=".notifications.NotificationReceiver"/>
+        <receiver android:name=".modules.notifications.NotificationReceiver"/>
 
         <receiver
             android:name="com.nu.art.cyborg.common.utils.BootStarterReceiver"

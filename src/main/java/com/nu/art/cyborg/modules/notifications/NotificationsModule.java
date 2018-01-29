@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.notifications;
+package com.nu.art.cyborg.modules.notifications;
 
 import android.app.Notification;
 import android.app.NotificationManager;

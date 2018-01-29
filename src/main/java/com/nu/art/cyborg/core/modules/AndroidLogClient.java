@@ -28,7 +28,7 @@ import com.nu.art.core.tools.ExceptionTools;
 public class AndroidLogClient
 		extends BeLoggedClient {
 
-	private static final StringBuffer buffer = new StringBuffer();
+	private final StringBuffer buffer = new StringBuffer();
 
 	@Override
 	protected void log(final LogLevel level, final String thread, final String tag, final String message, final Throwable t) {
