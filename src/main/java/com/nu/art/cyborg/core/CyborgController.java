@@ -384,6 +384,7 @@ public abstract class CyborgController
 				if (this.state != null)
 					return;
 
+				setState(newState);
 				activityBridge.addController(this);
 				onCreate();
 				break;
@@ -391,25 +392,26 @@ public abstract class CyborgController
 				if (this.state != LifeCycleState.OnPause && this.state != LifeCycleState.OnCreate)
 					return;
 
+				setState(newState);
 				onResume();
 				break;
 			case OnPause:
 				if (this.state != LifeCycleState.OnResume)
 					return;
 
+				setState(newState);
 				onPause();
 				break;
 			case OnDestroy:
 				if (this.state != LifeCycleState.OnPause)
 					return;
 
+				setState(newState);
 				activityBridge.removeController(this);
 				nestedControllers = EmptyControllersArray;
 				onDestroy();
 				break;
 		}
-
-		setState(newState);
 	}
 
 	protected boolean isAnimatedIn() {
