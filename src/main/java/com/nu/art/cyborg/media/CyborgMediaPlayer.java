@@ -476,7 +476,7 @@ public class CyborgMediaPlayer
 				setState(PlayerState.Preparing);
 				mediaPlayer.prepareAsync();
 			} catch (Exception e) {
-				logError("Error while preparing the media player", e);
+				logError("Error while preparing the media player, url: " + uri, e);
 				listener.onError();
 			}
 		}
