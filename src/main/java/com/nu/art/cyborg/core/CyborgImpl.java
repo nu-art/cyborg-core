@@ -351,10 +351,9 @@ final class CyborgImpl
 	/*
 	 * App MetaData
 	 */
-
 	@Override
-	public String getValueFromManifest(String key) {
-		return meta.metaData.getString(key, "");
+	public String getValueFromManifest(String key, String defaultValue) {
+		return meta.metaData.getString(key, defaultValue);
 	}
 
 	@Override

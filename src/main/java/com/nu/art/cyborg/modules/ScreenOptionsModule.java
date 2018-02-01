@@ -53,7 +53,11 @@ public class ScreenOptionsModule
 	}
 
 	private float getBrightnessAsFloat(int brightnessLevel) {
-		return normalizeBrightnessLevel(brightnessLevel) / 255f;
+		float value = normalizeBrightnessLevel(brightnessLevel) / 255f;
+		if (value == 0)
+			value = 0.0001f;
+
+		return value;
 	}
 
 	private int normalizeBrightnessLevel(int brightnessLevel) {
