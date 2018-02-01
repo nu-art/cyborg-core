@@ -677,7 +677,7 @@ final class CyborgImpl
 					name = "NoName";
 				else {
 					name = info.name;
-					this.metaData = info.metaData;
+					this.metaData = packageInfo.applicationInfo.metaData;
 				}
 
 				if (packageInfo == null) {
