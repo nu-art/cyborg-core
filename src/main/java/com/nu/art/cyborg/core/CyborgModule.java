@@ -342,7 +342,11 @@ public abstract class CyborgModule
 	}
 
 	public final String getValueFromManifest(String key) {
-		return cyborg.getValueFromManifest(key);
+		return getValueFromManifest(key, null);
+	}
+
+	public final String getValueFromManifest(String key, String defaultValue) {
+		return cyborg.getValueFromManifest(key, defaultValue);
 	}
 
 	@Override

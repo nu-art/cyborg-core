@@ -42,9 +42,15 @@ public class StartActivityForResultActivity
 		startIntentSenderForResultHack(context, originalIntent, intentSender, null, requestCode, 0, 0, 0);
 	}
 
-	public static void startIntentSenderForResultHack(Context context, Intent originalIntent, IntentSender intentSender, Intent fillInIntent, int requestCode, int flagsMasks, int flagsValues, int extraFlags) {
-		StartIntentSenderForResultHandler
-				.startIntentSenderForResult(context, originalIntent, intentSender, fillInIntent, requestCode, flagsMasks, flagsValues, extraFlags);
+	public static void startIntentSenderForResultHack(Context context,
+																										Intent originalIntent,
+																										IntentSender intentSender,
+																										Intent fillInIntent,
+																										int requestCode,
+																										int flagsMasks,
+																										int flagsValues,
+																										int extraFlags) {
+		StartIntentSenderForResultHandler.startIntentSenderForResult(context, originalIntent, intentSender, fillInIntent, requestCode, flagsMasks, flagsValues, extraFlags);
 	}
 
 	public enum StartActivityType {
@@ -180,7 +186,14 @@ final class StartIntentSenderForResultHandler
 		}
 	}
 
-	public static void startIntentSenderForResult(Context context, Intent originalIntent, IntentSender intentSender, Intent fillInIntent, int requestCode, int flagsMasks, int flagsValues, int extraFlags) {
+	public static void startIntentSenderForResult(Context context,
+																								Intent originalIntent,
+																								IntentSender intentSender,
+																								Intent fillInIntent,
+																								int requestCode,
+																								int flagsMasks,
+																								int flagsValues,
+																								int extraFlags) {
 		Intent intent = createGeneralIntent(context, StartActivityType.StartIntentSenderForResult, originalIntent, requestCode);
 
 		intent.putExtra(ExtraKey__IntentSender, intentSender);

@@ -152,6 +152,7 @@ final class CyborgImpl
 	}
 
 	private void printApplicationStarted() {
+		logVerbose(" Application Started...");
 		logVerbose(" ");
 		logVerbose(" _______  _______  _______  _       _________ _______  _______ __________________ _______  _          _______ _________ _______  _______ _________ _______  ______  ");
 		logVerbose("(  ___  )(  ____ )(  ____ )( \\      \\__   __/(  ____ \\(  ___  )\\__   __/\\__   __/(  ___  )( (    /|  (  ____ \\\\__   __/(  ___  )(  ____ )\\__   __/(  ____ \\(  __  \\ ");
@@ -350,10 +351,9 @@ final class CyborgImpl
 	/*
 	 * App MetaData
 	 */
-
 	@Override
-	public String getValueFromManifest(String key) {
-		return meta.metaData.getString(key, "");
+	public String getValueFromManifest(String key, String defaultValue) {
+		return meta.metaData.getString(key, defaultValue);
 	}
 
 	@Override
@@ -676,7 +676,7 @@ final class CyborgImpl
 					name = "NoName";
 				else {
 					name = info.name;
-					this.metaData = info.metaData;
+					this.metaData = packageInfo.applicationInfo.metaData;
 				}
 
 				if (packageInfo == null) {

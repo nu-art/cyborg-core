@@ -78,8 +78,7 @@ public final class CyborgViewInjector
 	protected final Field[] extractFieldsFromInstance(Class<? extends CyborgController> controllerType) {
 		Field[] fields = cache.get(controllerType);
 		if (fields == null) {
-			fields = ART_Tools
-					.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
+			fields = ART_Tools.getFieldsWithAnnotationAndTypeFromClassHierarchy(controllerType, CyborgController.class, null, ViewIdentifier.class, View.class, View[].class, CyborgController.class);
 			cache.put(controllerType, fields);
 		}
 		return fields;
@@ -113,7 +112,12 @@ public final class CyborgViewInjector
 		return getArrayValueFromAnnotationAndField(fieldValue, viewField, viewIdentifier, componentType, parentViewId, ids);
 	}
 
-	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Object fieldValue, Field viewField, ViewIdentifier viewIdentifier, Class<ComponentType> componentType, int parentViewId, int[] ids) {
+	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Object fieldValue,
+																																							Field viewField,
+																																							ViewIdentifier viewIdentifier,
+																																							Class<ComponentType> componentType,
+																																							int parentViewId,
+																																							int[] ids) {
 		ComponentType[] items;
 		if (fieldValue != null)
 			items = (ComponentType[]) fieldValue;

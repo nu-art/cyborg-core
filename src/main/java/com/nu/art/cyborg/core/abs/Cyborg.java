@@ -190,7 +190,8 @@ public interface Cyborg
 	 *
 	 * @param key The tag key
 	 *
+	 * @param defaultValue
 	 * @return The tag value
 	 */
-	String getValueFromManifest(String key);
+	String getValueFromManifest(String key, String defaultValue);
 }

@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core.modules;
 
 import com.nu.art.belog.BeLoggedClient;
 import com.nu.art.belog.consts.LogLevel;
+import com.nu.art.core.tools.ExceptionTools;
 
 /**
  * Created by TacB0sS on 28-Feb 2017.
@@ -27,7 +28,7 @@ import com.nu.art.belog.consts.LogLevel;
 public class AndroidLogClient
 		extends BeLoggedClient {
 
-	private static final StringBuffer buffer = new StringBuffer();
+	private final StringBuffer buffer = new StringBuffer();
 
 	@Override
 	protected void log(final LogLevel level, final String thread, final String tag, final String message, final Throwable t) {
@@ -35,48 +36,41 @@ public class AndroidLogClient
 			return;
 
 		String tagWithThread;
-		buffer.append(thread).append("/").append(tag);
-		tagWithThread = buffer.toString();
-		buffer.setLength(0);
+		synchronized (buffer) {
+			buffer.append(thread).append("/").append(tag);
+			tagWithThread = buffer.toString();
+			buffer.setLength(0);
+		}
 
-		if (message != null)
-			switch (level) {
-				case Assert:
-				case Error:
-					android.util.Log.e(tagWithThread, message);
-					break;
-				case Warning:
-					android.util.Log.w(tagWithThread, message);
-					break;
-				case Info:
-					android.util.Log.i(tagWithThread, message);
-					break;
-				case Debug:
-					android.util.Log.d(tagWithThread, message);
-					break;
-				case Verbose:
-					android.util.Log.v(tagWithThread, message);
-					break;
-			}
+		printLog(level, tagWithThread, message);
 
-		if (t != null)
-			switch (level) {
-				case Assert:
-				case Error:
-					android.util.Log.e(tagWithThread, "", t);
-					break;
-				case Warning:
-					android.util.Log.w(tagWithThread, "", t);
-					break;
-				case Info:
-					android.util.Log.i(tagWithThread, "", t);
-					break;
-				case Debug:
-					android.util.Log.d(tagWithThread, "", t);
-					break;
-				case Verbose:
-					android.util.Log.v(tagWithThread, "", t);
-					break;
-			}
+		if (t != null) {
+			printLog(level, tagWithThread, t.getMessage());
+			printLog(level, tagWithThread, ExceptionTools.getStackTrace(t));
+		}
+	}
+
+	private void printLog(LogLevel level, String tagWithThread, String message) {
+		if (message == null)
+			return;
+
+		switch (level) {
+			case Assert:
+			case Error:
+				android.util.Log.e(tagWithThread, message);
+				break;
+			case Warning:
+				android.util.Log.w(tagWithThread, message);
+				break;
+			case Info:
+				android.util.Log.i(tagWithThread, message);
+				break;
+			case Debug:
+				android.util.Log.d(tagWithThread, message);
+				break;
+			case Verbose:
+				android.util.Log.v(tagWithThread, message);
+				break;
+		}
 	}
 }

@@ -23,18 +23,23 @@ import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.tools.StreamTools;
 import com.nu.art.core.utils.RunnableQueue;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.tools.CryptoTools;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by tacb0ss on 14/06/2017.
  */
 public class CacheModule
 		extends CyborgModule {
+
+	private MessageDigest digestMD5;
 
 	public class Cacheable {
 
@@ -45,6 +50,8 @@ public class CacheModule
 		private String pathToDir;
 
 		private long interval;
+
+		private boolean must = true;
 
 		/**
 		 * @param key The key that would be used to identify the cached item, can be any unique string you want.
@@ -95,6 +102,18 @@ public class CacheModule
 		}
 
 		/**
+		 * Whether this item MUST be cached or can we live on with it not being cached.
+		 *
+		 * @param must Must this item be cahced
+		 *
+		 * @return The instance {@link Cacheable} you currently edit
+		 */
+		public Cacheable setMustCache(boolean must) {
+			this.must = must;
+			return this;
+		}
+
+		/**
 		 * @return Whether or not this item is cached.
 		 */
 		public boolean isCached() {
@@ -123,7 +142,9 @@ public class CacheModule
 		 *
 		 * @param inputStream the input stream to cache.
 		 *
-		 * @throws IOException if something goes wrong.
+		 * @return whether or not the item was cached, and you can still try to recover the stream.
+		 *
+		 * @throws IOException if the item must be cached, and you cannot recover from an error.
 		 */
 		public void cacheSync(InputStream inputStream)
 				throws IOException {
@@ -152,6 +173,11 @@ public class CacheModule
 
 	@Override
 	protected void init() {
+		try {
+			digestMD5 = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 		filesDir = getApplicationContext().getFilesDir();
 		cacheDir = getApplicationContext().getCacheDir();
 		cacheQueue.createThreads("Caching Thread", threadCount);
@@ -185,7 +211,12 @@ public class CacheModule
 		else
 			dir = cacheable.interval > 0 ? filesDir : cacheDir;
 
-		return new File(dir, cacheable.key.hashCode() + "." + cacheable.suffix);
+		String fileName;
+		if (digestMD5 != null)
+			fileName = CryptoTools.doFingerprint(cacheable.key.getBytes(), digestMD5);
+		else
+			fileName = cacheable.key.hashCode() + "";
+		return new File(dir, fileName + "." + cacheable.suffix);
 	}
 
 	private void cacheAsync(final Cacheable cacheable, final InputStream inputStream, final CacheListener listener) {
@@ -212,8 +243,15 @@ public class CacheModule
 			// save the stream into a local temp file.
 			FileTools.delete(tempFile);
 			FileTools.createNewFile(tempFile);
-			StreamTools.copy(inputStream, tempFile);
+		} catch (IOException e) {
+			if (cacheable.must)
+				throw e;
 
+			throw new UnableToCacheException("Error Caching cacheable: " + cacheable.key + " => " + tempFile.getAbsolutePath());
+		}
+
+		try {
+			StreamTools.copy(inputStream, tempFile);
 			// Rename the file to the final expected name.
 			FileTools.delete(file);
 			FileTools.renameFile(tempFile, file);
@@ -252,5 +290,21 @@ public class CacheModule
 				}
 			}
 		});
+	}
+
+	public static class UnableToCacheException
+			extends IOException {
+
+		public UnableToCacheException(String message) {
+			super(message);
+		}
+
+		public UnableToCacheException(String message, Throwable cause) {
+			super(message, cause);
+		}
+
+		public UnableToCacheException(Throwable cause) {
+			super(cause);
+		}
 	}
 }

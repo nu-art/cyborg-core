@@ -24,11 +24,13 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.net.wifi.WifiInfo;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Connectivity.WifiConnectivityState;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.ScannedWifiInfo;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
+import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiStrength;
 
 import java.net.NetworkInterface;
 import java.util.Collections;
@@ -140,6 +142,15 @@ public class WifiModule
 
 	public boolean hasAccessPoint(String wifiName) {
 		return WifiNetworkScanner.hasAccessPoint(wifiName);
+	}
+
+	public ScannedWifiInfo getAccessPoint(String wifiName) {
+		return WifiNetworkScanner.getAccessPoint(wifiName);
+	}
+
+	@Nullable
+	public WifiStrength getAccessPointStrength(String wifiName) {
+		return WifiNetworkScanner.getAccessPointStrength(wifiName);
 	}
 
 	@SuppressLint( {

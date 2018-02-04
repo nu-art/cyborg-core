@@ -42,6 +42,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
@@ -53,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.nu.art.cyborg.core.abs.Cyborg.paramExtractor;
-import static com.nu.art.cyborg.core.consts.DebugFlags.DebugActivityLifeCycle;
 
 /**
  * Created by TacB0sS on 19-Jun 2015.
@@ -85,6 +85,8 @@ public class CyborgActivityBridgeImpl
 	public static void startActivityInStack(Intent intent) {
 		CyborgBuilder.getInstance().openActivityInStack(intent);
 	}
+
+	public static final String DebugFlag = "Debug_" + CyborgActivityBridgeImpl.class.getSimpleName();
 
 	private final CyborgActivity activity;
 
@@ -459,16 +461,9 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public final void addController(CyborgController controller) {
-		if (controller instanceof ItemRenderer)
-			return;
-
-		if (controller instanceof InRendererCyborgController)
-			return;
-
-		//		controllers.add(new WeakReference<>(controller));
 		_controllerList = ArrayTools.appendElement(_controllerList, new WeakReference<>(controller));
 		eventDispatcher.addListener(controller);
-		if (DebugActivityLifeCycle) {
+		if (DebugFlags.isDebuggableFlag(DebugFlag)) {
 			logDebug("Added controller(" + _controllerList.length + "): " + controller);
 		}
 	}
@@ -493,19 +488,17 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg
-				.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
-					@Override
-					public void process(OnActivityResultListener listener) {
-						listener.onActivityResult(requestCode, resultCode, data);
-					}
-				});
+		cyborg.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
+			@Override
+			public void process(OnActivityResultListener listener) {
+				listener.onActivityResult(requestCode, resultCode, data);
+			}
+		});
 	}
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays
-				.toString(grantResults));
+		logDebug("onRequestPermissionsResult requestCode: " + requestCode + ", permissions: " + Arrays.toString(permissions) + ", grantResults: " + Arrays.toString(grantResults));
 		getModule(PermissionModule.class).onPermissionsResult(requestCode, permissions, grantResults);
 	}
 
@@ -520,7 +513,7 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-					eventDispatcher.dispatchEvent(whoCalledThis, processor);
+				eventDispatcher.dispatchEvent(whoCalledThis, processor);
 			}
 		});
 	}
@@ -625,7 +618,7 @@ public class CyborgActivityBridgeImpl
 		Logs
  	 **********************************/
 	private void logLifeCycle(String log) {
-		if (DebugActivityLifeCycle)
+		if (DebugFlags.isDebuggableFlag(DebugFlag))
 			logDebug("Activity State Changed: " + log);
 	}
 }

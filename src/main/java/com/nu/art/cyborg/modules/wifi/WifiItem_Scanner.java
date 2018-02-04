@@ -21,6 +21,7 @@ package com.nu.art.cyborg.modules.wifi;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.support.annotation.Nullable;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
@@ -76,7 +77,7 @@ public class WifiItem_Scanner
 
 	public static class ScannedWifiInfo {
 
-		public WifiStrength strength = WifiStrength.VeryWeak;
+		public WifiStrength strength;
 
 		public ScanResult scanResult;
 
@@ -105,16 +106,29 @@ public class WifiItem_Scanner
 	}
 
 	boolean hasAccessPoint(String wifiName) {
+		return getAccessPoint(wifiName) != null;
+	}
+
+	ScannedWifiInfo getAccessPoint(String wifiName) {
 		synchronized (scanResults) {
 			for (ScannedWifiInfo scanResult : scanResults) {
 				if (!scanResult.getName().equals(wifiName))
 					continue;
 
-				return true;
+				return scanResult;
 			}
 		}
 
-		return false;
+		return null;
+	}
+
+	@Nullable
+	WifiStrength getAccessPointStrength(String wifiName) {
+		ScannedWifiInfo accessPoint = getAccessPoint(wifiName);
+		if (accessPoint == null)
+			return null;
+
+		return accessPoint.strength;
 	}
 
 	void onScanCompleted() {
@@ -134,11 +148,11 @@ public class WifiItem_Scanner
 				scannedWifis.put(result.SSID, scannedWifi = new ScannedWifiInfo());
 			}
 
-			WifiStrength value = values[WifiManager.calculateSignalLevel(result.level, values.length)];
-			if (scannedWifi.strength.ordinal() > value.ordinal())
+			WifiStrength strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
+			if (scannedWifi.strength != null && scannedWifi.strength.ordinal() > strength.ordinal())
 				continue;
 
-			scannedWifi.strength = value;
+			scannedWifi.strength = strength;
 			scannedWifi.scanResult = result;
 		}
 

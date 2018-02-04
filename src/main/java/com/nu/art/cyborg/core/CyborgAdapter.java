@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.cyborg.core.dataModels.DataModel.DataModelListener;
@@ -40,7 +41,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
 
-import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
+import static com.nu.art.cyborg.core.consts.DebugFlags.Performance;
 
 @SuppressWarnings("unchecked")
 public class CyborgAdapter<Item>
@@ -117,12 +118,12 @@ public class CyborgAdapter<Item>
 
 	private ItemRenderer<? extends Item> createRendererForType(ViewGroup parent, int typeIndex) {
 		ItemRenderer<? extends Item> renderer = instantiateItemRendererType(typeIndex);
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("setActivityBridge");
 		renderer.setActivityBridge(controller.activityBridge);
 
 		try {
-			if (DebugPerformance)
+			if (DebugFlags.isDebuggableFlag(Performance))
 				logVerbose("_createView");
 			renderer._createView(LayoutInflater.from(parent.getContext()), parent);
 		} catch (Throwable e) {
@@ -134,15 +135,15 @@ public class CyborgAdapter<Item>
 			throw (RuntimeException) e;
 		}
 
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("extractMembersImpl");
 		renderer.extractMembersImpl();
 
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("setupRenderer");
 		setupRenderer(renderer);
 
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("return");
 		return renderer;
 	}

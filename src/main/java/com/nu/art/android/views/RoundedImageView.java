@@ -76,8 +76,9 @@ public class RoundedImageView
 		int square_dimension = Math.min(original_width, original_height);
 
 		if (original_height != original_width) {
-			bitmapSquare = Bitmap
-					.createBitmap(bitmapSquare, (original_width - square_dimension) / 2, (original_height - square_dimension) / 2, square_dimension, square_dimension);
+			int x = (original_width - square_dimension) / 2;
+			int y = (original_height - square_dimension) / 2;
+			bitmapSquare = Bitmap.createBitmap(bitmapSquare, x, y, square_dimension, square_dimension);
 		}
 
 		RoundedBitmapDrawable roundedImage = RoundedBitmapDrawableFactory.create(getResources(), bitmapSquare);

@@ -75,6 +75,7 @@ import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
+import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
@@ -91,8 +92,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Random;
 
-import static com.nu.art.cyborg.core.consts.DebugFlags.DebugControllerLifeCycle;
-import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
+import static com.nu.art.cyborg.core.consts.DebugFlags.Performance;
 
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
@@ -117,6 +117,8 @@ import static com.nu.art.cyborg.core.consts.DebugFlags.DebugPerformance;
 public abstract class CyborgController
 		extends Logger
 		implements ICyborgController {
+
+	public static final String DebugFlag = "Debug_" + CyborgController.class.getSimpleName();
 
 	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 
@@ -147,7 +149,6 @@ public abstract class CyborgController
 	boolean keepInStack;
 
 	private LifeCycleState state;
-
 	protected final ActionDelegator actionDelegator;
 
 	protected final Cyborg cyborg;
@@ -158,7 +159,7 @@ public abstract class CyborgController
 
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("Instantiated");
 		this.layoutId = layoutId;
 		cyborg = CyborgBuilder.getInstance();
@@ -198,25 +199,25 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	private void injectMembers() {
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("injectMembers");
 		CyborgViewInjector viewInjector = new CyborgViewInjector(rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("viewInjector");
 		viewInjector.injectToInstance(this);
 
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("moduleInjector");
 		moduleInjector.injectToInstance(this);
 
-		if (DebugPerformance)
+		if (DebugFlags.isDebuggableFlag(Performance))
 			logVerbose("done");
 	}
 
 	final void setState(LifeCycleState newState) {
-		if (DebugControllerLifeCycle)
+		if (DebugFlags.isDebuggableFlag(DebugFlag))
 			logDebug("State Changed: " + this.state + " ==> " + newState);
 
 		if (state == newState)
@@ -325,7 +326,7 @@ public abstract class CyborgController
 
 		if (!(view instanceof ViewGroup))
 			throw new BadImplementationException("The provided viewId is to a " + view.getClass()
-					.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
+																																								.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
 
 		((ViewGroup) view).removeAllViews();
 		((ViewGroup) view).addView(viewToInject);
@@ -383,6 +384,7 @@ public abstract class CyborgController
 				if (this.state != null)
 					return;
 
+				setState(newState);
 				activityBridge.addController(this);
 				onCreate();
 				break;
@@ -390,25 +392,26 @@ public abstract class CyborgController
 				if (this.state != LifeCycleState.OnPause && this.state != LifeCycleState.OnCreate)
 					return;
 
+				setState(newState);
 				onResume();
 				break;
 			case OnPause:
 				if (this.state != LifeCycleState.OnResume)
 					return;
 
+				setState(newState);
 				onPause();
 				break;
 			case OnDestroy:
 				if (this.state != LifeCycleState.OnPause)
 					return;
 
+				setState(newState);
 				activityBridge.removeController(this);
 				nestedControllers = EmptyControllersArray;
 				onDestroy();
 				break;
 		}
-
-		setState(newState);
 	}
 
 	protected boolean isAnimatedIn() {

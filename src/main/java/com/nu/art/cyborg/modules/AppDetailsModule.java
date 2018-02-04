@@ -28,11 +28,12 @@ import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
+import com.nu.art.cyborg.common.utils.BootStarterReceiver.OnBootCompletedListener;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.StringPreference;
 import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
-import com.nu.art.cyborg.common.utils.BootStarterReceiver.OnBootCompletedListener;
+import com.nu.art.cyborg.tools.CryptoTools;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.io.ByteArrayInputStream;
@@ -117,25 +118,6 @@ public final class AppDetailsModule
 		this.certificateType = certificateType;
 	}
 
-	protected static String doFingerprint(byte[] certificateBytes, String algorithm)
-			throws Exception {
-		MessageDigest md = MessageDigest.getInstance(algorithm);
-		md.update(certificateBytes);
-		byte[] digest = md.digest();
-
-		StringBuilder toRet = new StringBuilder();
-		for (int i = 0; i < digest.length; i++) {
-			if (i != 0)
-				toRet.append(":");
-			int b = digest[i] & 0xff;
-			String hex = Integer.toHexString(b);
-			if (hex.length() == 1)
-				toRet.append("0");
-			toRet.append(hex);
-		}
-		return toRet.toString();
-	}
-
 	public final void setSimulateProduction(boolean debugSimulationMode) {
 		this.debugSimulationMode = debugSimulationMode;
 	}
@@ -176,9 +158,13 @@ public final class AppDetailsModule
 			PackageManager pm = cyborg.getPackageManager();
 			PackageInfo packageInfo = pm.getPackageInfo(cyborg.getPackageName(), PackageManager.GET_SIGNATURES);
 			Signature sig = packageInfo.signatures[0];
-			String md5Fingerprint = doFingerprint(sig.toByteArray(), "MD5");
+			String md5Fingerprint = CryptoTools.doFingerprint(sig.toByteArray(), MessageDigest.getInstance("MD5"));
 			Type[] certificateList = (Type[]) ReflectiveTools.getEnumValues(certificateType);
-			logDebug("Certificate found: " + md5Fingerprint);
+			logDebug("Certificate found  (MD5) => " + md5Fingerprint);
+			try {
+				logDebug("Certificate found  (SHA1) => " + CryptoTools.doFingerprint(sig.toByteArray(), MessageDigest.getInstance("SHA-1")));
+			} catch (Exception ignore) {
+			}
 			for (Type type : certificateList) {
 				CyborgAppCertificate _certificate = (CyborgAppCertificate) type;
 				logDebug("Certificate(" + _certificate + "): " + _certificate.getMD5());

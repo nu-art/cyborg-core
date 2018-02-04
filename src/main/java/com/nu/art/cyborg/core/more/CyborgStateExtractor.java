@@ -147,7 +147,12 @@ public final class CyborgStateExtractor
 			throw new NotImplementedYetException("serializeArray");
 	}
 
-	private void serializeWithParser(Restorable annotation, Class<?> fieldType, Class<? extends TypeParser> parserType, Object fieldValue, Bundle data, String key) {
+	private void serializeWithParser(Restorable annotation,
+																	 Class<?> fieldType,
+																	 Class<? extends TypeParser> parserType,
+																	 Object fieldValue,
+																	 Bundle data,
+																	 String key) {
 		TypeParser parser = ReflectiveTools.newInstance(parserType);
 		parser.serialize(annotation, fieldType, fieldValue, data, key);
 	}

@@ -129,7 +129,12 @@ public class FloatingViewTransitionAnimator
 		renderFromTo(originLayer.getRootView(), targetViewToAnimate, originViewToAnimate, toAnimate, duration, listener);
 	}
 
-	private void renderFromTo(View fromParent, final View viewToAnimateFrom, final View viewToAnimateTo, Bitmap imageToAnimate, int duration, final AnimationListener listener) {
+	private void renderFromTo(View fromParent,
+														final View viewToAnimateFrom,
+														final View viewToAnimateTo,
+														Bitmap imageToAnimate,
+														int duration,
+														final AnimationListener listener) {
 		final FrameLayout rootView = (FrameLayout) fromParent.getRootView().findViewById(android.R.id.content);
 		Context context = rootView.getContext();
 
