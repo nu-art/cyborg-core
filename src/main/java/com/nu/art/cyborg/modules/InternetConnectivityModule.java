@@ -16,19 +16,23 @@ public class InternetConnectivityModule
 
 	private static final String DEFAULT_HOST = "google.com";
 
-	private Handler handler;
-
 	public interface InternetConnectivityListener {
 
-		void onInternetConnectivityLost();
-
-		void onInternetConnectivityGained();
+		void onInternetConnectivityChanged();
 	}
+
+	private Handler handler;
+
+	private volatile boolean isConnected;
 
 	@Override
 	protected void init() {
 		handler = getModule(ThreadsModule.class).getDefaultHandler("Internet Check");
 		registerReceiver(ConnectivityCheckReceiver.class);
+	}
+
+	public boolean isConnected() {
+		return isConnected;
 	}
 
 	private void checkInternetConnectionAsync() {
@@ -37,11 +41,17 @@ public class InternetConnectivityModule
 			public void run() {
 				try {
 					InetAddress.getByName(DEFAULT_HOST);
-					dispatchConnectivityGained();
+					isConnected = true;
 				} catch (Exception e) {
 					logError("Couldn't ping google.com", e);
-					dispatchConnectivityLost();
+					isConnected = false;
 				}
+				dispatchEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), new Processor<InternetConnectivityListener>() {
+					@Override
+					public void process(InternetConnectivityListener listener) {
+						listener.onInternetConnectivityChanged();
+					}
+				});
 			}
 		});
 	}
@@ -57,23 +67,5 @@ public class InternetConnectivityModule
 		protected void onReceive(Intent intent, InternetConnectivityModule module) {
 			module.checkInternetConnectionAsync();
 		}
-	}
-
-	private void dispatchConnectivityGained() {
-		dispatchEvent("Internet Check - Has Internet", new Processor<InternetConnectivityListener>() {
-			@Override
-			public void process(InternetConnectivityListener listener) {
-				listener.onInternetConnectivityGained();
-			}
-		});
-	}
-
-	private void dispatchConnectivityLost() {
-		dispatchEvent("Internet Check - No Internet", new Processor<InternetConnectivityListener>() {
-			@Override
-			public void process(InternetConnectivityListener listener) {
-				listener.onInternetConnectivityLost();
-			}
-		});
 	}
 }
