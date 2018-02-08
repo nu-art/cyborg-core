@@ -21,7 +21,7 @@ public class ScreenOptionsModule
 	public static final int UNKNOWN = -1;
 	public static final int LANDSCAPE = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 	public static final int PORTRAIT = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-	private WeakReference<Activity> weakRefActivity;
+	private WeakReference<Activity> weakRefActivity=new WeakReference<Activity>(null);
 
 	@Override
 	protected void init() {
@@ -37,7 +37,7 @@ public class ScreenOptionsModule
 	}
 
 	private Window getWindow() {
-		if (weakRefActivity == null || weakRefActivity.get() == null)
+		if (weakRefActivity.get() == null)
 			return null;
 
 		return weakRefActivity.get().getWindow();
@@ -51,10 +51,6 @@ public class ScreenOptionsModule
 	 * brightnessLevel should be between 0 and 255
 	 */
 	public void setWindowBrightness(int brightnessLevel) {
-		if (getWindow() == null) {
-			logWarning("Will not set brightness... no window");
-			return;
-		}
 		Window window = getWindow();
 		if (window == null) {
 			logWarning("Will not set brightness... no window");
@@ -86,10 +82,6 @@ public class ScreenOptionsModule
 	}
 
 	public int getWindowBrightness() {
-		if (getWindow() == null) {
-			logWarning("Cannot get brightness... no window");
-			return UNKNOWN;
-		}
 		Window window = getWindow();
 		if (window == null) {
 			logWarning("Cannot get brightness... no window");
