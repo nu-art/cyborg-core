@@ -21,7 +21,7 @@ public class ScreenOptionsModule
 	public static final int UNKNOWN = -1;
 	public static final int LANDSCAPE = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 	public static final int PORTRAIT = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-	private WeakReference<Activity> weakRefActivity=new WeakReference<Activity>(null);
+	private WeakReference<Activity> weakRefActivity = new WeakReference<Activity>(null);
 
 	@Override
 	protected void init() {
@@ -115,12 +115,13 @@ public class ScreenOptionsModule
 	 * @param orientation
 	 */
 	public void setScreenOrientation(int orientation) {
-		if (getActivity() == null) {
+		Activity activity = getActivity();
+		if (activity == null) {
 			logError("Will not change orientation... no activity");
 			return;
 		}
 
-		getActivity().setRequestedOrientation(orientation);
+		activity.setRequestedOrientation(orientation);
 	}
 
 	public int getScreenOrientation() {
