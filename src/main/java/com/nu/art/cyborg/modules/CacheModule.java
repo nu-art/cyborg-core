@@ -154,6 +154,19 @@ public class CacheModule
 		public void load(GenericListener<InputStream> listener) {
 			CacheModule.this.load(this, listener);
 		}
+
+		/**
+		 * To call this method you might be using a bad utility OR you architecture is flawed OR you don't know what you are doing OR you don't have a choice OR you
+		 * are smarter then I have anticipated...
+		 *
+		 * Regardless I think this is a bad way to use a rest api client!
+		 *
+		 * @return The response input stream, <b>be sure to close it when you are done</b>!
+		 */
+		public InputStream loadSync()
+				throws FileNotFoundException {
+			return CacheModule.this.loadSync(this);
+		}
 	}
 
 	public interface CacheListener {
@@ -268,15 +281,20 @@ public class CacheModule
 		}
 	}
 
+	private InputStream loadSync(final Cacheable cacheable)
+			throws FileNotFoundException {
+		File file = getFile(cacheable);
+		return new FileInputStream(file);
+	}
+
 	private void load(final Cacheable cacheable, final GenericListener<InputStream> listener) {
 		cacheQueue.addItem(new Runnable() {
 
 			@Override
 			public void run() {
-				File file = getFile(cacheable);
-				FileInputStream fis = null;
+				InputStream fis = null;
 				try {
-					fis = new FileInputStream(file);
+					fis = loadSync(cacheable);
 					listener.onSuccess(fis);
 				} catch (FileNotFoundException e) {
 					listener.onError(e);
