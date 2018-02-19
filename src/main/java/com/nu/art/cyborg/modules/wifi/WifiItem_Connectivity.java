@@ -84,7 +84,7 @@ public class WifiItem_Connectivity
 	}
 
 	final boolean isConnectedToWifi() {
-		NetworkInfo wifiNetworkInfo = null;
+		NetworkInfo wifiNetworkInfo;
 		try {
 			wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		} catch (Exception e) {
@@ -95,7 +95,7 @@ public class WifiItem_Connectivity
 		if (wifiNetworkInfo == null || !wifiNetworkInfo.isConnected())
 			return false;
 
-		return true;
+		return checkIfReallyConnected(wifiManager.getConnectionInfo());
 	}
 
 	final void removeWifi(String name) {
@@ -248,8 +248,25 @@ public class WifiItem_Connectivity
 	}
 
 	final String getConnectedWifiName() {
-		String wifiName = wifiManager.getConnectionInfo().getSSID();
+		WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+		String wifiName = connectionInfo.getSSID();
+		if (!checkIfReallyConnected(connectionInfo))
+			return null;
+
 		return wifiName.substring(1, wifiName.length() - 1);
+	}
+
+	private boolean checkIfReallyConnected(WifiInfo connectionInfo) {
+		if ("00:00:00:00:00:00".equals(connectionInfo.getBSSID())) {
+			logWarning("Android bug, not connect yet think that it does");
+			return false;
+		}
+
+		if (connectionInfo.getNetworkId() == -1) {
+			logWarning("Android bug, not connect yet think that it does");
+			return false;
+		}
+		return true;
 	}
 
 	public boolean isConnectivityState(WifiConnectivityState connectivityState) {
