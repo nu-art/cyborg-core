@@ -29,18 +29,18 @@ import android.content.res.Configuration;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.cyborg.common.utils.AndroidProcessorGenericParamExtractor;
+import com.nu.art.cyborg.common.utils.AndroidGenericParamExtractor;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.CyborgReceiver;
-import com.nu.art.modular.core.EventDispatcher.ProcessorGenericParamExtractor;
+import com.nu.art.modular.core.EventDispatcher.GenericParamExtractor;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface Cyborg
 		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, _SystemServices, ModuleManagerDelegator {
 
-	ProcessorGenericParamExtractor paramExtractor = new AndroidProcessorGenericParamExtractor();
+	GenericParamExtractor paramExtractor = new AndroidGenericParamExtractor();
 
 	/**
 	 * @return The application instance of the app

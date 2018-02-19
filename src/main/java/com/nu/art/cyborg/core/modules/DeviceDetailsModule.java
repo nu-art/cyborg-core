@@ -40,6 +40,8 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 @ModuleDescriptor(usesPermissions = {})
@@ -84,7 +86,10 @@ public final class DeviceDetailsModule
 
 	@Override
 	protected void printModuleDetails() {
+		String currentTime = new SimpleDateFormat("HH:mm dd-MM-yyyy").format(new Date());
+
 		logInfo("    Android Device Id: " + androidId);
+		logInfo("    Device timestamp: " + currentTime);
 		logInfo("    Device values folder: " + deviceValues.getFolderName());
 		logInfo("    Screen Density: " + screenDensity.name());
 		logInfo("    Screen Size: " + screenSize.name());
