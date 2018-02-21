@@ -762,14 +762,21 @@ public final class CyborgStackController
 					if (interpolator != null)
 						animator.setInterpolator(interpolator);
 
+					StackLayer originLayer = targetLayerToBeRemove.keepBackground ? null : originLayerToBeRestored; // background is already visible do not animate it
+
 					// All Animations are performed together, the listener MUST be called only once
-					animator.animateOut(originLayerToBeRestored, targetLayerToBeRemove, duration,
+					animator.animateOut(originLayer, targetLayerToBeRemove, duration,
 															animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		};
 
 		if (viewToBeRestored == null) {
+			startAnimation.run();
+			return true;
+		}
+
+		if(targetLayerToBeRemove.keepBackground) {
 			startAnimation.run();
 			return true;
 		}
