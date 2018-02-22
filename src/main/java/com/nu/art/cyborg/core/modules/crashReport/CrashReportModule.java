@@ -248,13 +248,13 @@ public class CrashReportModule
 		return crashReport.toString();
 	}
 
-	private HashMap<CrashReportListener, HashMap<String, Object>> collectModulesData() {
+	private HashMap<String, HashMap<String, Object>> collectModulesData() {
 		CrashReportListener[] listeners = getModulesAssignableFrom(CrashReportListener.class);
-		HashMap<CrashReportListener, HashMap<String, Object>> modulesData = new HashMap<>();
+		HashMap<String, HashMap<String, Object>> modulesData = new HashMap<>();
 
 		for (CrashReportListener listener : listeners) {
 			HashMap<String, Object> moduleCrashData = new HashMap<>();
-			modulesData.put(listener, moduleCrashData);
+			modulesData.put(listener.getClass().getSimpleName(), moduleCrashData);
 			try {
 				listener.onApplicationCrashed(moduleCrashData);
 			} catch (Exception e) {
