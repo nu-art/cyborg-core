@@ -39,7 +39,7 @@ public final class CrashReport {
 
 	public String crashMessage;
 
-	public HashMap<CrashReportListener, HashMap<String, Object>> modulesData;
+	public HashMap<String, HashMap<String, Object>> modulesData;
 
 	public HashMap<String, ThreadState> runningThreads;
 
