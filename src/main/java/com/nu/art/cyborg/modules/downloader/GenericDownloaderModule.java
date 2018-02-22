@@ -44,7 +44,7 @@ public class GenericDownloaderModule
 
 	public interface Downloader {
 
-		void download(GenericListener<InputStream> listener);
+		void download(DownloaderBuilder builder, GenericListener<InputStream> listener);
 
 		void cancel();
 	}
@@ -52,6 +52,8 @@ public class GenericDownloaderModule
 	public interface DownloaderBuilder {
 
 		DownloaderBuilder setUrl(String url);
+
+		String getUrl();
 
 		boolean isSameUrl(String url);
 
@@ -99,6 +101,11 @@ public class GenericDownloaderModule
 		public final DownloaderBuilder setUrl(String url) {
 			this.url = url;
 			return this;
+		}
+
+		@Override
+		public String getUrl() {
+			return url;
 		}
 
 		public final <Type> DownloaderBuilder onSuccess(Function<InputStream, Type> converter, Processor<Type> onSuccess) {
@@ -161,7 +168,7 @@ public class GenericDownloaderModule
 		}
 
 		private void downloadFromUrl() {
-			downloader.download(new GenericListener<InputStream>() {
+			downloader.download(this, new GenericListener<InputStream>() {
 
 				@Override
 				public void onSuccess(InputStream inputStream) {
