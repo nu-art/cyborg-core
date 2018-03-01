@@ -40,7 +40,8 @@ public class ScreenOptionsModule
 
 	public static final int UNKNOWN = -1;
 	private WeakReference<Activity> weakRefActivity = new WeakReference<>(null);
-	private boolean stateKeepScreenAwake = false;
+	private Boolean stateKeepScreenAwake = null;
+	private Boolean stateFullScreen = null;
 
 	@Override
 	protected void init() {}
@@ -51,12 +52,15 @@ public class ScreenOptionsModule
 			return;
 		}
 		weakRefActivity = new WeakReference<>(activity);
-		if (stateKeepScreenAwake)
+		if (stateKeepScreenAwake != null)
 			keepScreenAwake(stateKeepScreenAwake);
+
+		if (stateFullScreen != null)
+			setFullscreen(stateFullScreen);
 	}
 
 	private Window getWindow() {
-		if (weakRefActivity.get() == null)
+		if (getActivity() == null)
 			return null;
 
 		return weakRefActivity.get().getWindow();
@@ -194,32 +198,45 @@ public class ScreenOptionsModule
 	}
 
 	public void keepScreenAwake(boolean toKeepScreenAwake) {
-		stateKeepScreenAwake = true;
-		Activity activity = getActivity();
-		if (activity == null) {
+		stateKeepScreenAwake = toKeepScreenAwake;
+		if (getActivity() == null) {
 			logWarning("Will not keep screen awake... no activity");
 			return;
 		}
 
-		setScreenAwakeFlags(activity.getWindow(), toKeepScreenAwake);
+		setScreenAwakeFlags();
 
 		if (VERSION.SDK_INT >= VERSION_CODES.O) // Setting the flags is enough for api 25 and below.
 			getSystemService(KeyguardService).requestDismissKeyguard(getActivity(), null);
 	}
 
-	private void setScreenAwakeFlags(Window window, boolean toKeepScreenAwake) {
-		if (toKeepScreenAwake) {
-			window.addFlags(LayoutParams.FLAG_FULLSCREEN); // Hide all screen decorations (such as the status bar) while this window is displayed.
+	private void setScreenAwakeFlags() {
+		Window window = getWindow();
+		if (stateKeepScreenAwake == null || window == null)
+			return;
+
+		if (stateKeepScreenAwake) {
 			window.addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON); // As long as this window is visible to the user, keep the device's screen turned on and bright.
 			window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD); // Since keyguard was dismissed all the time as long as an activity with this flag on its window was focused, keyguard couldn't guard against unintentional touches on the screen, which isn't desired. Deprecates at api 26
 			window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED); // Like FLAG_DISMISS_KEYGUARD - just deprecates at api 27, instead of 26. Deprecates at api 27
 			window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON); // When set as a window is being added or made visible, once the window has been shown then the system will poke the power manager's user activity (as if the user had woken up the device) to turn the screen on. Deprecates at api 27
 		} else {
-			window.clearFlags(LayoutParams.FLAG_FULLSCREEN);
 			window.clearFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 			window.clearFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
 			window.clearFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 			window.clearFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
 		}
+	}
+
+	public void setFullscreen(boolean toSetFullScreen) {
+		stateFullScreen = toSetFullScreen;
+		Window window = getWindow();
+		if (stateFullScreen == null || window == null)
+			return;
+
+		if (stateFullScreen)
+			window.addFlags(LayoutParams.FLAG_FULLSCREEN); // Hide all screen decorations (such as the status bar) while this window is displayed.
+		else
+			window.clearFlags(LayoutParams.FLAG_FULLSCREEN);
 	}
 }
