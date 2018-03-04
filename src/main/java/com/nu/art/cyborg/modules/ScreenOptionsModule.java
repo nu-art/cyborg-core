@@ -38,7 +38,7 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
 public class ScreenOptionsModule
 		extends CyborgModule {
 
-	public static final int UNKNOWN = -1;
+	private static final int UNKNOWN = -1;
 	private WeakReference<Activity> weakRefActivity = new WeakReference<>(null);
 	private Boolean stateKeepScreenAwake = null;
 	private Boolean stateFullScreen = null;
@@ -206,10 +206,17 @@ public class ScreenOptionsModule
 			return;
 
 		if (this.stateKeepScreenAwake) {
-			window.addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON); // As long as this window is visible to the user, keep the device's screen turned on and bright.
-			window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD); // Since keyguard was dismissed all the time as long as an activity with this flag on its window was focused, keyguard couldn't guard against unintentional touches on the screen, which isn't desired. Deprecates at api 26
-			window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED); // Like FLAG_DISMISS_KEYGUARD - just deprecates at api 27, instead of 26. Deprecates at api 27
-			window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON); // When set as a window is being added or made visible, once the window has been shown then the system will poke the power manager's user activity (as if the user had woken up the device) to turn the screen on. Deprecates at api 27
+			// As long as this window is visible to the user, keep the device's screen turned on and bright.
+			window.addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+			// Since keyguard was dismissed all the time as long as an activity with this flag on its window was focused, keyguard couldn't guard against unintentional touches on the screen, which isn't desired. Deprecates at api 26
+			window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+			// Like FLAG_DISMISS_KEYGUARD - just deprecates at api 27, instead of 26. Deprecates at api 27
+			window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+
+			// When set as a window is being added or made visible, once the window has been shown then the system will poke the power manager's user activity (as if the user had woken up the device) to turn the screen on. Deprecates at api 27
+			window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
 		} else {
 			window.clearFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
 			window.clearFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
