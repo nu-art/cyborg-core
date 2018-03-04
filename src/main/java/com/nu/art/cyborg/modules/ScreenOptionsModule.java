@@ -42,7 +42,7 @@ public class ScreenOptionsModule
 	private WeakReference<Activity> weakRefActivity = new WeakReference<>(null);
 	private Boolean stateKeepScreenAwake = null;
 	private Boolean stateFullScreen = null;
-	private int brightnessLevel;
+	private int brightnessLevel = UNKNOWN;
 
 	@Override
 	protected void init() {}
@@ -83,6 +83,9 @@ public class ScreenOptionsModule
 			logWarning("Will not set brightness... no window");
 			return;
 		}
+
+		if (brightnessLevel == UNKNOWN)
+			return;
 
 		LayoutParams lp = window.getAttributes();
 		lp.screenBrightness = getBrightnessAsFloat(brightnessLevel);
@@ -231,6 +234,9 @@ public class ScreenOptionsModule
 			logWarning("Will not set full screen mode... no window");
 			return;
 		}
+
+		if (this.stateFullScreen == null)
+			return;
 
 		if (this.stateFullScreen)
 			window.addFlags(LayoutParams.FLAG_FULLSCREEN); // Hide all screen decorations (such as the status bar) while this window is displayed.

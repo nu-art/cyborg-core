@@ -9,6 +9,9 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.interfaces.Serializer;
 import com.nu.art.cyborg.core.CyborgModule;
 
+/**
+ * In Order for this to work you need to enable the {@link TasksReceiver} in your manifest
+ */
 public class TaskScheduler
 		extends CyborgModule {
 
@@ -26,15 +29,23 @@ public class TaskScheduler
 		alarmManager = getSystemService(AlarmService);
 	}
 
-	public final <DataType> void scheduleTask(Class<? extends Task<DataType>> taskType, DataType data, short id, long utcWakeupTime) {
+	public final <DataType> PendingIntent scheduleTask(Class<? extends Task<DataType>> taskType, DataType data, short id, long utcWakeupTime) {
 		Intent taskIntent = new Intent(getApplicationContext(), TasksReceiver.class);
 		Bundle bundle = new Bundle();
 		bundle.putString(Key_TaskType, taskType.getName());
-		bundle.putString(Key_TaskData, serializer.serialize(data));
+		if (data != null)
+			bundle.putString(Key_TaskData, serializer.serialize(data));
+
 		taskIntent.putExtras(bundle);
 
 		PendingIntent taskPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), id, taskIntent, PendingIntent.FLAG_ONE_SHOT);
 		alarmManager.set(AlarmManager.RTC_WAKEUP, utcWakeupTime, taskPendingIntent);
+
+		return taskPendingIntent;
+	}
+
+	public final void cancel(PendingIntent taskPendingIntent) {
+		alarmManager.cancel(taskPendingIntent);
 	}
 
 	@SuppressWarnings("unchecked")

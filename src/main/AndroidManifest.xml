@@ -51,6 +51,11 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".modules.scheduler.TasksReceiver"
+            android:enabled="false"
+            />
+
         <service android:name=".core.ApplicationService"/>
     </application>
 </manifest>
