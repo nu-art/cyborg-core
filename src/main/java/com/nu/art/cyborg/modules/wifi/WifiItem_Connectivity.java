@@ -249,14 +249,21 @@ public class WifiItem_Connectivity
 
 	final String getConnectedWifiName() {
 		WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-		String wifiName = connectionInfo.getSSID();
+
 		if (!checkIfReallyConnected(connectionInfo))
+			return null;
+
+		String wifiName = connectionInfo.getSSID();
+		if (wifiName == null)
 			return null;
 
 		return wifiName.substring(1, wifiName.length() - 1);
 	}
 
 	private boolean checkIfReallyConnected(WifiInfo connectionInfo) {
+		if (connectionInfo == null)
+			return false;
+
 		if ("00:00:00:00:00:00".equals(connectionInfo.getBSSID())) {
 			logWarning("Android bug, not connect yet think that it does");
 			return false;
@@ -336,7 +343,11 @@ public class WifiItem_Connectivity
 
 		@Override
 		protected void onReceive(Intent intent, WifiModule module) {
-			switch (intent.getAction()) {
+			String action = intent.getAction();
+			if (action == null)
+				return;
+
+			switch (action) {
 				case WifiManager.NETWORK_STATE_CHANGED_ACTION:
 					module.onConnectionChanged();
 					break;
