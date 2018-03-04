@@ -1,10 +1,13 @@
 package com.nu.art.cyborg.modules;
 
 import android.app.Activity;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.provider.Settings;
 import android.provider.Settings.System;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 
 import com.nu.art.core.interfaces.Condition;
 import com.nu.art.cyborg.core.CyborgModule;
@@ -35,25 +38,31 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
 public class ScreenOptionsModule
 		extends CyborgModule {
 
-	public static final int UNKNOWN = -1;
+	private static final int UNKNOWN = -1;
 	private WeakReference<Activity> weakRefActivity = new WeakReference<>(null);
+	private Boolean stateKeepScreenAwake = null;
+	private Boolean stateFullScreen = null;
+	private int brightnessLevel = UNKNOWN;
 
 	@Override
 	protected void init() {}
 
 	public final void setActivity(Activity activity) {
-		if (activity == null) {
-			weakRefActivity = null;
-			return;
-		}
 		weakRefActivity = new WeakReference<>(activity);
+		if (activity == null)
+			return;
+
+		setWindowBrightnessImpl();
+		keepScreenAwakeImpl();
+		setFullScreenImpl();
 	}
 
 	private Window getWindow() {
-		if (weakRefActivity.get() == null)
+		Activity activity = getActivity();
+		if (activity == null)
 			return null;
 
-		return weakRefActivity.get().getWindow();
+		return activity.getWindow();
 	}
 
 	private Activity getActivity() {
@@ -64,13 +73,21 @@ public class ScreenOptionsModule
 	 * brightnessLevel should be between 0 and 255
 	 */
 	public void setWindowBrightness(int brightnessLevel) {
+		this.brightnessLevel = brightnessLevel;
+		setWindowBrightnessImpl();
+	}
+
+	private void setWindowBrightnessImpl() {
 		Window window = getWindow();
 		if (window == null) {
 			logWarning("Will not set brightness... no window");
 			return;
 		}
 
-		WindowManager.LayoutParams lp = window.getAttributes();
+		if (brightnessLevel == UNKNOWN)
+			return;
+
+		LayoutParams lp = window.getAttributes();
 		lp.screenBrightness = getBrightnessAsFloat(brightnessLevel);
 		logDebug("Setting WINDOW Screen Brightness: " + lp.screenBrightness);
 		window.setAttributes(lp);
@@ -140,7 +157,11 @@ public class ScreenOptionsModule
 	 * @return Requested orientation.
 	 */
 	public ScreenOrientation getRequestedScreenOrientation() {
-		return ScreenOrientation.getOrientationByValue(getActivity().getRequestedOrientation());
+		Activity activity = getActivity();
+		if (activity == null)
+			return ScreenOrientation.UNSPECIFIED;
+
+		return ScreenOrientation.getOrientationByValue(activity.getRequestedOrientation());
 	}
 
 	/**
@@ -149,6 +170,78 @@ public class ScreenOptionsModule
 	 */
 	public boolean isLandscape() {
 		return getResources().getDisplayMetrics().widthPixels > getResources().getDisplayMetrics().heightPixels;
+	}
+
+	public void keepScreenAwake(boolean toKeepScreenAwake) {
+		this.stateKeepScreenAwake = toKeepScreenAwake;
+		keepScreenAwakeImpl();
+	}
+
+	public void setFullscreen(boolean toSetFullScreen) {
+		this.stateFullScreen = toSetFullScreen;
+		setFullScreenImpl();
+	}
+
+	private void keepScreenAwakeImpl() {
+		setScreenAwakeFlagsImpl();
+		dismissKeyguardImpl();
+	}
+
+	private void dismissKeyguardImpl() {
+		Activity activity = getActivity();
+		if (activity == null) {
+			logWarning("Will not dismiss keyguard... no activity");
+			return;
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.O) // Setting the flags is enough for api 25 and below.
+			getSystemService(KeyguardService).requestDismissKeyguard(activity, null);
+	}
+
+	private void setScreenAwakeFlagsImpl() {
+		Window window = getWindow();
+		if (window == null) {
+			logWarning("Will not set screen awake state... no window");
+			return;
+		}
+
+		if (this.stateKeepScreenAwake == null)
+			return;
+
+		if (this.stateKeepScreenAwake) {
+			// As long as this window is visible to the user, keep the device's screen turned on and bright.
+			window.addFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+			// Since keyguard was dismissed all the time as long as an activity with this flag on its window was focused, keyguard couldn't guard against unintentional touches on the screen, which isn't desired. Deprecates at api 26
+			window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+			// Like FLAG_DISMISS_KEYGUARD - just deprecates at api 27, instead of 26. Deprecates at api 27
+			window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+
+			// When set as a window is being added or made visible, once the window has been shown then the system will poke the power manager's user activity (as if the user had woken up the device) to turn the screen on. Deprecates at api 27
+			window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
+		} else {
+			window.clearFlags(LayoutParams.FLAG_KEEP_SCREEN_ON);
+			window.clearFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
+			window.clearFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+			window.clearFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
+		}
+	}
+
+	private void setFullScreenImpl() {
+		Window window = getWindow();
+		if (window == null) {
+			logWarning("Will not set full screen mode... no window");
+			return;
+		}
+
+		if (this.stateFullScreen == null)
+			return;
+
+		if (this.stateFullScreen)
+			window.addFlags(LayoutParams.FLAG_FULLSCREEN); // Hide all screen decorations (such as the status bar) while this window is displayed.
+		else
+			window.clearFlags(LayoutParams.FLAG_FULLSCREEN);
 	}
 
 	public enum ScreenOrientation {
@@ -160,7 +253,7 @@ public class ScreenOptionsModule
 		SENSOR(SCREEN_ORIENTATION_SENSOR),
 		NOSENSOR(SCREEN_ORIENTATION_NOSENSOR),
 		SENSOR_LANDSCAPE(SCREEN_ORIENTATION_SENSOR_LANDSCAPE),
-		SENSOR_OIRTRAUT(SCREEN_ORIENTATION_SENSOR_PORTRAIT),
+		SENSOR_PORTRAIT(SCREEN_ORIENTATION_SENSOR_PORTRAIT),
 		REVERSE_LANDSCAPE(SCREEN_ORIENTATION_REVERSE_LANDSCAPE),
 		REVERSE_PORTRAIT(SCREEN_ORIENTATION_REVERSE_PORTRAIT),
 		FULL_SENSOR(SCREEN_ORIENTATION_FULL_SENSOR),
@@ -183,6 +276,5 @@ public class ScreenOptionsModule
 				}
 			});
 		}
-
 	}
 }
