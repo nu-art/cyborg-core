@@ -174,6 +174,7 @@ public class ImageDownloaderModule
 
 		public final void download() {
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
+			downloaderBuilder.setUrl(url);
 			downloaderBuilder.setCacheable(cacheable);
 			downloaderBuilder.onBefore(onBefore);
 			downloaderBuilder.onAfter(onAfter);
