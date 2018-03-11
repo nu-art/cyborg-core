@@ -180,6 +180,7 @@ public class ImageDownloaderModule
 			downloaderBuilder.onAfter(onAfter);
 			downloaderBuilder.setDownloader(downloader);
 			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
+
 				@Override
 				public void process(Bitmap bitmap) {
 					if (cancelled)

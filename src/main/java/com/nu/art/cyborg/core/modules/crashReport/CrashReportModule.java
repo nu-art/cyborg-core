@@ -88,6 +88,10 @@ public class CrashReportModule
 		this.crashReportHandler = crashReportHandler;
 	}
 
+	public void setDefaultExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler) {
+		this.defaultExceptionHandler = defaultExceptionHandler;
+	}
+
 	@Override
 	protected void init() {
 		if (crashReportHandler == null)
@@ -96,7 +100,9 @@ public class CrashReportModule
 		sendDebugCrashReports = getModule(PreferencesModule.class).new BooleanPreference("sendDebugCrashReports", false);
 		hasCrashReportWaiting = getModule(PreferencesModule.class).new BooleanPreference("hasCrashReportWaiting", false);
 
-		defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+		if (defaultExceptionHandler != null)
+			defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+
 		Thread.setDefaultUncaughtExceptionHandler(this);
 		if (isDebug())
 			forceStrictPolicy();

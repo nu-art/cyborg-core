@@ -51,11 +51,9 @@
             </intent-filter>
         </receiver>
 
-        <receiver
-            android:name="com.nu.art.cyborg.modules.scheduler.TasksReceiver"
-            android:enabled="false"
-            />
+        <receiver android:name="com.nu.art.cyborg.modules.scheduler.TasksReceiver"/>
 
         <service android:name="com.nu.art.cyborg.core.ApplicationService"/>
+
     </application>
 </manifest>
