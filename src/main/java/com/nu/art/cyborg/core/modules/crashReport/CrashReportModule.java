@@ -100,7 +100,7 @@ public class CrashReportModule
 		sendDebugCrashReports = getModule(PreferencesModule.class).new BooleanPreference("sendDebugCrashReports", false);
 		hasCrashReportWaiting = getModule(PreferencesModule.class).new BooleanPreference("hasCrashReportWaiting", false);
 
-		if (defaultExceptionHandler != null)
+		if (defaultExceptionHandler == null)
 			defaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
 		Thread.setDefaultUncaughtExceptionHandler(this);
