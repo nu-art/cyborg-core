@@ -174,11 +174,13 @@ public class ImageDownloaderModule
 
 		public final void download() {
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
+			downloaderBuilder.setUrl(url);
 			downloaderBuilder.setCacheable(cacheable);
 			downloaderBuilder.onBefore(onBefore);
 			downloaderBuilder.onAfter(onAfter);
 			downloaderBuilder.setDownloader(downloader);
 			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
+
 				@Override
 				public void process(Bitmap bitmap) {
 					if (cancelled)

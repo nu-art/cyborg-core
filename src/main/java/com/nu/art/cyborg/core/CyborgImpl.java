@@ -456,7 +456,7 @@ final class CyborgImpl
 
 		if (connection == null) {
 			serviceConnections.put(cls, connection = new GenericServiceConnection<>(cls));
-			Intent serviceIntent = new Intent(getApplicationContext(), ApplicationService.class);
+			Intent serviceIntent = new Intent(getApplicationContext(), cls);
 			getApplicationContext().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
 		}
 
