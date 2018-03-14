@@ -390,7 +390,12 @@ public final class CyborgStackController
 	}
 
 	private StackLayer getTopLayer(boolean remove) {
-		StackLayer layer = layersStack.size() == (withRoot && remove ? 1 : 0) ? null : layersStack.get(layersStack.size() - 1);
+		int size = layersStack.size();
+		int index = size == (withRoot && remove ? 1 : 0) ? -1 : size - 1;
+		if (index == -1)
+			return null;
+
+		StackLayer layer = layersStack.get(index);
 
 		if (remove)
 			removeStackLayer(layer);
@@ -765,8 +770,7 @@ public final class CyborgStackController
 					StackLayer originLayer = targetLayerToBeRemove.keepBackground ? null : originLayerToBeRestored; // background is already visible do not animate it
 
 					// All Animations are performed together, the listener MUST be called only once
-					animator.animateOut(originLayer, targetLayerToBeRemove, duration,
-															animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					animator.animateOut(originLayer, targetLayerToBeRemove, duration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		};
@@ -776,7 +780,7 @@ public final class CyborgStackController
 			return true;
 		}
 
-		if(targetLayerToBeRemove.keepBackground) {
+		if (targetLayerToBeRemove.keepBackground) {
 			startAnimation.run();
 			return true;
 		}
