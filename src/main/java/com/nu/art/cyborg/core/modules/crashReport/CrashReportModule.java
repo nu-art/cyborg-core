@@ -121,6 +121,12 @@ public class CrashReportModule
 	}
 
 	@Override
+	protected void printModuleDetails() {
+		super.printModuleDetails();
+		logDebug("hasCrashReportWaiting: " + hasCrashReportWaiting.get());
+	}
+
+	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
 		logError("Crash on thread: " + thread.getName(), ex);
 		logError(" ");
@@ -139,10 +145,16 @@ public class CrashReportModule
 		defaultExceptionHandler.uncaughtException(thread, ex);
 	}
 
-	@Override
-	protected void printModuleDetails() {
-		super.printModuleDetails();
-		logDebug("hasCrashReportWaiting: " + hasCrashReportWaiting.get());
+	public void composeAndSendReport() {
+		composeAndSendReport(null, null, false);
+	}
+
+	public void composeAndSendReport(String uuid) {
+		composeAndSendReport(uuid, null, null, false);
+	}
+
+	public void composeAndSendReport(Throwable ex) {
+		composeAndSendReport(Thread.currentThread(), ex, false);
 	}
 
 	private void composeAndSendReport(Thread thread, Throwable ex, boolean crashed) {
@@ -150,13 +162,13 @@ public class CrashReportModule
 	}
 
 	private void composeAndSendReport(String uuid, Thread thread, Throwable ex, boolean crashed) {
-		crashReport = new CrashReport(uuid);
-		crashReport.crashMessage = composeMessage(thread, ex, crashed);
-		crashReport.modulesData = collectModulesData();
-		crashReport.runningThreads = getRunningThreads();
-		crashReport.threadTraces = getTraces();
-
 		try {
+			crashReport = new CrashReport(uuid);
+			crashReport.crashMessage = composeMessage(thread, ex, crashed);
+			crashReport.modulesData = collectModulesData();
+			crashReport.runningThreads = getRunningThreads();
+			crashReport.threadTraces = getTraces();
+
 			crashReportHandler.prepareAndBackupCrashReport(crashReport);
 			hasCrashReportWaiting.set(true);
 
@@ -222,18 +234,6 @@ public class CrashReportModule
 	//	public ReportBuilder composeReport() {
 	//		return new ReportBuilder();
 	//	}
-
-	public void composeAndSendReport() {
-		composeAndSendReport(null, null, false);
-	}
-
-	public void composeAndSendReport(String uuid) {
-		composeAndSendReport(uuid, null, null, false);
-	}
-
-	public void composeAndSendReport(Throwable ex) {
-		composeAndSendReport(Thread.currentThread(), ex, false);
-	}
 
 	private String composeMessage(Thread thread, Throwable ex, boolean crash) {
 		StringBuilder crashReport = new StringBuilder();
