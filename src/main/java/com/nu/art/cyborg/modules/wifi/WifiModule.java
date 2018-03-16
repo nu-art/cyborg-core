@@ -48,6 +48,7 @@ public class WifiModule
 	private WifiItem_AdapterState WifiAdapter;
 
 	private WifiItem_Scanner WifiNetworkScanner;
+	private String macAddress;
 
 	@Override
 	protected void init() {
@@ -158,12 +159,16 @@ public class WifiModule
 										 "MissingPermission"
 								 })
 	public String calculateMacAddress() {
+		if (macAddress != null)
+			return macAddress;
+
 		String macAddress = null;
 		if (Build.VERSION.SDK_INT < 23) {
 			// generate a unique id from MAC address of the WiFi
 			WifiInfo info = getSystemService(WifiService).getConnectionInfo();
-			return info.getMacAddress();
+			return this.macAddress = info.getMacAddress();
 		}
+
 		try {
 			List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
 			for (NetworkInterface nif : all) {
@@ -190,7 +195,7 @@ public class WifiModule
 				}
 
 				macAddress = res1.toString();
-				return macAddress;
+				return this.macAddress = macAddress;
 			}
 		} catch (Exception e) {
 			// TODO What ddo weo we do once unable to get wifi mac
@@ -207,6 +212,6 @@ public class WifiModule
 			}
 		}
 
-		return macAddress;
+		return this.macAddress = macAddress;
 	}
 }

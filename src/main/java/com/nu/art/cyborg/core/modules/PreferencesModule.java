@@ -443,9 +443,13 @@ public final class PreferencesModule
 		}
 
 		public void set(ItemType value) {
+			set(value, true);
+		}
+
+		public void set(ItemType value, boolean printToLog) {
 			String valueAsString = value == null ? null : serializer.serialize(value);
 			cache = value;
-			key.set(valueAsString);
+			key.set(valueAsString, printToLog);
 		}
 
 		public void delete() {

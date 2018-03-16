@@ -188,9 +188,9 @@ public interface Cyborg
 	/**
 	 * Will return the value associated with the MetaData tag from the manifest
 	 *
-	 * @param key The tag key
-	 *
+	 * @param key          The tag key
 	 * @param defaultValue
+	 *
 	 * @return The tag value
 	 */
 	String getValueFromManifest(String key, String defaultValue);

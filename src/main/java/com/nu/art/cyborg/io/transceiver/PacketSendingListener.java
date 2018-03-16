@@ -5,6 +5,8 @@ package com.nu.art.cyborg.io.transceiver;
  */
 
 public interface PacketSendingListener {
+
 	void onSuccess();
+
 	void onError(Throwable t);
 }
