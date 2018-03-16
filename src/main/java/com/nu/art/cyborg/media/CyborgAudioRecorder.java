@@ -13,8 +13,8 @@ import android.support.annotation.NonNull;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Condition;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
 

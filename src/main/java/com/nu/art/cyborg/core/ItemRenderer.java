@@ -23,10 +23,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.CyborgAdapter.PositionResolver;
-import com.nu.art.cyborg.core.consts.DebugFlags;
 
-import static com.nu.art.cyborg.core.consts.DebugFlags.Performance;
+import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 
 /**
  * This is a very important class, it is used to render items in {@link CyborgAdapter}...see example project!
@@ -56,7 +56,7 @@ public abstract class ItemRenderer<ItemType>
 	public final void render() {
 		long startMs = System.currentTimeMillis();
 		renderItem(item);
-		if (DebugFlags.isDebuggableFlag(Performance))
+		if (DebugFlags.isDebuggableFlag(Debug_Performance))
 			logVerbose("Render duration: " + (System.currentTimeMillis() - startMs) + "ms");
 	}
 

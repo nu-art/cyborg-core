@@ -39,11 +39,11 @@ import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
-import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
 import com.nu.art.reflection.tools.ReflectiveTools;
@@ -52,7 +52,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.nu.art.cyborg.core.consts.DebugFlags.Performance;
+import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 
 /**
  * Created by TacB0sS on 25-Jun 2015.
@@ -545,7 +545,7 @@ public final class CyborgStackController
 
 			push(this);
 
-			if (DebugFlags.isDebuggableFlag(Performance))
+			if (DebugFlags.isDebuggableFlag(Debug_Performance))
 				logDebug("Open Controller (" + controllerType + "): " + (System.currentTimeMillis() - started) + "ms");
 		}
 	}

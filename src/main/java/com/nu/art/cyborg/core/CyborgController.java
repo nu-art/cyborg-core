@@ -59,6 +59,7 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.beans.ModelEvent;
@@ -75,7 +76,6 @@ import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
-import com.nu.art.cyborg.core.consts.DebugFlags;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
@@ -92,7 +92,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Random;
 
-import static com.nu.art.cyborg.core.consts.DebugFlags.Performance;
+import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
@@ -159,7 +159,7 @@ public abstract class CyborgController
 
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
-		if (DebugFlags.isDebuggableFlag(Performance))
+		if (DebugFlags.isDebuggableFlag(Debug_Performance))
 			logVerbose("Instantiated");
 		this.layoutId = layoutId;
 		cyborg = CyborgBuilder.getInstance();
@@ -199,20 +199,20 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	private void injectMembers() {
-		if (DebugFlags.isDebuggableFlag(Performance))
+		if (DebugFlags.isDebuggableFlag(Debug_Performance))
 			logVerbose("injectMembers");
 		CyborgViewInjector viewInjector = new CyborgViewInjector(rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 
-		if (DebugFlags.isDebuggableFlag(Performance))
+		if (DebugFlags.isDebuggableFlag(Debug_Performance))
 			logVerbose("viewInjector");
 		viewInjector.injectToInstance(this);
 
-		if (DebugFlags.isDebuggableFlag(Performance))
+		if (DebugFlags.isDebuggableFlag(Debug_Performance))
 			logVerbose("moduleInjector");
 		moduleInjector.injectToInstance(this);
 
-		if (DebugFlags.isDebuggableFlag(Performance))
+		if (DebugFlags.isDebuggableFlag(Debug_Performance))
 			logVerbose("done");
 	}
 

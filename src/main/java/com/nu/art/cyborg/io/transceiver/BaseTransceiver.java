@@ -22,6 +22,7 @@ import android.os.Handler;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 
@@ -119,9 +120,12 @@ public abstract class BaseTransceiver
 		setState(Idle);
 	}
 
-	public final void disconnect() {
-		logInfo("Disconnecting");
+	@Override
+	protected boolean isLoggerEnabled() {
+		return DebugFlags.isDebuggableFlag(DebugFlag);
+	}
 
+	public final void disconnect() {
 		if (state == Idle) {
 			logWarning("Cannot disconnect, State is Disconnected");
 			return;
