@@ -35,6 +35,8 @@ import static com.nu.art.cyborg.io.transceiver.ConnectionState.Idle;
 public abstract class BaseTransceiver
 		extends Logger {
 
+	public static final String DebugFlag = "Debug_" + BaseTransceiver.class.getSimpleName();
+
 	protected SocketWrapper socket;
 
 	private ConnectionState state = Idle;
@@ -59,6 +61,8 @@ public abstract class BaseTransceiver
 			try {
 				listen = true;
 				while (listen) {
+					logDebug("live");
+
 					setState(Connecting);
 					receiver.removeCallbacksAndMessages(null);
 
@@ -67,10 +71,15 @@ public abstract class BaseTransceiver
 
 					while (socket.isConnected()) {
 						try {
+							logDebug("waiting for packet");
 							processPacket();
 						} catch (SocketException e) {
+							logError("SocketException");
+
 							break;
 						} catch (IOException e) {
+							logError("IOException");
+
 							try {
 								socket.close();
 							} catch (IOException e1) {
@@ -78,20 +87,25 @@ public abstract class BaseTransceiver
 							}
 						} catch (Exception e) {
 							notifyError(e);
+							logError("inner Exception");
 						}
 					}
 					if (oneShot)
 						break;
 				}
 			} catch (Exception e) {
+				logError("outer Exception");
 				notifyError(e);
 			} finally {
+				logDebug("died");
+
 				_disconnectImpl();
 			}
 		}
 	};
 
 	private void _disconnectImpl() {
+		logInfo("+---+ Disconnecting...");
 		setState(ConnectionState.Disconnecting);
 		disconnectImpl();
 		try {
@@ -103,6 +117,18 @@ public abstract class BaseTransceiver
 
 		socket = null;
 		setState(Idle);
+	}
+
+	public final void disconnect() {
+		logInfo("Disconnecting");
+
+		if (state == Idle) {
+			logWarning("Cannot disconnect, State is Disconnected");
+			return;
+		}
+
+		listen = false;
+		_disconnectImpl();
 	}
 
 	protected void disconnectImpl() {}
@@ -163,7 +189,9 @@ public abstract class BaseTransceiver
 
 	protected void processPacket()
 			throws IOException {
-		notifyNewPacket(packetSerializer.extractPacket(socket.getInputStream()));
+		Packet packet = packetSerializer.extractPacket(socket.getInputStream());
+		logDebug("Process packet: " + packet);
+		notifyNewPacket(packet);
 	}
 
 	public final void addListener(TransceiverListener listener) {
@@ -203,31 +231,6 @@ public abstract class BaseTransceiver
 
 	protected abstract SocketWrapper connectImpl()
 			throws Exception;
-
-	public final void disconnect() {
-		logInfo("Disconnecting");
-
-		if (state == Idle) {
-			logWarning("Cannot disconnect, State is Disconnected");
-			return;
-		}
-
-		listen = false;
-
-		if (socket == null) {
-			logWarning("Cannot disconnect, Socket is null");
-			setState(Idle);
-			return;
-		}
-
-		logInfo("+---+ Disconnecting...");
-
-		try {
-			socket.close();
-		} catch (IOException e) {
-			notifyError(e);
-		}
-	}
 
 	protected final void notifyError(Exception e) {
 		for (TransceiverListener listener : listeners) {
