@@ -58,7 +58,7 @@ public abstract class CyborgServiceBase
 		logInfo("Service created " + super.toString().split("@")[1]);
 	}
 
-	protected abstract BaseBinder createBinder();
+	protected abstract IBinder createBinder();
 
 	public final <Type extends CyborgModule> Type getModule(Class<Type> moduleType) {
 		return cyborg.getModule(moduleType);
