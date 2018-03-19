@@ -17,7 +17,7 @@ Cyborg defines things a bit differently to overcome some of Android design flaws
 
 
 ## Cyborg's other benefits:
- - Remove completely the Fragment's infemous IllegalStateException(by removing Fragments).
+ - Remove completely the Fragment's infamous IllegalStateException(by removing Fragments).
  - Reduce drastically any possibility for memory leaks, context leaks crashes.
  - Compile type safe enforcement by using generics wherever possible.
  - Recycler views with multiple item types in few lines of code.

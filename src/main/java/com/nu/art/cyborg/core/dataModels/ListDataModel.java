@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core.dataModels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class ListDataModel<Item>
 		addAll(Arrays.asList(items));
 	}
 
-	public final void addAll(List<Item> items) {
+	public final void addAll(Collection<Item> items) {
 		this.items.addAll(items);
 		dispatchDataSetChanged();
 	}
