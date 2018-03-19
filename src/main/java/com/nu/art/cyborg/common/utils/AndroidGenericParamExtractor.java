@@ -9,8 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 public class AndroidGenericParamExtractor
-		extends Logger
-		implements GenericParamExtractor {
+	extends Logger
+	implements GenericParamExtractor {
 
 	private Field argsField;
 
@@ -18,13 +18,47 @@ public class AndroidGenericParamExtractor
 
 	public AndroidGenericParamExtractor() {
 		try {
-			Class<?> parameterizedType = Class.forName("libcore.reflect.ParameterizedTypeImpl");
-			argsField = parameterizedType.getDeclaredField("args");
+			Class<?> parametrizedType = getParameterizedType();
+			argsField = parametrizedType.getDeclaredField("args");
 			argsField.setAccessible(true);
 
-			Class<?> listOfTypes = Class.forName("libcore.reflect.ListOfTypes");
+			Class<?> listOfTypes = getListOfTypes();
 			resolvedTypesField = listOfTypes.getDeclaredField("resolvedTypes");
 			resolvedTypesField.setAccessible(true);
+		} catch (Throwable e) {
+			throw new MUST_NeverHappenedException("Error extracting processor generic parameter fields for runtime use", e);
+		}
+	}
+
+	private Class<?> getListOfTypes()
+		throws ClassNotFoundException {
+		try {
+			return Class.forName("libcore.reflect.ListOfTypes");
+		} catch (Throwable ignore) {}
+
+		try {
+			return Class.forName("sun.reflect.generics.reflectiveObjects.ListOfTypes");
+		} catch (Throwable ignore) {}
+
+		try {
+			return Class.forName("org.apache.harmony.luni.lang.reflect.ListOfTypes");
+		} catch (Throwable e) {
+			throw new MUST_NeverHappenedException("Error extracting processor generic parameter fields for runtime use", e);
+		}
+	}
+
+	private Class<?> getParameterizedType()
+		throws ClassNotFoundException {
+		try {
+			return Class.forName("libcore.reflect.ParameterizedTypeImpl");
+		} catch (Throwable ignore) {}
+
+		try {
+			return Class.forName("sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl");
+		} catch (Throwable ignore) {}
+
+		try {
+			return Class.forName("org.apache.harmony.luni.lang.reflect.ImplForType");
 		} catch (Throwable e) {
 			throw new MUST_NeverHappenedException("Error extracting processor generic parameter fields for runtime use", e);
 		}
