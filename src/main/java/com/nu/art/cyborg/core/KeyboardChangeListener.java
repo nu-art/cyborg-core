@@ -77,6 +77,8 @@ public class KeyboardChangeListener {
 
 	private void removeLayoutChangeListener() {
 		final View activityRootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+		if (activityRootView == null)
+			return;
 
 		ViewTreeObserver viewTreeObserver = activityRootView.getViewTreeObserver();
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
@@ -87,6 +89,8 @@ public class KeyboardChangeListener {
 
 	private void addLayoutChangeListener() {
 		final View activityRootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+		if (activityRootView == null)
+			return;
 
 		activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(layoutChangeListener = new OnGlobalLayoutListener() {
 

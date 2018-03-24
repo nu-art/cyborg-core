@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.core.dataModels;
 
-import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.cyborg.core.CyborgAdapter;
 
 /**
  * Created by TacB0sS on 22-Jun 2015.
@@ -43,36 +43,25 @@ public abstract class DataModel<Item> {
 
 	public abstract void renderItemAtPosition(int position);
 
-	private DataModelListener[] listeners = {};
-
-	public final void addDataModelListener(DataModelListener listener) {
-		listeners = ArrayTools.appendElement(listeners, listener);
-	}
-
-	public final void removeDataModelListener(DataModelListener listener) {
-		listeners = ArrayTools.removeElement(listeners, listener);
-	}
+	protected CyborgAdapter adapter;
 
 	public final void setCyclic() {
 		cyclic = true;
 	}
 
+	public void setAdapter(CyborgAdapter<?> adapter) {
+		this.adapter = adapter;
+	}
+
 	protected final void dispatchDataSetChanged() {
-		for (DataModelListener listener : listeners) {
-			listener.onDataSetChanged();
-		}
+		adapter.onDataSetChanged();
+	}
+
+	protected final void dispatchItemRangeInserted(int from, int to) {
+		adapter.onItemRangeInserted(from, to);
 	}
 
 	protected final void dispatchItemAtPositionChanged(int position) {
-		for (DataModelListener listener : listeners) {
-			listener.onItemAtPositionChanged(position);
-		}
-	}
-
-	public interface DataModelListener {
-
-		void onDataSetChanged();
-
-		void onItemAtPositionChanged(int position);
+		adapter.onItemAtPositionChanged(position);
 	}
 }

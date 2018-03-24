@@ -58,7 +58,7 @@ import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
  * Created by TacB0sS on 25-Jun 2015.
  */
 public final class CyborgStackController
-		extends CyborgController {
+	extends CyborgController {
 
 	public static abstract class StackTransitionAnimator {
 
@@ -272,6 +272,8 @@ public final class CyborgStackController
 
 		protected abstract void create();
 
+		protected abstract void pause();
+
 		public abstract void append();
 
 		public abstract void build();
@@ -412,7 +414,7 @@ public final class CyborgStackController
 	}
 
 	public class StackLayerBuilder
-			extends StackLayer {
+		extends StackLayer {
 
 		private Class<? extends CyborgController> controllerType;
 
@@ -471,6 +473,12 @@ public final class CyborgStackController
 
 			resume();
 			CyborgStackController.this.addNestedController(controller);
+		}
+
+		@Override
+		protected void pause() {
+			if (getState() == LifeCycleState.OnResume)
+				controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
 		}
 
 		@Override
@@ -576,7 +584,10 @@ public final class CyborgStackController
 		//		activityBridge.removeController(this);
 		//		activityBridge.addController(this);
 
-		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground ? null : getTopLayer();
+		StackLayer topLayer = getTopLayer();
+		if (targetLayerToBeAdded.keepBackground)
+			topLayer.pause();
+		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground ? null : topLayer;
 		if (originLayerToBeDisposed != null)
 			originLayerToBeDisposed.preDestroy();
 
@@ -645,7 +656,7 @@ public final class CyborgStackController
 
 					// All Animations are performed together, the listener MUST be called only once
 					animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
-														 animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					                   animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		});

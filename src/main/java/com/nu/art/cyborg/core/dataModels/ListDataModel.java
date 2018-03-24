@@ -28,7 +28,7 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public class ListDataModel<Item>
-		extends DataModel<Item> {
+	extends DataModel<Item> {
 
 	private final Class<? extends Item>[] itemsType;
 
@@ -47,8 +47,10 @@ public class ListDataModel<Item>
 	}
 
 	public final void addAll(Collection<Item> items) {
+		int size = this.items.size();
 		this.items.addAll(items);
-		dispatchDataSetChanged();
+		if (adapter != null)
+			adapter.onItemRangeInserted(size, items.size());
 	}
 
 	public final void removeItems(Item... items) {
@@ -56,8 +58,23 @@ public class ListDataModel<Item>
 	}
 
 	public final void removeItems(List<Item> items) {
-		this.items.removeAll(items);
-		dispatchDataSetChanged();
+		int position = -1;
+		if (items.size() == 1)
+			position = getPositionByItem(items.get(0));
+
+		boolean removed = this.items.removeAll(items);
+		if (position >= 0) {
+			if (adapter != null)
+				adapter.onItemRemoved(position);
+			return;
+		}
+
+		if (!removed)
+			return;
+
+		// TODO: can add a calculation of minimal range..
+		if (adapter != null)
+			adapter.onDataSetChanged();
 	}
 
 	@Override
@@ -107,6 +124,7 @@ public class ListDataModel<Item>
 		int position = getPositionByItem(item);
 		if (position == -1)
 			return;
+
 		renderItemAtPosition(position);
 	}
 
@@ -116,11 +134,13 @@ public class ListDataModel<Item>
 
 	@Override
 	public void renderItemAtPosition(int position) {
-		dispatchItemAtPositionChanged(position % items.size());
+		if (adapter != null)
+			adapter.onItemAtPositionChanged(position);
 	}
 
 	public final void notifyDataSetChanged() {
-		dispatchDataSetChanged();
+		if (adapter != null)
+			adapter.onDataSetChanged();
 	}
 
 	public final void setItems(Item... items) {

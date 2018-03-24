@@ -25,14 +25,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.nu.art.belog.Logger;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ClassInstantiationRuntimeException;
+import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.util.HashMap;
 
 final class ReceiversManager
-		extends Logger {
+	extends Logger {
 
 	private final Cyborg cyborg;
 
@@ -63,7 +65,7 @@ final class ReceiversManager
 
 		Receiver receiver = (Receiver) registeredReceivers.get(receiverType);
 		if (receiver != null) {
-			logWarning("Attempt to RE-register a receiver '" + receiverType.getSimpleName() + "'");
+			logWarning("", new WhoCalledThis("Attempt to RE-register a receiver '" + receiverType.getSimpleName() + "'"));
 			return;
 		}
 		try {

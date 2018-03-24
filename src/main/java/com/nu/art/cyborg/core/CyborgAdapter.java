@@ -36,7 +36,6 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
-import com.nu.art.cyborg.core.dataModels.DataModel.DataModelListener;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
@@ -45,8 +44,7 @@ import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 
 @SuppressWarnings("unchecked")
 public class CyborgAdapter<Item>
-		extends Logger
-		implements DataModelListener {
+	extends Logger {
 
 	private final Class<? extends ItemRenderer<? extends Item>>[] renderersTypes;
 
@@ -97,23 +95,9 @@ public class CyborgAdapter<Item>
 	 */
 	@Deprecated
 	public final void setDataModel(DataModel<Item> dataModel) {
-		if (this.dataModel != null)
-			this.dataModel.removeDataModelListener(this);
-
 		this.dataModel = dataModel;
-		this.dataModel.addDataModelListener(this);
-		notifyDataSetChanged();
-	}
-
-	private void notifyDataSetChanged() {
-		if (recyclerAdapter != null)
-			recyclerAdapter.notifyDataSetChanged();
-
-		if (arrayAdapter != null)
-			arrayAdapter.notifyDataSetChanged();
-
-		if (pagerAdapter != null)
-			pagerAdapter.notifyDataSetChanged();
+		this.dataModel.setAdapter(this);
+		onDataSetChanged();
 	}
 
 	private ItemRenderer<? extends Item> createRendererForType(ViewGroup parent, int typeIndex) {
@@ -212,26 +196,54 @@ public class CyborgAdapter<Item>
 	//		return renderers.get(item);
 	//	}
 
-	@Override
 	public void onDataSetChanged() {
 		cyborg.assertMainThread();
 		if (recyclerAdapter != null)
 			recyclerAdapter.notifyDataSetChanged();
-		if (pagerAdapter != null)
-			pagerAdapter.notifyDataSetChanged();
-		if (arrayAdapter != null)
-			arrayAdapter.notifyDataSetChanged();
+		android_DataSetChanged();
 	}
 
-	@Override
+	private void android_DataSetChanged() {
+		if (arrayAdapter != null)
+			arrayAdapter.notifyDataSetChanged();
+
+		if (pagerAdapter != null)
+			pagerAdapter.notifyDataSetChanged();
+	}
+
+	public void onItemRangeInserted(int from, int to) {
+		cyborg.assertMainThread();
+		if (recyclerAdapter != null)
+			recyclerAdapter.notifyItemRangeChanged(from, to);
+		android_DataSetChanged();
+	}
+
+	public void onItemMoved(int from, int to) {
+		cyborg.assertMainThread();
+		if (recyclerAdapter != null)
+			recyclerAdapter.notifyItemMoved(from, to);
+		android_DataSetChanged();
+	}
+
+	public void onItemRangeRemoved(int from, int to) {
+		cyborg.assertMainThread();
+		if (recyclerAdapter != null)
+			recyclerAdapter.notifyItemRangeRemoved(from, to);
+		android_DataSetChanged();
+	}
+
+	public void onItemRemoved(int position) {
+		cyborg.assertMainThread();
+		if (recyclerAdapter != null)
+			recyclerAdapter.notifyItemRemoved(position);
+		android_DataSetChanged();
+	}
+
 	public void onItemAtPositionChanged(int position) {
 		cyborg.assertMainThread();
 		if (recyclerAdapter != null)
 			recyclerAdapter.notifyItemChanged(position);
-		if (pagerAdapter != null)
-			pagerAdapter.notifyDataSetChanged();
-		if (arrayAdapter != null)
-			arrayAdapter.notifyDataSetChanged();
+		android_DataSetChanged();
 	}
 
 	public final CyborgArrayAdapter getArrayAdapter() {
@@ -254,7 +266,7 @@ public class CyborgAdapter<Item>
 	}
 
 	private class CyborgPagerAdapter
-			extends PagerAdapter {
+		extends PagerAdapter {
 
 		@Override
 		public final View instantiateItem(ViewGroup parent, int position) {
@@ -334,7 +346,7 @@ public class CyborgAdapter<Item>
 	}
 
 	private class CyborgArrayAdapter
-			extends ArrayAdapter {
+		extends ArrayAdapter {
 
 		public CyborgArrayAdapter() {
 			super(controller.getActivity(), -1);
@@ -393,8 +405,8 @@ public class CyborgAdapter<Item>
 	}
 
 	private class CyborgDefaultHolder
-			extends ViewHolder
-			implements PositionResolver {
+		extends ViewHolder
+		implements PositionResolver {
 
 		private ItemRenderer<? extends Item> renderer;
 
@@ -411,8 +423,8 @@ public class CyborgAdapter<Item>
 	}
 
 	public final class CyborgRecyclerAdapter
-			extends Adapter<CyborgDefaultHolder>
-			implements OnClickListener, OnLongClickListener {
+		extends Adapter<CyborgDefaultHolder>
+		implements OnClickListener, OnLongClickListener {
 
 		private long longClickTimeStamp;
 

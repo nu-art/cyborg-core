@@ -109,14 +109,14 @@ import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
  * <b>I can elaborate about the controller's magnificence for 50 more lines, but instead just explore the API, and check out the sample project!</b>
  */
 @SuppressWarnings( {
-											 "unused",
-											 "deprecation",
-											 "unchecked",
-											 "WeakerAccess"
-									 })
+	                   "unused",
+	                   "deprecation",
+	                   "unchecked",
+	                   "WeakerAccess"
+                   })
 public abstract class CyborgController
-		extends Logger
-		implements ICyborgController {
+	extends Logger
+	implements ICyborgController {
 
 	public static final String DebugFlag = "Debug_" + CyborgController.class.getSimpleName();
 
@@ -180,10 +180,33 @@ public abstract class CyborgController
 	 * Common use case would be the background of dialogs, once user clicks the shaded area you can block the click events from propagating to the under visible
 	 * view.
 	 */
-	protected final void blockClickEvents() {
+	protected final void blockTouchEvents() {
 		rootView.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
+	}
+
+	/**
+	 * @deprecated use #blockTouchEvents instead
+	 */
+	@Deprecated
+	protected final void blockClickEvents() {
+		blockTouchEvents();
+	}
+
+	protected final void enableTouchEvents() {
+		rootView.setOnTouchListener(null);
+	}
+
+	protected final void dismissOnTouchEvent() {
+		rootView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				enableTouchEvents();
+				activityBridge.onBackPressed();
 				return true;
 			}
 		});
@@ -326,7 +349,7 @@ public abstract class CyborgController
 
 		if (!(view instanceof ViewGroup))
 			throw new BadImplementationException("The provided viewId is to a " + view.getClass()
-																																								.getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
+			                                                                          .getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
 
 		((ViewGroup) view).removeAllViews();
 		((ViewGroup) view).addView(viewToInject);
@@ -690,7 +713,7 @@ public abstract class CyborgController
 	}
 
 	final class ActionDelegator
-			extends UserActionsDelegatorImpl {
+		extends UserActionsDelegatorImpl {
 
 		public ActionDelegator(Cyborg cyborg) {
 			super(cyborg);
@@ -1232,7 +1255,7 @@ public abstract class CyborgController
 
 	@Override
 	public final InputStream getAsset(String assetName)
-			throws IOException {
+		throws IOException {
 		return cyborg.getAsset(assetName);
 	}
 
