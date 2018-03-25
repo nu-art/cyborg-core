@@ -58,7 +58,7 @@ import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
  * Created by TacB0sS on 25-Jun 2015.
  */
 public final class CyborgStackController
-		extends CyborgController {
+	extends CyborgController {
 
 	public static abstract class StackTransitionAnimator {
 
@@ -149,7 +149,8 @@ public final class CyborgStackController
 		if (rootLayoutId != -1)
 			layerBuilder.setLayoutId(rootLayoutId);
 
-		layerBuilder.setRefKey(rootTag);
+		if (rootTag != null)
+			layerBuilder.setRefKey(rootTag);
 
 		if (rootControllerType != null)
 			layerBuilder.setControllerType(rootControllerType);
@@ -412,7 +413,7 @@ public final class CyborgStackController
 	}
 
 	public class StackLayerBuilder
-			extends StackLayer {
+		extends StackLayer {
 
 		private Class<? extends CyborgController> controllerType;
 
@@ -645,7 +646,7 @@ public final class CyborgStackController
 
 					// All Animations are performed together, the listener MUST be called only once
 					animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
-														 animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					                   animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		});
