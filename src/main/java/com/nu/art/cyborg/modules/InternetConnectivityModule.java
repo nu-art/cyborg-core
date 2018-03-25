@@ -12,7 +12,7 @@ import com.nu.art.cyborg.core.modules.ThreadsModule;
 import java.net.InetAddress;
 
 public class InternetConnectivityModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private static final String DEFAULT_HOST = "google.com";
 
@@ -46,7 +46,7 @@ public class InternetConnectivityModule
 					logError("Couldn't ping google.com", e);
 					isConnected = false;
 				}
-				dispatchEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), new Processor<InternetConnectivityListener>() {
+				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), new Processor<InternetConnectivityListener>() {
 					@Override
 					public void process(InternetConnectivityListener listener) {
 						listener.onInternetConnectivityChanged();
@@ -57,7 +57,7 @@ public class InternetConnectivityModule
 	}
 
 	private static class ConnectivityCheckReceiver
-			extends CyborgReceiver<InternetConnectivityModule> {
+		extends CyborgReceiver<InternetConnectivityModule> {
 
 		protected ConnectivityCheckReceiver() {
 			super(InternetConnectivityModule.class, ConnectivityManager.CONNECTIVITY_ACTION);
