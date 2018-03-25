@@ -149,7 +149,8 @@ public final class CyborgStackController
 		if (rootLayoutId != -1)
 			layerBuilder.setLayoutId(rootLayoutId);
 
-		layerBuilder.setRefKey(rootTag);
+		if (rootTag != null)
+			layerBuilder.setRefKey(rootTag);
 
 		if (rootControllerType != null)
 			layerBuilder.setControllerType(rootControllerType);

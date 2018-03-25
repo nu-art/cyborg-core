@@ -612,6 +612,8 @@ public abstract class CyborgController
 			return;
 
 		this.stateTag = stateTag;
+		if (stateTag != null && !stateTag.equals(getClass().getSimpleName()))
+			setTag(getClass().getSimpleName() + "-" + stateTag);
 	}
 
 	final String getStateTag() {
