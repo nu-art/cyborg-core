@@ -31,12 +31,12 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 
 @SuppressWarnings( {
-											 "unused",
-											 "WeakerAccess"
-									 })
+	                   "unused",
+	                   "WeakerAccess"
+                   })
 @ModuleDescriptor(usesPermissions = {})
 public final class PreferencesModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private static final String DefaultStorageGroup = "DefaultStorage";
 
@@ -47,7 +47,8 @@ public final class PreferencesModule
 	private PreferencesModule() {}
 
 	@Override
-	protected void init() {}
+	protected void init() {
+	}
 
 	public final void clearExpiration(PreferenceKey type) {
 		Editor editor = getPreferences(type.storageGroup).edit();
@@ -84,7 +85,7 @@ public final class PreferencesModule
 	}
 
 	public abstract class PreferenceKey<ItemType>
-			implements Getter<ItemType> {
+		implements Getter<ItemType> {
 
 		final String key;
 
@@ -162,7 +163,7 @@ public final class PreferencesModule
 	}
 
 	public final class IntegerPreference
-			extends PreferenceKey<Integer> {
+		extends PreferenceKey<Integer> {
 
 		public IntegerPreference(String key, int defaultValue) {
 			super(key, defaultValue);
@@ -192,7 +193,7 @@ public final class PreferencesModule
 	}
 
 	public final class BooleanPreference
-			extends PreferenceKey<Boolean> {
+		extends PreferenceKey<Boolean> {
 
 		public BooleanPreference(String key, boolean defaultValue) {
 			super(key, defaultValue);
@@ -222,7 +223,7 @@ public final class PreferencesModule
 	}
 
 	public final class LongPreference
-			extends PreferenceKey<Long> {
+		extends PreferenceKey<Long> {
 
 		public LongPreference(String key, long defaultValue) {
 			super(key, defaultValue);
@@ -252,7 +253,7 @@ public final class PreferencesModule
 	}
 
 	public final class FloatPreference
-			extends PreferenceKey<Float> {
+		extends PreferenceKey<Float> {
 
 		public FloatPreference(String key, float defaultValue) {
 			super(key, defaultValue);
@@ -282,7 +283,7 @@ public final class PreferencesModule
 	}
 
 	public final class StringPreference
-			extends PreferenceKey<String> {
+		extends PreferenceKey<String> {
 
 		public StringPreference(String key, String defaultValue) {
 			super(key, defaultValue);
@@ -312,7 +313,7 @@ public final class PreferencesModule
 	}
 
 	public final class EnumPreference<EnumType extends Enum<EnumType>>
-			implements Getter<EnumType> {
+		implements Getter<EnumType> {
 
 		private final StringPreference key;
 
@@ -366,7 +367,7 @@ public final class PreferencesModule
 	}
 
 	public final class CustomPreference<ItemType>
-			implements Getter<ItemType> {
+		implements Getter<ItemType> {
 
 		private ItemType cache;
 

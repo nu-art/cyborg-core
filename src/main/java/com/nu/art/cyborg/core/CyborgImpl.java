@@ -75,8 +75,8 @@ import java.util.Locale;
  * This is an internal object.
  */
 final class CyborgImpl
-		extends Logger
-		implements Cyborg {
+	extends Logger
+	implements Cyborg {
 
 	private final HashMap<Class<? extends Service>, GenericServiceConnection<? extends Service>> serviceConnections = new HashMap<>();
 
@@ -142,27 +142,13 @@ final class CyborgImpl
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
 		BeLogged.getInstance().addClient(new AndroidLogClient());
-		printApplicationStarted();
+		logVerbose(" Application Created...");
 
 		builder.buildMainManager();
 
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
 		}
-	}
-
-	private void printApplicationStarted() {
-		logVerbose(" Application Started...");
-		logVerbose(" ");
-		logVerbose(" _______  _______  _______  _       _________ _______  _______ __________________ _______  _          _______ _________ _______  _______ _________ _______  ______  ");
-		logVerbose("(  ___  )(  ____ )(  ____ )( \\      \\__   __/(  ____ \\(  ___  )\\__   __/\\__   __/(  ___  )( (    /|  (  ____ \\\\__   __/(  ___  )(  ____ )\\__   __/(  ____ \\(  __  \\ ");
-		logVerbose("| (   ) || (    )|| (    )|| (         ) (   | (    \\/| (   ) |   ) (      ) (   | (   ) ||  \\  ( |  | (    \\/   ) (   | (   ) || (    )|   ) (   | (    \\/| (  \\  )");
-		logVerbose("| (___) || (____)|| (____)|| |         | |   | |      | (___) |   | |      | |   | |   | ||   \\ | |  | (_____    | |   | (___) || (____)|   | |   | (__    | |   ) |");
-		logVerbose("|  ___  ||  _____)|  _____)| |         | |   | |      |  ___  |   | |      | |   | |   | || (\\ \\) |  (_____  )   | |   |  ___  ||     __)   | |   |  __)   | |   | |");
-		logVerbose("| (   ) || (      | (      | |         | |   | |      | (   ) |   | |      | |   | |   | || | \\   |        ) |   | |   | (   ) || (\\ (      | |   | (      | |   ) |");
-		logVerbose("| )   ( || )      | )      | (____/\\___) (___| (____/\\| )   ( |   | |   ___) (___| (___) || )  \\  |  /\\____) |   | |   | )   ( || ) \\ \\__   | |   | (____/\\| (__/  )");
-		logVerbose("|/     \\||/       |/       (_______/\\_______/(_______/|/     \\|   )_(   \\_______/(_______)|/    )_)  \\_______)   )_(   |/     \\||/   \\__/   )_(   (_______/(______/ ");
-		logVerbose(" ");
 	}
 
 	@Override
@@ -239,7 +225,7 @@ final class CyborgImpl
 
 	@Override
 	public final InputStream getAsset(String assetName)
-			throws IOException {
+		throws IOException {
 		return getApplicationContext().getAssets().open(assetName);
 	}
 
@@ -401,9 +387,9 @@ final class CyborgImpl
 
 	@Override
 	@SuppressWarnings( {
-												 "unchecked",
-												 "ResourceType"
-										 })
+		                   "unchecked",
+		                   "ResourceType"
+	                   })
 	public final <SystemService> SystemService getSystemService(ServiceType<SystemService> service) {
 		Context applicationContext = getApplicationContext();
 		if (isInEditMode())

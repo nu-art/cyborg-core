@@ -42,8 +42,8 @@ public class CyborgBasePack
 		extends ModulesPack {
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
-			CacheModule.class,
 			PreferencesModule.class,
+			CacheModule.class,
 			PermissionModule.class,
 			AppDetailsModule.class,
 			DeviceDetailsModule.class,
