@@ -41,7 +41,7 @@ import java.util.List;
  */
 
 public class WifiModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private WifiItem_Connectivity WifiConnectivity;
 
@@ -129,10 +129,6 @@ public class WifiModule
 		return WifiConnectivity.isConnectivityState(state);
 	}
 
-	public void scanForWifiNetworks() {
-		WifiNetworkScanner.startScan();
-	}
-
 	final void setConnectivityTimeout(long connectivityTimeout) {
 		WifiConnectivity.setConnectivityTimeout(connectivityTimeout);
 	}
@@ -155,9 +151,9 @@ public class WifiModule
 	}
 
 	@SuppressLint( {
-										 "HardwareIds",
-										 "MissingPermission"
-								 })
+		               "HardwareIds",
+		               "MissingPermission"
+	               })
 	public String calculateMacAddress() {
 		if (macAddress != null)
 			return macAddress;

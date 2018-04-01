@@ -38,7 +38,9 @@ import com.nu.art.cyborg.core.CyborgModuleItem;
 import com.nu.art.cyborg.core.CyborgReceiver;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode.EAP;
 
@@ -48,7 +50,7 @@ import static com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode.E
 
 @SuppressWarnings("MissingPermission")
 public class WifiItem_Connectivity
-		extends CyborgModuleItem {
+	extends CyborgModuleItem {
 
 	public interface WifiConnectivityListener {
 
@@ -68,7 +70,9 @@ public class WifiItem_Connectivity
 
 	private WifiConnectivityMonitor monitor;
 
+	private Set<String> keys = new HashSet<>();
 	private long connectivityTimeout = 20000;
+	private boolean enabled;
 
 	@Override
 	protected void init() {
@@ -285,15 +289,21 @@ public class WifiItem_Connectivity
 	}
 
 	void enable(boolean enable) {
-		if (enable) {
+		if (enable && !this.enabled) {
 			monitor.init();
 			cyborg.registerReceiver(WifiConnectivityReceiver.class, WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		} else
+			this.enabled = enable;
+			return;
+		}
+
+		if (!enable && this.enabled) {
+			this.enabled = enable;
 			cyborg.unregisterReceiver(WifiConnectivityReceiver.class);
+		}
 	}
 
 	private class WifiConnectivityMonitor
-			implements Runnable {
+		implements Runnable {
 
 		WifiConnectivityState state;
 
@@ -336,7 +346,7 @@ public class WifiItem_Connectivity
 	}
 
 	public static class WifiConnectivityReceiver
-			extends CyborgReceiver<WifiModule> {
+		extends CyborgReceiver<WifiModule> {
 
 		protected WifiConnectivityReceiver() {
 			super(WifiModule.class);

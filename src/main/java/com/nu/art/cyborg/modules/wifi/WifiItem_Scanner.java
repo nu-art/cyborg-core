@@ -40,7 +40,7 @@ import java.util.List;
 
 @SuppressWarnings("MissingPermission")
 public class WifiItem_Scanner
-		extends CyborgModuleItem {
+	extends CyborgModuleItem {
 
 	public interface OnWifiUIListener {
 
@@ -101,8 +101,12 @@ public class WifiItem_Scanner
 		wifiManager = getSystemService(WifiService);
 	}
 
-	void startScan() {
-		wifiManager.startScan();
+	private void startScan() {
+		try {
+			wifiManager.startScan();
+		} catch (Exception e) {
+			logError("Low level Android error when trying to start scanning for wifi... will not SCAN", e);
+		}
 	}
 
 	boolean hasAccessPoint(String wifiName) {
@@ -197,7 +201,7 @@ public class WifiItem_Scanner
 	}
 
 	public static class WifiNetworksReceiver
-			extends CyborgReceiver<WifiModule> {
+		extends CyborgReceiver<WifiModule> {
 
 		protected WifiNetworksReceiver() {
 			super(WifiModule.class);

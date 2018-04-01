@@ -83,6 +83,7 @@ public class RoundedImageView
 
 		RoundedBitmapDrawable roundedImage = RoundedBitmapDrawableFactory.create(getResources(), bitmapSquare);
 		roundedImage.setCornerRadius(Math.max(original_width, original_height) / 2.0f);
+		roundedImage.setAntiAlias(true);
 		setImageDrawable(roundedImage);
 	}
 
