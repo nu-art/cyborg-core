@@ -125,10 +125,6 @@ public class WifiModule
 		return WifiConnectivity.hasWifiConfiguration(wifiName);
 	}
 
-	public boolean isConnectivityState(WifiConnectivityState state) {
-		return WifiConnectivity.isConnectivityState(state);
-	}
-
 	final void setConnectivityTimeout(long connectivityTimeout) {
 		WifiConnectivity.setConnectivityTimeout(connectivityTimeout);
 	}
