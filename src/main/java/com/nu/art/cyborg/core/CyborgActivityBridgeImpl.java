@@ -38,11 +38,12 @@ import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
-import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
@@ -59,8 +60,8 @@ import static com.nu.art.cyborg.core.abs.Cyborg.paramExtractor;
  * Created by TacB0sS on 19-Jun 2015.
  */
 public class CyborgActivityBridgeImpl
-		extends Logger
-		implements CyborgActivityBridge, IntentKeys, _SystemServices {
+	extends Logger
+	implements CyborgActivityBridge, IntentKeys, _SystemServices {
 
 	public static Intent composeIntent(LaunchConfiguration launchConfiguration) {
 		return composeIntent(launchConfiguration.activityType, launchConfiguration.screenName, launchConfiguration.layoutId);
@@ -488,7 +489,7 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg.dispatchModuleEvent(screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
+		cyborg.dispatchModuleEvent(this, screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
 			@Override
 			public void process(OnActivityResultListener listener) {
 				listener.onActivityResult(requestCode, resultCode, data);
@@ -503,8 +504,10 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
-		logDebug("Dispatching UI Event: " + message);
+	public final <ListenerType> void dispatchEvent(ILogger originator, String message, final Processor<ListenerType> processor) {
+		if (originator != null)
+			originator.logInfo("Dispatching UI Event: " + message);
+
 		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event: " + message);
 		activity.runOnUiThread(new Runnable() {
 
@@ -549,9 +552,9 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	@SuppressWarnings( {
-												 "rawtypes",
-												 "unchecked"
-										 })
+		                   "rawtypes",
+		                   "unchecked"
+	                   })
 	public <ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType) {
 		return (ModuleType) cyborg.getModule((Class<? extends CyborgModule>) moduleType);
 	}

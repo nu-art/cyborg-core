@@ -22,11 +22,12 @@ import android.os.Handler;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
 public final class ActivityStack
-		extends Logger {
+	extends Logger {
 
 	public interface ActivityStackAction {
 
@@ -60,19 +61,22 @@ public final class ActivityStack
 		}
 	}
 
-	<ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor) {
+	<ListenerType> void dispatchEvent(ILogger originator, String message, Processor<ListenerType> processor) {
 		if (activity == null) {
-			logDebug("No Activity... will not dispatch UI Event: " + message);
+			if (originator == null)
+				originator = this;
+
+			originator.logDebug("No Activity... will not dispatch UI Event: " + message);
 			return;
 		}
 
-		activity.dispatchEvent(message, processor);
+		activity.dispatchEvent(originator, message, processor);
 	}
 
 	private PoolQueue<ActivityStackAction> queue = new PoolQueue<ActivityStackAction>() {
 		@Override
 		protected void executeAction(final ActivityStackAction action)
-				throws Exception {
+			throws Exception {
 			synchronized (screenSyncObject) {
 				if (activity == null)
 					screenSyncObject.wait();

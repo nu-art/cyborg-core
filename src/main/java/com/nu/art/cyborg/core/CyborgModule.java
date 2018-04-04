@@ -53,8 +53,8 @@ import java.util.Random;
  */
 @SuppressWarnings("unused")
 public abstract class CyborgModule
-		extends Module
-		implements ICyborgModule {
+	extends Module
+	implements ICyborgModule {
 
 	public static final String GSF_Services = "com.google.android.providers.gsf.permission.READ_GSERVICES";
 
@@ -351,9 +351,9 @@ public abstract class CyborgModule
 
 	@Override
 	@SuppressWarnings( {
-												 "rawtypes",
-												 "unchecked"
-										 })
+		                   "rawtypes",
+		                   "unchecked"
+	                   })
 	public final <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
 		return (ModuleType) cyborg.getModule((Class<CyborgModule>) moduleType);
 	}
@@ -375,7 +375,7 @@ public abstract class CyborgModule
 
 	@Override
 	public final InputStream getAsset(String assetName)
-			throws IOException {
+		throws IOException {
 		return cyborg.getAsset(assetName);
 	}
 
@@ -415,21 +415,10 @@ public abstract class CyborgModule
 	}
 
 	public final <ListenerType> void dispatchGlobalEvent(String message, final Processor<ListenerType> processor) {
-		dispatchModuleEvent(message, processor);
-		dispatchEvent(message, processor);
+		((CyborgImpl) cyborg).dispatchGlobalEvent(this, message, processor);
 	}
 
-	/**
-	 * Use the one without the listenerType parameter
-	 */
-	@Deprecated
-	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		dispatchEvent(message, processor);
-	}
-
-	@Override
 	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
-		logInfo("Dispatching UI Event: " + message);
-		cyborg.dispatchEvent(message, processor);
+		cyborg.dispatchEvent(this, message, processor);
 	}
 }

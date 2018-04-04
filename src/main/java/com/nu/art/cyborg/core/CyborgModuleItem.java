@@ -25,7 +25,6 @@ import android.os.Handler;
 import android.view.animation.Animation;
 
 import com.nu.art.core.generics.Processor;
-import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.common.interfaces.ICyborgModule;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
@@ -40,18 +39,13 @@ import java.util.Locale;
  * Created by TacB0sS on 07-Jun 2016.
  */
 public abstract class CyborgModuleItem
-		extends ModuleItem
-		implements ICyborgModule, ILogger {
-
-	private final String TAG = getClass().getSimpleName();
+	extends ModuleItem
+	implements ICyborgModule {
 
 	protected Cyborg cyborg;
 
-	private ILogger logger;
-
 	final void setCyborg(Cyborg cyborg) {
 		this.cyborg = cyborg;
-		logger = cyborg.getLogger(this);
 	}
 
 	@Override
@@ -196,7 +190,7 @@ public abstract class CyborgModuleItem
 
 	@Override
 	public final InputStream getAsset(String assetName)
-			throws IOException {
+		throws IOException {
 		return cyborg.getAsset(assetName);
 	}
 
@@ -240,134 +234,11 @@ public abstract class CyborgModuleItem
 		cyborg.postActivityAction(action);
 	}
 
-	@Override
 	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
-		logInfo("Dispatching UI Event: " + message);
-		cyborg.dispatchEvent(message, processor);
+		cyborg.dispatchEvent(this, message, processor);
 	}
 
 	public final <ListenerType> void dispatchGlobalEvent(String message, final Processor<ListenerType> processor) {
-		dispatchModuleEvent(message, processor);
-		dispatchEvent(message, processor);
-	}
-
-	@Override
-	public void logVerbose(String verbose) {
-		if (logger != null)
-			logger.logVerbose(verbose);
-	}
-
-	@Override
-	public void logVerbose(String verbose, Object... params) {
-		if (logger != null)
-			logger.logVerbose(verbose, params);
-	}
-
-	@Override
-	public void logVerbose(Throwable e) {
-		if (logger != null)
-			logger.logVerbose(e);
-	}
-
-	@Override
-	public void logVerbose(String verbose, Throwable e) {
-		if (logger != null)
-			logger.logVerbose(verbose, e);
-	}
-
-	@Override
-	public void logDebug(String debug) {
-		if (logger != null)
-			logger.logDebug(debug);
-	}
-
-	@Override
-	public void logDebug(String debug, Object... params) {
-		if (logger != null)
-			logger.logDebug(debug, params);
-	}
-
-	@Override
-	public void logDebug(Throwable e) {
-		if (logger != null)
-			logger.logDebug(e);
-	}
-
-	@Override
-	public void logDebug(String debug, Throwable e) {
-		if (logger != null)
-			logger.logDebug(debug, e);
-	}
-
-	@Override
-	public void logInfo(String info) {
-		if (logger != null)
-			logger.logInfo(info);
-	}
-
-	@Override
-	public void logInfo(String info, Object... params) {
-		if (logger != null)
-			logger.logInfo(info, params);
-	}
-
-	@Override
-	public void logInfo(Throwable e) {
-		if (logger != null)
-			logger.logInfo(e);
-	}
-
-	@Override
-	public void logInfo(String info, Throwable e) {
-		if (logger != null)
-			logger.logInfo(info, e);
-	}
-
-	@Override
-	public void logWarning(String warning) {
-		if (logger != null)
-			logger.logWarning(warning);
-	}
-
-	@Override
-	public void logWarning(String warning, Object... params) {
-		if (logger != null)
-			logger.logWarning(warning, params);
-	}
-
-	@Override
-	public void logWarning(Throwable e) {
-		if (logger != null)
-			logger.logWarning(e);
-	}
-
-	@Override
-	public void logWarning(String warning, Throwable e) {
-		if (logger != null)
-			logger.logWarning(warning, e);
-	}
-
-	@Override
-	public void logError(String error) {
-		if (logger != null)
-			logger.logError(error);
-	}
-
-	@Override
-	public void logError(String error, Object... params) {
-		if (logger != null)
-			logger.logError(error, params);
-	}
-
-	@Override
-	public void logError(Throwable e) {
-		if (logger != null)
-			logger.logError(e);
-	}
-
-	@Override
-	public void logError(String error, Throwable e) {
-		if (logger != null)
-			logger.logError(error, e);
+		((CyborgImpl)cyborg).dispatchGlobalEvent(this, message, processor);
 	}
 }

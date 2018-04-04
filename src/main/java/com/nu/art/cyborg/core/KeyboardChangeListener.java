@@ -28,11 +28,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
+import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.interfaces.ActivityLifeCycleImpl;
 
-public class KeyboardChangeListener {
+public class KeyboardChangeListener
+	extends Logger {
 
 	public interface OnKeyboardVisibilityListener {
 
@@ -115,7 +117,7 @@ public class KeyboardChangeListener {
 					return;
 
 				wasOpened = isShown;
-				cyborg.dispatchEvent("Keyboard visibility changed: " + isShown, new Processor<OnKeyboardVisibilityListener>() {
+				cyborg.dispatchEvent(KeyboardChangeListener.this, "Keyboard visibility changed: " + isShown, new Processor<OnKeyboardVisibilityListener>() {
 					@Override
 					public void process(OnKeyboardVisibilityListener listener) {
 						listener.onVisibilityChanged(isShown);

@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.view.animation.Animation;
 
+import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.common.interfaces.ICyborgModule;
@@ -48,12 +49,12 @@ import java.util.Locale;
  * @param <_ModuleType> Type of the {@link CyborgModule} to use in this WidgetProvider.
  */
 @SuppressWarnings( {
-											 "unused",
-											 "NullableProblems"
-									 })
+	                   "unused",
+	                   "NullableProblems"
+                   })
 public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
-		extends AppWidgetProvider
-		implements ICyborgModule, ILogger {
+	extends AppWidgetProvider
+	implements ICyborgModule, ILogger {
 
 	private String tag = getClass().getSimpleName();
 
@@ -61,7 +62,7 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 
 	private Cyborg cyborg;
 
-	private ILogger logger;
+	private Logger logger;
 
 	protected CyborgWidgetProvider(Class<_ModuleType> moduleType) {
 		this.moduleType = moduleType;
@@ -269,7 +270,7 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 
 	@Override
 	public final InputStream getAsset(String assetName)
-			throws IOException {
+		throws IOException {
 		return cyborg.getAsset(assetName);
 	}
 
@@ -308,18 +309,8 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 		cyborg.postActivityAction(action);
 	}
 
-	/**
-	 * Use the one without the listenerType parameter
-	 */
-	@Deprecated
-	public final <ListenerType> void dispatchEvent(String message, final Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
-		dispatchEvent(message, processor);
-	}
-
-	@Override
 	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
-		logInfo("Dispatching UI Event: " + message);
-		cyborg.dispatchEvent(message, processor);
+		cyborg.dispatchEvent(logger, message, processor);
 	}
 
 	@Override

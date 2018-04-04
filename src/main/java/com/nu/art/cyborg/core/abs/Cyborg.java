@@ -27,6 +27,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 
+import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.common.utils.AndroidGenericParamExtractor;
@@ -38,7 +39,7 @@ import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface Cyborg
-		extends CyborgDelegator, _LifeCycleLogger, _AppMeta, _SystemServices, ModuleManagerDelegator {
+	extends CyborgDelegator, _LifeCycleLogger, _AppMeta, _SystemServices, ModuleManagerDelegator {
 
 	GenericParamExtractor paramExtractor = new AndroidGenericParamExtractor();
 
@@ -170,7 +171,7 @@ public interface Cyborg
 	 *
 	 * @return The ILogger for the object to belogged.
 	 */
-	ILogger getLogger(Object beLogged);
+	Logger getLogger(Object beLogged);
 
 	/**
 	 * Apparently when in the process of migrating an Android project that is stupidly coupled to Android classes) to Cyborg, you'd find this API really useful
@@ -183,7 +184,9 @@ public interface Cyborg
 	 * @param processor      A processor on how ti handle the event.
 	 * @param <ListenerType> A generic bound to the listener type
 	 */
-	<ListenerType> void dispatchModuleEvent(final String message, final Processor<ListenerType> processor);
+	<ListenerType> void dispatchModuleEvent(ILogger originator, String message, Processor<ListenerType> processor);
+
+	<ListenerType> void dispatchEvent(ILogger originator, String message, Processor<ListenerType> processor);
 
 	/**
 	 * Will return the value associated with the MetaData tag from the manifest

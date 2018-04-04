@@ -22,7 +22,6 @@ import android.os.Handler;
 import android.support.annotation.AnimRes;
 import android.view.animation.Animation;
 
-import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 
 public interface _UI {
@@ -73,15 +72,6 @@ public interface _UI {
 	 * @param action The action to run once an activity is in foreground.
 	 */
 	void postActivityAction(ActivityStackAction action);
-
-	/**
-	 * Dispatch event to the UI.
-	 *
-	 * @param message        A log message to accompany the event.
-	 * @param processor      A processor on how to handle the event.
-	 * @param <ListenerType> A generic bound to the listener type
-	 */
-	<ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor);
 
 	/**
 	 * Utility api to load animations

@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core;
 
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.modular.core.ModuleManager;
 
 import static com.nu.art.cyborg.core.abs.Cyborg.paramExtractor;
@@ -27,13 +28,13 @@ import static com.nu.art.cyborg.core.abs.Cyborg.paramExtractor;
  * This is an internal object.
  */
 public final class CyborgModuleManager
-		extends ModuleManager {
+	extends ModuleManager {
 
 	CyborgModuleManager() {
 		super(paramExtractor);
 	}
 
-	protected final <ParentType> void dispatchModuleEvent(String message, Processor<ParentType> processor) {
-		super.dispatchModuleEvent(message, processor);
+	protected final <ParentType> void dispatchModuleEvent(ILogger originator, String message, Processor<ParentType> processor) {
+		super.dispatchModuleEvent(originator, message, processor);
 	}
 }

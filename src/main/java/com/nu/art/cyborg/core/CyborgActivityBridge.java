@@ -31,6 +31,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.consts.LifeCycleState;
 
 public interface CyborgActivityBridge {
@@ -89,8 +90,7 @@ public interface CyborgActivityBridge {
 
 	void finish();
 
-	/* Actions */
-	<ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor);
+	<ListenerType> void dispatchEvent(ILogger originator, String message, Processor<ListenerType> processor);
 
 	void reCreateScreen();
 

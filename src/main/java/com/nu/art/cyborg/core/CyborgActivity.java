@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -62,7 +63,7 @@ public class CyborgActivity
 
 	private LayoutInflater layoutInflater;
 
-	private final ILogger logger;
+	private final Logger logger;
 
 	public final CyborgActivityBridge getBridge() {
 		return bridge;
