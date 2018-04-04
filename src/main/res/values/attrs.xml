@@ -70,6 +70,11 @@
         <attr name="horizontalSpacing" format="dimension"/>
     </declare-styleable>
 
+    <declare-styleable name="RoundedImageView">
+        <attr name="src" format="reference"/>
+        <attr name="corners" format="dimension"/>
+    </declare-styleable>
+
     <declare-styleable name="SquareView">
         <attr name="heightRatio" format="integer"/>
         <attr name="widthRatio" format="integer"/>

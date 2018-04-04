@@ -40,7 +40,7 @@ import com.nu.art.cyborg.R;
  */
 @Restorable
 public class CyborgRecycler
-		extends RecyclerView {
+	extends RecyclerView {
 
 	public interface OnRecyclerItemClickListener {
 
@@ -53,7 +53,7 @@ public class CyborgRecycler
 	}
 
 	public static class SpacesItemDecoration
-			extends ItemDecoration {
+		extends ItemDecoration {
 
 		private int vertical;
 
@@ -77,7 +77,7 @@ public class CyborgRecycler
 	}
 
 	public class CyborgGridLayoutManager
-			extends GridLayoutManager {
+		extends GridLayoutManager {
 
 		public CyborgGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 			super(context, attrs, defStyleAttr, defStyleRes);
@@ -122,13 +122,11 @@ public class CyborgRecycler
 	private int horizontalSpacing = 2;
 
 	public CyborgRecycler(Context context) {
-		super(context);
-		init(context, null, -1);
+		this(context, null);
 	}
 
 	public CyborgRecycler(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init(context, attrs, -1);
+		this(context, attrs, 0);
 	}
 
 	public CyborgRecycler(Context context, AttributeSet attrs, int defStyle) {
@@ -257,14 +255,14 @@ public class CyborgRecycler
 	 */
 	@ReflectiveInitialization
 	public static class CyborgRecyclerSetter
-			extends AttributesSetter<CyborgRecycler> {
+		extends AttributesSetter<CyborgRecycler> {
 
 		private static int[] ids = {
-				R.styleable.Recycler_orientation,
-				R.styleable.Recycler_horizontalSpacing,
-				R.styleable.Recycler_verticalSpacing,
-				R.styleable.Recycler_landscapeColumnsCount,
-				R.styleable.Recycler_portraitColumnsCount
+			R.styleable.Recycler_orientation,
+			R.styleable.Recycler_horizontalSpacing,
+			R.styleable.Recycler_verticalSpacing,
+			R.styleable.Recycler_landscapeColumnsCount,
+			R.styleable.Recycler_portraitColumnsCount
 		};
 
 		private CyborgRecyclerSetter() {

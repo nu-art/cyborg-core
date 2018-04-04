@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.core.modules;
 
+import com.nu.art.android.views.RoundedImageView.RoundedImageViewSetter;
 import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
@@ -67,6 +68,7 @@ public class CyborgBasePack
 		attributeModule.registerAttributesSetter(CyborgViewPagerSetter.class);
 		attributeModule.registerAttributesSetter(CyborgStackSetter.class);
 		attributeModule.registerAttributesSetter(CyborgRecyclerSetter.class);
+		attributeModule.registerAttributesSetter(RoundedImageViewSetter.class);
 		attributeModule.registerAttributesSetter(ValueChangerSetter.class);
 	}
 }
