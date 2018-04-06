@@ -94,7 +94,7 @@ public class ExceptionGenerator {
 		String fieldName = viewField.getName();
 		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
 
-		return new BadImplementationException("Could not find the supplied viewId in layout for field '" + fieldName + "' in class, '" + classSimpleName + "'");
+		return new BadImplementationException("Could not find view for field '" + fieldName + "' in class, '" + classSimpleName + "'");
 	}
 
 	public static BadImplementationException wrongListenerToViewAssignment(View view, ViewListener listener) {

@@ -33,4 +33,6 @@ dependencies {
     _api(resolveDependency('nu-art-core', 'com.nu-art-software', "${NU_ART_VERSION}"))
     _api "com.android.support:support-v4:${ANDROID_SUPPORT_VERSION}"
     _api "com.android.support:recyclerview-v7:${ANDROID_SUPPORT_VERSION}"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
 }
