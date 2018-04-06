@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 public final class ZoomGesture
-		implements OnTouchListener, ZoomListener {
+	implements OnTouchListener, ZoomListener {
 
 	private float distanceX;
 

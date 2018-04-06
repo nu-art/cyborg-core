@@ -39,12 +39,12 @@ import static com.nu.art.cyborg.modules.LocationModule.LocationService.OFFLINE;
  * Created by TacB0sS on 15-Sep 2017.
  */
 @ModuleDescriptor(usesPermissions = {//
-		Manifest.permission.ACCESS_COARSE_LOCATION,
-		Manifest.permission.ACCESS_FINE_LOCATION
+	Manifest.permission.ACCESS_COARSE_LOCATION,
+	Manifest.permission.ACCESS_FINE_LOCATION
 })
 public class LocationModule
-		extends CyborgModule
-		implements LocationListener {
+	extends CyborgModule
+	implements LocationListener {
 
 	private long minTime;
 

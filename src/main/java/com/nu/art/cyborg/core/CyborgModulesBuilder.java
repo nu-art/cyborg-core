@@ -31,8 +31,8 @@ import com.nu.art.modular.core.ModulesPack;
  * This is an internal object.
  */
 final class CyborgModulesBuilder
-		extends ModuleManagerBuilder
-		implements AnalyticsConstants {
+	extends ModuleManagerBuilder
+	implements AnalyticsConstants {
 
 	@SafeVarargs
 	CyborgModulesBuilder(Class<? extends ModulesPack>... modulesPacksTypes) {

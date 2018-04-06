@@ -25,4 +25,4 @@ import com.nu.art.cyborg.core.abs.CyborgDelegator;
  */
 
 public interface ICyborgController
-		extends UserActionsDelegator, CyborgDelegator {}
+	extends UserActionsDelegator, CyborgDelegator {}

@@ -239,6 +239,6 @@ public abstract class CyborgModuleItem
 	}
 
 	public final <ListenerType> void dispatchGlobalEvent(String message, final Processor<ListenerType> processor) {
-		((CyborgImpl)cyborg).dispatchGlobalEvent(this, message, processor);
+		((CyborgImpl) cyborg).dispatchGlobalEvent(this, message, processor);
 	}
 }

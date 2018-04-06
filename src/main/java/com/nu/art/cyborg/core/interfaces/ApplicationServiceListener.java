@@ -21,6 +21,6 @@ package com.nu.art.cyborg.core.interfaces;
 import com.nu.art.cyborg.core.ApplicationService;
 
 public interface ApplicationServiceListener
-		extends ServiceListener<ApplicationService> {
+	extends ServiceListener<ApplicationService> {
 
 }

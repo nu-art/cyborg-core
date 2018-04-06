@@ -44,10 +44,10 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @ModuleDescriptor(usesPermissions = {/*permission.READ_PHONE_STATE*/},
-									dependencies = {PreferencesModule.class})
+                  dependencies = {PreferencesModule.class})
 public final class AppDetailsModule
-		extends CyborgModule
-		implements AnalyticsConstants, CrashReportListener {
+	extends CyborgModule
+	implements AnalyticsConstants, CrashReportListener {
 
 	@Override
 	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
@@ -68,7 +68,7 @@ public final class AppDetailsModule
 	private StringPreference installationUUID;
 
 	public enum DummyCertificate
-			implements CyborgAppCertificate {
+		implements CyborgAppCertificate {
 		Default;
 
 		private boolean debuggable = false;

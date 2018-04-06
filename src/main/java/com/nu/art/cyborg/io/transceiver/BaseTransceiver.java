@@ -34,7 +34,7 @@ import static com.nu.art.cyborg.io.transceiver.ConnectionState.Connecting;
 import static com.nu.art.cyborg.io.transceiver.ConnectionState.Idle;
 
 public abstract class BaseTransceiver
-		extends Logger {
+	extends Logger {
 
 	public static final String DebugFlag = "Debug_" + BaseTransceiver.class.getSimpleName();
 
@@ -167,12 +167,12 @@ public abstract class BaseTransceiver
 	}
 
 	public void sendPacketSync(Packet packet)
-			throws IOException {
+		throws IOException {
 		sendPacketSync(packet, true);
 	}
 
 	public void sendPacketSync(Packet packet, boolean printToLog)
-			throws IOException {
+		throws IOException {
 		if (socket == null)
 			throw new IOException("Socket is null ignoring packet: " + packet);
 
@@ -192,7 +192,7 @@ public abstract class BaseTransceiver
 	}
 
 	protected void processPacket()
-			throws IOException {
+		throws IOException {
 		Packet packet = packetSerializer.extractPacket(socket.getInputStream());
 		logDebug("Process packet: " + packet);
 		notifyNewPacket(packet);
@@ -234,7 +234,7 @@ public abstract class BaseTransceiver
 	}
 
 	protected abstract SocketWrapper connectImpl()
-			throws Exception;
+		throws Exception;
 
 	protected final void notifyError(Exception e) {
 		for (TransceiverListener listener : listeners) {

@@ -31,8 +31,8 @@ import com.nu.art.modular.interfaces.ModuleManagerDelegator;
  * A convenience receiver with access to everything a receiver might need from Cyborg.
  */
 public abstract class CyborgReceiverBase
-		extends BroadcastReceiver
-		implements ModuleManagerDelegator, ILogger {
+	extends BroadcastReceiver
+	implements ModuleManagerDelegator, ILogger {
 
 	protected final String TAG = getClass().getSimpleName();
 

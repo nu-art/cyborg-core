@@ -23,7 +23,7 @@ import android.webkit.JsResult;
 import android.webkit.WebView;
 
 public abstract class WebViewJavaScriptImplementor
-		implements WebViewJavaScriptHandler {
+	implements WebViewJavaScriptHandler {
 
 	@Override
 	public boolean onJsAlert(WebView view, String url, String message, JsResult result) {

@@ -39,8 +39,8 @@ import java.util.Map;
  * Created by TacB0sS on 19-Sep 2016.
  */
 public class CrashReportModule
-		extends CyborgModule
-		implements UncaughtExceptionHandler, CrashReportListener {
+	extends CyborgModule
+	implements UncaughtExceptionHandler, CrashReportListener {
 
 	private CrashReportHandler crashReportHandler;
 
@@ -273,12 +273,12 @@ public class CrashReportModule
 	public interface CrashReportHandler {
 
 		void prepareAndBackupCrashReport(CrashReport crashReport)
-				throws Exception;
+			throws Exception;
 
 		void sendCrashReport(CrashReport crashReport, Processor<Throwable> resultListener)
-				throws Exception;
+			throws Exception;
 
 		void deleteBackup()
-				throws Exception;
+			throws Exception;
 	}
 }

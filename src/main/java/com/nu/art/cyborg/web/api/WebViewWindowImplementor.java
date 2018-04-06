@@ -22,7 +22,7 @@ import android.os.Message;
 import android.webkit.WebView;
 
 public abstract class WebViewWindowImplementor
-		implements WebViewWindowHandler {
+	implements WebViewWindowHandler {
 
 	@Override
 	public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {

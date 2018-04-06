@@ -104,7 +104,7 @@ public enum ViewListener {
 	OnTextChangedListener(ListenersMethods._OnTextChangedListener, TextView.class, TextWatcher.class) {
 		@Override
 		public void assign(final View view, final UserActionsDelegator modelDelegator)
-				throws InvocationTargetException, IllegalAccessException {
+			throws InvocationTargetException, IllegalAccessException {
 			listenerMethod.invoke(view, new TextWatcher() {
 				@Override
 				public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -147,7 +147,7 @@ public enum ViewListener {
 	}
 
 	public void assign(View view, UserActionsDelegator modelDelegator)
-			throws InvocationTargetException, IllegalAccessException {
+		throws InvocationTargetException, IllegalAccessException {
 		listenerMethod.invoke(view, modelDelegator);
 	}
 }

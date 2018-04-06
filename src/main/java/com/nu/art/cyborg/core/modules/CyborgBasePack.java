@@ -40,19 +40,19 @@ import com.nu.art.modular.core.ModulesPack;
  */
 @SuppressWarnings("unchecked")
 public class CyborgBasePack
-		extends ModulesPack {
+	extends ModulesPack {
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
-			PreferencesModule.class,
-			CacheModule.class,
-			PermissionModule.class,
-			AppDetailsModule.class,
-			DeviceDetailsModule.class,
-			ImageUtilsModule.class,
-			ThreadsModule.class,
-			UtilsModule.class,
-			VibrationModule.class,
-			AttributeModule.class
+		PreferencesModule.class,
+		CacheModule.class,
+		PermissionModule.class,
+		AppDetailsModule.class,
+		DeviceDetailsModule.class,
+		ImageUtilsModule.class,
+		ThreadsModule.class,
+		UtilsModule.class,
+		VibrationModule.class,
+		AttributeModule.class
 	};
 
 	protected CyborgBasePack() {

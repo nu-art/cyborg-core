@@ -52,8 +52,8 @@ import java.util.List;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class UtilsModule
-		extends CyborgModule
-		implements AnalyticsConstants {
+	extends CyborgModule
+	implements AnalyticsConstants {
 
 	private static final String SCHEME = "package";
 

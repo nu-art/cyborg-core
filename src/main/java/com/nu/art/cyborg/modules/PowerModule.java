@@ -32,7 +32,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
  */
 
 public class PowerModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private ChargingSource chargingSource;
 
@@ -43,9 +43,9 @@ public class PowerModule
 	private int batteryLevel;
 
 	private static final String[] DefaultActions = new String[]{
-			Intent.ACTION_POWER_CONNECTED,
-			Intent.ACTION_POWER_DISCONNECTED,
-			Intent.ACTION_BATTERY_CHANGED
+		Intent.ACTION_POWER_CONNECTED,
+		Intent.ACTION_POWER_DISCONNECTED,
+		Intent.ACTION_BATTERY_CHANGED
 	};
 
 	/**
@@ -188,7 +188,7 @@ public class PowerModule
 	}
 
 	private static class Power_IndicatorReceiver
-			extends CyborgReceiver<PowerModule> {
+		extends CyborgReceiver<PowerModule> {
 
 		protected Power_IndicatorReceiver() {
 			super(PowerModule.class, DefaultActions);

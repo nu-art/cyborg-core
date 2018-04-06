@@ -28,13 +28,13 @@ import android.content.Intent;
  * So use this service to keep your application alive, and do yourself a favor and create a module to handle any action you want to perform.
  */
 public final class ApplicationService
-		extends CyborgServiceBase {
+	extends CyborgServiceBase {
 
 	/**
 	 * Class for clients to access. Because we know this service always runs in the same process as its clients, we don't need to deal with IPC.
 	 */
 	public class LocalBinder
-			extends BaseBinder<ApplicationService> {
+		extends BaseBinder<ApplicationService> {
 
 		@SuppressWarnings("UnusedDeclaration")
 		public ApplicationService getService() {

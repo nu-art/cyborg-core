@@ -26,7 +26,7 @@ import com.nu.art.core.tools.ExceptionTools;
  * Created by TacB0sS on 28-Feb 2017.
  */
 public class AndroidLogClient
-		extends BeLoggedClient {
+	extends BeLoggedClient {
 
 	private final StringBuffer buffer = new StringBuffer();
 

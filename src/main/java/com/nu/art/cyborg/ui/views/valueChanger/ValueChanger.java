@@ -41,8 +41,8 @@ import com.nu.art.cyborg.modules.AttributeModule;
  * Created by TacB0sS on 25-Jul 2015.
  */
 public class ValueChanger
-		extends LinearLayout
-		implements OnClickListener, TextWatcher, OnTouchListener {
+	extends LinearLayout
+	implements OnClickListener, TextWatcher, OnTouchListener {
 
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -69,7 +69,7 @@ public class ValueChanger
 	private boolean stop;
 
 	private class ValueIncrementer
-			implements Runnable {
+		implements Runnable {
 
 		private final int factor;
 

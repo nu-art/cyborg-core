@@ -36,7 +36,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
  * Created by TacB0sS on 24-Jul 2015.
  */
 public enum PredefinedTransitions
-		implements BaseTransitionHelper {
+	implements BaseTransitionHelper {
 	Slide(SlideTransition.class),
 	Squash(SquashTransition.class),
 	Scale(ScaleTransition.class),

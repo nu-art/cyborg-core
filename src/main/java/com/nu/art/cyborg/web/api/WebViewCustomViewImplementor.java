@@ -22,7 +22,7 @@ import android.view.View;
 import android.webkit.WebChromeClient.CustomViewCallback;
 
 public abstract class WebViewCustomViewImplementor
-		implements WebViewCustomViewHandler {
+	implements WebViewCustomViewHandler {
 
 	@Override
 	public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) {}

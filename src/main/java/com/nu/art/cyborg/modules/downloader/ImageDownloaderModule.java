@@ -36,7 +36,7 @@ import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
  */
 
 public class ImageDownloaderModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	@Override
 	protected void init() {
@@ -79,7 +79,7 @@ public class ImageDownloaderModule
 	}
 
 	private class ImageDownloaderBuilderImpl
-			implements ImageDownloaderBuilder {
+		implements ImageDownloaderBuilder {
 
 		private boolean cancelled;
 

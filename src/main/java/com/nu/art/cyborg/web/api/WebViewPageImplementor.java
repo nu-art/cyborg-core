@@ -22,7 +22,7 @@ import android.graphics.Bitmap;
 import android.webkit.WebView;
 
 public abstract class WebViewPageImplementor
-		implements WebViewPageHandler {
+	implements WebViewPageHandler {
 
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {

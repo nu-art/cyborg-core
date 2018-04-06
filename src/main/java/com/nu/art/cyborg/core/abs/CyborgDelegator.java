@@ -19,7 +19,7 @@
 package com.nu.art.cyborg.core.abs;
 
 public interface CyborgDelegator
-		extends _Analytics, _Resources, _Toasts, _Debug, _UI {
+	extends _Analytics, _Resources, _Toasts, _Debug, _UI {
 
 	/**
 	 * Vibrate for the provided ms.

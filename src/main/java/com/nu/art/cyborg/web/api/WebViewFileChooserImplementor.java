@@ -23,7 +23,7 @@ import android.net.Uri;
 import com.nu.art.core.generics.Processor;
 
 public abstract class WebViewFileChooserImplementor
-		implements WebViewFileChooserHandler {
+	implements WebViewFileChooserHandler {
 
 	@Override
 	public boolean openFileChooser(String url, String mimeType, Processor<Uri> processor) {

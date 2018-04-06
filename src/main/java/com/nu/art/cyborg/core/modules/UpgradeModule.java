@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core.modules;
 import com.nu.art.cyborg.core.CyborgModule;
 
 public abstract class UpgradeModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	@Override
 	protected final void init() {

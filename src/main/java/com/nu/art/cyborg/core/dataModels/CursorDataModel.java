@@ -26,7 +26,7 @@ import com.nu.art.core.generics.Function;
  * Created by TacB0sS on 22-Jun 2015.
  */
 public class CursorDataModel<Item>
-		extends DataModel<Item> {
+	extends DataModel<Item> {
 
 	private final Function<Cursor, Item> cursorToItem;
 

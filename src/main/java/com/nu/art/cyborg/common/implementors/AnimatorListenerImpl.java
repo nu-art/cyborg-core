@@ -22,7 +22,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 
 public abstract class AnimatorListenerImpl
-		implements AnimatorListener {
+	implements AnimatorListener {
 
 	@Override
 	public void onAnimationStart(Animator animator) {}

@@ -21,7 +21,7 @@ package com.nu.art.cyborg.ui.animations.interpulator;
 import android.view.animation.Interpolator;
 
 public class ReverseInterpolator
-		implements Interpolator {
+	implements Interpolator {
 
 	private Interpolator interpolator;
 

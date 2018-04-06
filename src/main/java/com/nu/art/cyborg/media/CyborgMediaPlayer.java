@@ -40,7 +40,7 @@ import java.util.HashMap;
 
 @SuppressWarnings("WeakerAccess")
 public class CyborgMediaPlayer
-		extends CyborgModuleItem {
+	extends CyborgModuleItem {
 
 	public final static int MAX_VOLUME = 100;
 	private static final int ERROR_TIMED_OUT = 100;
@@ -349,7 +349,7 @@ public class CyborgMediaPlayer
 	}
 
 	public static abstract class MediaPlayerListenerImpl
-			implements MediaPlayerListener {
+		implements MediaPlayerListener {
 
 		public void onPrepared() {}
 
@@ -499,7 +499,7 @@ public class CyborgMediaPlayer
 	}
 
 	private class InternalListener
-			implements OnPreparedListener, OnCompletionListener, OnErrorListener, OnBufferingUpdateListener {
+		implements OnPreparedListener, OnCompletionListener, OnErrorListener, OnBufferingUpdateListener {
 
 		@Override
 		public void onPrepared(MediaPlayer mp) {
@@ -572,7 +572,7 @@ public class CyborgMediaPlayer
 	}
 
 	private class FadeVolumeRunnable
-			implements Runnable {
+		implements Runnable {
 
 		private final long startTime;
 		private final int duration;
@@ -626,7 +626,7 @@ public class CyborgMediaPlayer
 	}
 
 	private class TimeoutError
-			implements Runnable {
+		implements Runnable {
 
 		Object tag;
 

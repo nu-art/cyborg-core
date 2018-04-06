@@ -37,7 +37,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by tacb0ss on 14/06/2017.
  */
 public class CacheModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private MessageDigest digestMD5;
 
@@ -147,7 +147,7 @@ public class CacheModule
 		 * @throws IOException if the item must be cached, and you cannot recover from an error.
 		 */
 		public void cacheSync(InputStream inputStream)
-				throws IOException {
+			throws IOException {
 			CacheModule.this.cacheSync(this, inputStream);
 		}
 
@@ -164,7 +164,7 @@ public class CacheModule
 		 * @return The response input stream, <b>be sure to close it when you are done</b>!
 		 */
 		public InputStream loadSync()
-				throws FileNotFoundException {
+			throws FileNotFoundException {
 			return CacheModule.this.loadSync(this);
 		}
 	}
@@ -248,7 +248,7 @@ public class CacheModule
 	}
 
 	private void cacheSync(Cacheable cacheable, InputStream inputStream)
-			throws IOException {
+		throws IOException {
 		File file = getFile(cacheable);
 		File tempFile = new File(file.getParentFile(), "_" + file.getName());
 
@@ -282,7 +282,7 @@ public class CacheModule
 	}
 
 	private InputStream loadSync(final Cacheable cacheable)
-			throws FileNotFoundException {
+		throws FileNotFoundException {
 		File file = getFile(cacheable);
 		return new FileInputStream(file);
 	}
@@ -311,7 +311,7 @@ public class CacheModule
 	}
 
 	public static class UnableToCacheException
-			extends IOException {
+		extends IOException {
 
 		public UnableToCacheException(String message) {
 			super(message);

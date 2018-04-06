@@ -36,7 +36,7 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
  * Created by matankoby on 1/30/18.
  */
 public class ScreenOptionsModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private static final int UNKNOWN = -1;
 	private WeakReference<Activity> weakRefActivity = new WeakReference<>(null);

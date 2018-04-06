@@ -31,106 +31,106 @@ import com.nu.art.cyborg.web.JavascriptStack.JavascriptActionExecutor;
 import com.nu.art.cyborg.web.api.OnLifeCycleListener;
 
 public final class JavascriptStack
-		extends PoolQueue<JavascriptActionExecutor>
-		implements ILogger, _Analytics {
+	extends PoolQueue<JavascriptActionExecutor>
+	implements ILogger, _Analytics {
 
 	public static final String ClickFromAndroidScript = "" + //
-			"function calculateCoordinateAndClickOnNode(node) {\n" + //
-			"    var rect = node.getBoundingClientRect();\n" + //
-			"    var x = rect.left;\n" + //
-			"    var y = rect.top;\n" + //
-			"    var w = rect.right - rect.left;\n" + //
-			"    var h = rect.bottom - rect.top;\n\n" + //
+		"function calculateCoordinateAndClickOnNode(node) {\n" + //
+		"    var rect = node.getBoundingClientRect();\n" + //
+		"    var x = rect.left;\n" + //
+		"    var y = rect.top;\n" + //
+		"    var w = rect.right - rect.left;\n" + //
+		"    var h = rect.bottom - rect.top;\n\n" + //
 
-			"    var finalX = x + w / 2;\n" + //
-			"    var finalY = y + h / 2;\n\n" + //
+		"    var finalX = x + w / 2;\n" + //
+		"    var finalY = y + h / 2;\n\n" + //
 
-			"    var webViewWidth = window.webviewAPI.getWidth();\n" + //
-			"    var webViewHeight = window.webviewAPI.getHeight();\n" + //
-			"    var screenWidth = document.documentElement.clientWidth;\n" + //
-			"    var screenHeight = document.documentElement.clientHeight;\n" + //
-			"    logD('WebView: [' + webViewWidth + ',' + webViewHeight + ']');\n" + //
-			"    logD('viewport: [' + screenWidth + ',' + screenHeight + ']');\n\n" + //
+		"    var webViewWidth = window.webviewAPI.getWidth();\n" + //
+		"    var webViewHeight = window.webviewAPI.getHeight();\n" + //
+		"    var screenWidth = document.documentElement.clientWidth;\n" + //
+		"    var screenHeight = document.documentElement.clientHeight;\n" + //
+		"    logD('WebView: [' + webViewWidth + ',' + webViewHeight + ']');\n" + //
+		"    logD('viewport: [' + screenWidth + ',' + screenHeight + ']');\n\n" + //
 
-			"    finalX *= webViewWidth / screenWidth;\n" + //
-			"    finalY *= webViewHeight / screenHeight;\n\n" + //
+		"    finalX *= webViewWidth / screenWidth;\n" + //
+		"    finalY *= webViewHeight / screenHeight;\n\n" + //
 
-			"    logD('Button: [' + x + ',' + y + ',' + w + ',' + h + ']');\n" + //
-			"    clickOnElement(finalX, finalY);\n" + //
-			"};\n";
+		"    logD('Button: [' + x + ',' + y + ',' + w + ',' + h + ']');\n" + //
+		"    clickOnElement(finalX, finalY);\n" + //
+		"};\n";
 
 	public static final String HideNodeScript = "" + //
-			"function hideNode(node) {\n" + //
-			"    node.style.visibility = 'hidden';\n" + //
-			"};\n";
+		"function hideNode(node) {\n" + //
+		"    node.style.visibility = 'hidden';\n" + //
+		"};\n";
 
 	public static final String GetNodeByClassAndIndex = "" + //
-			"function getNodeByClassAndIndex(parentNode, className, index) {\n" + //
-			"    var nodes = parentNode.getElementsByClassName(className);\n" + //
-			"    if(!nodes || nodes.length <= index) {\n" + //
-			"        logW('Could not find element by CLASS: ' + className + ', With index: ' + index);\n" + //
-			"        return;\n" + //
-			"    }\n" + //
-			"    return nodes[index];\n" + //
-			"};\n";
+		"function getNodeByClassAndIndex(parentNode, className, index) {\n" + //
+		"    var nodes = parentNode.getElementsByClassName(className);\n" + //
+		"    if(!nodes || nodes.length <= index) {\n" + //
+		"        logW('Could not find element by CLASS: ' + className + ', With index: ' + index);\n" + //
+		"        return;\n" + //
+		"    }\n" + //
+		"    return nodes[index];\n" + //
+		"};\n";
 
 	public static final String GetNodeByTagAndIndex = "" + //
-			"function getNodeByTagAndIndex(parentNode, tagName, index) {\n" + //
-			"    var nodes = parentNode.getElementsByTagName(tagName);\n" + //
-			"    if(!nodes || nodes.length <= index) {\n" + //
-			"        return;\n" + //
-			"        logW('Could not find element by TAG: ' + tagName + ', With index: ' + index);\n" + //
-			"    }\n" + //
-			"    return nodes[index];\n" + //
-			"};\n";
+		"function getNodeByTagAndIndex(parentNode, tagName, index) {\n" + //
+		"    var nodes = parentNode.getElementsByTagName(tagName);\n" + //
+		"    if(!nodes || nodes.length <= index) {\n" + //
+		"        return;\n" + //
+		"        logW('Could not find element by TAG: ' + tagName + ', With index: ' + index);\n" + //
+		"    }\n" + //
+		"    return nodes[index];\n" + //
+		"};\n";
 
 	public static final String WaitForNode = "" + //
-			"function waitForNode(searchForNode, maxDT, dt) {\n" + //
-			"    var node;\n" + //
-			"    var passedDT = 0;\n" + //
-			"    while(!(node = searchForNode()) && maxDT < passedDT) {\n" + //
-			"        delay(dt);\n" + //
-			"        passedDT += dt;\n" + //
-			"    }\n" + //
-			"    return node;\n" + //
-			"};\n";
+		"function waitForNode(searchForNode, maxDT, dt) {\n" + //
+		"    var node;\n" + //
+		"    var passedDT = 0;\n" + //
+		"    while(!(node = searchForNode()) && maxDT < passedDT) {\n" + //
+		"        delay(dt);\n" + //
+		"        passedDT += dt;\n" + //
+		"    }\n" + //
+		"    return node;\n" + //
+		"};\n";
 
 	public static final String SetNodeVisibilityGoneScript = "" + //
-			"function setNodeVisibilityGone(node) {\n" + //
-			// "    node.createAttribute('style');\n" + //
-			"    node.setAttribute('style','display:none');\n" + //
-			"};\n";
+		"function setNodeVisibilityGone(node) {\n" + //
+		// "    node.createAttribute('style');\n" + //
+		"    node.setAttribute('style','display:none');\n" + //
+		"};\n";
 
 	public static final String SetNodeStyleToNoneScript = "" + //
-			"function setNodeStyleToNoneScript(node) {\n" + //
-			"    node.style='display:none';\n" + //
-			"};\n";
+		"function setNodeStyleToNoneScript(node) {\n" + //
+		"    node.style='display:none';\n" + //
+		"};\n";
 
 	private static final String BaseWrappingScript = "" + //
-			"javascript:(\n" + //
-			"    function() {\n" + //
-			"/* --------- APIS BEGIN --------- */\n" + //
-			GetNodeByClassAndIndex + //
-			GetNodeByTagAndIndex + //
-			ClickFromAndroidScript + //
-			HideNodeScript + //
-			WaitForNode + //
-			SetNodeVisibilityGoneScript + //
-			"${APIs}\n" + //
-			"/* ---------- APIS END ---------- */\n" + //
-			"        var scriptToExecute = function() {\n" + //
-			"            ${SCRIPT}" + //
-			"        };\n" + //
-			"        try {\n" + //
-			"            scriptToExecute();\n" + //
-			"        } catch(err) {\n" + //
-			"            if(onScriptErrorListener)\n" + //
-			"                onScriptErrorListener('' + err);\n" + //
-			"            onScriptError('${SCRIPT_NAME}', '' + err);\n" + //
-			"        }\n" + //
-			"        onScriptCompleted('${SCRIPT_NAME}');\n" + //
-			"    }\n" + //
-			")();\n";//
+		"javascript:(\n" + //
+		"    function() {\n" + //
+		"/* --------- APIS BEGIN --------- */\n" + //
+		GetNodeByClassAndIndex + //
+		GetNodeByTagAndIndex + //
+		ClickFromAndroidScript + //
+		HideNodeScript + //
+		WaitForNode + //
+		SetNodeVisibilityGoneScript + //
+		"${APIs}\n" + //
+		"/* ---------- APIS END ---------- */\n" + //
+		"        var scriptToExecute = function() {\n" + //
+		"            ${SCRIPT}" + //
+		"        };\n" + //
+		"        try {\n" + //
+		"            scriptToExecute();\n" + //
+		"        } catch(err) {\n" + //
+		"            if(onScriptErrorListener)\n" + //
+		"                onScriptErrorListener('' + err);\n" + //
+		"            onScriptError('${SCRIPT_NAME}', '' + err);\n" + //
+		"        }\n" + //
+		"        onScriptCompleted('${SCRIPT_NAME}');\n" + //
+		"    }\n" + //
+		")();\n";//
 
 	public static class JavascriptAction {
 
@@ -204,7 +204,7 @@ public final class JavascriptStack
 	}
 
 	public static class WebViewJavascriptStackConditionalAction
-			extends JavascriptAction {
+		extends JavascriptAction {
 
 		private Condition<String> condition;
 
@@ -230,7 +230,7 @@ public final class JavascriptStack
 	}
 
 	static final class JavascriptActionExecutor
-			implements Runnable, OnLifeCycleListener {
+		implements Runnable, OnLifeCycleListener {
 
 		JavascriptAction action;
 
@@ -309,27 +309,27 @@ public final class JavascriptStack
 	private final WebViewAPI webViewAPI = new WebViewAPI();
 
 	final String OnLoadJS = "javascript:(\n" + //
-			"    function() {\n" + //
-			webViewAPI.getAPI() + //
-			"        if(!('documentOffsetTop' in Element.prototype)) \n" + //
-			"            window.Object.defineProperty( Element.prototype, 'documentOffsetTop', {\n" + //
-			"                get: function () {\n" + //
-			"                    var offset = this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop : 0 );\n" + //
-			"                    return offset + parseFloat((this.currentStyle || window.getComputedStyle(this)).marginTop);\n" + //
-			"                }\n" + //
-			"            });\n" + //
-			"        if(!('documentOffsetLeft' in Element.prototype)) \n" + //
-			"            window.Object.defineProperty( Element.prototype, 'documentOffsetLeft', {\n" + //
-			"                get: function () {\n" + //
-			"                    var offset = this.offsetLeft + ( this.offsetParent ? this.offsetParent.documentOffsetLeft : 0 );\n" + //
-			"                    return offset + parseFloat((this.currentStyle || window.getComputedStyle(this)).marginLeft);\n" + //
-			"                }\n" + //
-			"            });\n" + //
-			"        window.onload = function() {\n" + //
-			"            onWindowLoaded(window.location.href);\n" + //
-			"        };\n" + //
-			"    }\n" + //
-			")();\n";//
+		"    function() {\n" + //
+		webViewAPI.getAPI() + //
+		"        if(!('documentOffsetTop' in Element.prototype)) \n" + //
+		"            window.Object.defineProperty( Element.prototype, 'documentOffsetTop', {\n" + //
+		"                get: function () {\n" + //
+		"                    var offset = this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop : 0 );\n" + //
+		"                    return offset + parseFloat((this.currentStyle || window.getComputedStyle(this)).marginTop);\n" + //
+		"                }\n" + //
+		"            });\n" + //
+		"        if(!('documentOffsetLeft' in Element.prototype)) \n" + //
+		"            window.Object.defineProperty( Element.prototype, 'documentOffsetLeft', {\n" + //
+		"                get: function () {\n" + //
+		"                    var offset = this.offsetLeft + ( this.offsetParent ? this.offsetParent.documentOffsetLeft : 0 );\n" + //
+		"                    return offset + parseFloat((this.currentStyle || window.getComputedStyle(this)).marginLeft);\n" + //
+		"                }\n" + //
+		"            });\n" + //
+		"        window.onload = function() {\n" + //
+		"            onWindowLoaded(window.location.href);\n" + //
+		"        };\n" + //
+		"    }\n" + //
+		")();\n";//
 
 	static Handler uiHandler;
 

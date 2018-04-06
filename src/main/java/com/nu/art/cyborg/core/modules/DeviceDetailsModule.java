@@ -46,8 +46,8 @@ import java.util.HashMap;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class DeviceDetailsModule
-		extends CyborgModule
-		implements CrashReportListener {
+	extends CyborgModule
+	implements CrashReportListener {
 
 	private DeviceScreenSize screenSize;
 

@@ -25,7 +25,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class WifiClientTransceiver
-		extends WifiTransceiver {
+	extends WifiTransceiver {
 
 	private final String serverIpAddress;
 
@@ -42,7 +42,7 @@ public class WifiClientTransceiver
 
 	@Override
 	protected SocketWrapper connectImpl()
-			throws Exception {
+		throws Exception {
 		setOneShot();
 		logDebug("Connecting on: " + serverIpAddress + ":" + port);
 		Socket socket = new Socket();

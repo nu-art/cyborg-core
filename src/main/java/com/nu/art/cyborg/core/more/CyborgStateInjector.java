@@ -41,8 +41,8 @@ import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public final class CyborgStateInjector
-		extends AnnotatbleInjector<Restorable, Object, Object>
-		implements ILogger {
+	extends AnnotatbleInjector<Restorable, Object, Object>
+	implements ILogger {
 
 	public interface TypeParser {
 

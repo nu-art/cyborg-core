@@ -29,7 +29,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 public class CountCircleView
-		extends View {
+	extends View {
 
 	private static final int DefaultHeightMargin = 6;
 

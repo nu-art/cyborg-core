@@ -30,14 +30,14 @@ import com.nu.art.reflection.annotations.ReflectiveInitialization;
  */
 @ReflectiveInitialization
 public class ValueChangerSetter
-		extends AttributesSetter<ValueChanger> {
+	extends AttributesSetter<ValueChanger> {
 
 	private static int[] ids = {//
-			R.styleable.ValueChanger_deltaValue,
-			//
-			R.styleable.ValueChanger_value,
-			//
-			R.styleable.ValueChanger_label
+		R.styleable.ValueChanger_deltaValue,
+		//
+		R.styleable.ValueChanger_value,
+		//
+		R.styleable.ValueChanger_label
 	};
 
 	private ValueChangerSetter() {

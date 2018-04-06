@@ -25,7 +25,7 @@ import android.widget.EditText;
 import com.nu.art.cyborg.core.CyborgBuilder;
 
 public final class FontEditText
-		extends EditText {
+	extends EditText {
 
 	public FontEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);

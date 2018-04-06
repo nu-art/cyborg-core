@@ -30,11 +30,11 @@ import com.nu.art.cyborg.core.abs.Cyborg;
  * Created by TacB0sS on 16-May 2016.
  */
 public abstract class CyborgServiceBase
-		extends Service
-		implements ILogger {
+	extends Service
+	implements ILogger {
 
 	public abstract class BaseBinder<ServiceType>
-			extends Binder {
+		extends Binder {
 
 		public abstract ServiceType getService();
 	}

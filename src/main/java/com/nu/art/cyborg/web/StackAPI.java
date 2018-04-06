@@ -23,7 +23,7 @@ import android.webkit.JavascriptInterface;
 import com.nu.art.cyborg.annotations.JavascriptBridgeMethod;
 
 public final class StackAPI
-		extends JavascriptAPI {
+	extends JavascriptAPI {
 
 	private static final String API_Name = "stackAPI";
 

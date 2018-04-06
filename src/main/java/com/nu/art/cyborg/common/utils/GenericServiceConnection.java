@@ -28,8 +28,8 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgServiceBase.BaseBinder;
 
 public final class GenericServiceConnection<_ServiceType extends Service>
-		extends Logger
-		implements ServiceConnection {
+	extends Logger
+	implements ServiceConnection {
 
 	public interface ServiceConnectionListener<_ServiceType extends Service> {
 
@@ -39,7 +39,7 @@ public final class GenericServiceConnection<_ServiceType extends Service>
 	}
 
 	public static abstract class ServiceConnectionListenerImpl<_ServiceType extends Service>
-			implements ServiceConnectionListener<_ServiceType> {
+		implements ServiceConnectionListener<_ServiceType> {
 
 		@Override
 		public void onServiceConnected(_ServiceType service) {}

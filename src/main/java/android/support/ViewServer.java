@@ -107,7 +107,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * </pre>
  */
 public class ViewServer
-		implements Runnable {
+	implements Runnable {
 
 	/**
 	 * The default port used to start rootView servers.
@@ -221,7 +221,7 @@ public class ViewServer
 	 * @see #isRunning()
 	 */
 	public boolean start()
-			throws IOException {
+		throws IOException {
 		if (mThread != null) {
 			return false;
 		}
@@ -478,7 +478,7 @@ public class ViewServer
 	}
 
 	private static class UncloseableOutputStream
-			extends OutputStream {
+		extends OutputStream {
 
 		private final OutputStream mStream;
 
@@ -487,7 +487,7 @@ public class ViewServer
 		}
 
 		public void close()
-				throws IOException {
+			throws IOException {
 			// Don't close the stream
 		}
 
@@ -496,7 +496,7 @@ public class ViewServer
 		}
 
 		public void flush()
-				throws IOException {
+			throws IOException {
 			mStream.flush();
 		}
 
@@ -509,30 +509,30 @@ public class ViewServer
 		}
 
 		public void write(byte[] buffer, int offset, int count)
-				throws IOException {
+			throws IOException {
 			mStream.write(buffer, offset, count);
 		}
 
 		public void write(byte[] buffer)
-				throws IOException {
+			throws IOException {
 			mStream.write(buffer);
 		}
 
 		public void write(int oneByte)
-				throws IOException {
+			throws IOException {
 			mStream.write(oneByte);
 		}
 	}
 
 	private static class NoopViewServer
-			extends ViewServer {
+		extends ViewServer {
 
 		private NoopViewServer() {
 		}
 
 		@Override
 		public boolean start()
-				throws IOException {
+			throws IOException {
 			return false;
 		}
 
@@ -576,7 +576,7 @@ public class ViewServer
 	}
 
 	private class ViewServerWorker
-			implements Runnable, WindowListener {
+		implements Runnable, WindowListener {
 
 		private Socket mClient;
 

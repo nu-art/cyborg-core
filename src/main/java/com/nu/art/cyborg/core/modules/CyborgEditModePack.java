@@ -34,10 +34,10 @@ import com.nu.art.modular.core.ModulesPack;
  */
 @SuppressWarnings("unchecked")
 public class CyborgEditModePack
-		extends ModulesPack {
+	extends ModulesPack {
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
-			AttributeModule.class,
+		AttributeModule.class,
 	};
 
 	private CyborgEditModePack() {

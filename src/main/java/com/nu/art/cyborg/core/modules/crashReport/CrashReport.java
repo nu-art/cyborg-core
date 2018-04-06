@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @SuppressWarnings( {
-											 "WeakerAccess",
-											 "unused"
-									 })
+	                   "WeakerAccess",
+	                   "unused"
+                   })
 public final class CrashReport {
 
 	public final static SimpleDateFormat DefaultTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

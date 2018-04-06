@@ -23,4 +23,4 @@ import com.nu.art.cyborg.core.abs._SystemServices;
 import com.nu.art.modular.interfaces.ModuleManagerDelegator;
 
 public interface ICyborgModule
-		extends CyborgDelegator, ModuleManagerDelegator, _SystemServices {}
+	extends CyborgDelegator, ModuleManagerDelegator, _SystemServices {}

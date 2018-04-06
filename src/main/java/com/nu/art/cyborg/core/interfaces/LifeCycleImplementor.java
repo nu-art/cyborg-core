@@ -19,7 +19,7 @@
 package com.nu.art.cyborg.core.interfaces;
 
 public class LifeCycleImplementor
-		implements LifeCycleListener {
+	implements LifeCycleListener {
 
 	@Override
 	public void onCreate() {}

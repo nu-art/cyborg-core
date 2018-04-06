@@ -21,7 +21,7 @@ package com.nu.art.cyborg.web.api;
 import com.nu.art.core.generics.Processor;
 
 public abstract class WebViewGeoLocationImplementor
-		implements WebViewGeoLocationHandler {
+	implements WebViewGeoLocationHandler {
 
 	@Override
 	public void onGeolocationPermissionsShowPrompt() {}

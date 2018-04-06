@@ -26,8 +26,8 @@ import com.nu.art.belog.Logger;
 import com.nu.art.core.tools.ArrayTools;
 
 public final class TouchAnalyzer
-		extends Logger
-		implements OnTouchListener {
+	extends Logger
+	implements OnTouchListener {
 
 	private static final boolean DebugAnalyzer = true;
 
@@ -83,7 +83,7 @@ public final class TouchAnalyzer
 	}
 
 	public static abstract class OnTouchGestureAdapter
-			implements OnTouchGestureListener {
+		implements OnTouchGestureListener {
 
 		@Override
 		public void onGestureStopped() {

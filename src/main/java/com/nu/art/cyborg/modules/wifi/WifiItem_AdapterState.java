@@ -33,7 +33,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 
 @SuppressWarnings("MissingPermission")
 public class WifiItem_AdapterState
-		extends CyborgModuleItem {
+	extends CyborgModuleItem {
 
 	public interface WifiAdapterStateListener {
 
@@ -99,7 +99,7 @@ public class WifiItem_AdapterState
 	}
 
 	public static class WifiAdapterStateReceiver
-			extends CyborgReceiver<WifiModule> {
+		extends CyborgReceiver<WifiModule> {
 
 		protected WifiAdapterStateReceiver() {
 			super(WifiModule.class);

@@ -35,8 +35,8 @@ import com.nu.art.cyborg.core.CyborgModule;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class NotificationsModule
-		extends CyborgModule
-		implements NotificationKeys {
+	extends CyborgModule
+	implements NotificationKeys {
 
 	private GenericMap<NotificationHandler> notificationHandlers = new GenericMap<>();
 
@@ -53,9 +53,9 @@ public final class NotificationsModule
 	}
 
 	@SuppressWarnings( {
-												 "unchecked",
-												 "SuspiciousMethodCalls"
-										 })
+		                   "unchecked",
+		                   "SuspiciousMethodCalls"
+	                   })
 	public final <HandlerType extends NotificationHandler> HandlerType getNotificationHandler(Class<HandlerType> handlerType) {
 		HandlerType notificationHandler = (HandlerType) notificationHandlers.get(handlerType);
 		if (notificationHandler == null)

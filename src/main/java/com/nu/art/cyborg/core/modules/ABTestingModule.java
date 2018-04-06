@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class ABTestingModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private static final String StorageGroup = "ab-testing";
 

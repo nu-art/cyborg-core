@@ -27,7 +27,7 @@ import android.content.Intent;
  * @param <ModuleType> Type of the module to use in this receiver.
  */
 public abstract class CyborgReceiver<ModuleType extends CyborgModule>
-		extends CyborgReceiverBase {
+	extends CyborgReceiverBase {
 
 	private final Class<ModuleType> moduleType;
 

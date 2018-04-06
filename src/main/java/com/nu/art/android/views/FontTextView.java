@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.nu.art.cyborg.core.CyborgBuilder;
 
 public final class FontTextView
-		extends TextView {
+	extends TextView {
 
 	public FontTextView(Context context) {
 		super(context);

@@ -25,7 +25,7 @@ import android.webkit.JavascriptInterface;
 import com.nu.art.cyborg.annotations.JavascriptBridgeMethod;
 
 public final class WebViewAPI
-		extends JavascriptAPI {
+	extends JavascriptAPI {
 
 	private CyborgWebView webView;
 

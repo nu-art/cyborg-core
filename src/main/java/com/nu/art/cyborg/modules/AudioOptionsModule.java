@@ -27,7 +27,7 @@ import static android.media.AudioManager.STREAM_VOICE_CALL;
  */
 
 public class AudioOptionsModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	public interface OnAudioOptionsChanged {
 
@@ -141,14 +141,14 @@ public class AudioOptionsModule
 	}
 
 	public static final class AudioSettingsReceiver
-			extends CyborgReceiver<AudioOptionsModule> {
+		extends CyborgReceiver<AudioOptionsModule> {
 
 		public static final String IntentAction__VOLUME_CHANGED = "android.media.VOLUME_CHANGED_ACTION";
 		public static final String IntentAction__STREAM_MUTE_CHANGED = "android.media.STREAM_MUTE_CHANGED_ACTION";
 
 		private static final String[] INTENT_ACTIONS = {
-				IntentAction__VOLUME_CHANGED,
-				IntentAction__STREAM_MUTE_CHANGED
+			IntentAction__VOLUME_CHANGED,
+			IntentAction__STREAM_MUTE_CHANGED
 		};
 
 		private AudioSettingsReceiver() {

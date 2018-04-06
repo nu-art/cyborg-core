@@ -27,7 +27,7 @@ import com.nu.art.cyborg.io.transceiver.TransceiverListener;
  */
 
 public class TransceiverListenerImpl
-		implements TransceiverListener {
+	implements TransceiverListener {
 
 	@Override
 	public void onStateChange(ConnectionState newState) {}

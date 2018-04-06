@@ -28,10 +28,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public abstract class WifiTransceiver
-		extends BaseTransceiver {
+	extends BaseTransceiver {
 
 	class WifiSocketWrapper
-			implements SocketWrapper {
+		implements SocketWrapper {
 
 		private final Socket socket;
 
@@ -41,25 +41,25 @@ public abstract class WifiTransceiver
 
 		@Override
 		public OutputStream getOutputStream()
-				throws IOException {
+			throws IOException {
 			return socket.getOutputStream();
 		}
 
 		@Override
 		public InputStream getInputStream()
-				throws IOException {
+			throws IOException {
 			return socket.getInputStream();
 		}
 
 		@Override
 		public void close()
-				throws IOException {
+			throws IOException {
 			socket.close();
 		}
 
 		@Override
 		public boolean isConnected()
-				throws IOException {
+			throws IOException {
 			return socket.isConnected();
 		}
 	}

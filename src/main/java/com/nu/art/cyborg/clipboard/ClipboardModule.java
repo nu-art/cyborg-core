@@ -29,7 +29,7 @@ import com.nu.art.core.generics.Processor;
 
 @ModuleDescriptor(usesPermissions = {})
 public class ClipboardModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	public interface OnClipboardChangedListener {
 
@@ -55,8 +55,8 @@ public class ClipboardModule
 
 	@SuppressWarnings("deprecation")
 	private class Pre11_Clipboard
-			extends BaseClipboard<android.text.ClipboardManager>
-			implements Runnable {
+		extends BaseClipboard<android.text.ClipboardManager>
+		implements Runnable {
 
 		private Handler handler;
 
@@ -93,8 +93,8 @@ public class ClipboardModule
 	}
 
 	private class Post11_Clipboard
-			extends BaseClipboard<android.content.ClipboardManager>
-			implements OnPrimaryClipChangedListener {
+		extends BaseClipboard<android.content.ClipboardManager>
+		implements OnPrimaryClipChangedListener {
 
 		private Post11_Clipboard() {
 			super(new ServiceType<android.content.ClipboardManager>(Context.CLIPBOARD_SERVICE));
@@ -131,9 +131,9 @@ public class ClipboardModule
 	private String oldText;
 
 	@SuppressWarnings( {
-												 "unused",
-												 "FieldCanBeLocal"
-										 })
+		                   "unused",
+		                   "FieldCanBeLocal"
+	                   })
 	private BaseClipboard<?> clipboard;
 
 	@Override

@@ -25,15 +25,15 @@ import java.io.OutputStream;
 public interface SocketWrapper {
 
 	OutputStream getOutputStream()
-			throws IOException;
+		throws IOException;
 
 	InputStream getInputStream()
-			throws IOException;
+		throws IOException;
 
 	void close()
-			throws IOException;
+		throws IOException;
 
 	boolean isConnected()
-			throws IOException;
+		throws IOException;
 }
 

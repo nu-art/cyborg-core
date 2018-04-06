@@ -83,8 +83,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CyborgWebView
-		extends WebView
-		implements ILogger {
+	extends WebView
+	implements ILogger {
 
 	static {
 		try {
@@ -227,8 +227,8 @@ public class CyborgWebView
 			Object mNativeClass = nativeclass_field.get(webviewclassic);
 
 			Method method = mWebViewCore.getClass().getDeclaredMethod("nativeRegisterURLSchemeAsLocal", new Class[]{
-					int.class,
-					String.class
+				int.class,
+				String.class
 			});
 			method.setAccessible(true);
 			method.invoke(mWebViewCore, mNativeClass, "http");

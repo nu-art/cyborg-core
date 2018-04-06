@@ -29,7 +29,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 public class TouchTester
-		extends View {
+	extends View {
 
 	private ArrayList<Point> points = new ArrayList<>();
 

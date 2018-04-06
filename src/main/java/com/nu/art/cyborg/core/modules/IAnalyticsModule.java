@@ -21,6 +21,6 @@ package com.nu.art.cyborg.core.modules;
 import com.nu.art.cyborg.core.abs._Analytics;
 
 public interface IAnalyticsModule
-		extends _Analytics {
+	extends _Analytics {
 
 }

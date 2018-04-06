@@ -23,7 +23,7 @@ import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
 public final class DebugStringsResolver
-		implements StringResourceResolver {
+	implements StringResourceResolver {
 
 	private String text;
 

@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 @ModuleDescriptor
 public class PermissionModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private static final int RequestCode_Permissions = 100;
 

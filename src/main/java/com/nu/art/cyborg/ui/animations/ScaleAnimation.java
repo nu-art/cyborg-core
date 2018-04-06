@@ -26,7 +26,7 @@ import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 
 public class ScaleAnimation
-		extends Animation {
+	extends Animation {
 
 	public enum Horizontal {
 		Right,

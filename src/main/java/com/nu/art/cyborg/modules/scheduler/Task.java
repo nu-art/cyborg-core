@@ -7,7 +7,7 @@ import com.nu.art.modular.core.ModuleItem;
  */
 
 public abstract class Task<DataType>
-		extends ModuleItem {
+	extends ModuleItem {
 
 	protected short id;
 

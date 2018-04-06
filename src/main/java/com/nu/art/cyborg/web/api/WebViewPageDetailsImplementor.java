@@ -22,7 +22,7 @@ import android.graphics.Bitmap;
 import android.webkit.WebView;
 
 public abstract class WebViewPageDetailsImplementor
-		implements WebViewPageDetailsHandler {
+	implements WebViewPageDetailsHandler {
 
 	@Override
 	public void onReceivedIcon(WebView view, Bitmap icon) {}

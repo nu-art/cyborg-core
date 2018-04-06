@@ -54,8 +54,8 @@ import java.io.IOException;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class ImageUtilsModule
-		extends CyborgModule
-		implements OnActivityResultListener {
+	extends CyborgModule
+	implements OnActivityResultListener {
 
 	private static final int SELECT_PICTURE = getNextRandomPositiveShort();
 
@@ -97,7 +97,7 @@ public final class ImageUtilsModule
 	}
 
 	public final void saveImageToFile(File imageFile, Bitmap image)
-			throws IOException {
+		throws IOException {
 		saveImageToFile(imageFile, image, CompressFormat.PNG);
 	}
 
@@ -108,7 +108,7 @@ public final class ImageUtilsModule
 	}
 
 	public final void saveImageToFile(File imageFile, Bitmap image, CompressFormat format)
-			throws IOException {
+		throws IOException {
 		FileTools.createNewFile(imageFile);
 
 		FileOutputStream fileOutputStream = null;
@@ -122,12 +122,12 @@ public final class ImageUtilsModule
 	}
 
 	public final Bitmap loadImageFromFile(File imageFile)
-			throws IOException {
+		throws IOException {
 		return loadImageFromFile(imageFile, 1f);
 	}
 
 	public final Bitmap loadImageFromFile(File imageFile, float ratio)
-			throws IOException {
+		throws IOException {
 		if (!imageFile.exists())
 			throw new FileNotFoundException("Cannot find file: " + imageFile);
 		int rotate = getImageOrientation(imageFile);
@@ -145,7 +145,7 @@ public final class ImageUtilsModule
 	}
 
 	public final int getImageOrientation(File imageFile)
-			throws IOException {
+		throws IOException {
 		ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
 		int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 

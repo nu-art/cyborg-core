@@ -33,7 +33,7 @@ import java.io.InputStream;
  */
 
 public class GenericDownloaderModule
-		extends Module {
+	extends Module {
 
 	@Override
 	protected void init() {}
@@ -75,7 +75,7 @@ public class GenericDownloaderModule
 	}
 
 	private class DownloaderBuilderImpl
-			implements DownloaderBuilder {
+		implements DownloaderBuilder {
 
 		private String url;
 

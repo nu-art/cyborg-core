@@ -26,7 +26,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public final class WifiServerTransceiver
-		extends WifiTransceiver {
+	extends WifiTransceiver {
 
 	private ServerSocket serverSocket;
 
@@ -38,7 +38,7 @@ public final class WifiServerTransceiver
 
 	@Override
 	protected SocketWrapper connectImpl()
-			throws Exception {
+		throws Exception {
 
 		serverSocket = new ServerSocket(port);
 		Socket socket = serverSocket.accept();

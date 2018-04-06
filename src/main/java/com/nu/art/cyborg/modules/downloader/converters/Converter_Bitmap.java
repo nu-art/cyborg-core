@@ -31,7 +31,7 @@ import java.io.InputStream;
 
 @SuppressWarnings("unused")
 public class Converter_Bitmap
-		implements Function<InputStream, Bitmap> {
+	implements Function<InputStream, Bitmap> {
 
 	public static final Converter_Bitmap converter = new Converter_Bitmap();
 

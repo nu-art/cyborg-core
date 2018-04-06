@@ -34,7 +34,7 @@ import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
  * @param <ItemType> The item type this renderer can render.
  */
 public abstract class ItemRenderer<ItemType>
-		extends CyborgController {
+	extends CyborgController {
 
 	private ItemType item;
 

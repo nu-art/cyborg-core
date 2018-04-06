@@ -32,10 +32,10 @@ import java.util.HashMap;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class AttributeModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	public static abstract class AttributesSetter<Expected>
-			extends CyborgModuleItem {
+		extends CyborgModuleItem {
 
 		final Class<Expected> expectedType;
 
@@ -85,9 +85,9 @@ public final class AttributeModule
 		protected void init() {}
 
 		@SuppressWarnings( {
-													 "unchecked",
-													 "UnusedParameters"
-											 })
+			                   "unchecked",
+			                   "UnusedParameters"
+		                   })
 		protected final <Type> Class<? extends Type> resolveClassType(Class<Type> type, String className) {
 			if (className == null || className.length() == 0)
 				throw ExceptionGenerator.noValueForControllerClassNameSpecified();

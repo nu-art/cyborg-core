@@ -35,7 +35,7 @@ import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
 public class UserActionsDelegatorImpl
-		implements UserActionsDelegator {
+	implements UserActionsDelegator {
 
 	private final Cyborg cyborg;
 	private UserActionsDelegator[] modulesAssignableFrom;

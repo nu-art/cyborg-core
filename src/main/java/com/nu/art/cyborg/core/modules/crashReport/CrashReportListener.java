@@ -34,5 +34,5 @@ public interface CrashReportListener {
 	 * @param moduleCrashData The specific crash report data for the module.
 	 */
 	void onApplicationCrashed(HashMap<String, Object> moduleCrashData)
-			throws Exception;
+		throws Exception;
 }

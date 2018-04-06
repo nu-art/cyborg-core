@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core.animations.transitions;
 import android.view.View;
 
 public class SquashTransition
-		extends BaseTransition {
+	extends BaseTransition {
 
 	public SquashTransition() {}
 

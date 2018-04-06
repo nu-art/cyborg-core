@@ -24,7 +24,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class ZoomableViewPager
-		extends ViewPager {
+	extends ViewPager {
 
 	public interface ZoomableView {
 

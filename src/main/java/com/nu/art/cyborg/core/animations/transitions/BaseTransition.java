@@ -37,19 +37,19 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  * Created by TacB0sS on 27-Jul 2015.
  */
 public abstract class BaseTransition
-		extends Animation {
+	extends Animation {
 
 	@Documented
 	@Retention(SOURCE)
 	@Target( {
-							 PARAMETER,
-							 FIELD,
-							 LOCAL_VARIABLE
-					 })
+		         PARAMETER,
+		         FIELD,
+		         LOCAL_VARIABLE
+	         })
 	@IntDef( {
-							 ORIENTATION_HORIZONTAL,
-							 ORIENTATION_VERTICAL
-					 })
+		         ORIENTATION_HORIZONTAL,
+		         ORIENTATION_VERTICAL
+	         })
 	public @interface TransitionOrientation {}
 
 	public interface BaseTransitionHelper {

@@ -23,7 +23,7 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 public class CustomScroller
-		extends Scroller {
+	extends Scroller {
 
 	private static final int DEFAULT_SCROLL_DURATION = 500;
 

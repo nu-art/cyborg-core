@@ -22,7 +22,7 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 
 public abstract class WebViewSystemImplementor
-		implements WebViewSystemHandler {
+	implements WebViewSystemHandler {
 
 	@Override
 	public void onScaleChanged(WebView view, float oldScale, float newScale) {}

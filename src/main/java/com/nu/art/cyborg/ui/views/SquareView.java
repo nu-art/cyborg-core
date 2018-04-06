@@ -12,7 +12,7 @@ import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
 
 public class SquareView
-		extends FrameLayout {
+	extends FrameLayout {
 
 	private int aspectRatioWidth;
 
@@ -49,11 +49,11 @@ public class SquareView
 
 	@ReflectiveInitialization
 	public static class SquareViewSetter
-			extends AttributesSetter<SquareView> {
+		extends AttributesSetter<SquareView> {
 
 		private static int[] ids = {
-				R.styleable.SquareView_heightRatio,
-				R.styleable.SquareView_widthRatio
+			R.styleable.SquareView_heightRatio,
+			R.styleable.SquareView_widthRatio
 		};
 
 		private SquareViewSetter() {

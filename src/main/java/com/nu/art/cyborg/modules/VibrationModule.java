@@ -28,7 +28,7 @@ import com.nu.art.cyborg.core.modules.PreferencesModule.PreferenceKey;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class VibrationModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private PreferenceKey<Boolean> VibrationState;
 

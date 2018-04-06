@@ -28,10 +28,10 @@ import com.nu.art.cyborg.core.modules.PreferencesModule.IntegerPreference;
  * Created by TacB0sS on 28-Feb 2017.
  */
 @ModuleDescriptor(usesPermissions = {},
-									dependencies = {AppDetailsModule.class})
+                  dependencies = {AppDetailsModule.class})
 
 public class UpgradeModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	public interface OnAppUpgradedListener {
 

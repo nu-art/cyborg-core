@@ -31,24 +31,24 @@ import com.nu.art.reflection.annotations.ReflectiveInitialization;
  */
 @ReflectiveInitialization
 public class CyborgStackSetter
-		extends AttributesSetter<CyborgStackController> {
+	extends AttributesSetter<CyborgStackController> {
 
 	private static int[] ids = {//
-			R.styleable.StackController_transition,
-			//
-			R.styleable.StackController_transitionOrientation,
-			//
-			R.styleable.StackController_transitionDuration,
-			//
-			R.styleable.StackController_popOnBackPress,
-			//
-			R.styleable.StackController_rootLayoutId,
-			//
-			R.styleable.StackController_rootSaveState,
-			//
-			R.styleable.StackController_rootController,
-			//
-			R.styleable.StackController_rootTag
+		R.styleable.StackController_transition,
+		//
+		R.styleable.StackController_transitionOrientation,
+		//
+		R.styleable.StackController_transitionDuration,
+		//
+		R.styleable.StackController_popOnBackPress,
+		//
+		R.styleable.StackController_rootLayoutId,
+		//
+		R.styleable.StackController_rootSaveState,
+		//
+		R.styleable.StackController_rootController,
+		//
+		R.styleable.StackController_rootTag
 	};
 
 	private CyborgStackSetter() {

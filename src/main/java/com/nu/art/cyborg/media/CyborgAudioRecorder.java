@@ -28,7 +28,7 @@ import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Pre
 import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Recording;
 
 public class CyborgAudioRecorder
-		extends CyborgModule {
+	extends CyborgModule {
 
 	public static final String DebugFlag = "Debug_" + CyborgAudioRecorder.class.getSimpleName();
 
@@ -256,9 +256,9 @@ public class CyborgAudioRecorder
 	@NonNull
 	private String getRecorderBuilderDetails(RecorderBuilder builder) {
 		return "\n  recordingSource: " + builder.recordingSource + //
-				"\n  recordingChannel: " + builder.recordingChannel + //
-				"\n  recordingEncoding: " + builder.recordingEncoding +//
-				"\n  sampleRate: " + builder.sampleRate;
+			"\n  recordingChannel: " + builder.recordingChannel + //
+			"\n  recordingEncoding: " + builder.recordingEncoding +//
+			"\n  sampleRate: " + builder.sampleRate;
 	}
 
 	private void recordImpl(int bufferSize, int sampleRate) {
@@ -332,7 +332,7 @@ public class CyborgAudioRecorder
 
 	@SuppressWarnings("unused")
 	public class RecorderBuilder
-			implements Runnable {
+		implements Runnable {
 
 		int maxBufferSize = MaxBufferSize;
 		int sampleRate = SampleRate;
@@ -380,7 +380,7 @@ public class CyborgAudioRecorder
 		}
 
 		int calculateBufferSize()
-				throws AudioRecordingException {
+			throws AudioRecordingException {
 			int bufferSize = AudioRecord.getMinBufferSize(sampleRate, recordingChannel, recordingEncoding);
 			if (bufferSize <= 0)
 				checkForBufferError(bufferSize);
@@ -403,7 +403,7 @@ public class CyborgAudioRecorder
 		}
 
 		private AudioRecord createAudioRecord(int bufferSize)
-				throws AudioRecordingException {
+			throws AudioRecordingException {
 			AudioRecord audioRecord = new AudioRecord(recordingSource, sampleRate, recordingChannel, recordingEncoding, bufferSize);
 			if (audioRecord.getState() == AudioRecord.STATE_INITIALIZED)
 				return audioRecord;
@@ -412,12 +412,12 @@ public class CyborgAudioRecorder
 		}
 
 		private void checkForBufferError(int bufferSize)
-				throws AudioRecordingException {
+			throws AudioRecordingException {
 			AudioRecorderError error = AudioRecorderError.getErrorFromValue(bufferSize);
 
 			if (error != null)
 				throw new AudioRecordingException("Error getting min buffer size: " +//
-																							"\n  error: " + error.name());
+					                                  "\n  error: " + error.name());
 		}
 	}
 
@@ -432,7 +432,7 @@ public class CyborgAudioRecorder
 	}
 
 	public class AudioRecordingException
-			extends Exception {
+		extends Exception {
 
 		AudioRecordingException(String message) {
 			super(message);

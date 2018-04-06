@@ -5,7 +5,7 @@ import android.content.Intent;
 import com.nu.art.cyborg.core.CyborgReceiver;
 
 public final class TasksReceiver
-		extends CyborgReceiver<TaskScheduler> {
+	extends CyborgReceiver<TaskScheduler> {
 
 	public TasksReceiver() {
 		super(TaskScheduler.class);

@@ -31,8 +31,8 @@ import com.nu.art.cyborg.ui.StartActivityForResultActivity.StartActivityType;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 public class StartActivityForResultActivity
-		extends Activity
-		implements StartActivityForResultWorkaroundConsts {
+	extends Activity
+	implements StartActivityForResultWorkaroundConsts {
 
 	public static void startActivityForResultHack(Context context, Intent originalIntent, Intent startIntent, int requestCode) {
 		StartActivityForResultHandler.startActivityForResult(context, originalIntent, startIntent, requestCode);
@@ -43,13 +43,13 @@ public class StartActivityForResultActivity
 	}
 
 	public static void startIntentSenderForResultHack(Context context,
-																										Intent originalIntent,
-																										IntentSender intentSender,
-																										Intent fillInIntent,
-																										int requestCode,
-																										int flagsMasks,
-																										int flagsValues,
-																										int extraFlags) {
+	                                                  Intent originalIntent,
+	                                                  IntentSender intentSender,
+	                                                  Intent fillInIntent,
+	                                                  int requestCode,
+	                                                  int flagsMasks,
+	                                                  int flagsValues,
+	                                                  int extraFlags) {
 		StartIntentSenderForResultHandler.startIntentSenderForResult(context, originalIntent, intentSender, fillInIntent, requestCode, flagsMasks, flagsValues, extraFlags);
 	}
 
@@ -86,7 +86,7 @@ public class StartActivityForResultActivity
 }
 
 abstract class StartActivityHandler
-		implements StartActivityForResultWorkaroundConsts {
+	implements StartActivityForResultWorkaroundConsts {
 
 	protected static Intent createGeneralIntent(Context context, StartActivityType type, Intent originalIntent, int requestCode) {
 		Intent intent = new Intent();
@@ -139,7 +139,7 @@ abstract class StartActivityHandler
 }
 
 final class StartActivityForResultHandler
-		extends StartActivityHandler {
+	extends StartActivityHandler {
 
 	@Override
 	protected final void handleIntent(Activity activity, Intent intent) {
@@ -161,7 +161,7 @@ final class StartActivityForResultHandler
 }
 
 final class StartIntentSenderForResultHandler
-		extends StartActivityHandler {
+	extends StartActivityHandler {
 
 	@Override
 	protected final void handleIntent(Activity activity, Intent intent) {
@@ -187,13 +187,13 @@ final class StartIntentSenderForResultHandler
 	}
 
 	public static void startIntentSenderForResult(Context context,
-																								Intent originalIntent,
-																								IntentSender intentSender,
-																								Intent fillInIntent,
-																								int requestCode,
-																								int flagsMasks,
-																								int flagsValues,
-																								int extraFlags) {
+	                                              Intent originalIntent,
+	                                              IntentSender intentSender,
+	                                              Intent fillInIntent,
+	                                              int requestCode,
+	                                              int flagsMasks,
+	                                              int flagsValues,
+	                                              int extraFlags) {
 		Intent intent = createGeneralIntent(context, StartActivityType.StartIntentSenderForResult, originalIntent, requestCode);
 
 		intent.putExtra(ExtraKey__IntentSender, intentSender);

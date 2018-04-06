@@ -24,7 +24,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
  * Created by TacB0sS on 18-Mar-15.
  */
 public abstract class OnPageChangedListenerImpl
-		implements OnPageChangeListener {
+	implements OnPageChangeListener {
 
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}

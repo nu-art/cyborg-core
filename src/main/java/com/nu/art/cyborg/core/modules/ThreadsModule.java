@@ -30,7 +30,7 @@ import java.util.Map;
 
 @ModuleDescriptor(usesPermissions = {})
 public class ThreadsModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	/**
 	 * This key is for a quick repetitive or one shot actions <b>ONLY</b>,

@@ -38,12 +38,12 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 @SuppressWarnings( {
-											 "rawtypes",
-											 "unchecked"
-									 })
+	                   "rawtypes",
+	                   "unchecked"
+                   })
 public final class CyborgViewInjector
-		extends AnnotatbleInjector<ViewIdentifier, View, CyborgController>
-		implements ILogger {
+	extends AnnotatbleInjector<ViewIdentifier, View, CyborgController>
+	implements ILogger {
 
 	private static final HashMap<Class<? extends CyborgController>, Field[]> cache = new HashMap<>();
 	/**
@@ -113,11 +113,11 @@ public final class CyborgViewInjector
 	}
 
 	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Object fieldValue,
-																																							Field viewField,
-																																							ViewIdentifier viewIdentifier,
-																																							Class<ComponentType> componentType,
-																																							int parentViewId,
-																																							int[] ids) {
+	                                                                            Field viewField,
+	                                                                            ViewIdentifier viewIdentifier,
+	                                                                            Class<ComponentType> componentType,
+	                                                                            int parentViewId,
+	                                                                            int[] ids) {
 		ComponentType[] items;
 		if (fieldValue != null)
 			items = (ComponentType[]) fieldValue;

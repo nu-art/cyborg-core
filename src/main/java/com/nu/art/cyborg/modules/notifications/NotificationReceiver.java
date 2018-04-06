@@ -25,7 +25,7 @@ import com.nu.art.cyborg.core.CyborgReceiver;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 
 public final class NotificationReceiver
-		extends CyborgReceiver<NotificationsModule> {
+	extends CyborgReceiver<NotificationsModule> {
 
 	public NotificationReceiver() {
 		super(NotificationsModule.class);

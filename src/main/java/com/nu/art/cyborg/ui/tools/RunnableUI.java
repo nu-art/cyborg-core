@@ -27,7 +27,7 @@ import com.nu.art.cyborg.core.modules.ThreadsModule;
  * A convenient wrapper for runnable to be called on the main thread, without knowing which thread is going to run it.
  */
 public abstract class RunnableUI
-		implements Runnable {
+	implements Runnable {
 
 	@Override
 	public final void run() {

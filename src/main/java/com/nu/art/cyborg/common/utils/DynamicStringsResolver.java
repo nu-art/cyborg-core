@@ -23,7 +23,7 @@ import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
 public final class DynamicStringsResolver
-		implements StringResourceResolver {
+	implements StringResourceResolver {
 
 	public static enum Case {
 		Upper,

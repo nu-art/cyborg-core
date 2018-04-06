@@ -37,7 +37,7 @@ import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public final class CyborgStateExtractor
-		extends AnnotatbleExtractor<Restorable, Object, Object> {
+	extends AnnotatbleExtractor<Restorable, Object, Object> {
 
 	private final Bundle data;
 
@@ -148,11 +148,11 @@ public final class CyborgStateExtractor
 	}
 
 	private void serializeWithParser(Restorable annotation,
-																	 Class<?> fieldType,
-																	 Class<? extends TypeParser> parserType,
-																	 Object fieldValue,
-																	 Bundle data,
-																	 String key) {
+	                                 Class<?> fieldType,
+	                                 Class<? extends TypeParser> parserType,
+	                                 Object fieldValue,
+	                                 Bundle data,
+	                                 String key) {
 		TypeParser parser = ReflectiveTools.newInstance(parserType);
 		parser.serialize(annotation, fieldType, fieldValue, data, key);
 	}

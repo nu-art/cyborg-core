@@ -24,7 +24,7 @@ import com.nu.art.cyborg.core.CyborgReceiver;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 
 public final class BootStarterReceiver
-		extends CyborgReceiver<AppDetailsModule> {
+	extends CyborgReceiver<AppDetailsModule> {
 
 	public interface OnBootCompletedListener {
 

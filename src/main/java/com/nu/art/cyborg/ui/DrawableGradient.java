@@ -21,7 +21,7 @@ package com.nu.art.cyborg.ui;
 import android.graphics.drawable.GradientDrawable;
 
 public class DrawableGradient
-		extends GradientDrawable {
+	extends GradientDrawable {
 
 	public DrawableGradient(Orientation orientation, int shape, int gradientType, int... colors) {
 		super(orientation, colors);

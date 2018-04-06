@@ -57,7 +57,7 @@ public final class StoragePath {
 	}
 
 	public void delete()
-			throws IOException {
+		throws IOException {
 		FileTools.delete(getFile());
 	}
 

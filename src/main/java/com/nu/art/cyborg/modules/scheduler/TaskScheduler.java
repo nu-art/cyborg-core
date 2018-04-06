@@ -13,7 +13,7 @@ import com.nu.art.cyborg.core.CyborgModule;
  * In Order for this to work you need to enable the {@link TasksReceiver} in your manifest
  */
 public class TaskScheduler
-		extends CyborgModule {
+	extends CyborgModule {
 
 	private Serializer<Object, String> serializer;
 	private static final String Key_TaskType = "TaskType";

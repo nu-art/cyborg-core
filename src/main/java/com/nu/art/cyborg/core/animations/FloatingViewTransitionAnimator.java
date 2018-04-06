@@ -43,7 +43,7 @@ import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
  * Created by TacB0sS on 30-Apr 2016.
  */
 public class FloatingViewTransitionAnimator
-		extends StackTransitionAnimator {
+	extends StackTransitionAnimator {
 
 	private final Function<StackLayer, View> getOriginView;
 
@@ -70,7 +70,7 @@ public class FloatingViewTransitionAnimator
 	}
 
 	private class WidthEvaluator
-			extends IntEvaluator {
+		extends IntEvaluator {
 
 		private View v;
 
@@ -89,7 +89,7 @@ public class FloatingViewTransitionAnimator
 	}
 
 	private class HeightEvaluator
-			extends IntEvaluator {
+		extends IntEvaluator {
 
 		private View v;
 
@@ -130,11 +130,11 @@ public class FloatingViewTransitionAnimator
 	}
 
 	private void renderFromTo(View fromParent,
-														final View viewToAnimateFrom,
-														final View viewToAnimateTo,
-														Bitmap imageToAnimate,
-														int duration,
-														final AnimationListener listener) {
+	                          final View viewToAnimateFrom,
+	                          final View viewToAnimateTo,
+	                          Bitmap imageToAnimate,
+	                          int duration,
+	                          final AnimationListener listener) {
 		final FrameLayout rootView = (FrameLayout) fromParent.getRootView().findViewById(android.R.id.content);
 		Context context = rootView.getContext();
 

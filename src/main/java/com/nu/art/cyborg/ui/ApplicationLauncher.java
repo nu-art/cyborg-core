@@ -31,7 +31,7 @@ import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
  * This is the default application launcher Activity when using Cyborg!
  */
 public final class ApplicationLauncher
-		extends Activity {
+	extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

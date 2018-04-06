@@ -35,16 +35,16 @@ public interface _Resources {
 	 * Numeric Ids.
 	 */
 	int[] numericIds = {
-			R.string._0,
-			R.string._1,
-			R.string._2,
-			R.string._3,
-			R.string._4,
-			R.string._5,
-			R.string._6,
-			R.string._7,
-			R.string._8,
-			R.string._9
+		R.string._0,
+		R.string._1,
+		R.string._2,
+		R.string._3,
+		R.string._4,
+		R.string._5,
+		R.string._6,
+		R.string._7,
+		R.string._8,
+		R.string._9
 	};
 
 	/**
@@ -109,7 +109,7 @@ public interface _Resources {
 	 * @throws IOException if something goes wrong...
 	 */
 	InputStream getAsset(String assetName)
-			throws IOException;
+		throws IOException;
 
 	/**
 	 * @return Android's {@link ContentResolver}.

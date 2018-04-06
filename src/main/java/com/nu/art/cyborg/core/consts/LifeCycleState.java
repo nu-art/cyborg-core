@@ -22,7 +22,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
 
 public enum LifeCycleState
-		implements Processor<LifeCycleListener> {
+	implements Processor<LifeCycleListener> {
 	OnCreate() {
 		@Override
 		public void process(LifeCycleListener toProcess) {

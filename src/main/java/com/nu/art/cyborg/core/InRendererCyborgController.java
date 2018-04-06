@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core;
 import android.support.annotation.LayoutRes;
 
 public class InRendererCyborgController
-		extends CyborgController {
+	extends CyborgController {
 
 	public InRendererCyborgController(@LayoutRes int layoutId) {
 		super(layoutId);

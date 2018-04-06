@@ -25,8 +25,8 @@ import java.io.OutputStream;
 public interface PacketSerializer {
 
 	void serializePacket(OutputStream os, Packet packet)
-			throws IOException;
+		throws IOException;
 
 	Packet extractPacket(InputStream inputStream)
-			throws IOException;
+		throws IOException;
 }

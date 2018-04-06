@@ -26,7 +26,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
 public abstract class WebViewRequestImplementor
-		implements WebViewRequestHandler {
+	implements WebViewRequestHandler {
 
 	@Override
 	public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {}

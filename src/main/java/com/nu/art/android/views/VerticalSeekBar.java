@@ -25,7 +25,7 @@ import android.view.MotionEvent;
 import android.widget.SeekBar;
 
 public class VerticalSeekBar
-		extends SeekBar {
+	extends SeekBar {
 
 	private OnSeekBarChangeListener myListener;
 

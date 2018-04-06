@@ -35,7 +35,7 @@ import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOr
  * Created by TacB0sS on 19-Jul 2015.
  */
 public class PredefinedStackTransitionAnimator
-		extends StackTransitionAnimator {
+	extends StackTransitionAnimator {
 
 	private Animation outOrigin;
 

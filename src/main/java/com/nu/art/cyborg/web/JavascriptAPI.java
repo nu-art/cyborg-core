@@ -41,7 +41,7 @@ import java.lang.reflect.Method;
  * @author TacB0sS
  */
 public abstract class JavascriptAPI
-		implements Obfuscation_KeepMethods, Obfuscation_KeepMethodsNames {
+	implements Obfuscation_KeepMethods, Obfuscation_KeepMethodsNames {
 
 	private String api;
 
@@ -96,9 +96,9 @@ public abstract class JavascriptAPI
 	}
 
 	@SuppressLint( {
-										 "JavascriptInterface",
-										 "AddJavascriptInterface"
-								 })
+		               "JavascriptInterface",
+		               "AddJavascriptInterface"
+	               })
 	public final void appendToWebView(WebView webView) {
 		if (webView == null)
 			throw new BadImplementationException("API: " + name + " - WEBVIEW == null");

@@ -22,7 +22,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 
 public abstract class WebViewVideoImplementor
-		implements WebViewVideoHandler {
+	implements WebViewVideoHandler {
 
 	@Override
 	public Bitmap getDefaultVideoPoster() {

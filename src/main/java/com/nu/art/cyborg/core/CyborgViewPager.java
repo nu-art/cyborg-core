@@ -37,7 +37,7 @@ import java.lang.reflect.Field;
  * Created by TacB0sS on 06-Aug 2016.
  */
 public class CyborgViewPager
-		extends ViewPager {
+	extends ViewPager {
 
 	private boolean blockUserSwiping;
 
@@ -68,7 +68,7 @@ public class CyborgViewPager
 	}
 
 	public void setAutoScrollSpeed(int speedInMillis)
-			throws Exception {
+		throws Exception {
 		Field mScroller;
 		mScroller = ViewPager.class.getDeclaredField("mScroller");
 		mScroller.setAccessible(true);
@@ -94,11 +94,11 @@ public class CyborgViewPager
 	 */
 	@ReflectiveInitialization
 	public static class CyborgViewPagerSetter
-			extends AttributesSetter<CyborgViewPager> {
+		extends AttributesSetter<CyborgViewPager> {
 
 		private static int[] ids = {
-				R.styleable.ViewPager_scrollIntervalMS,
-				R.styleable.ViewPager_blockUserSwiping,
+			R.styleable.ViewPager_scrollIntervalMS,
+			R.styleable.ViewPager_blockUserSwiping,
 		};
 
 		private CyborgViewPagerSetter() {

@@ -57,7 +57,7 @@ import com.nu.art.reflection.tools.ReflectiveTools;
  */
 @SuppressWarnings("unchecked")
 public class CyborgView
-		extends RelativeLayout {
+	extends RelativeLayout {
 
 	protected final String TAG = getClass().getSimpleName();
 
@@ -212,11 +212,11 @@ public class CyborgView
 
 	@ReflectiveInitialization
 	public static class CyborgViewSetter
-			extends AttributesSetter<CyborgView> {
+		extends AttributesSetter<CyborgView> {
 
 		private static final int[] ids = {
-				R.styleable.CyborgView_controller,
-				R.styleable.CyborgView_tag
+			R.styleable.CyborgView_controller,
+			R.styleable.CyborgView_tag
 		};
 
 		public CyborgViewSetter() {

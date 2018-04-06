@@ -52,8 +52,8 @@ import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
  */
 @SuppressWarnings("unused")
 public class CyborgActivity
-		extends FragmentActivity
-		implements ILogger {
+	extends FragmentActivity
+	implements ILogger {
 
 	protected final String TAG = getClass().getSimpleName();
 
@@ -206,9 +206,9 @@ public class CyborgActivity
 	}
 
 	@SuppressWarnings( {
-												 "rawtypes",
-												 "unchecked"
-										 })
+		                   "rawtypes",
+		                   "unchecked"
+	                   })
 	public final <ModuleType extends CyborgModule> ModuleType getModule(Class<ModuleType> moduleType) {
 		return bridge.getModule(moduleType);
 	}

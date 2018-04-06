@@ -27,8 +27,8 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 
 public abstract class NotificationHandler
-		extends CyborgModuleItem
-		implements NotificationKeys {
+	extends CyborgModuleItem
+	implements NotificationKeys {
 
 	protected NotificationsModule module;
 

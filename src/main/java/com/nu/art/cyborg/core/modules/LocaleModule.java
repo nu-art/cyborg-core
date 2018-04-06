@@ -31,7 +31,7 @@ import com.nu.art.cyborg.core.CyborgModule;
 import java.util.Locale;
 
 public class LocaleModule
-		extends CyborgModule {
+	extends CyborgModule {
 
 	public interface SupportedLocale {
 
@@ -41,7 +41,7 @@ public class LocaleModule
 	private static final SupportedLocale DefaultLanguage = LanguageLocale.English;
 
 	public enum LanguageLocale
-			implements SupportedLocale {
+		implements SupportedLocale {
 		English("English", "en"),
 		Arabic("Arabic", "ar"),
 		German("German", "de"),

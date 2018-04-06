@@ -29,7 +29,7 @@ import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 
 public class FontTypeSetter
-		extends AttributesSetter<TextView> {
+	extends AttributesSetter<TextView> {
 
 	public interface SupportedFont {
 
