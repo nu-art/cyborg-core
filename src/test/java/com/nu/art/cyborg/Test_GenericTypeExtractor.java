@@ -1,10 +1,10 @@
 package com.nu.art.cyborg;
 
 import com.nu.art.belog.BeLogged;
-import com.nu.art.belog.DefaultLogClient;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.core.modules.AndroidLogClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class Test_GenericTypeExtractor
 			return;
 		}
 
-		BeLogged.getInstance().addClient(new DefaultLogClient());
+		BeLogged.getInstance().addClient(new AndroidLogClient());
 		setUpIsDone = true;
 	}
 
@@ -86,6 +86,14 @@ public class Test_GenericTypeExtractor
 	public void test_ProcessorGenericType() {
 		//		FirstParamListener<InputStream> p = new FirstParamListener<InputStream>() {};
 		InterfaceTest<Double> p = new InterfaceTest<Double>() {};
+
+		Class<?> ___classProc0 = _GenericParamExtractor.extractGenericType(Processor.class, new Processor<String>() {
+			@Override
+			public void process(String s) {
+
+			}
+		}, 0);
+		logDebug("___classProc 0: " + ___classProc0.getName());
 
 		Class<?> __classProc0 = _GenericParamExtractor.extractGenericType(Processor.class, p, 0);
 		logDebug("_classProc 0: " + __classProc0.getName());

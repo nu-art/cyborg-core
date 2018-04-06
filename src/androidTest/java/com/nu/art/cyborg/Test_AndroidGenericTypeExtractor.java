@@ -91,6 +91,14 @@ public class Test_AndroidGenericTypeExtractor
 		//		FirstParamListener<InputStream> p = new FirstParamListener<InputStream>() {};
 		InterfaceTest<Double> p = new InterfaceTest<Double>() {};
 
+		Class<?> ___classProc0 = _GenericParamExtractor.extractGenericType(Processor.class, new Processor<String>() {
+			@Override
+			public void process(String s) {
+
+			}
+		}, 0);
+		logDebug("___classProc 0: " + ___classProc0.getName());
+
 		Class<?> __classProc0 = _GenericParamExtractor.extractGenericType(Processor.class, p, 0);
 		logDebug("_classProc 0: " + __classProc0.getName());
 
