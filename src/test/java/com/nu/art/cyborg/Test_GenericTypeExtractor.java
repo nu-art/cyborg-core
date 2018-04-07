@@ -19,10 +19,10 @@
 package com.nu.art.cyborg;
 
 import com.nu.art.belog.BeLogged;
+import com.nu.art.belog.DefaultLogClient;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
-import com.nu.art.cyborg.core.modules.AndroidLogClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class Test_GenericTypeExtractor
 			return;
 		}
 
-		BeLogged.getInstance().addClient(new AndroidLogClient());
+		BeLogged.getInstance().addClient(new DefaultLogClient());
 		setUpIsDone = true;
 	}
 
