@@ -22,7 +22,7 @@ android {
 }
 
 if (project.hasProperty("configureUploadAndroidLibArtifact")) {
-    configureUploadAndroidLibArtifact("com.nu-art-software.cyborg", "nu-art/${name}");
+    configureUploadAndroidLibArtifact("com.nu-art-software.cyborg", "nu-art/${name}")
 }
 
 
