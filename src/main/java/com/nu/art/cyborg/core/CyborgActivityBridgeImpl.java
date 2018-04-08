@@ -508,7 +508,7 @@ public class CyborgActivityBridgeImpl
 		if (originator != null)
 			originator.logInfo("Dispatching UI Event: " + message);
 
-		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event: " + message);
+		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event (" + Thread.currentThread().getName() + "): " + message);
 		activity.runOnUiThread(new Runnable() {
 
 			@Override
