@@ -93,11 +93,20 @@ public class RoundedImageView
 		updateImage();
 	}
 
+	@Deprecated
+	@Override
+	public void setImageBitmap(Bitmap bm) {
+		setImage(bm);
+	}
+
 	public void setImage(Drawable src) {
 		setImage(ImageUtilsModule.drawableToBitmap(src));
 	}
 
 	private void updateImage() {
+		if (src == null)
+			return;
+
 		setRoundedBitmapDrawable(src);
 	}
 
@@ -163,7 +172,7 @@ public class RoundedImageView
 		@Override
 		protected void setAttribute(RoundedImageView instance, TypedArray a, int attr) {
 			if (attr == R.styleable.RoundedImageView_corners) {
-				int corners = a.getDimensionPixelSize(attr, -1);
+				int corners = a.getDimensionPixelSize(attr, 0);
 				instance.setCornersPixels(corners);
 				return;
 			}
