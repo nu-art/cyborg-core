@@ -396,7 +396,8 @@ public abstract class CyborgController
 
 	final void dispatchLifeCycleEvent(LifeCycleState newState) {
 		if (newState == state)
-			logWarning("ALREADY IN STATE: " + newState);
+			if (DebugFlags.isDebuggableFlag(DebugFlag))
+				logWarning("ALREADY IN STATE: " + newState);
 
 		for (CyborgController nestedController : nestedControllers) {
 			nestedController.dispatchLifeCycleEvent(newState);
