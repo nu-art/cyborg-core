@@ -35,8 +35,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.SeekBar;
@@ -55,8 +53,8 @@ import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemLongClickListener;
  */
 public interface UserActionsDelegator
 	extends OnClickListener, OnTouchListener, OnLongClickListener, OnSeekBarChangeListener, OnRecyclerItemClickListener, OnRecyclerItemLongClickListener,
-	        OnItemSelectedListener, OnItemClickListener, OnItemLongClickListener, OnRatingBarChangeListener, OnPageChangeListener, OnCheckedChangeListener,
-	        OnMenuItemClickListener, OnEditorActionListener, OnFocusChangeListener, OnKeyListener, OnTextChangedListener {
+	        OnItemSelectedListener, OnItemClickListener, OnItemLongClickListener, OnRatingBarChangeListener, OnPageChangeListener, OnMenuItemClickListener,
+	        OnEditorActionListener, OnFocusChangeListener, OnKeyListener, OnTextChangedListener {
 
 	boolean onKeyShortcut(int keyCode, KeyEvent event);
 
@@ -116,9 +114,6 @@ public interface UserActionsDelegator
 
 	@Override
 	void onPageScrollStateChanged(int state);
-
-	@Override
-	void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
 
 	@Override
 	boolean onEditorAction(TextView v, int actionId, KeyEvent event);

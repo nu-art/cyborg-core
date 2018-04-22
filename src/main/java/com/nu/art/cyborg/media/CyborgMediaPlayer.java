@@ -190,9 +190,9 @@ public class CyborgMediaPlayer
 		return this.state == PlayerState.Prepared || state == PlayerState.Playing;
 	}
 
-	public synchronized void setPosition(float positionRelative) {
+	public synchronized void setPositionRelative(float positionRelative) {
 		assertThread();
-		if (mediaPlayer == null || builder == null || isAlive())
+		if (mediaPlayer == null || builder == null || getDuration() <= 0)
 			return;
 
 		builder.positionMs = (int) (getDuration() * positionRelative);

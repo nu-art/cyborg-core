@@ -49,7 +49,6 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -908,15 +907,6 @@ public abstract class CyborgController
 		}
 
 		@Override
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			if (!canReceiveEvents())
-				return;
-
-			super.onCheckedChanged(buttonView, isChecked);
-			CyborgController.this.onCheckedChanged(buttonView, isChecked);
-		}
-
-		@Override
 		public boolean onMenuItemClick(MenuItem item) {
 			if (!canReceiveEvents())
 				return false;
@@ -1100,11 +1090,6 @@ public abstract class CyborgController
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
-		// Dummy method to be overridden in the inheriting class...
-	}
-
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		// Dummy method to be overridden in the inheriting class...
 	}
 
