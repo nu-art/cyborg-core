@@ -33,8 +33,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.SeekBar;
@@ -57,11 +55,6 @@ public enum ViewListener {
 	OnClick(ListenersMethods._SetOnClickListener, View.class, OnClickListener.class),
 	OnLongClick(ListenersMethods._SetOnLongClickListener, View.class, OnLongClickListener.class),
 	OnTouch(ListenersMethods._SetOnTouchListener, View.class, OnTouchListener.class),
-	/**
-	 * Don't Ever use this... use the on click and get the view check state.
-	 */
-	@Deprecated OnCheckChanged(ListenersMethods._SetOnCheckChangedListener, CompoundButton.class, OnCheckedChangeListener.class),
-
 	/**
 	 * Adds an {@link OnSeekBarChangeListener} to a {@link SeekBar} rootView instance.
 	 */

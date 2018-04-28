@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -212,13 +211,6 @@ public class UserActionsDelegatorImpl
 	public void onPageScrollStateChanged(int state) {
 		for (UserActionsDelegator userActionDelegator : getModulesAssignableFrom()) {
 			userActionDelegator.onPageScrollStateChanged(state);
-		}
-	}
-
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		for (UserActionsDelegator userActionDelegator : getModulesAssignableFrom()) {
-			userActionDelegator.onCheckedChanged(buttonView, isChecked);
 		}
 	}
 

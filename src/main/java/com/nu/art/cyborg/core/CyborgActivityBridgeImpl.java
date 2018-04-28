@@ -41,6 +41,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.cyborg.common.interfaces.ScenarioRecorder;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
@@ -183,6 +184,10 @@ public class CyborgActivityBridgeImpl
 		 **********************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		for (ScenarioRecorder scenarioRecorder : cyborg.getModulesAssignableFrom(ScenarioRecorder.class)) {
+			scenarioRecorder.onActivityStarted(activity.getIntent());
+		}
+
 		new KeyboardChangeListener(cyborg, activity);
 		eventDispatcher.addListener(activity);
 		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
@@ -371,6 +376,10 @@ public class CyborgActivityBridgeImpl
 	@Override
 	@SuppressWarnings("ConstantConditions")
 	public boolean onBackPressed() {
+		for (ScenarioRecorder scenarioRecorder : cyborg.getModulesAssignableFrom(ScenarioRecorder.class)) {
+			scenarioRecorder.onBackPressed();
+		}
+
 		return processControllersPriority(new ControllerProcessor() {
 			@Override
 			public boolean process(CyborgController controller) {
