@@ -61,6 +61,8 @@ public class ImageDownloaderModule
 
 		ImageDownloaderBuilder setCacheable(Cacheable cacheable);
 
+		ImageDownloaderBuilder onSuccess(Processor<Bitmap> onSuccess);
+
 		ImageDownloaderBuilder onError(@DrawableRes int drawableId);
 
 		ImageDownloaderBuilder onError(Drawable errorDrawable);
@@ -99,6 +101,8 @@ public class ImageDownloaderModule
 
 		private Function<Bitmap, Bitmap> postDownloading;
 
+		private Processor<Bitmap> onSuccess;
+
 		private Runnable onBefore;
 
 		private Runnable onAfter;
@@ -136,6 +140,12 @@ public class ImageDownloaderModule
 		@Override
 		public ImageDownloaderBuilder setTarget(ImageView target) {
 			this.target = target;
+			return this;
+		}
+
+		@Override
+		public ImageDownloaderBuilder onSuccess(Processor<Bitmap> onSuccess) {
+			this.onSuccess = onSuccess;
 			return this;
 		}
 
@@ -195,7 +205,11 @@ public class ImageDownloaderModule
 						public void run() {
 							if (cancelled)
 								return;
-							target.setImageBitmap(finalBitmap);
+
+							if (onSuccess != null)
+								onSuccess.process(finalBitmap);
+							else
+								target.setImageBitmap(finalBitmap);
 						}
 					});
 				}
