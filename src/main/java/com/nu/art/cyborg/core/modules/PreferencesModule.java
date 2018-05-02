@@ -142,7 +142,8 @@ public final class PreferencesModule
 
 		public void set(ItemType value, boolean printToLog) {
 			Editor editor = getPreferences(storageGroup).edit();
-			logDebug("+----+ SET: " + key + ": " + value);
+			if (printToLog)
+				logDebug("+----+ SET: " + key + ": " + value);
 
 			_set(editor, key, value);
 			if (expires != -1)
