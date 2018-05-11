@@ -41,7 +41,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgRecycler;
 import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemClickListener;
@@ -131,7 +131,7 @@ public enum ViewListener {
 			String parameterType = ReflectiveTools.parseParametersType(methodArguments);
 			String msg = "Failed to get method: " + listenerMethodName + "(" + parameterType + "), for type: " + methodOwnerType;
 			Log.e("ViewListener", msg, e);
-			throw new MUST_NeverHappenedException(msg, e);
+			throw new MUST_NeverHappenException(msg, e);
 		}
 	}
 

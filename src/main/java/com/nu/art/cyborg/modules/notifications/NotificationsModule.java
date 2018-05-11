@@ -28,7 +28,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.reflection.utils.GenericMap;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
@@ -85,7 +85,7 @@ public final class NotificationsModule
 		try {
 			handlerType = (Class<HandlerType>) Class.forName(handlerTypeClassName);
 		} catch (Exception e1) {
-			throw new MUST_NeverHappenedException("Cannot find class type: " + handlerTypeClassName);
+			throw new MUST_NeverHappenException("Cannot find class type: " + handlerTypeClassName);
 		}
 
 		HandlerType notificationHandler = (HandlerType) notificationHandlers.get(handlerType);

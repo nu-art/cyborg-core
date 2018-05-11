@@ -44,7 +44,7 @@ import android.widget.Toast;
 import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
@@ -661,7 +661,7 @@ final class CyborgImpl
 					packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_META_DATA);
 					info = getPackageManager().getApplicationInfo(getPackageName(), 0);
 				} catch (NameNotFoundException e) {
-					throw new MUST_NeverHappenedException("Could not find my own package");
+					throw new MUST_NeverHappenException("Could not find my own package");
 				}
 
 				if (info == null)

@@ -23,7 +23,7 @@ import android.os.Debug;
 
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.exceptions.runtime.NotImplementedYetException;
-import com.nu.art.core.exceptions.runtime.ThisShouldNotHappenedException;
+import com.nu.art.core.exceptions.runtime.ThisShouldNotHappenException;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.Restorable;
@@ -103,7 +103,7 @@ public final class CyborgStateInjector
 			try {
 				return Cyborg.class.getClassLoader().loadClass(data.getString(key));
 			} catch (ClassNotFoundException e) {
-				throw new ThisShouldNotHappenedException(key, e);
+				throw new ThisShouldNotHappenException(key, e);
 			}
 		if (Enum.class.isAssignableFrom(fieldType))
 			return ReflectiveTools.getEnumFromValue((Class<? extends Enum<?>>) fieldType, data.getString(key));

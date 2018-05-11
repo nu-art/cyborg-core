@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.ui.animations.consts;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 
 /**
  * Created by TacB0sS on 28-Jul 2015.
@@ -40,7 +40,7 @@ public enum Direction {
 			case Right:
 				return Left;
 			default:
-				throw new MUST_NeverHappenedException("");
+				throw new MUST_NeverHappenException("");
 		}
 	}
 }

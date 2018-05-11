@@ -24,7 +24,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Build.VERSION;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
@@ -186,7 +186,7 @@ public final class AppDetailsModule
 			this.certificate = certificate;
 		} catch (Exception e) {
 			logInfo("Error getting certificate, assuming release version...", e);
-			throw new MUST_NeverHappenedException("Why the Fuck did that happened...", e);
+			throw new MUST_NeverHappenException("Why the Fuck did that happened...", e);
 		}
 	}
 

@@ -32,7 +32,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 
 import com.nu.art.cyborg.R;
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.beans.FullComponentName;
@@ -236,7 +236,7 @@ public final class UtilsModule
 				fulfillingComponents = packageManager.queryIntentServices(intent, 0);
 				break;
 			default:
-				throw new MUST_NeverHappenedException("Unknown component type...  MUST be a hack!!");
+				throw new MUST_NeverHappenException("Unknown component type...  MUST be a hack!!");
 		}
 
 		String name = "";

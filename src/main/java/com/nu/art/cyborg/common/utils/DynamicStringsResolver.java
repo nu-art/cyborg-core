@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.common.utils;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenedException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
@@ -65,7 +65,7 @@ public final class DynamicStringsResolver
 			case Upper:
 				return string.toUpperCase();
 		}
-		throw new MUST_NeverHappenedException("STUPID JAVA");
+		throw new MUST_NeverHappenException("STUPID JAVA");
 	}
 
 	private String resolveString(Cyborg cyborg) {
