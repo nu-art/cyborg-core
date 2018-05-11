@@ -28,10 +28,11 @@ import com.nu.art.core.tools.ExceptionTools;
 public class AndroidLogClient
 	extends BeLoggedClient {
 
+	public static final String StacktraceIndet = "    ";
 	private final StringBuffer buffer = new StringBuffer();
 
 	@Override
-	protected void log(final LogLevel level, final String thread, final String tag, final String message, final Throwable t) {
+	protected void log(LogLevel level, String thread, String tag, String message, Throwable t) {
 		if (!isLoggable(level))
 			return;
 
@@ -44,9 +45,16 @@ public class AndroidLogClient
 
 		printLog(level, tagWithThread, message);
 
-		if (t != null) {
-			printLog(level, tagWithThread, t.getMessage());
-			printLog(level, tagWithThread, ExceptionTools.getStackTrace(t));
+		String indent = "";
+		while (t != null) {
+			//noinspection StringEquality
+			printLog(level, tagWithThread, (indent == StacktraceIndet ? "CAUSED BY: " : "") + t.getMessage());
+			indent = "";
+			for (StackTraceElement stackTraceElement : t.getStackTrace()) {
+				printLog(level, tagWithThread, indent + ExceptionTools.parseStackTrace(stackTraceElement));
+				indent = StacktraceIndet;
+			}
+			t = t.getCause();
 		}
 	}
 
