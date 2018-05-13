@@ -34,7 +34,7 @@ import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
@@ -261,8 +261,8 @@ public class CyborgAdapter<Item>
 	}
 
 	private void callRendererLifeCycle(ItemRenderer<? extends Item> renderer) {
-		renderer.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
-		renderer.dispatchLifeCycleEvent(LifeCycleState.OnResume);
+		renderer.dispatchLifeCycleEvent(LifecycleState.OnCreate);
+		renderer.dispatchLifeCycleEvent(LifecycleState.OnResume);
 	}
 
 	private class CyborgPagerAdapter

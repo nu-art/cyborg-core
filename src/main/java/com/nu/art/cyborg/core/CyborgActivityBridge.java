@@ -32,7 +32,7 @@ import android.widget.FrameLayout;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
-import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.core.consts.LifecycleState;
 
 public interface CyborgActivityBridge {
 
@@ -120,7 +120,7 @@ public interface CyborgActivityBridge {
 
 	Handler getUI_Handler();
 
-	LifeCycleState getState();
+	LifecycleState getState();
 
 	FrameLayout addContentLayer(int contentLayer);
 

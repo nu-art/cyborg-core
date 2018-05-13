@@ -46,8 +46,8 @@ import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.abs._SystemServices;
 import com.nu.art.cyborg.core.consts.IntentKeys;
-import com.nu.art.cyborg.core.consts.LifeCycleState;
-import com.nu.art.cyborg.core.interfaces.LifeCycleListener;
+import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.core.interfaces.LifecycleListener;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.modular.core.EventDispatcher;
 
@@ -100,7 +100,7 @@ public class CyborgActivityBridgeImpl
 	private WeakReference<CyborgController>[] _controllerList = new WeakReference[0];
 	private WeakReference<CyborgStackController> priorityStack;
 
-	private LifeCycleListener[] lifecycleListeners = {};
+	private LifecycleListener[] lifecycleListeners = {};
 
 	private String screenName;
 
@@ -110,7 +110,7 @@ public class CyborgActivityBridgeImpl
 
 	private boolean destroyed;
 
-	private LifeCycleState state;
+	private LifecycleState state;
 
 	private LayoutInflater layoutInflater;
 
@@ -123,7 +123,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
-	public LifeCycleState getState() {
+	public LifecycleState getState() {
 		return state;
 	}
 
@@ -191,7 +191,7 @@ public class CyborgActivityBridgeImpl
 		new KeyboardChangeListener(cyborg, activity);
 		eventDispatcher.addListener(activity);
 		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
-		dispatchLifecycleEvent(LifeCycleState.OnCreate);
+		dispatchLifecycleEvent(LifecycleState.OnCreate);
 		logLifeCycle(screenName + ": onCreate");
 		createView();
 		if (cyborg.isDebugCertificate())
@@ -260,7 +260,7 @@ public class CyborgActivityBridgeImpl
 			cyborg.setActivityInForeground(this);
 
 		cyborg.sendView(screenName);
-		dispatchLifecycleEvent(LifeCycleState.OnResume);
+		dispatchLifecycleEvent(LifecycleState.OnResume);
 		ViewServer.get(activity).setFocusedWindow(activity);
 	}
 
@@ -269,7 +269,7 @@ public class CyborgActivityBridgeImpl
 		logLifeCycle(screenName + ": onPause");
 		if (addToStack)
 			cyborg.setActivityInForeground(null);
-		dispatchLifecycleEvent(LifeCycleState.OnPause);
+		dispatchLifecycleEvent(LifecycleState.OnPause);
 	}
 
 	@Override
@@ -290,7 +290,7 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void onDestroy() {
 		logLifeCycle(screenName + ": onDestroy");
-		dispatchLifecycleEvent(LifeCycleState.OnDestroy);
+		dispatchLifecycleEvent(LifecycleState.OnDestroy);
 		ViewServer.get(activity).removeWindow(activity);
 		destroyed = true;
 	}
@@ -598,15 +598,15 @@ public class CyborgActivityBridgeImpl
 		return cyborg.getUI_Handler();
 	}
 
-	public final void addLifeCycleListener(LifeCycleListener listener) {
+	public final void addLifeCycleListener(LifecycleListener listener) {
 		lifecycleListeners = ArrayTools.appendElement(lifecycleListeners, listener);
 	}
 
-	public final void removeLifeCycleListener(LifeCycleListener listener) {
+	public final void removeLifeCycleListener(LifecycleListener listener) {
 		lifecycleListeners = ArrayTools.removeElement(lifecycleListeners, listener);
 	}
 
-	private synchronized void dispatchLifecycleEvent(final LifeCycleState state) {
+	private synchronized void dispatchLifecycleEvent(final LifecycleState state) {
 		this.state = state;
 		processControllers(new ControllerProcessor() {
 			@Override
@@ -616,8 +616,8 @@ public class CyborgActivityBridgeImpl
 			}
 		});
 
-		for (LifeCycleListener lifecycleListener : lifecycleListeners) {
-			state.process(lifecycleListener);
+		for (LifecycleListener lifecycleListener : lifecycleListeners) {
+			lifecycleListener.onLifecycleChanged(state);
 		}
 	}
 

@@ -18,24 +18,9 @@
 
 package com.nu.art.cyborg.core.interfaces;
 
-public class LifeCycleImplementor
-	implements LifeCycleListener {
+import com.nu.art.cyborg.core.consts.LifecycleState;
 
-	@Override
-	public void onCreate() {}
+public interface LifecycleListener {
 
-	@Override
-	public void onStart() {}
-
-	@Override
-	public void onResume() {}
-
-	@Override
-	public void onPause() {}
-
-	@Override
-	public void onStop() {}
-
-	@Override
-	public void onDestroy() {}
+	void onLifecycleChanged(LifecycleState state);
 }

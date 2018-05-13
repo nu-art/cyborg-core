@@ -30,7 +30,7 @@ import android.widget.RelativeLayout;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
@@ -113,10 +113,6 @@ public class CyborgView
 			controller.setActivityBridge(activityBridge);
 		}
 
-		// set the state tag
-		if (stateTag == null)
-			stateTag = controller.getClass().getSimpleName();
-
 		// inflating views
 		try {
 			controller._createView(LayoutInflater.from(context), this);
@@ -138,7 +134,7 @@ public class CyborgView
 		// extract members by injection or by find view by id
 		controller.extractMembersImpl();
 
-		controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+		controller.dispatchLifeCycleEvent(LifecycleState.OnCreate);
 	}
 
 	final void initController(AttributeSet attrs, int defStyle) {
@@ -167,7 +163,7 @@ public class CyborgView
 
 		CyborgController parentController = findParentController();
 		// this can still be, because the controller is set to be the tag of the cyborg-view on the one hand, and the itemrenderer layout on the other.
-		LifeCycleState targetState;
+		LifecycleState targetState;
 		if (parentController != null && parentController != controller) {
 			parentController.addNestedController(controller);
 			targetState = parentController.getState();
@@ -178,8 +174,8 @@ public class CyborgView
 			targetState = activityBridge.getState();
 		}
 
-		if (targetState == LifeCycleState.OnResume)
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
+		if (targetState == LifecycleState.OnResume)
+			controller.dispatchLifeCycleEvent(LifecycleState.OnResume);
 	}
 
 	private CyborgController findParentController() {

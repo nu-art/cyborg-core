@@ -16,17 +16,11 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.common.interfaces;
+package com.nu.art.cyborg.core.consts;
 
-import android.content.Intent;
-
-/**
- * Created by tacb0ss on 19/04/2018.
- */
-
-public interface ScenarioRecorder {
-
-	void onActivityStarted(Intent intent);
-
-	void onBackPressed();
+public enum LifecycleState {
+	OnCreate,
+	OnResume,
+	OnPause,
+	OnDestroy,
 }

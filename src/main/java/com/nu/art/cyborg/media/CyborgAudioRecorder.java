@@ -34,6 +34,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
+import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.nio.ByteBuffer;
@@ -243,7 +244,7 @@ public class CyborgAudioRecorder
 	private void prepare(RecorderBuilder builder) {
 		logInfo("Starting Recorder: " + getRecorderBuilderDetails(builder));
 
-		if (!checkUsesPermission(permission.RECORD_AUDIO)) {
+		if (!getModule(PermissionModule.class).isPermissionGranted(permission.RECORD_AUDIO)) {
 			dispatchErrorNoPermission();
 			return;
 		}

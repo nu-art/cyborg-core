@@ -44,7 +44,7 @@ import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
-import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
@@ -300,8 +300,8 @@ public final class CyborgStackController
 			if (controller == null)
 				return;
 
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnDestroy);
+			controller.dispatchLifeCycleEvent(LifecycleState.OnPause);
+			controller.dispatchLifeCycleEvent(LifecycleState.OnDestroy);
 			removeNestedController(controller);
 			controller = null;
 		}
@@ -441,9 +441,6 @@ public final class CyborgStackController
 
 		private void createControllerLayer() {
 			controller = ReflectiveTools.newInstance(controllerType);
-			if (refKey == null)
-				refKey = controller.getClass().getSimpleName();
-
 			//			if(CyborgBuilder.getInEditMode())
 			CyborgActivityBridge activityBridge = getActivity().getBridge();
 			controller.setActivityBridge(activityBridge);
@@ -459,7 +456,7 @@ public final class CyborgStackController
 			controller.extractMembersImpl();
 			// xml attribute for root controller are handled in the handleAttributes method
 
-			controller.dispatchLifeCycleEvent(LifeCycleState.OnCreate);
+			controller.dispatchLifeCycleEvent(LifecycleState.OnCreate);
 
 			// ARE THESE TWO ACTIONS DEPEND ON ONE ANOTHER, IN ANY CONFIGURATION???
 			if (processor != null)
@@ -478,14 +475,14 @@ public final class CyborgStackController
 
 		@Override
 		protected void pause() {
-			if (getState() == LifeCycleState.OnResume)
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnPause);
+			if (getState() == LifecycleState.OnResume)
+				controller.dispatchLifeCycleEvent(LifecycleState.OnPause);
 		}
 
 		@Override
 		protected void resume() {
-			if (getState() == LifeCycleState.OnResume)
-				controller.dispatchLifeCycleEvent(LifeCycleState.OnResume);
+			if (getState() == LifecycleState.OnResume)
+				controller.dispatchLifeCycleEvent(LifecycleState.OnResume);
 		}
 
 		private void createLayoutLayer() {

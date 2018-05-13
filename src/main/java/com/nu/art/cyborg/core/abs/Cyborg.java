@@ -198,4 +198,13 @@ public interface Cyborg
 	 * @return The tag value
 	 */
 	String getValueFromManifest(String key, String defaultValue);
+
+	/**
+	 * Will check whether we've defined the permission in the manifest
+	 *
+	 * @param permission The permission to check
+	 *
+	 * @return true if the permission is defined in the manifest, false otherwise
+	 */
+	boolean isPermissionDeclared(String permission);
 }

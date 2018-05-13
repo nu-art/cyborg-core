@@ -25,43 +25,115 @@ import com.nu.art.cyborg.core.CyborgAdapter;
  */
 public abstract class DataModel<Item> {
 
-	protected boolean cyclic;
+	private final Class<? extends Item>[] itemsType;
+	private CyborgAdapter adapter;
+	private boolean cyclic;
 
-	public abstract int getItemTypesCount();
-
-	public abstract int getPositionForItem(Item item);
-
-	public abstract int getItemTypeByPosition(int position);
-
-	public abstract Item getItemForPosition(int position);
-
-	public abstract int getItemsCount();
-
-	public abstract int getRealItemsCount();
-
-	public abstract void renderItem(Item item);
-
-	public abstract void renderItemAtPosition(int position);
-
-	protected CyborgAdapter adapter;
+	public DataModel(Class<? extends Item>[] itemsType) {
+		this.itemsType = itemsType;
+	}
 
 	public final void setCyclic() {
 		cyclic = true;
 	}
 
-	public void setAdapter(CyborgAdapter<?> adapter) {
+	public final void setAdapter(CyborgAdapter<?> adapter) {
 		this.adapter = adapter;
 	}
 
-	protected final void dispatchDataSetChanged() {
-		adapter.onDataSetChanged();
+	public final int getItemTypesCount() {
+		return itemsType.length;
 	}
 
-	protected final void dispatchItemRangeInserted(int from, int to) {
+	public final int getItemTypeByPosition(int position) {
+		Item item = getItemForPosition(position);
+		if (item == null)
+			return 0;
+
+		return getItemTypeByItem(item);
+	}
+
+	private int getItemTypeByItem(Item item) {
+		for (int i = 0; i < itemsType.length; i++) {
+			if (item.getClass() == itemsType[i])
+				return i;
+		}
+
+		for (int i = 0; i < itemsType.length; i++) {
+			if (itemsType[i].isAssignableFrom(item.getClass()))
+				return i;
+		}
+
+		return 0;
+	}
+
+	abstract int getRealItemsCount();
+
+	public abstract int getPositionForItem(Item item);
+
+	public abstract Item getItemForPosition(int position);
+
+	public final void renderItem(Item item) {
+		int position = getPositionForItem(item);
+		if (position == -1)
+			return;
+
+		notifyItemAtPositionChanged(position);
+	}
+
+	public final int getItemsCount() {
+		int realItemsCount = getRealItemsCount();
+		return cyclic && realItemsCount > 0 ? Integer.MAX_VALUE : realItemsCount;
+	}
+
+	// ----------- NOTIFIERS --------------
+
+	public void notifyItemRemoved(int position) {
+		if (adapter == null)
+			return;
+
+		adapter.onItemRemoved(position);
+	}
+
+	public void notifyItemRangeRemoved(int from, int to) {
+		if (adapter == null)
+			return;
+
+		adapter.onItemRangeRemoved(from, to);
+	}
+
+	public void notifyItemInserted(int position) {
+		if (adapter == null)
+			return;
+
+		adapter.onItemRangeInserted(position, position);
+	}
+
+	public void notifyItemRangeInserted(int from, int to) {
+		if (adapter == null)
+			return;
+
 		adapter.onItemRangeInserted(from, to);
 	}
 
-	protected final void dispatchItemAtPositionChanged(int position) {
+	public void notifyItemMoved(int from, int to) {
+		if (adapter == null)
+			return;
+
+		adapter.onItemMoved(from, to);
+	}
+
+	public void notifyDataSetChanged() {
+		if (adapter == null)
+			return;
+
+		adapter.onDataSetChanged();
+	}
+
+	public void notifyItemAtPositionChanged(int position) {
+		if (adapter == null)
+			return;
+
 		adapter.onItemAtPositionChanged(position);
 	}
 }

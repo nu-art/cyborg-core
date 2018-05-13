@@ -107,29 +107,32 @@ public abstract class CyborgModule
 			}
 		}
 
-		//		String[] usesPermissions = descriptor.usesPermissions();
-		//		for (String permission : usesPermissions) {
-		//			boolean optional = false;
-		//			if (permission.startsWith("?")) {
-		//				optional = true;
-		//				permission = permission.replace("?", "");
-		//			}
-		//
-		//			permission = replaceRuntimeVariables(permission);
-		//			if (!checkUsesPermission(permission)) {
-		//				logWarning("Permissions check returned NEGATIVE: " + permission);
-		//				if (!optional)
-		//					result.addEntry(this, "<uses-permission android:name=\"" + permission + "\" />");
-		//			}
-		//		}
+		String[] usesPermissions = descriptor.usesPermissions();
+		for (String permission : usesPermissions) {
+			boolean optional = false;
+			if (permission.startsWith("?")) {
+				optional = true;
+				permission = permission.replace("?", "");
+			}
 
-		//		String[] definedPermissions = descriptor.definedPermissions();
-		//		for (String permission : definedPermissions) {
-		//			permission = replaceRuntimeVariables(permission);
-		//			if (!checkDefinedPermission(permission)) {
-		//				result.addEntry(this, "<permission android:name=\"" + permission + "\"android:protectionLevel=${level} />");
-		//			}
-		//		}
+			if (optional)
+				continue;
+
+			permission = replaceRuntimeVariables(permission);
+			if (cyborg.isPermissionDeclared(permission))
+				continue;
+
+			result.addEntry(this, "<uses-permission android:name=\"" + permission + "\" />");
+		}
+
+		String[] definedPermissions = descriptor.definedPermissions();
+		for (String permission : definedPermissions) {
+			permission = replaceRuntimeVariables(permission);
+			if (checkDefinedPermission(permission))
+				continue;
+
+			result.addEntry(this, "<permission android:name=\"" + permission + "\"android:protectionLevel=${level} />");
+		}
 	}
 
 	private boolean checkDefinedPermission(String permission) {
@@ -143,10 +146,6 @@ public abstract class CyborgModule
 
 	private String replaceRuntimeVariables(String permission) {
 		return permission.replace(CyborgModule.PackageNameVariable, cyborg.getPackageName());
-	}
-
-	protected final boolean checkUsesPermission(String permission) {
-		return cyborg.getPackageManager().checkPermission(permission, cyborg.getPackageName()) == PackageManager.PERMISSION_GRANTED;
 	}
 
 	protected final boolean isPackageInstalled(String packageName) {

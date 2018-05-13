@@ -30,16 +30,10 @@ import java.util.List;
 public class ListDataModel<Item>
 	extends DataModel<Item> {
 
-	private final Class<? extends Item>[] itemsType;
-
 	private ArrayList<Item> items = new ArrayList<>();
 
 	public ListDataModel(Class<? extends Item>... itemsType) {
-		this.itemsType = itemsType;
-	}
-
-	public final int indexOf(Item item) {
-		return items.indexOf(item);
+		super(itemsType);
 	}
 
 	public final void add(Item... items) {
@@ -49,8 +43,18 @@ public class ListDataModel<Item>
 	public final void addAll(Collection<Item> items) {
 		int size = this.items.size();
 		this.items.addAll(items);
-		if (adapter != null)
-			adapter.onItemRangeInserted(size, items.size());
+		notifyItemRangeInserted(size, items.size());
+	}
+
+	public final void setItems(Item... items) {
+		this.items.clear();
+		this.items.addAll(Arrays.asList(items));
+		notifyDataSetChanged();
+	}
+
+	public final void clear() {
+		items.clear();
+		notifyDataSetChanged();
 	}
 
 	public final void removeItems(Item... items) {
@@ -64,8 +68,7 @@ public class ListDataModel<Item>
 
 		boolean removed = this.items.removeAll(items);
 		if (position >= 0) {
-			if (adapter != null)
-				adapter.onItemRemoved(position);
+			notifyItemRemoved(position);
 			return;
 		}
 
@@ -73,35 +76,12 @@ public class ListDataModel<Item>
 			return;
 
 		// TODO: can add a calculation of minimal range..
-		if (adapter != null)
-			adapter.onDataSetChanged();
-	}
-
-	@Override
-	public int getItemTypesCount() {
-		return itemsType.length;
+		notifyDataSetChanged();
 	}
 
 	@Override
 	public int getPositionForItem(Item item) {
 		return items.indexOf(item);
-	}
-
-	@Override
-	public int getItemTypeByPosition(int position) {
-		Item item = getItemForPosition(position);
-		if (item == null)
-			return 0;
-
-		return getItemTypeByItem(item);
-	}
-
-	protected int getItemTypeByItem(Item item) {
-		for (int i = 0; i < itemsType.length; i++) {
-			if (item.getClass() == itemsType[i])
-				return i;
-		}
-		return 0;
 	}
 
 	@Override
@@ -114,42 +94,7 @@ public class ListDataModel<Item>
 		return items.size();
 	}
 
-	@Override
-	public int getItemsCount() {
-		return cyclic && items.size() > 0 ? Integer.MAX_VALUE : items.size();
-	}
-
-	@Override
-	public void renderItem(Item item) {
-		int position = getPositionByItem(item);
-		if (position == -1)
-			return;
-
-		renderItemAtPosition(position);
-	}
-
 	private int getPositionByItem(Item item) {
 		return items.indexOf(item);
-	}
-
-	@Override
-	public void renderItemAtPosition(int position) {
-		if (adapter != null)
-			adapter.onItemAtPositionChanged(position);
-	}
-
-	public final void notifyDataSetChanged() {
-		if (adapter != null)
-			adapter.onDataSetChanged();
-	}
-
-	public final void setItems(Item... items) {
-		this.items.clear();
-		add(items);
-	}
-
-	public final void clear() {
-		items.clear();
-		notifyDataSetChanged();
 	}
 }

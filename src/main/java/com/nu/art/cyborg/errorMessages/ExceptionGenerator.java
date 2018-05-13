@@ -109,6 +109,11 @@ public class ExceptionGenerator {
 
 	public static ImplementationMissingException developerDidNotAddTheServiceToTheManifest(Class<? extends Service> serviceType) {
 		String message = "<service android:name=\"" + serviceType.getName() + "\"/>";
-		return new ImplementationMissingException("It might be that you didn't add the service to your manifest:\n\n   " + message);
+		return new ImplementationMissingException("Service not present in your manifest. Add the following:\n\n    " + message);
+	}
+
+	public static ImplementationMissingException permissionMissingInManifest(String permission) {
+		String message = "<uses-permission android:name=\"" + permission + "\"/>";
+		return new ImplementationMissingException("Permission not present in your manifest. Add the following:\n\n    " + message);
 	}
 }

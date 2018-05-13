@@ -18,19 +18,25 @@
 
 package com.nu.art.cyborg.modules;
 
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @ModuleDescriptor
 public class PermissionModule
@@ -48,14 +54,14 @@ public class PermissionModule
 	public final String[] getRejectedPermissions(String... requestedPermissions) {
 		ArrayList<String> notGranted = new ArrayList<>();
 		for (String permission : requestedPermissions) {
-			if (!isGranted(permission))
+			if (!isPermissionGranted(permission))
 				notGranted.add(permission);
 		}
 
 		return ArrayTools.asArray(notGranted, String.class);
 	}
 
-	private boolean isGranted(String permission) {
+	public final boolean isPermissionGranted(String permission) {
 		return ContextCompat.checkSelfPermission(getApplicationContext(), permission) == PackageManager.PERMISSION_GRANTED;
 	}
 
@@ -75,6 +81,21 @@ public class PermissionModule
 				}
 			});
 			return;
+		}
+
+		List<String> permissionsInManifest;
+		try {
+			PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
+			permissionsInManifest = Arrays.asList(packageInfo.requestedPermissions);
+		} catch (NameNotFoundException e) {
+			throw new MUST_NeverHappenException("", e);
+		}
+
+		for (String rejectedPermission : rejectedPermissions) {
+			if (permissionsInManifest.contains(rejectedPermission))
+				continue;
+
+			throw ExceptionGenerator.permissionMissingInManifest(rejectedPermission);
 		}
 
 		postActivityAction(new ActivityStackAction() {

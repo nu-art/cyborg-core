@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.modules;
 
 import android.Manifest.permission;
+import android.annotation.SuppressLint;
 import android.os.Vibrator;
 
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
@@ -26,7 +27,8 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.PreferenceKey;
 
-@ModuleDescriptor(usesPermissions = {})
+@ModuleDescriptor(usesPermissions = {"?" + permission.VIBRATE})
+@SuppressLint("MissingPermission")
 public final class VibrationModule
 	extends CyborgModule {
 
@@ -40,7 +42,8 @@ public final class VibrationModule
 	protected void init() {
 		PreferencesModule preferences = getModule(PreferencesModule.class);
 		vibrator = getSystemService(VibratorService);
-		if (!checkUsesPermission(permission.VIBRATE)) {
+
+		if (!getModule(PermissionModule.class).isPermissionGranted(permission.VIBRATE)) {
 			vibration = false;
 			logDebug("Vibration permission is not in manifest!!");
 			VibrationState = preferences.new BooleanPreference("VibrationState", false);
@@ -57,11 +60,15 @@ public final class VibrationModule
 
 	public final void vibrateImpl(int repeat, long... intervals) {
 		if (!vibration)
-			vibrator.vibrate(intervals, repeat);
+			return;
+
+		vibrator.vibrate(intervals, repeat);
 	}
 
 	public final void vibrateImpl(long interval) {
-		if (vibration)
-			vibrator.vibrate(interval);
+		if (!vibration)
+			return;
+
+		vibrator.vibrate(interval);
 	}
 }

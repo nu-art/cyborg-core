@@ -75,7 +75,8 @@ import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
-import com.nu.art.cyborg.core.consts.LifeCycleState;
+import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.core.interfaces.LifecycleListener;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
 import com.nu.art.cyborg.core.more.CyborgStateInjector;
@@ -129,10 +130,7 @@ public abstract class CyborgController
 		}
 	};
 
-	public ScreenOrientation getScreenOrientation() {
-		return getModule(DeviceDetailsModule.class).getOrientation();
-	}
-
+	private LifecycleListener[] lifecycleListeners = {};
 	private CyborgController[] nestedControllers = {};
 
 	private final SparseArray<View> views = new SparseArray<>();
@@ -147,11 +145,9 @@ public abstract class CyborgController
 
 	boolean keepInStack;
 
-	private LifeCycleState state;
+	private LifecycleState state;
 	protected final ActionDelegator actionDelegator;
-
 	protected final Cyborg cyborg;
-
 	protected CyborgActivityBridge activityBridge;
 
 	private boolean animatedIn;
@@ -170,6 +166,10 @@ public abstract class CyborgController
 		for (CyborgController nestedController : nestedControllers) {
 			nestedController.setBusyState(busyState);
 		}
+	}
+
+	public ScreenOrientation getScreenOrientation() {
+		return getModule(DeviceDetailsModule.class).getOrientation();
 	}
 
 	/**
@@ -238,17 +238,21 @@ public abstract class CyborgController
 			logVerbose("done");
 	}
 
-	final void setState(LifeCycleState newState) {
+	final void setState(LifecycleState newState) {
 		if (DebugFlags.isDebuggableFlag(DebugFlag))
 			logDebug("State Changed: " + this.state + " ==> " + newState);
 
 		if (state == newState)
 			throw new BadImplementationException("States are not managed well");
 
+		for (LifecycleListener lifecycleListener : lifecycleListeners) {
+			lifecycleListener.onLifecycleChanged(state);
+		}
+
 		this.state = newState;
 	}
 
-	protected final LifeCycleState getState() {
+	protected final LifecycleState getState() {
 		return state;
 	}
 
@@ -393,7 +397,7 @@ public abstract class CyborgController
 
 	protected void onReady() {}
 
-	final void dispatchLifeCycleEvent(LifeCycleState newState) {
+	final void dispatchLifeCycleEvent(LifecycleState newState) {
 		if (newState == state)
 			if (DebugFlags.isDebuggableFlag(DebugFlag))
 				logWarning("ALREADY IN STATE: " + newState);
@@ -412,21 +416,21 @@ public abstract class CyborgController
 				onCreate();
 				break;
 			case OnResume:
-				if (this.state != LifeCycleState.OnPause && this.state != LifeCycleState.OnCreate)
+				if (this.state != LifecycleState.OnPause && this.state != LifecycleState.OnCreate)
 					return;
 
 				setState(newState);
 				onResume();
 				break;
 			case OnPause:
-				if (this.state != LifeCycleState.OnResume)
+				if (this.state != LifecycleState.OnResume)
 					return;
 
 				setState(newState);
 				onPause();
 				break;
 			case OnDestroy:
-				if (this.state != LifeCycleState.OnPause)
+				if (this.state != LifecycleState.OnPause)
 					return;
 
 				setState(newState);
@@ -608,11 +612,14 @@ public abstract class CyborgController
 	}
 
 	final void setStateTag(String stateTag) {
+		if (stateTag == null)
+			stateTag = getClass().getSimpleName();
+
 		if (stateTag.equals(this.stateTag))
 			return;
 
 		this.stateTag = stateTag;
-		if (stateTag != null && !stateTag.equals(getClass().getSimpleName()))
+		if (!stateTag.equals(getClass().getSimpleName()))
 			setTag(getClass().getSimpleName() + "-" + stateTag);
 	}
 
@@ -714,6 +721,14 @@ public abstract class CyborgController
 		this.keepInStack = keepInStack;
 	}
 
+	public final void addLifecycleListener(LifecycleListener listener) {
+		lifecycleListeners = ArrayTools.appendElement(lifecycleListeners, listener);
+	}
+
+	public final void removeLifecycleListener(LifecycleListener listener) {
+		lifecycleListeners = ArrayTools.removeElement(lifecycleListeners, listener);
+	}
+
 	final class ActionDelegator
 		extends UserActionsDelegatorImpl {
 
@@ -722,7 +737,7 @@ public abstract class CyborgController
 		}
 
 		boolean canReceiveEvents() {
-			return getState() == LifeCycleState.OnResume;
+			return getState() == LifecycleState.OnResume;
 		}
 
 		@Override

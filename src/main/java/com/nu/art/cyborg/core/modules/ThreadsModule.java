@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 
@@ -49,6 +50,20 @@ public class ThreadsModule
 	@Override
 	protected void init() {
 		loopers.put(MainThread, Looper.getMainLooper());
+	}
+
+	public static void assertMainThread() {
+		if (Thread.currentThread() == Looper.getMainLooper().getThread())
+			return;
+
+		throw new BadImplementationException("This method MUST be called on main thread");
+	}
+
+	public static void assertNotMainThread() {
+		if (Thread.currentThread() != Looper.getMainLooper().getThread())
+			return;
+
+		throw new BadImplementationException("This method MUST NOT be called on main thread");
 	}
 
 	public final Handler getDefaultHandler(String threadName) {
