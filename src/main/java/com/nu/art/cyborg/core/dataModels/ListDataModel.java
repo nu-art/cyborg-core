@@ -55,6 +55,14 @@ public class ListDataModel<Item>
 	public final void clear() {
 		items.clear();
 		notifyDataSetChanged();
+//		if (adapter != null)
+//			adapter.onItemRangeInserted(size, items.size());
+
+	}
+
+	public final void removeItems(int index) {
+		this.items.remove(index);
+		notifyItemRemoved(index);
 	}
 
 	public final void removeItems(Item... items) {

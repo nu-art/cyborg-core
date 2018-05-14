@@ -18,25 +18,37 @@
 
 package com.nu.art.cyborg.modules.downloader;
 
+import android.net.Uri;
+import android.os.Handler;
+
 import com.nu.art.core.GenericListener;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.CacheModule.UnableToCacheException;
-import com.nu.art.modular.core.Module;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 /**
  * Created by tacb0ss on 14/06/2017.
  */
 
 public class GenericDownloaderModule
-	extends Module {
+	extends CyborgModule {
+
+	private Handler resourceLoader;
 
 	@Override
-	protected void init() {}
+	protected void init() {
+		resourceLoader = getModule(ThreadsModule.class).getDefaultHandler("Resource-Loader");
+	}
 
 	public final DownloaderBuilder createDownloader() {
 		return new DownloaderBuilderImpl();
@@ -168,7 +180,7 @@ public class GenericDownloaderModule
 		}
 
 		private void downloadFromUrl() {
-			downloader.download(this, new GenericListener<InputStream>() {
+			final GenericListener<InputStream> listener = new GenericListener<InputStream>() {
 
 				@Override
 				public void onSuccess(InputStream inputStream) {
@@ -193,7 +205,39 @@ public class GenericDownloaderModule
 				public void onError(Throwable e) {
 					onError.process(e);
 				}
-			});
+			};
+
+			if (url.startsWith("android.resource://")) {
+				resourceLoader.post(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							listener.onSuccess(getContentResolver().openInputStream(Uri.parse(url)));
+						} catch (FileNotFoundException e) {
+							logWarning("Failed getting file from path: '" + url + "'", e);
+							onError.process(e);
+						}
+					}
+				});
+				return;
+			}
+
+			if (url.startsWith("file://")) {
+				resourceLoader.post(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							listener.onSuccess(new FileInputStream(new File(URI.create(url))));
+						} catch (FileNotFoundException e) {
+							logWarning("Failed getting file from path: '" + url + "'", e);
+							onError.process(e);
+						}
+					}
+				});
+				return;
+			}
+
+			downloader.download(this, listener);
 		}
 
 		private void loadFromCache() {

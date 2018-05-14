@@ -52,6 +52,7 @@ public class ImageDownloaderModule
 		ImageDownloaderBuilder setUrl(String url);
 
 		boolean isSameUrl(String url);
+		Cacheable getCacheable();
 
 		ImageDownloaderBuilder setDownloader(Downloader downloader);
 
@@ -110,6 +111,11 @@ public class ImageDownloaderModule
 		private Runnable onError;
 
 		private Cacheable cacheable;
+
+		@Override
+		public Cacheable getCacheable() {
+			return cacheable;
+		}
 
 		public final ImageDownloaderBuilder setUrl(String url) {
 			this.url = url;

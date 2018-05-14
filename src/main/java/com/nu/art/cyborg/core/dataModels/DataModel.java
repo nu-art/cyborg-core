@@ -28,6 +28,7 @@ public abstract class DataModel<Item> {
 	private final Class<? extends Item>[] itemsType;
 	private CyborgAdapter adapter;
 	private boolean cyclic;
+	private boolean autoNotifyChanges;
 
 	public DataModel(Class<? extends Item>[] itemsType) {
 		this.itemsType = itemsType;
@@ -35,6 +36,10 @@ public abstract class DataModel<Item> {
 
 	public final void setCyclic() {
 		cyclic = true;
+	}
+
+	public final void setAutoNotifyChanges(boolean autoNotifyChanges) {
+		this.autoNotifyChanges = autoNotifyChanges;
 	}
 
 	public final void setAdapter(CyborgAdapter<?> adapter) {
@@ -89,49 +94,49 @@ public abstract class DataModel<Item> {
 	// ----------- NOTIFIERS --------------
 
 	public void notifyItemRemoved(int position) {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onItemRemoved(position);
 	}
 
 	public void notifyItemRangeRemoved(int from, int to) {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onItemRangeRemoved(from, to);
 	}
 
 	public void notifyItemInserted(int position) {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onItemRangeInserted(position, position);
 	}
 
 	public void notifyItemRangeInserted(int from, int to) {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onItemRangeInserted(from, to);
 	}
 
 	public void notifyItemMoved(int from, int to) {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onItemMoved(from, to);
 	}
 
 	public void notifyDataSetChanged() {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onDataSetChanged();
 	}
 
 	public void notifyItemAtPositionChanged(int position) {
-		if (adapter == null)
+		if (adapter == null || !autoNotifyChanges)
 			return;
 
 		adapter.onItemAtPositionChanged(position);
