@@ -25,7 +25,9 @@
 
     <application>
         <activity
-            android:name="com.nu.art.cyborg.ui.ApplicationLauncher">
+            android:name="com.nu.art.cyborg.ui.ApplicationLauncher"
+            android:theme="@style/Theme.Transparent"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
