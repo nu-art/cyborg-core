@@ -47,23 +47,40 @@ public class InternetConnectivityModule
 	protected void init() {
 		handler = getModule(ThreadsModule.class).getDefaultHandler("Internet Check");
 		registerReceiver(ConnectivityCheckReceiver.class);
+		postOnUI(new Runnable() {
+			@Override
+			public void run() {
+				checkInternetConnectionAsync();
+			}
+		});
 	}
 
-	public boolean isConnected() {
+	public synchronized boolean isConnected() {
 		return isConnected;
+	}
+
+	public synchronized void setConnected(boolean connected) {
+		isConnected = connected;
 	}
 
 	private void checkInternetConnectionAsync() {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
+				boolean connected;
 				try {
+					logVerbose("checking connectivity");
 					InetAddress.getByName(DEFAULT_HOST);
-					isConnected = true;
+					connected = true;
 				} catch (Exception e) {
 					logError("Couldn't ping google.com", e);
-					isConnected = false;
+					connected = false;
 				}
+
+				if (isConnected() == connected)
+					return;
+
+				setConnected(connected);
 				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), new Processor<InternetConnectivityListener>() {
 					@Override
 					public void process(InternetConnectivityListener listener) {

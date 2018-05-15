@@ -28,7 +28,7 @@ import com.nu.art.core.tools.ExceptionTools;
 public class AndroidLogClient
 	extends BeLoggedClient {
 
-	public static final String StacktraceIndet = "    ";
+	private static final String StacktraceIndent = "    ";
 	private final StringBuffer buffer = new StringBuffer();
 
 	@Override
@@ -45,15 +45,18 @@ public class AndroidLogClient
 
 		printLog(level, tagWithThread, message);
 
-		String indent = "";
+		boolean isCause = false;
 		while (t != null) {
+			String exceptionMessage = t.getMessage() != null ? ": " + t.getMessage() : "";
 			//noinspection StringEquality
-			printLog(level, tagWithThread, (indent == StacktraceIndet ? "CAUSED BY: " : "") + t.getClass().getName() + ": " + t.getMessage());
-			indent = "";
+			String causedBy = isCause ? "CAUSED BY: " : "";
+
+			printLog(level, tagWithThread, causedBy + t.getClass().getName() + exceptionMessage);
 			for (StackTraceElement stackTraceElement : t.getStackTrace()) {
-				printLog(level, tagWithThread, indent + ExceptionTools.parseStackTrace(stackTraceElement));
-				indent = StacktraceIndet;
+				printLog(level, tagWithThread, StacktraceIndent + ExceptionTools.parseStackTrace(stackTraceElement));
 			}
+
+			isCause = true;
 			t = t.getCause();
 		}
 	}
