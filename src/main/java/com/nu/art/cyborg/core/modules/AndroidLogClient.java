@@ -48,7 +48,7 @@ public class AndroidLogClient
 		String indent = "";
 		while (t != null) {
 			//noinspection StringEquality
-			printLog(level, tagWithThread, (indent == StacktraceIndet ? "CAUSED BY: " : "") + t.getMessage());
+			printLog(level, tagWithThread, (indent == StacktraceIndet ? "CAUSED BY: " : "") + t.getClass().getName() + ": " + t.getMessage());
 			indent = "";
 			for (StackTraceElement stackTraceElement : t.getStackTrace()) {
 				printLog(level, tagWithThread, indent + ExceptionTools.parseStackTrace(stackTraceElement));
