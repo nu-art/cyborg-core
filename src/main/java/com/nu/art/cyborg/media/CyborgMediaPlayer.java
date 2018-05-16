@@ -477,7 +477,8 @@ public class CyborgMediaPlayer
 				mediaPlayer.prepareAsync();
 			} catch (Exception e) {
 				logError("Error while preparing the media player, url: " + uri, e);
-				listener.onError();
+				if (listener != null)
+					listener.onError();
 			}
 		}
 
