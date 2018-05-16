@@ -67,6 +67,7 @@ public class AndroidLogClient
 	private void logException(LogLevel level, Throwable t, String tagWithThread) {
 		boolean isCause = false;
 		Set<StackTraceElement> traces = syncTracesSet.get();
+		traces.clear();
 
 		while (t != null) {
 			String exceptionMessage = t.getMessage() != null ? ": " + t.getMessage() : "";
