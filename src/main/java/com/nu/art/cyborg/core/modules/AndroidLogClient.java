@@ -60,6 +60,7 @@ public class AndroidLogClient
 
 		printLog(level, tagWithThread, message);
 
+		boolean isCause = false;
 		if (t != null)
 			logException(level, t, tagWithThread);
 	}
