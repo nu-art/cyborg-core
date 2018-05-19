@@ -26,6 +26,7 @@ import android.telephony.TelephonyManager;
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.calls.NativeCall.CallDirection;
 import com.nu.art.cyborg.modules.calls.NativeCall.CallState;
@@ -41,6 +42,10 @@ import static com.nu.art.cyborg.modules.calls.NativeCall.CallState.InProgress;
 import static com.nu.art.cyborg.modules.calls.NativeCall.CallState.Ringing;
 
 @SuppressWarnings("unused")
+@ModuleDescriptor(usesPermissions = {
+	permission.PROCESS_OUTGOING_CALLS,
+	permission.READ_PHONE_STATE
+})
 public final class NativeCallsModule
 	extends CyborgModule {
 
