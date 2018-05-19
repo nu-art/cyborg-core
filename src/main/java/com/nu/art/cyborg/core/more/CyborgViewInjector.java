@@ -92,7 +92,7 @@ public final class CyborgViewInjector
 		if (!fieldType.isArray()) {
 			int parentViewId = viewIdentifier.parentViewId();
 			int viewId = viewIdentifier.viewId();
-			if (viewId == -1)
+			if (viewId == -1 && fieldValue == null)
 				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
 
 			return setupItem(fieldValue, viewField, fieldType, viewIdentifier, parentViewId, viewId);
@@ -106,7 +106,7 @@ public final class CyborgViewInjector
 			throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
 
 		int[] ids = viewIdentifier.viewIds();
-		if (ids.length == 0)
+		if (ids.length == 0 && fieldValue == null)
 			throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
 
 		return getArrayValueFromAnnotationAndField(fieldValue, viewField, viewIdentifier, componentType, parentViewId, ids);
