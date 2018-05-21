@@ -214,7 +214,9 @@ public class CrashReportModule
 			state.interrupted = thread.isInterrupted();
 			state.id = thread.getId();
 			state.priority = thread.getPriority();
-			state.threadGroup = thread.getThreadGroup().getName();
+			ThreadGroup threadGroup = thread.getThreadGroup();
+			if (threadGroup != null)
+				state.threadGroup = threadGroup.getName();
 			state.state = thread.getState().name();
 			state.stacktrace = ExceptionTools.parseStackTrace(thread.getStackTrace());
 		}
