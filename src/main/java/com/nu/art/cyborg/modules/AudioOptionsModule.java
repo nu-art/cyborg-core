@@ -79,31 +79,31 @@ public class AudioOptionsModule
 	/**
 	 * Each sound stream might have different max volume.
 	 */
-	public int getStreamMaxVolume(Integer streamId) {
+	public int getStreamMaxVolume(int streamId) {
 		return audioManager.getStreamMaxVolume(streamId);
 	}
 
-	public int getStreamVolume(Integer streamId) {
+	public int getStreamVolume(int streamId) {
 		int volume = audioManager.getStreamVolume(streamId);
 		logInfo("AudioStream Get volume: " + AudioStreamType.getTypeByValue(streamId).name() + " " + volume);
 		return volume;
 	}
 
-	public void setStreamVolume(Integer streamId, int volume, int flags) {
+	public void setStreamVolume(int streamId, int volume, int flags) {
 		audioManager.setStreamVolume(streamId, volume, flags);
 		logInfo("AudioStream Set volume: " + AudioStreamType.getTypeByValue(streamId).name() + " " + getStreamVolume(streamId));
 	}
 
-	public void setStreamVolume(Integer streamId, int volume) {
+	public void setStreamVolume(int streamId, int volume) {
 		setStreamVolume(streamId, volume, 0);
 	}
 
-	public void muteStream(Integer streamId, boolean toMute) {
+	public void muteStream(int streamId, boolean toMute) {
 		audioManager.adjustStreamVolume(streamId, toMute ? android.media.AudioManager.ADJUST_MUTE : android.media.AudioManager.ADJUST_UNMUTE, 0);
 	}
 
 	@TargetApi(23)
-	public boolean isStreamMute(Integer streamId) {
+	public boolean isStreamMute(int streamId) {
 		return audioManager.isStreamMute(streamId);
 	}
 
@@ -141,9 +141,9 @@ public class AudioOptionsModule
 		Notification(STREAM_NOTIFICATION),
 		DTMF(STREAM_DTMF);
 
-		public final Integer streamId;
+		public final int streamId;
 
-		AudioStreamType(Integer streamId) {
+		AudioStreamType(int streamId) {
 			this.streamId = streamId;
 		}
 
