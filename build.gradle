@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-applyAndroidLibrary("com.nu-art-software.cyborg", "nu-art")
+applyAndroidLibrary()
 
 dependencies {
     api(resolveDependency('module-manager', 'com.nu-art-software', "${NU_ART_VERSION}"))
@@ -28,4 +28,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
+}
+
+if (project.hasProperty("addTask_DeployAndroidArtifactToCentral")) {
+    addTask_DeployAndroidArtifactToCentral("com.nu-art-software.cyborg", "nu-art")
 }
