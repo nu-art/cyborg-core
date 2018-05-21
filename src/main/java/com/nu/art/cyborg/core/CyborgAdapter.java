@@ -85,7 +85,9 @@ public class CyborgAdapter<Item>
 	}
 
 	public final void invalidateDataModel() {
-		setDataModel(resolver.get());
+		DataModel<Item> dataModel = resolver.get();
+		setDataModel(dataModel);
+		dataModel.notifyDataSetChanged();
 	}
 
 	/**

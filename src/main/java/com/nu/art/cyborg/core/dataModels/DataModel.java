@@ -28,7 +28,7 @@ public abstract class DataModel<Item> {
 	private final Class<? extends Item>[] itemsType;
 	private CyborgAdapter adapter;
 	private boolean cyclic;
-	private boolean autoNotifyChanges;
+	private boolean autoNotifyChanges = true;
 
 	public DataModel(Class<? extends Item>[] itemsType) {
 		this.itemsType = itemsType;

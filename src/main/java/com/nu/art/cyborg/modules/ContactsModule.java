@@ -72,6 +72,9 @@ public class ContactsModule
 	}
 
 	public final String convertToNumericRegexp(String query) {
+		if (query == null || query.length() == 0)
+			return query;
+
 		query = query.replaceAll(phoneNumberSpecialChars, "");
 
 		StringBuilder sb = new StringBuilder();
