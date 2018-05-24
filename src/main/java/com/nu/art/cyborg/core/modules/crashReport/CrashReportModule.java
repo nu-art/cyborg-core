@@ -164,10 +164,30 @@ public class CrashReportModule
 	private void composeAndSendReport(String uuid, Thread thread, Throwable ex, boolean crashed) {
 		try {
 			crashReport = new CrashReport(uuid);
-			crashReport.crashMessage = composeMessage(thread, ex, crashed);
-			crashReport.modulesData = collectModulesData();
-			crashReport.runningThreads = getRunningThreads();
-			crashReport.threadTraces = getTraces();
+
+			try {
+				crashReport.crashMessage = composeMessage(thread, ex, crashed);
+			} catch (Exception e) {
+				logError("Error composing crashMessage: ", e);
+			}
+
+			try {
+				crashReport.modulesData = collectModulesData();
+			} catch (Exception e) {
+				logError("Error collecting modulesData: ", e);
+			}
+
+			try {
+				crashReport.runningThreads = getRunningThreads();
+			} catch (Exception e) {
+				logError("Error mapping running threads: ", e);
+			}
+
+			try {
+				crashReport.threadTraces = getTraces();
+			} catch (Exception e) {
+				logError("Error fetching traces.txt: ", e);
+			}
 
 			crashReportHandler.prepareAndBackupCrashReport(crashReport);
 			hasCrashReportWaiting.set(true);
