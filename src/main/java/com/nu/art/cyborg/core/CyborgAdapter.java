@@ -85,7 +85,9 @@ public class CyborgAdapter<Item>
 	}
 
 	public final void invalidateDataModel() {
-		setDataModel(resolver.get());
+		DataModel<Item> dataModel = resolver.get();
+		setDataModel(dataModel);
+		dataModel.notifyDataSetChanged();
 	}
 
 	/**
@@ -359,7 +361,7 @@ public class CyborgAdapter<Item>
 
 		@Override
 		public int getViewTypeCount() {
-			return dataModel.getItemTypesCount();
+			return 1;
 		}
 
 		@Override
@@ -390,10 +392,11 @@ public class CyborgAdapter<Item>
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			int viewType = getItemViewType(position);
-			ItemRenderer<? extends Item> renderer;
+			ItemRenderer<? extends Item> renderer = null;
 			if (convertView != null)
 				renderer = (ItemRenderer<? extends Item>) convertView.getTag();
-			else {
+
+			if (renderer == null || renderer.getClass() != renderersTypes[viewType]) {
 				renderer = createRendererForType(parent, viewType);
 				callRendererLifeCycle(renderer);
 			}
