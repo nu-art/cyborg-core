@@ -34,7 +34,7 @@ public abstract class DataModel<Item> {
 		this.itemsType = itemsType;
 	}
 
-	protected void setCyclic(boolean cyclic) {
+	public void setCyclic(boolean cyclic) {
 		this.cyclic = cyclic;
 	}
 
