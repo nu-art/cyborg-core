@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.modules.CacheModule;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.DownloaderBuilder;
@@ -43,24 +44,31 @@ public class ImageDownloaderModule
 
 	}
 
-	public final ImageDownloaderBuilder createDownloader() {
-		return new ImageDownloaderBuilderImpl();
+	public ImageDownloaderBuilder createDownloader(ImageView target, String url) {
+		ImageDownloaderBuilderImpl downloader = null;
+		if (target != null)
+			downloader = (ImageDownloaderBuilderImpl) target.getTag();
+
+		if (downloader == null) {
+			downloader = new ImageDownloaderBuilderImpl();
+		}
+
+		downloader.setUrl(url);
+		downloader.setTarget(target);
+		return downloader;
 	}
 
 	public interface ImageDownloaderBuilder {
 
-		ImageDownloaderBuilder setUrl(String url);
-
-		boolean isSameUrl(String url);
 		Cacheable getCacheable();
 
 		ImageDownloaderBuilder setDownloader(Downloader downloader);
 
 		ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading);
 
-		ImageDownloaderBuilder setTarget(ImageView target);
-
 		ImageDownloaderBuilder setCacheable(Cacheable cacheable);
+
+		ImageDownloaderBuilder setCacheable(String cacheToFolder, String suffix, boolean isMust);
 
 		ImageDownloaderBuilder onSuccess(Processor<Bitmap> onSuccess);
 
@@ -77,6 +85,8 @@ public class ImageDownloaderModule
 		ImageDownloaderBuilder onAfter(Runnable runnable);
 
 		ImageDownloaderBuilder onError(Runnable runnable);
+
+		ImageDownloaderBuilder onError(Processor<Throwable> onError);
 
 		void download();
 	}
@@ -108,18 +118,27 @@ public class ImageDownloaderModule
 
 		private Runnable onAfter;
 
-		private Runnable onError;
+		private Processor<Throwable> onError;
 
 		private Cacheable cacheable;
+
+		private boolean sameUrl;
 
 		@Override
 		public Cacheable getCacheable() {
 			return cacheable;
 		}
 
-		public final ImageDownloaderBuilder setUrl(String url) {
+		private void setTarget(ImageView target) {
+			this.target = target;
+		}
+
+		private void setUrl(String url) {
+			sameUrl = this.url != null && url != null && this.url.equals(url);
+			if (!sameUrl)
+				cancel();
+
 			this.url = url;
-			return this;
 		}
 
 		public ImageDownloaderBuilder setDownloader(Downloader downloader) {
@@ -132,9 +151,8 @@ public class ImageDownloaderModule
 			return this;
 		}
 
-		@Override
-		public boolean isSameUrl(String url) {
-			return this.url.equals(url);
+		public ImageDownloaderBuilder setCacheable(String cacheToFolder, String suffix, boolean isMust) {
+			return setCacheable(getModule(CacheModule.class).new Cacheable().setKey(url).setSuffix(suffix).setMustCache(isMust).setPathToDir(cacheToFolder));
 		}
 
 		@Override
@@ -144,8 +162,14 @@ public class ImageDownloaderModule
 		}
 
 		@Override
-		public ImageDownloaderBuilder setTarget(ImageView target) {
-			this.target = target;
+		public ImageDownloaderBuilder onBefore(Runnable onBefore) {
+			this.onBefore = onBefore;
+			return this;
+		}
+
+		@Override
+		public ImageDownloaderBuilder onAfter(Runnable onAfter) {
+			this.onAfter = onAfter;
 			return this;
 		}
 
@@ -180,6 +204,23 @@ public class ImageDownloaderModule
 		}
 
 		@Override
+		public ImageDownloaderBuilder onError(final Runnable onError) {
+			this.onError = new Processor<Throwable>() {
+				@Override
+				public void process(Throwable throwable) {
+					onError.run();
+				}
+			};
+			return this;
+		}
+
+		@Override
+		public ImageDownloaderBuilder onError(Processor<Throwable> onError) {
+			this.onError = onError;
+			return this;
+		}
+
+		@Override
 		public ImageDownloaderBuilder cancel() {
 			cancelled = true;
 			if (downloaderBuilder != null)
@@ -189,6 +230,13 @@ public class ImageDownloaderModule
 		}
 
 		public final void download() {
+			if (sameUrl) {
+				logWarning("Same url... will not download");
+				return;
+			}
+
+			cancelled = false;
+
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
 			downloaderBuilder.setUrl(url);
 			downloaderBuilder.setCacheable(cacheable);
@@ -199,6 +247,7 @@ public class ImageDownloaderModule
 
 				@Override
 				public void process(Bitmap bitmap) {
+					sameUrl = false;
 					if (cancelled)
 						return;
 
@@ -212,32 +261,38 @@ public class ImageDownloaderModule
 							if (cancelled)
 								return;
 
-							if (onSuccess != null)
+							if (onSuccess != null) {
 								onSuccess.process(finalBitmap);
-							else
+								return;
+							}
+
+							if (target != null) {
 								target.setImageBitmap(finalBitmap);
+								return;
+							}
+
+							logInfo("Url cached: " + url);
 						}
 					});
 				}
 			});
+
 			downloaderBuilder.onError(new Processor<Throwable>() {
 				@Override
 				public void process(final Throwable e) {
+					sameUrl = false;
 					if (cancelled)
 						return;
 
 					postOnUI(new Runnable() {
 						@Override
 						public void run() {
-							processError();
+							if (onError != null) {
+								onError.process(e);
+								return;
+							}
 
-							if (onError != null)
-								onError.run();
-							else
-								logError("Error downloading image", e);
-						}
-
-						private void processError() {
+							logError("Error downloading image", e);
 							if (errorDrawableId != -1) {
 								target.setImageResource(errorDrawableId);
 								return;
@@ -258,24 +313,6 @@ public class ImageDownloaderModule
 			});
 
 			downloaderBuilder.download();
-		}
-
-		@Override
-		public ImageDownloaderBuilder onBefore(Runnable onBefore) {
-			this.onBefore = onBefore;
-			return this;
-		}
-
-		@Override
-		public ImageDownloaderBuilder onError(Runnable onError) {
-			this.onError = onError;
-			return this;
-		}
-
-		@Override
-		public ImageDownloaderBuilder onAfter(Runnable onAfter) {
-			this.onAfter = onAfter;
-			return this;
 		}
 	}
 }

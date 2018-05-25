@@ -26,6 +26,7 @@ import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
+import com.nu.art.cyborg.modules.CacheModule;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.CacheModule.UnableToCacheException;
 
@@ -42,6 +43,13 @@ import java.net.URI;
 
 public class GenericDownloaderModule
 	extends CyborgModule {
+
+	private static final Function<InputStream, InputStream> DefaultConverter = new Function<InputStream, InputStream>() {
+		@Override
+		public InputStream map(InputStream inputStream) {
+			return inputStream;
+		}
+	};
 
 	private Handler resourceLoader;
 
@@ -71,6 +79,8 @@ public class GenericDownloaderModule
 
 		<Type> DownloaderBuilder onSuccess(Function<InputStream, Type> converter, Processor<Type> processor);
 
+		DownloaderBuilder onSuccess(Runnable onSuccess);
+
 		DownloaderBuilder setDownloader(Downloader downloader);
 
 		DownloaderBuilder onError(Processor<Throwable> processor);
@@ -78,6 +88,8 @@ public class GenericDownloaderModule
 		DownloaderBuilder cancel();
 
 		DownloaderBuilder setCacheable(Cacheable cacheable);
+
+		DownloaderBuilder setCacheable(String cacheToFolder, String suffix, boolean isMust);
 
 		DownloaderBuilder onBefore(Runnable runnable);
 
@@ -89,11 +101,40 @@ public class GenericDownloaderModule
 	private class DownloaderBuilderImpl
 		implements DownloaderBuilder {
 
+		private final GenericListener<InputStream> downloadListener = new GenericListener<InputStream>() {
+
+			@Override
+			public void onSuccess(InputStream inputStream) {
+				if (cacheable == null) {
+					handleResponse(inputStream);
+					return;
+				}
+
+				try {
+					cacheable.cacheSync(inputStream);
+					loadFromCache();
+				} catch (UnableToCacheException e) {
+					logWarning("COULD NOT CACHE... ", e);
+					handleResponse(inputStream);
+				} catch (IOException e) {
+					onError(e);
+				}
+			}
+
+			@Override
+			public void onError(Throwable e) {
+				if (onError != null)
+					onError.process(e);
+				else
+					logError("Error downloading image", e);
+			}
+		};
+
 		private String url;
 
 		private Cacheable cacheable;
 
-		private Function<InputStream, ?> converter;
+		private Function<InputStream, ?> converter = DefaultConverter;
 
 		private Processor<?> onSuccess;
 
@@ -120,6 +161,18 @@ public class GenericDownloaderModule
 			return url;
 		}
 
+		@Override
+		public DownloaderBuilder onSuccess(final Runnable onSuccess) {
+			return onSuccess(DefaultConverter, new Processor<InputStream>() {
+				@Override
+				public void process(InputStream inputStream) {
+					logInfo("Download completed: " + url);
+					if (onSuccess != null)
+						onSuccess.run();
+				}
+			});
+		}
+
 		public final <Type> DownloaderBuilder onSuccess(Function<InputStream, Type> converter, Processor<Type> onSuccess) {
 			this.converter = converter;
 			this.onSuccess = onSuccess;
@@ -130,6 +183,10 @@ public class GenericDownloaderModule
 		public DownloaderBuilder setDownloader(Downloader downloader) {
 			this.downloader = downloader;
 			return this;
+		}
+
+		public DownloaderBuilder setCacheable(String cacheToFolder, String suffix, boolean isMust) {
+			return setCacheable(getModule(CacheModule.class).new Cacheable().setKey(url).setSuffix(suffix).setMustCache(isMust).setPathToDir(cacheToFolder));
 		}
 
 		@Override
@@ -168,6 +225,13 @@ public class GenericDownloaderModule
 		}
 
 		public final void download() {
+			if (url == null || url.trim().length() == 0) {
+				IOException error = new IOException("url is null or empty");
+				onError(error);
+
+				return;
+			}
+
 			if (cacheable != null && cacheable.isCached()) {
 				loadFromCache();
 				return;
@@ -176,68 +240,54 @@ public class GenericDownloaderModule
 			if (onBefore != null)
 				onBefore.run();
 
-			downloadFromUrl();
-		}
-
-		private void downloadFromUrl() {
-			final GenericListener<InputStream> listener = new GenericListener<InputStream>() {
-
-				@Override
-				public void onSuccess(InputStream inputStream) {
-					if (cacheable == null) {
-						handleResponse(inputStream);
-						return;
-					}
-
-					try {
-						cacheable.cacheSync(inputStream);
-						loadFromCache();
-					} catch (UnableToCacheException e) {
-						logWarning("COULD NOT CACHE... " + e.getMessage());
-						handleResponse(inputStream);
-					} catch (IOException e) {
-						logError("Error caching stream... ", e);
-						onError(e);
-					}
-				}
-
-				@Override
-				public void onError(Throwable e) {
-					onError.process(e);
-				}
-			};
-
 			if (url.startsWith("android.resource://")) {
-				resourceLoader.post(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							listener.onSuccess(getContentResolver().openInputStream(Uri.parse(url)));
-						} catch (FileNotFoundException e) {
-							logWarning("Failed getting file from path: '" + url + "'", e);
-							onError.process(e);
-						}
-					}
-				});
+				loadFromResources(downloadListener);
 				return;
 			}
 
 			if (url.startsWith("file://")) {
-				resourceLoader.post(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							listener.onSuccess(new FileInputStream(new File(URI.create(url))));
-						} catch (FileNotFoundException e) {
-							logWarning("Failed getting file from path: '" + url + "'", e);
-							onError.process(e);
-						}
-					}
-				});
+				loadFromFile(downloadListener);
 				return;
 			}
 
-			downloader.download(this, listener);
+			downloader.download(this, downloadListener);
+		}
+
+		private void onError(Throwable error) {
+			if (onError != null) {
+				onError.process(error);
+				return;
+			}
+
+			logError(error);
+		}
+
+		private void loadFromFile(final GenericListener<InputStream> listener) {
+			resourceLoader.post(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						listener.onSuccess(new FileInputStream(new File(URI.create(url))));
+					} catch (FileNotFoundException e) {
+						logWarning("Failed getting file from path: '" + url + "'", e);
+						onError(e);
+					}
+				}
+			});
+		}
+
+		private void loadFromResources(final GenericListener<InputStream> listener) {
+			resourceLoader.post(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						listener.onSuccess(getContentResolver().openInputStream(Uri.parse(url)));
+					} catch (FileNotFoundException e) {
+						logWarning("Failed getting file from path: '" + url + "'", e);
+						onError(e);
+					}
+				}
+			});
 		}
 
 		private void loadFromCache() {
@@ -250,7 +300,7 @@ public class GenericDownloaderModule
 
 				@Override
 				public void onError(Throwable e) {
-					onError.process(e);
+					DownloaderBuilderImpl.this.onError(e);
 				}
 			});
 		}

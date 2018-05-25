@@ -55,8 +55,8 @@ public class ListDataModel<Item>
 	public final void clear() {
 		items.clear();
 		notifyDataSetChanged();
-//		if (adapter != null)
-//			adapter.onItemRangeInserted(size, items.size());
+		//		if (adapter != null)
+		//			adapter.onItemRangeInserted(size, items.size());
 
 	}
 
