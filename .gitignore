@@ -7,4 +7,4 @@
 gradle
 *.iml
 target
-src/main/java/com/nu/art/cyborg/inProgress
+src/main/java/com/nu/art/cyborg/modules/inProgress/
