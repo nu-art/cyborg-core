@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.modules.downloader;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
@@ -31,6 +32,8 @@ import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.DownloaderBuilder;
 import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by tacb0ss on 14/06/2017.
@@ -94,35 +97,26 @@ public class ImageDownloaderModule
 	private class ImageDownloaderBuilderImpl
 		implements ImageDownloaderBuilder {
 
+		// Internal
+		private boolean sameUrl;
 		private boolean cancelled;
+		private DownloaderBuilder downloaderBuilder;
 
 		private String url;
 
-		private int errorDrawableId;
-
 		private Drawable errorDrawable;
-
-		private Bitmap errorBitmap;
-
-		private Downloader downloader;
-
-		private DownloaderBuilder downloaderBuilder;
-
-		private ImageView target;
-
-		private Function<Bitmap, Bitmap> postDownloading;
-
-		private Processor<Bitmap> onSuccess;
-
-		private Runnable onBefore;
-
-		private Runnable onAfter;
-
-		private Processor<Throwable> onError;
 
 		private Cacheable cacheable;
 
-		private boolean sameUrl;
+		private Downloader downloader;
+
+		// UI
+		private WeakReference<ImageView> target;
+		private WeakReference<Function<Bitmap, Bitmap>> postDownloading;
+		private WeakReference<Processor<Bitmap>> onSuccess;
+		private WeakReference<Runnable> onBefore;
+		private WeakReference<Runnable> onAfter;
+		private WeakReference<Processor<Throwable>> onError;
 
 		@Override
 		public Cacheable getCacheable() {
@@ -130,7 +124,7 @@ public class ImageDownloaderModule
 		}
 
 		private void setTarget(ImageView target) {
-			this.target = target;
+			this.target = new WeakReference<>(target);
 		}
 
 		private void setUrl(String url) {
@@ -157,66 +151,57 @@ public class ImageDownloaderModule
 
 		@Override
 		public ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading) {
-			this.postDownloading = postDownloading;
+			this.postDownloading = new WeakReference<>(postDownloading);
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onBefore(Runnable onBefore) {
-			this.onBefore = onBefore;
+			this.onBefore = new WeakReference<>(onBefore);
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onAfter(Runnable onAfter) {
-			this.onAfter = onAfter;
+			this.onAfter = new WeakReference<>(onAfter);
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onSuccess(Processor<Bitmap> onSuccess) {
-			this.onSuccess = onSuccess;
+			this.onSuccess = new WeakReference<>(onSuccess);
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onError(@DrawableRes int errorDrawableId) {
-			this.errorDrawable = null;
-			this.errorBitmap = null;
-			this.errorDrawableId = errorDrawableId;
-			return this;
+			return onError(getResources().getDrawable(errorDrawableId));
 		}
 
 		@Override
 		public ImageDownloaderBuilder onError(Drawable errorDrawable) {
 			this.errorDrawable = errorDrawable;
-			this.errorBitmap = null;
-			this.errorDrawableId = -1;
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onError(Bitmap errorBitmap) {
-			this.errorBitmap = errorBitmap;
-			this.errorDrawable = null;
-			this.errorDrawableId = -1;
-			return this;
+			return onError(new BitmapDrawable(getResources(), errorBitmap));
 		}
 
 		@Override
 		public ImageDownloaderBuilder onError(final Runnable onError) {
-			this.onError = new Processor<Throwable>() {
+			return onError(new Processor<Throwable>() {
 				@Override
 				public void process(Throwable throwable) {
 					onError.run();
 				}
-			};
-			return this;
+			});
 		}
 
 		@Override
 		public ImageDownloaderBuilder onError(Processor<Throwable> onError) {
-			this.onError = onError;
+			this.onError = new WeakReference<>(onError);
 			return this;
 		}
 
@@ -240,8 +225,8 @@ public class ImageDownloaderModule
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
 			downloaderBuilder.setUrl(url);
 			downloaderBuilder.setCacheable(cacheable);
-			downloaderBuilder.onBefore(onBefore);
-			downloaderBuilder.onAfter(onAfter);
+			downloaderBuilder.onBefore(onBefore.get());
+			downloaderBuilder.onAfter(onAfter.get());
 			downloaderBuilder.setDownloader(downloader);
 			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
 
@@ -251,6 +236,7 @@ public class ImageDownloaderModule
 					if (cancelled)
 						return;
 
+					Function<Bitmap, Bitmap> postDownloading = ImageDownloaderBuilderImpl.this.postDownloading.get();
 					if (postDownloading != null)
 						bitmap = postDownloading.map(bitmap);
 
@@ -261,11 +247,13 @@ public class ImageDownloaderModule
 							if (cancelled)
 								return;
 
+							Processor<Bitmap> onSuccess = ImageDownloaderBuilderImpl.this.onSuccess.get();
 							if (onSuccess != null) {
 								onSuccess.process(finalBitmap);
 								return;
 							}
 
+							ImageView target = ImageDownloaderBuilderImpl.this.target.get();
 							if (target != null) {
 								target.setImageBitmap(finalBitmap);
 								return;
@@ -287,26 +275,22 @@ public class ImageDownloaderModule
 					postOnUI(new Runnable() {
 						@Override
 						public void run() {
+
+							Processor<Throwable> onError = ImageDownloaderBuilderImpl.this.onError.get();
 							if (onError != null) {
 								onError.process(e);
 								return;
 							}
 
-							logError("Error downloading image", e);
-							if (errorDrawableId != -1) {
-								target.setImageResource(errorDrawableId);
-								return;
-							}
-
 							if (errorDrawable != null) {
-								target.setImageDrawable(errorDrawable);
-								return;
+								ImageView target = ImageDownloaderBuilderImpl.this.target.get();
+								if (target != null) {
+									target.setImageDrawable(errorDrawable);
+									return;
+								}
 							}
 
-							if (errorBitmap != null) {
-								target.setImageBitmap(errorBitmap);
-								return;
-							}
+							logError("Error downloading image", e);
 						}
 					});
 				}
