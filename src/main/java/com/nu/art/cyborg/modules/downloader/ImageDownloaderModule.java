@@ -63,8 +63,6 @@ public class ImageDownloaderModule
 
 	public interface ImageDownloaderBuilder {
 
-		Cacheable getCacheable();
-
 		ImageDownloaderBuilder setDownloader(Downloader downloader);
 
 		ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading);
@@ -113,15 +111,10 @@ public class ImageDownloaderModule
 		// UI
 		private WeakReference<ImageView> target;
 		private WeakReference<Function<Bitmap, Bitmap>> postDownloading;
-		private WeakReference<Processor<Bitmap>> onSuccess;
 		private WeakReference<Runnable> onBefore;
+		private WeakReference<Processor<Bitmap>> onSuccess;
 		private WeakReference<Runnable> onAfter;
 		private WeakReference<Processor<Throwable>> onError;
-
-		@Override
-		public Cacheable getCacheable() {
-			return cacheable;
-		}
 
 		private void setTarget(ImageView target) {
 			this.target = new WeakReference<>(target);
@@ -236,7 +229,7 @@ public class ImageDownloaderModule
 					if (cancelled)
 						return;
 
-					Function<Bitmap, Bitmap> postDownloading = ImageDownloaderBuilderImpl.this.postDownloading.get();
+					Function<Bitmap, Bitmap> postDownloading = getPostDownloading();
 					if (postDownloading != null)
 						bitmap = postDownloading.map(bitmap);
 
@@ -247,13 +240,13 @@ public class ImageDownloaderModule
 							if (cancelled)
 								return;
 
-							Processor<Bitmap> onSuccess = ImageDownloaderBuilderImpl.this.onSuccess.get();
+							Processor<Bitmap> onSuccess = getOnSuccess();
 							if (onSuccess != null) {
 								onSuccess.process(finalBitmap);
 								return;
 							}
 
-							ImageView target = ImageDownloaderBuilderImpl.this.target.get();
+							ImageView target = getTarget();
 							if (target != null) {
 								target.setImageBitmap(finalBitmap);
 								return;
@@ -276,14 +269,14 @@ public class ImageDownloaderModule
 						@Override
 						public void run() {
 
-							Processor<Throwable> onError = ImageDownloaderBuilderImpl.this.onError.get();
+							Processor<Throwable> onError = getOnError();
 							if (onError != null) {
 								onError.process(e);
 								return;
 							}
 
 							if (errorDrawable != null) {
-								ImageView target = ImageDownloaderBuilderImpl.this.target.get();
+								ImageView target = getTarget();
 								if (target != null) {
 									target.setImageDrawable(errorDrawable);
 									return;
@@ -297,6 +290,34 @@ public class ImageDownloaderModule
 			});
 
 			downloaderBuilder.download();
+		}
+
+		private Processor<Bitmap> getOnSuccess() {
+			if (ImageDownloaderBuilderImpl.this.onSuccess != null)
+				return ImageDownloaderBuilderImpl.this.onSuccess.get();
+
+			return null;
+		}
+
+		private ImageView getTarget() {
+			if (ImageDownloaderBuilderImpl.this.target != null)
+				return ImageDownloaderBuilderImpl.this.target.get();
+
+			return null;
+		}
+
+		private Processor<Throwable> getOnError() {
+			if (ImageDownloaderBuilderImpl.this.onError != null)
+				return ImageDownloaderBuilderImpl.this.onError.get();
+
+			return null;
+		}
+
+		private Function<Bitmap, Bitmap> getPostDownloading() {
+			if (ImageDownloaderBuilderImpl.this.postDownloading != null)
+				return ImageDownloaderBuilderImpl.this.postDownloading.get();
+
+			return null;
 		}
 	}
 }
