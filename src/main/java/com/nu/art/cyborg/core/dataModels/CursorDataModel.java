@@ -135,7 +135,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyItemRemoved(index);
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyItemRemoved(index);
 			}
 		});
 	}
@@ -144,7 +145,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyItemRangeRemoved(from, to);
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyItemRangeRemoved(from, to);
 			}
 		});
 	}
@@ -153,7 +155,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyItemInserted(position);
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyItemInserted(position);
 			}
 		});
 	}
@@ -162,7 +165,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyItemRangeInserted(from, to);
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyItemRangeInserted(from, to);
 			}
 		});
 	}
@@ -171,7 +175,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyItemMoved(from, to);
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyItemMoved(from, to);
 			}
 		});
 	}
@@ -180,7 +185,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyDataSetChanged();
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyDataSetChanged();
 			}
 		});
 	}
@@ -189,7 +195,8 @@ public abstract class CursorDataModel<ItemType>
 		refresh(new Runnable() {
 			@Override
 			public void run() {
-				CursorDataModel.super.notifyItemAtPositionChanged(position);
+				if (autoNotifyChanges)
+					CursorDataModel.super.notifyItemAtPositionChanged(position);
 			}
 		});
 	}

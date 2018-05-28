@@ -43,18 +43,21 @@ public class ListDataModel<Item>
 	public final void addAll(Collection<Item> items) {
 		int size = this.items.size();
 		this.items.addAll(items);
-		notifyItemRangeInserted(size, items.size());
+		if (autoNotifyChanges)
+			notifyItemRangeInserted(size, items.size());
 	}
 
 	public final void setItems(Item... items) {
 		this.items.clear();
 		this.items.addAll(Arrays.asList(items));
-		notifyDataSetChanged();
+		if (autoNotifyChanges)
+			notifyDataSetChanged();
 	}
 
 	public final void clear() {
 		items.clear();
-		notifyDataSetChanged();
+		if (autoNotifyChanges)
+			notifyDataSetChanged();
 		//		if (adapter != null)
 		//			adapter.onItemRangeInserted(size, items.size());
 
@@ -62,7 +65,8 @@ public class ListDataModel<Item>
 
 	public final void removeItems(int index) {
 		this.items.remove(index);
-		notifyItemRemoved(index);
+		if (autoNotifyChanges)
+			notifyItemRemoved(index);
 	}
 
 	public final void removeItems(Item... items) {
@@ -76,7 +80,8 @@ public class ListDataModel<Item>
 
 		boolean removed = this.items.removeAll(items);
 		if (position >= 0) {
-			notifyItemRemoved(position);
+			if (autoNotifyChanges)
+				notifyItemRemoved(position);
 			return;
 		}
 
@@ -84,7 +89,8 @@ public class ListDataModel<Item>
 			return;
 
 		// TODO: can add a calculation of minimal range..
-		notifyDataSetChanged();
+		if (autoNotifyChanges)
+			notifyDataSetChanged();
 	}
 
 	@Override
