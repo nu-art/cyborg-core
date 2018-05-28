@@ -218,8 +218,8 @@ public class ImageDownloaderModule
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
 			downloaderBuilder.setUrl(url);
 			downloaderBuilder.setCacheable(cacheable);
-			downloaderBuilder.onBefore(onBefore!=null?onBefore.get():null);
-			downloaderBuilder.onAfter(onBefore!=null?onAfter.get():null);
+			downloaderBuilder.onBefore(onBefore != null ? onBefore.get() : null);
+			downloaderBuilder.onAfter(onAfter != null ? onAfter.get() : null);
 			downloaderBuilder.setDownloader(downloader);
 			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
 
