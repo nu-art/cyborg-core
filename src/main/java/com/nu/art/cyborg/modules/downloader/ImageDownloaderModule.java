@@ -22,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.nu.art.core.generics.Function;
@@ -32,6 +33,8 @@ import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.DownloaderBuilder;
 import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by tacb0ss on 14/06/2017.
@@ -107,7 +110,7 @@ public class ImageDownloaderModule
 		private Downloader downloader;
 
 		// UI
-		private ImageView target;
+		private WeakReference<ImageView> target;
 		private Function<Bitmap, Bitmap> postDownloading;
 		private Runnable onBefore;
 		private Processor<Bitmap> onSuccess;
@@ -115,7 +118,7 @@ public class ImageDownloaderModule
 		private Processor<Throwable> onError;
 
 		private void setTarget(ImageView target) {
-			this.target = target;
+			this.target = new WeakReference<>(target);
 		}
 
 		private void setUrl(String url) {
@@ -242,6 +245,8 @@ public class ImageDownloaderModule
 								return;
 							}
 
+							ImageView target = getTarget();
+
 							if (target != null) {
 								target.setImageBitmap(finalBitmap);
 								return;
@@ -270,6 +275,7 @@ public class ImageDownloaderModule
 							}
 
 							if (errorDrawable != null) {
+								ImageView target = getTarget();
 								if (target != null) {
 									target.setImageDrawable(errorDrawable);
 									return;
@@ -283,6 +289,13 @@ public class ImageDownloaderModule
 			});
 
 			downloaderBuilder.download();
+		}
+
+		@Nullable
+		private ImageView getTarget() {
+			if (ImageDownloaderBuilderImpl.this.target != null)
+				return ImageDownloaderBuilderImpl.this.target.get();
+			return null;
 		}
 	}
 }
