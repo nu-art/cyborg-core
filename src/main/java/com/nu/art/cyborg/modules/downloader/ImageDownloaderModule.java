@@ -33,8 +33,6 @@ import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.DownloaderBuilder;
 import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
 
-import java.lang.ref.WeakReference;
-
 /**
  * Created by tacb0ss on 14/06/2017.
  */
@@ -117,7 +115,7 @@ public class ImageDownloaderModule
 		private Processor<Throwable> onError;
 
 		private void setTarget(ImageView target) {
-			this.target = new WeakReference<>(target);
+			this.target = target;
 		}
 
 		private void setUrl(String url) {
