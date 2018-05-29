@@ -109,12 +109,12 @@ public class ImageDownloaderModule
 		private Downloader downloader;
 
 		// UI
-		private WeakReference<ImageView> target;
-		private WeakReference<Function<Bitmap, Bitmap>> postDownloading;
-		private WeakReference<Runnable> onBefore;
-		private WeakReference<Processor<Bitmap>> onSuccess;
-		private WeakReference<Runnable> onAfter;
-		private WeakReference<Processor<Throwable>> onError;
+		private ImageView target;
+		private Function<Bitmap, Bitmap> postDownloading;
+		private Runnable onBefore;
+		private Processor<Bitmap> onSuccess;
+		private Runnable onAfter;
+		private Processor<Throwable> onError;
 
 		private void setTarget(ImageView target) {
 			this.target = new WeakReference<>(target);
@@ -144,25 +144,25 @@ public class ImageDownloaderModule
 
 		@Override
 		public ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading) {
-			this.postDownloading = new WeakReference<>(postDownloading);
+			this.postDownloading = postDownloading;
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onBefore(Runnable onBefore) {
-			this.onBefore = new WeakReference<>(onBefore);
+			this.onBefore = onBefore;
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onAfter(Runnable onAfter) {
-			this.onAfter = new WeakReference<>(onAfter);
+			this.onAfter = onAfter;
 			return this;
 		}
 
 		@Override
 		public ImageDownloaderBuilder onSuccess(Processor<Bitmap> onSuccess) {
-			this.onSuccess = new WeakReference<>(onSuccess);
+			this.onSuccess = onSuccess;
 			return this;
 		}
 
@@ -194,7 +194,7 @@ public class ImageDownloaderModule
 
 		@Override
 		public ImageDownloaderBuilder onError(Processor<Throwable> onError) {
-			this.onError = new WeakReference<>(onError);
+			this.onError = onError;
 			return this;
 		}
 
@@ -218,8 +218,8 @@ public class ImageDownloaderModule
 			downloaderBuilder = getModule(GenericDownloaderModule.class).createDownloader();
 			downloaderBuilder.setUrl(url);
 			downloaderBuilder.setCacheable(cacheable);
-			downloaderBuilder.onBefore(onBefore!=null?onBefore.get():null);
-			downloaderBuilder.onAfter(onBefore!=null?onAfter.get():null);
+			downloaderBuilder.onBefore(onBefore);
+			downloaderBuilder.onAfter(onAfter);
 			downloaderBuilder.setDownloader(downloader);
 			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
 
@@ -229,7 +229,6 @@ public class ImageDownloaderModule
 					if (cancelled)
 						return;
 
-					Function<Bitmap, Bitmap> postDownloading = getPostDownloading();
 					if (postDownloading != null)
 						bitmap = postDownloading.map(bitmap);
 
@@ -240,13 +239,11 @@ public class ImageDownloaderModule
 							if (cancelled)
 								return;
 
-							Processor<Bitmap> onSuccess = getOnSuccess();
 							if (onSuccess != null) {
 								onSuccess.process(finalBitmap);
 								return;
 							}
 
-							ImageView target = getTarget();
 							if (target != null) {
 								target.setImageBitmap(finalBitmap);
 								return;
@@ -269,14 +266,12 @@ public class ImageDownloaderModule
 						@Override
 						public void run() {
 
-							Processor<Throwable> onError = getOnError();
 							if (onError != null) {
 								onError.process(e);
 								return;
 							}
 
 							if (errorDrawable != null) {
-								ImageView target = getTarget();
 								if (target != null) {
 									target.setImageDrawable(errorDrawable);
 									return;
@@ -290,34 +285,6 @@ public class ImageDownloaderModule
 			});
 
 			downloaderBuilder.download();
-		}
-
-		private Processor<Bitmap> getOnSuccess() {
-			if (ImageDownloaderBuilderImpl.this.onSuccess != null)
-				return ImageDownloaderBuilderImpl.this.onSuccess.get();
-
-			return null;
-		}
-
-		private ImageView getTarget() {
-			if (ImageDownloaderBuilderImpl.this.target != null)
-				return ImageDownloaderBuilderImpl.this.target.get();
-
-			return null;
-		}
-
-		private Processor<Throwable> getOnError() {
-			if (ImageDownloaderBuilderImpl.this.onError != null)
-				return ImageDownloaderBuilderImpl.this.onError.get();
-
-			return null;
-		}
-
-		private Function<Bitmap, Bitmap> getPostDownloading() {
-			if (ImageDownloaderBuilderImpl.this.postDownloading != null)
-				return ImageDownloaderBuilderImpl.this.postDownloading.get();
-
-			return null;
 		}
 	}
 }

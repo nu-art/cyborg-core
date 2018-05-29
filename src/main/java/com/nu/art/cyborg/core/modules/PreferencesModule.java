@@ -20,12 +20,14 @@ package com.nu.art.cyborg.core.modules;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.interfaces.Serializer;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.ui.tools.RunnableTimer;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -50,16 +52,23 @@ public final class PreferencesModule
 	protected void init() {
 	}
 
-	public final void clearExpiration(PreferenceKey type) {
-		Editor editor = getPreferences(type.storageGroup).edit();
-		editor.putLong(type.key + EXPIRES_POSTFIX, -1L);
-		editor.apply();
+	public final void clearExpiration(final PreferenceKey type) {
+		SharedPreferences preferences = getPreferences(type.storageGroup);
+		getStorageHandler(type.storageGroup).post(new Runnable() {
+			@Override
+			public void run() {
+				getPreferences(type.storageGroup).edit().putLong(type.key + EXPIRES_POSTFIX, -1L).commit();
+			}
+		});
 	}
 
-	public final void removeValue(PreferenceKey<?> type) {
-		Editor editor = getPreferences(type.storageGroup).edit();
-		editor.remove(type.key);
-		editor.apply();
+	public final void removeValue(final PreferenceKey<?> type) {
+		getStorageHandler(type.storageGroup).post(new Runnable() {
+			@Override
+			public void run() {
+				getPreferences(type.storageGroup).edit().remove(type.key).commit();
+			}
+		});
 	}
 
 	public void clearCache() {
@@ -68,14 +77,20 @@ public final class PreferencesModule
 		}
 	}
 
-	public void dropPreferences(String storageGroup) {
-		getPreferences(storageGroup).edit().clear().apply();
+	public void dropPreferences(final String storageGroup) {
+		getStorageHandler(storageGroup).post(new Runnable() {
+			@Override
+			public void run() {
+				getPreferences(storageGroup).edit().clear().commit();
+			}
+		});
+	}
+
+	private Handler getStorageHandler(String storageGroup) {
+		return getModule(ThreadsModule.class).getDefaultHandler("shared-preferences-" + storageGroup);
 	}
 
 	private SharedPreferences getPreferences(String storageGroup) {
-		if (storageGroup == null)
-			storageGroup = DefaultStorageGroup;
-
 		SharedPreferences sharedPreferences = preferencesMap.get(storageGroup);
 		if (sharedPreferences == null) {
 			sharedPreferences = cyborg.getApplicationContext().getSharedPreferences(storageGroup, 0);
@@ -109,7 +124,7 @@ public final class PreferencesModule
 
 		public PreferenceKey(String key, ItemType defaultValue, long expires, String storageGroup) {
 			this.key = key;
-			this.storageGroup = storageGroup;
+			this.storageGroup = storageGroup == null ? DefaultStorageGroup : storageGroup;
 			this.defaultValue = defaultValue;
 			this.expires = expires;
 		}
@@ -140,15 +155,37 @@ public final class PreferencesModule
 			set(value, true);
 		}
 
-		public void set(ItemType value, boolean printToLog) {
-			Editor editor = getPreferences(storageGroup).edit();
+		public void set(final ItemType value, boolean printToLog) {
+			ItemType savedValue = get(false);
+			if (areEquals(savedValue, value))
+				return;
+
+			final Editor editor = getPreferences(storageGroup).edit();
 			if (printToLog)
 				logDebug("+----+ SET: " + key + ": " + value);
 
-			_set(editor, key, value);
-			if (expires != -1)
-				editor.putLong(key + EXPIRES_POSTFIX, System.currentTimeMillis());
-			editor.apply();
+			getStorageHandler(storageGroup).post(new RunnableTimer() {
+				@Override
+				protected void execute() {
+					_set(editor, key, value);
+					if (expires != -1)
+						editor.putLong(key + EXPIRES_POSTFIX, System.currentTimeMillis());
+
+					editor.apply();
+				}
+
+				@Override
+				protected void postExecute(long duration) {
+					logInfo("saving changes took " + duration + "ms");
+				}
+			});
+		}
+
+		public boolean areEquals(ItemType s1, ItemType s2) {
+			if (s1 == null && s2 == null)
+				return true;
+
+			return s1 != null && s2 != null && s1.equals(s2);
 		}
 
 		protected abstract void _set(Editor preferences, String key, ItemType value);
