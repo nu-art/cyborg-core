@@ -54,19 +54,21 @@ public final class PreferencesModule
 
 	public final void clearExpiration(final PreferenceKey type) {
 		SharedPreferences preferences = getPreferences(type.storageGroup);
+		final Editor editor = getPreferences(type.storageGroup).edit().putLong(type.key + EXPIRES_POSTFIX, -1L);
 		getStorageHandler(type.storageGroup).post(new Runnable() {
 			@Override
 			public void run() {
-				getPreferences(type.storageGroup).edit().putLong(type.key + EXPIRES_POSTFIX, -1L).commit();
+				editor.commit();
 			}
 		});
 	}
 
 	public final void removeValue(final PreferenceKey<?> type) {
+		final Editor remove = getPreferences(type.storageGroup).edit().remove(type.key);
 		getStorageHandler(type.storageGroup).post(new Runnable() {
 			@Override
 			public void run() {
-				getPreferences(type.storageGroup).edit().remove(type.key).commit();
+				remove.commit();
 			}
 		});
 	}
@@ -78,10 +80,11 @@ public final class PreferencesModule
 	}
 
 	public void dropPreferences(final String storageGroup) {
+		final Editor clear = getPreferences(storageGroup).edit().clear();
 		getStorageHandler(storageGroup).post(new Runnable() {
 			@Override
 			public void run() {
-				getPreferences(storageGroup).edit().clear().commit();
+				clear.commit();
 			}
 		});
 	}
