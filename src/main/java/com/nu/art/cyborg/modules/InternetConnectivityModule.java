@@ -70,8 +70,8 @@ public class InternetConnectivityModule
 				boolean connected;
 				try {
 					logVerbose("checking connectivity");
-					InetAddress.getByName(DEFAULT_HOST);
-					connected = true;
+					InetAddress byName = InetAddress.getByName(DEFAULT_HOST);
+					connected = byName.isReachable(5000);
 				} catch (Exception e) {
 					logError("Couldn't ping google.com", e);
 					connected = false;
