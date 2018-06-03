@@ -24,8 +24,8 @@ import android.os.Vibrator;
 
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.PreferencesModule;
-import com.nu.art.cyborg.core.modules.PreferencesModule.PreferenceKey;
+import com.nu.art.cyborg.core.modules.preferences.PreferencesModule;
+import com.nu.art.cyborg.core.modules.preferences.PreferencesModule.PreferenceKey;
 
 @ModuleDescriptor(usesPermissions = {"?" + permission.VIBRATE})
 @SuppressLint("MissingPermission")

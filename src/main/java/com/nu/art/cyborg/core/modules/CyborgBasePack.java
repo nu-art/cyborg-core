@@ -23,6 +23,7 @@ import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
 import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
+import com.nu.art.cyborg.core.modules.preferences.PreferencesModule;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.CacheModule;

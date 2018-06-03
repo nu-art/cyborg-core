@@ -26,8 +26,8 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.core.tools.StreamTools;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.PreferencesModule;
-import com.nu.art.cyborg.core.modules.PreferencesModule.BooleanPreference;
+import com.nu.art.cyborg.core.modules.preferences.PreferencesModule;
+import com.nu.art.cyborg.core.modules.preferences.PreferencesModule.BooleanPreference;
 
 import java.io.File;
 import java.io.FileInputStream;
