@@ -77,7 +77,7 @@ public class InternetConnectivityModule
 					sock.close();
 					connected = true;
 				} catch (Exception e) {
-					logError("Couldn't ping google.com", e);
+					logError("Couldn't ping 8.8.8.8", e);
 					connected = false;
 				}
 

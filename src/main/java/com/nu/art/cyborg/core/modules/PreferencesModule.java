@@ -20,14 +20,12 @@ package com.nu.art.cyborg.core.modules;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.interfaces.Serializer;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.ui.tools.RunnableTimer;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -69,10 +67,6 @@ public final class PreferencesModule
 
 	public void dropPreferences(final String storageGroup) {
 		getPreferences(storageGroup).edit().clear().apply();
-	}
-
-	private Handler getStorageHandler(String storageGroup) {
-		return getModule(ThreadsModule.class).getDefaultHandler("shared-preferences-" + storageGroup);
 	}
 
 	private SharedPreferences getPreferences(String storageGroup) {
@@ -149,21 +143,11 @@ public final class PreferencesModule
 			if (printToLog)
 				logDebug("+----+ SET: " + key + ": " + value);
 
-			getStorageHandler(storageGroup).post(new RunnableTimer() {
-				@Override
-				protected void execute() {
-					_set(editor, key, value);
-					if (expires != -1)
-						editor.putLong(key + EXPIRES_POSTFIX, System.currentTimeMillis());
+			_set(editor, key, value);
+			if (expires != -1)
+				editor.putLong(key + EXPIRES_POSTFIX, System.currentTimeMillis());
 
-					editor.apply();
-				}
-
-				@Override
-				protected void postExecute(long duration) {
-					logInfo("saving changes took " + duration + "ms");
-				}
-			});
+			editor.apply();
 		}
 
 		public boolean areEquals(ItemType s1, ItemType s2) {
