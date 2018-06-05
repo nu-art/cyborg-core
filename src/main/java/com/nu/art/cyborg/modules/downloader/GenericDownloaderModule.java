@@ -75,8 +75,6 @@ public class GenericDownloaderModule
 
 		String getUrl();
 
-		boolean isSameUrl(String url);
-
 		<Type> DownloaderBuilder onSuccess(Function<InputStream, Type> converter, Processor<Type> processor);
 
 		DownloaderBuilder onSuccess(Runnable onSuccess);
@@ -145,11 +143,6 @@ public class GenericDownloaderModule
 		private Runnable onBefore;
 
 		private Runnable onAfter;
-
-		@Override
-		public boolean isSameUrl(String url) {
-			return this.url.equals(url);
-		}
 
 		public final DownloaderBuilder setUrl(String url) {
 			this.url = url;
