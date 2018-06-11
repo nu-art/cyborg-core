@@ -485,10 +485,13 @@ public final class CyborgStackController
 			restoreState();
 
 			// JUST FOR THE RECORD... I HATE THIS CONDITION>> ()
-			if (!fromXml)
+			//			this condition breaks in my current setup..
+			if (!fromXml) {
 				controller.onReady();
+			}
 			// --------------------------------------------------------------------
 
+			fromXml = false;
 			resume();
 			CyborgStackController.this.addNestedController(controller);
 		}
@@ -800,12 +803,10 @@ public final class CyborgStackController
 					if (interpolator != null)
 						animator.setInterpolator(interpolator);
 
-					StackLayer originLayer =
-						targetLayerToBeRemove.keepBackground ? null : originLayerToBeRestored; // background is already visible do not animate it
+					StackLayer originLayer = targetLayerToBeRemove.keepBackground ? null : originLayerToBeRestored; // background is already visible do not animate it
 
 					// All Animations are performed together, the listener MUST be called only once
-					animator.animateOut(originLayer, targetLayerToBeRemove, duration,
-					                    animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					animator.animateOut(originLayer, targetLayerToBeRemove, duration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		};

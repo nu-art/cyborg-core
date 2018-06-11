@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.modules.downloader;
 
+import android.Manifest.permission;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.CacheModule;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
@@ -39,7 +41,8 @@ import java.lang.ref.WeakReference;
 /**
  * Created by tacb0ss on 14/06/2017.
  */
-
+@ModuleDescriptor(usesPermissions = {permission.INTERNET},
+                  dependencies = {GenericDownloaderModule.class})
 public class ImageDownloaderModule
 	extends CyborgModule {
 

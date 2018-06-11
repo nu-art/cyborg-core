@@ -337,7 +337,7 @@ public abstract class CyborgController
 				return (CyborgStackController) controller;
 		}
 
-		throw new ImplementationMissingException("In order to use the stack, this view must be a contained within a StackController");
+		throw ExceptionGenerator.triedToCreateStackLayerWhenNotInStack();
 	}
 
 	protected final <ControllerType extends CyborgController> ControllerType injectController(@IdRes int viewId, Class<ControllerType> controller) {

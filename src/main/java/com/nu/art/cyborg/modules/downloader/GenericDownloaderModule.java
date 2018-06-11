@@ -18,12 +18,14 @@
 
 package com.nu.art.cyborg.modules.downloader;
 
+import android.Manifest.permission;
 import android.net.Uri;
 import android.os.Handler;
 
 import com.nu.art.core.GenericListener;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.CacheModule;
@@ -40,7 +42,7 @@ import java.net.URI;
 /**
  * Created by tacb0ss on 14/06/2017.
  */
-
+@ModuleDescriptor(usesPermissions = {permission.INTERNET})
 public class GenericDownloaderModule
 	extends CyborgModule {
 
@@ -233,7 +235,7 @@ public class GenericDownloaderModule
 			if (onBefore != null)
 				onBefore.run();
 
-			if (url.startsWith("android.resource://")) {
+			if (url.startsWith("android.resource://") || url.startsWith("content://")) {
 				loadFromResources(downloadListener);
 				return;
 			}
