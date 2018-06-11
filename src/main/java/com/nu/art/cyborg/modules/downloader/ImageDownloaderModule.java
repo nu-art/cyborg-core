@@ -48,7 +48,6 @@ public class ImageDownloaderModule
 
 	@Override
 	protected void init() {
-
 	}
 
 	public ImageDownloaderBuilder createDownloader(ImageView target, String url) {
@@ -58,6 +57,8 @@ public class ImageDownloaderModule
 
 		if (downloader == null) {
 			downloader = new ImageDownloaderBuilderImpl();
+			if (target != null)
+				target.setTag(downloader);
 		}
 
 		downloader.setUrl(url);
@@ -125,9 +126,11 @@ public class ImageDownloaderModule
 		}
 
 		private void setUrl(String url) {
-			sameUrl = this.url != null && url != null && this.url.equals(url);
-			if (!sameUrl)
-				cancel();
+			if (this.url != null) {
+				sameUrl = url != null && this.url.equals(url);
+				if (!sameUrl)
+					cancel();
+			}
 
 			this.url = url;
 		}
@@ -204,6 +207,7 @@ public class ImageDownloaderModule
 
 		@Override
 		public ImageDownloaderBuilder cancel() {
+			logDebug("Cancelling... " + this.url);
 			cancelled = true;
 			if (downloaderBuilder != null)
 				downloaderBuilder.cancel();
