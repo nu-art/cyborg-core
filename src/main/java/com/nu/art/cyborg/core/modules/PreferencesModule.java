@@ -364,6 +364,10 @@ public final class PreferencesModule
 		}
 
 		public void set(EnumType value) {
+			if (value == null) {
+				delete();
+				return;
+			}
 			key.set(value.name());
 		}
 

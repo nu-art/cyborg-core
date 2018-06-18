@@ -49,9 +49,6 @@ public class AndroidLogClient
 
 	@Override
 	protected void log(LogLevel level, String thread, String tag, String message, Throwable t) {
-		if (!isLoggable(level))
-			return;
-
 		StringBuffer buffer = syncBuffer.get();
 		buffer.setLength(0);
 		buffer.append(thread).append("/").append(tag);
@@ -60,7 +57,6 @@ public class AndroidLogClient
 
 		printLog(level, tagWithThread, message);
 
-		boolean isCause = false;
 		if (t != null)
 			logException(level, t, tagWithThread);
 	}

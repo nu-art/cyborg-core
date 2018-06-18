@@ -163,6 +163,7 @@ public class CrashReportModule
 
 	private void composeAndSendReport(String uuid, Thread thread, Throwable ex, boolean crashed) {
 		try {
+			logDebug("Composing bug report");
 			crashReport = new CrashReport(uuid);
 
 			try {
@@ -189,6 +190,7 @@ public class CrashReportModule
 				logError("Error fetching traces.txt: ", e);
 			}
 
+			logDebug("Composed bug report");
 			crashReportHandler.prepareAndBackupCrashReport(crashReport);
 			hasCrashReportWaiting.set(true);
 
