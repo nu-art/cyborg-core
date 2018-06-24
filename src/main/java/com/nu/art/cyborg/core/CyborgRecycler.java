@@ -28,12 +28,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.core.CyborgAdapter.CyborgRecyclerAdapter;
+import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
-import com.nu.art.cyborg.R;
 
 /**
  * Enhanced Recycler with item click events, xml layouting parameters.
@@ -189,6 +190,17 @@ public class CyborgRecycler
 	}
 
 	public final void invalidateDataModel() {
+		Cyborg cyborg = CyborgBuilder.getInstance();
+		if (!cyborg.isMainThread()) {
+			cyborg.postOnUI(new Runnable() {
+				@Override
+				public void run() {
+					invalidateDataModel();
+				}
+			});
+			return;
+		}
+
 		Adapter adapter = getAdapter();
 		if (!(adapter instanceof CyborgRecyclerAdapter))
 			return;
