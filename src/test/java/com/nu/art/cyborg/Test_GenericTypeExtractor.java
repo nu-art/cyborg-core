@@ -86,6 +86,19 @@ public class Test_GenericTypeExtractor
 	}
 
 	@Test
+	public void test_ArrayGenericType() {
+		//		FirstParamListener<InputStream> p = new FirstParamListener<InputStream>() {};
+		Processor<String[]> instance = new Processor<String[]>() {
+			@Override
+			public void process(String[] strings) {
+			}
+		};
+
+		Class<?> __classArray = _GenericParamExtractor.extractGenericType(Processor.class, instance, 0);
+		logDebug("_classArray 0: " + __classArray.getName());
+	}
+
+	@Test
 	public void test_HttpListenerGenericType() {
 		//		FirstParamListener<InputStream> p = new FirstParamListener<InputStream>() {};
 		SecondParamListener<InputStream, BeLogged> p = new SecondParamListener<InputStream, BeLogged>() {};
