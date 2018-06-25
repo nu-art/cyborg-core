@@ -11,12 +11,10 @@ public class DateTimeModule
 	extends CyborgModule {
 
 	@Override
-	protected void init() {
-		registerReceiver(DateTimeChangeReceiver.class);
-	}
+	protected void init() {}
 
-	public void onDateTimeChanged() {
-		dispatchEvent("Date-Time changed", new Processor<DateTimeChangedListener>() {
+	final void onDateTimeChanged() {
+		dispatchGlobalEvent("Date-Time changed", new Processor<DateTimeChangedListener>() {
 			@Override
 			public void process(DateTimeChangedListener dateTimeChangedListener) {
 				dateTimeChangedListener.onDateTimeChanged();
@@ -24,7 +22,7 @@ public class DateTimeModule
 		});
 	}
 
-	interface DateTimeChangedListener {
+	public interface DateTimeChangedListener {
 
 		void onDateTimeChanged();
 	}
