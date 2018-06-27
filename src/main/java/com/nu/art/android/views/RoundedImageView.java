@@ -105,8 +105,8 @@ public class RoundedImageView
 
 	private void updateImage() {
 		if (src == null) {
-		super.setImageBitmap(null);
-				return;
+			super.setImageBitmap(null);
+			return;
 		}
 		setRoundedBitmapDrawable(src);
 	}
