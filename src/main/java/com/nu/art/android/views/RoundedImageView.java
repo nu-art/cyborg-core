@@ -88,11 +88,6 @@ public class RoundedImageView
 		setImage(BitmapFactory.decodeResource(getResources(), defaultImageId));
 	}
 
-	public void setImage(Bitmap src) {
-		this.src = src;
-		updateImage();
-	}
-
 	@Deprecated
 	@Override
 	public void setImageBitmap(Bitmap bm) {
@@ -103,10 +98,16 @@ public class RoundedImageView
 		setImage(ImageUtilsModule.drawableToBitmap(src));
 	}
 
-	private void updateImage() {
-		if (src == null)
-			return;
+	public void setImage(Bitmap src) {
+		this.src = src;
+		updateImage();
+	}
 
+	private void updateImage() {
+		if (src == null) {
+		super.setImageBitmap(null);
+				return;
+		}
 		setRoundedBitmapDrawable(src);
 	}
 
