@@ -157,11 +157,11 @@ public class CyborgMediaPlayer
 		fadeVolume(targetVolume, duration, interpolator, listener);
 	}
 
-	private void fadeVolume(int targetVolume, final int duration, VolumeFadeListener listener) {
+	public void fadeVolume(int targetVolume, final int duration, VolumeFadeListener listener) {
 		fadeVolume(targetVolume, duration, Interpolators.LinearInterpolator, listener);
 	}
 
-	private void fadeVolume(int targetVolume, final int duration, Interpolator interpolator, VolumeFadeListener listener) {
+	public void fadeVolume(int targetVolume, final int duration, Interpolator interpolator, VolumeFadeListener listener) {
 		targetVolume = normalizeVolume(targetVolume);
 
 		final int fromVolume = this.volume;
