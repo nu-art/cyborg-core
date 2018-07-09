@@ -30,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -38,8 +37,6 @@ import java.security.NoSuchAlgorithmException;
  */
 public class CacheModule
 	extends CyborgModule {
-
-	private MessageDigest digestMD5;
 
 	public class Cacheable {
 
@@ -186,11 +183,6 @@ public class CacheModule
 
 	@Override
 	protected void init() {
-		try {
-			digestMD5 = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
 		filesDir = getApplicationContext().getFilesDir();
 		cacheDir = getApplicationContext().getCacheDir();
 		cacheQueue.createThreads("Caching Thread", threadCount);
@@ -202,19 +194,29 @@ public class CacheModule
 
 	private boolean isCached(Cacheable cacheable) {
 		File file = getFile(cacheable);
-		if (!file.exists())
+		if (!file.exists()) {
+//			logVerbose("File does not exist: " + file.getAbsolutePath());
 			return false;
+		}
 
-		if (!file.isFile())
+		if (!file.isFile()) {
+//			logVerbose("Not a file: " + file.getAbsolutePath());
 			return false;
+		}
 
-		if (file.length() == 0)
+		if (file.length() == 0) {
+//			logVerbose("File empty: " + file.getAbsolutePath());
 			return false;
+		}
 
 		if (cacheable.interval == 0)
 			return true;
 
-		return System.currentTimeMillis() - file.lastModified() > cacheable.interval;
+		boolean isValidCacheInterval = System.currentTimeMillis() - file.lastModified() < cacheable.interval;
+//		if (!isValidCacheInterval)
+//			logVerbose("cacheTimeout: " + file.getAbsolutePath());
+
+		return isValidCacheInterval;
 	}
 
 	private File getFile(Cacheable cacheable) {
@@ -225,10 +227,11 @@ public class CacheModule
 			dir = cacheable.interval > 0 ? filesDir : cacheDir;
 
 		String fileName;
-		if (digestMD5 != null)
-			fileName = CryptoTools.doFingerprint(cacheable.key.getBytes(), digestMD5);
-		else
+		try {
+			fileName = CryptoTools.doFingerprint(cacheable.key.getBytes(), "MD5");
+		} catch (NoSuchAlgorithmException e) {
 			fileName = cacheable.key.hashCode() + "";
+		}
 		return new File(dir, fileName + "." + cacheable.suffix);
 	}
 
@@ -251,6 +254,7 @@ public class CacheModule
 		throws IOException {
 		File file = getFile(cacheable);
 		File tempFile = new File(file.getParentFile(), "_" + file.getName());
+		logInfo("Started caching... to: " + tempFile.getAbsolutePath());
 
 		try {
 			// save the stream into a local temp file.
@@ -268,6 +272,7 @@ public class CacheModule
 			// Rename the file to the final expected name.
 			FileTools.delete(file);
 			FileTools.renameFile(tempFile, file);
+			logInfo("Caching completed to: " + file.getAbsolutePath());
 		} catch (IOException e) {
 			logError("Error caching stream... ", e);
 

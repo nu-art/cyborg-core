@@ -220,18 +220,21 @@ public class GenericDownloaderModule
 		}
 
 		public final void download() {
+			logDebug("Downloading: " + url);
+
 			if (url == null || url.trim().length() == 0) {
 				IOException error = new IOException("url is null or empty");
 				onError(error);
-
 				return;
 			}
 
 			if (cacheable != null && cacheable.isCached()) {
+				logDebug("Already cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
 				loadFromCache();
 				return;
 			}
 
+			logDebug("Not cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
 			if (onBefore != null)
 				onBefore.run();
 

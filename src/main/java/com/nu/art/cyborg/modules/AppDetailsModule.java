@@ -37,7 +37,6 @@ import com.nu.art.cyborg.tools.CryptoTools;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.io.ByteArrayInputStream;
-import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -158,11 +157,11 @@ public final class AppDetailsModule
 			PackageManager pm = cyborg.getPackageManager();
 			PackageInfo packageInfo = pm.getPackageInfo(cyborg.getPackageName(), PackageManager.GET_SIGNATURES);
 			Signature sig = packageInfo.signatures[0];
-			String md5Fingerprint = CryptoTools.doFingerprint(sig.toByteArray(), MessageDigest.getInstance("MD5"));
+			String md5Fingerprint = CryptoTools.doFingerprint(sig.toByteArray(), "MD5");
 			Type[] certificateList = (Type[]) ReflectiveTools.getEnumValues(certificateType);
 			logDebug("Certificate found  (MD5) => " + md5Fingerprint);
 			try {
-				logDebug("Certificate found  (SHA1) => " + CryptoTools.doFingerprint(sig.toByteArray(), MessageDigest.getInstance("SHA-1")));
+				logDebug("Certificate found  (SHA1) => " + CryptoTools.doFingerprint(sig.toByteArray(), "SHA-1"));
 			} catch (Exception ignore) {
 			}
 			for (Type type : certificateList) {
