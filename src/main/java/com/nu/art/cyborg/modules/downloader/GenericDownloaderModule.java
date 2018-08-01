@@ -228,6 +228,9 @@ public class GenericDownloaderModule
 				return;
 			}
 
+			if (onBefore != null)
+				onBefore.run();
+
 			if (cacheable != null && cacheable.isCached()) {
 				logDebug("Already cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
 				loadFromCache();
@@ -235,8 +238,7 @@ public class GenericDownloaderModule
 			}
 
 			logDebug("Not cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
-			if (onBefore != null)
-				onBefore.run();
+
 
 			if (url.startsWith("android.resource://") || url.startsWith("content://")) {
 				loadFromResources(downloadListener);
