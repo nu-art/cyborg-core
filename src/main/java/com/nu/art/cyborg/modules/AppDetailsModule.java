@@ -66,6 +66,28 @@ public final class AppDetailsModule
 
 	private StringPreference installationUUID;
 
+	private final MemorySnapshot MemorySnapshot = new MemorySnapshot();
+
+	public final class MemorySnapshot {
+
+		private transient final Runtime runtime = Runtime.getRuntime();
+
+		private MemorySnapshot() {
+		}
+
+		public long usedMemory;
+		public long maxMemory;
+
+		public final float getMemoryFactor() {
+			return usedMemory * 1f / maxMemory;
+		}
+
+		public void update() {
+			usedMemory = runtime.totalMemory() - runtime.freeMemory();
+			maxMemory = runtime.maxMemory();
+		}
+	}
+
 	public enum DummyCertificate
 		implements CyborgAppCertificate {
 		Default;
@@ -93,6 +115,8 @@ public final class AppDetailsModule
 	private boolean automated;
 
 	private boolean debugSimulationMode;
+
+	private Runtime runtime;
 
 	private Class<? extends Enum<?>> certificateType = DummyCertificate.class;
 
@@ -131,6 +155,8 @@ public final class AppDetailsModule
 
 	@Override
 	protected void init() {
+		runtime = Runtime.getRuntime();
+
 		PreferencesModule preferences = getModule(PreferencesModule.class);
 		installationUUID = preferences.new StringPreference("installationUUID", null);
 
@@ -146,6 +172,10 @@ public final class AppDetailsModule
 		}
 
 		checkCertificate();
+	}
+
+	public MemorySnapshot getMemorySnapshot() {
+		return MemorySnapshot;
 	}
 
 	@SuppressWarnings("unchecked")
