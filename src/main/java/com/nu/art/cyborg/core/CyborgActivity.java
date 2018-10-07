@@ -84,6 +84,15 @@ public class CyborgActivity
 	}
 
 	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (!hasFocus) {
+			Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+			sendBroadcast(closeDialog);
+		}
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		boolean toRet = bridge.onCreateOptionsMenu(menu);
 		return toRet | super.onCreateOptionsMenu(menu);
