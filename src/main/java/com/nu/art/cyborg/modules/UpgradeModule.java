@@ -52,7 +52,7 @@ public class UpgradeModule
 	}
 
 	private void dispatchOnAppUpgraded(final int previousVersionCode, final int versionCode) {
-		dispatchModuleEvent("Application upgraded: " + previousVersionCode + " ==> " + versionCode, new Processor<OnAppUpgradedListener>() {
+		dispatchModuleEvent("Application upgraded: " + previousVersionCode + " ==> " + versionCode, OnAppUpgradedListener.class, new Processor<OnAppUpgradedListener>() {
 
 			@Override
 			public void process(OnAppUpgradedListener listener) {

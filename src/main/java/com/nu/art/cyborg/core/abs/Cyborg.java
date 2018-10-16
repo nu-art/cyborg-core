@@ -185,9 +185,9 @@ public interface Cyborg
 	 * @param processor      A processor on how ti handle the event.
 	 * @param <ListenerType> A generic bound to the listener type
 	 */
-	<ListenerType> void dispatchModuleEvent(ILogger originator, String message, Processor<ListenerType> processor);
+	<ListenerType> void dispatchModuleEvent(ILogger originator, String message, Class<ListenerType> listenerType, Processor<ListenerType> processor);
 
-	<ListenerType> void dispatchEvent(ILogger originator, String message, Processor<ListenerType> processor);
+	<ListenerType> void dispatchEvent(ILogger originator, String message, Class<ListenerType> listenerType, Processor<ListenerType> processor);
 
 	/**
 	 * Will return the value associated with the MetaData tag from the manifest

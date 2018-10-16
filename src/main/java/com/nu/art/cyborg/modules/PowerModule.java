@@ -144,7 +144,7 @@ public class PowerModule
 		if (!hasChanged)
 			return;
 
-		dispatchGlobalEvent("Battery state changed.", new Processor<BatteryStateListener>() {
+		dispatchGlobalEvent("Battery state changed.", BatteryStateListener.class, new Processor<BatteryStateListener>() {
 			@Override
 			public void process(BatteryStateListener batteryStateListener) {
 				batteryStateListener.onBatteryStateChanged();

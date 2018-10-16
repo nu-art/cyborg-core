@@ -34,7 +34,10 @@ public final class CyborgModuleManager
 		super(paramExtractor);
 	}
 
-	protected final <ParentType> void dispatchModuleEvent(ILogger originator, String message, Processor<ParentType> processor) {
-		super.dispatchModuleEvent(originator, message, processor);
+	protected final <ListenerType> void dispatchModuleEvent(ILogger originator,
+	                                                        String message,
+	                                                        Class<ListenerType> listenerType,
+	                                                        Processor<ListenerType> processor) {
+		super.dispatchModuleEvent(originator, message, listenerType, processor);
 	}
 }

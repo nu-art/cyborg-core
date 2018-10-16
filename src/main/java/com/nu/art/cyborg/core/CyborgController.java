@@ -55,7 +55,6 @@ import android.widget.TextView;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
@@ -985,8 +984,8 @@ public abstract class CyborgController
 		}
 	}
 
-	public final <ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor) {
-		cyborg.dispatchEvent(this, message, processor);
+	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		cyborg.dispatchEvent(this, message, listenerType, processor);
 	}
 
 	@Override

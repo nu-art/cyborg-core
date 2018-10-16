@@ -14,7 +14,7 @@ public class DateTimeModule
 	protected void init() {}
 
 	final void onDateTimeChanged() {
-		dispatchGlobalEvent("Date-Time changed", new Processor<DateTimeChangedListener>() {
+		dispatchGlobalEvent("Date-Time changed", DateTimeChangedListener.class, new Processor<DateTimeChangedListener>() {
 			@Override
 			public void process(DateTimeChangedListener dateTimeChangedListener) {
 				dateTimeChangedListener.onDateTimeChanged();

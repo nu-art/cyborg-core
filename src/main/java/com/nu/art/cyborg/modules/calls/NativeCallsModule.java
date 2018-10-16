@@ -135,7 +135,7 @@ public final class NativeCallsModule
 		}
 
 		logInfo("Calls:" + ArrayTools.printGenericArray("", 1, items));
-		dispatchGlobalEvent("Calls State changed", new Processor<NativeCallsListener>() {
+		dispatchGlobalEvent("Calls State changed", NativeCallsListener.class, new Processor<NativeCallsListener>() {
 			@Override
 			public void process(NativeCallsListener listener) {
 				listener.onCallsStateChanged();

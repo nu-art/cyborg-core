@@ -192,7 +192,7 @@ public class AudioOptionsModule
 	}
 
 	private void onVolumeChanged() {
-		dispatchEvent("Device volume changed", new Processor<OnAudioOptionsChanged>() {
+		dispatchEvent("Device volume changed", OnAudioOptionsChanged.class, new Processor<OnAudioOptionsChanged>() {
 			@Override
 			public void process(OnAudioOptionsChanged listener) {
 				listener.onDeviceVolumeChanged();
@@ -201,7 +201,7 @@ public class AudioOptionsModule
 	}
 
 	private void onStreamMuteChanged() {
-		dispatchEvent("Stream mute changed", new Processor<OnAudioOptionsChanged>() {
+		dispatchEvent("Stream mute changed", OnAudioOptionsChanged.class, new Processor<OnAudioOptionsChanged>() {
 			@Override
 			public void process(OnAudioOptionsChanged listener) {
 				listener.onStreamMuteChanged();

@@ -177,7 +177,7 @@ public class WifiItem_Connectivity
 		}
 
 		if (netId == -1 || !saved) {
-			dispatchGlobalEvent("Error while connecting to WiFi: " + wifiName, new Processor<WifiConnectivityListener>() {
+			dispatchGlobalEvent("Error while connecting to WiFi: " + wifiName, WifiConnectivityListener.class, new Processor<WifiConnectivityListener>() {
 				@Override
 				public void process(WifiConnectivityListener listener) {
 					listener.onWifiConnectionError();
@@ -332,7 +332,7 @@ public class WifiItem_Connectivity
 			}
 
 			state = newState;
-			dispatchGlobalEvent("Wifi connectivity state: " + state, new Processor<WifiConnectivityListener>() {
+			dispatchGlobalEvent("Wifi connectivity state: " + state, WifiConnectivityListener.class, new Processor<WifiConnectivityListener>() {
 				@Override
 				public void process(WifiConnectivityListener listener) {
 					listener.onWifiConnectivityStateChanged();

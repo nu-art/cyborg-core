@@ -309,8 +309,8 @@ public abstract class CyborgWidgetProvider<_ModuleType extends CyborgModule>
 		cyborg.postActivityAction(action);
 	}
 
-	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
-		cyborg.dispatchEvent(logger, message, processor);
+	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		cyborg.dispatchEvent(logger, message, listenerType, processor);
 	}
 
 	@Override

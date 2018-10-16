@@ -85,7 +85,7 @@ public class InternetConnectivityModule
 					return;
 
 				setConnected(connected);
-				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), new Processor<InternetConnectivityListener>() {
+				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), InternetConnectivityListener.class, new Processor<InternetConnectivityListener>() {
 					@Override
 					public void process(InternetConnectivityListener listener) {
 						listener.onInternetConnectivityChanged();

@@ -234,11 +234,11 @@ public abstract class CyborgModuleItem
 		cyborg.postActivityAction(action);
 	}
 
-	public final <ListenerType> void dispatchEvent(String message, final Processor<ListenerType> processor) {
-		cyborg.dispatchEvent(this, message, processor);
+	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		cyborg.dispatchEvent(this, message, listenerType, processor);
 	}
 
-	public final <ListenerType> void dispatchGlobalEvent(String message, final Processor<ListenerType> processor) {
-		((CyborgImpl) cyborg).dispatchGlobalEvent(this, message, processor);
+	public final <ListenerType> void dispatchGlobalEvent(String message, Class<ListenerType> listenerType, final Processor<ListenerType> processor) {
+		((CyborgImpl) cyborg).dispatchGlobalEvent(this, message, listenerType, processor);
 	}
 }
