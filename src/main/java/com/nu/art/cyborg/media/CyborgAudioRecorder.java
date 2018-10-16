@@ -555,16 +555,17 @@ public class CyborgAudioRecorder
 
 		public void stopRecording() {
 			recorderHandler.removeCallbacksAndMessages(null);
-			record.set(false);
 			removeActionFromBackground(progressUpdater);
 			setState(Idle);
-
 			if (recorder == null)
 				return;
 
 			recorder.stop();
 			recorder.release();
 			recorder = null;
+
+			record.set(false);
+
 			logInfo("Called Stop Recording To File...");
 		}
 
