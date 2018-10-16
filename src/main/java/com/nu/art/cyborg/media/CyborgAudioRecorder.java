@@ -461,8 +461,7 @@ public class CyborgAudioRecorder
 		int recordingSource = RecordingSource;
 		int maxBufferSize = MaxBufferSize;
 
-		public abstract void startRecording()
-			throws AudioRecordingException;
+		public abstract void startRecording();
 
 		public T setRecordingEncoding(int recordingEncoding) {
 			this.recordingEncoding = recordingEncoding;
