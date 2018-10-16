@@ -24,6 +24,8 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.AudioSource;
+import android.media.MediaRecorder.OnErrorListener;
+import android.media.MediaRecorder.OnInfoListener;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -31,17 +33,21 @@ import android.support.annotation.NonNull;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Condition;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static android.media.MediaRecorder.OutputFormat.DEFAULT;
 import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Idle;
 import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Preparing;
 import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Recording;
@@ -147,6 +153,16 @@ public class CyborgAudioRecorder
 	public interface AudioRecorderErrorListener {
 
 		void onError();
+
+		void onErrorReadingBuffer();
+
+		void onErrorInitializingAudioRecord();
+
+		void onErrorGettingBufferSize();
+
+		void onNoPermission();
+
+		void onRecordingToFileError();
 	}
 
 	public interface AudioRecorderStateListener {
@@ -185,8 +201,14 @@ public class CyborgAudioRecorder
 		recorderHandler = getModule(ThreadsModule.class).getDefaultHandler("Audio Recorder", android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
 	}
 
+	@Deprecated
 	public final RecorderBuilder createBuilder() {
 		return new RecorderBuilder();
+	}
+
+	@Deprecated
+	public final RecordToFileBuilder createFileRecorderBuilder() {
+		return new RecordToFileBuilder();
 	}
 
 	public void setState(AudioRecorderState state) {
@@ -205,6 +227,10 @@ public class CyborgAudioRecorder
 
 	public final boolean isState(AudioRecorderState state) {
 		return this.state.get() == state;
+	}
+
+	public final boolean isRecording() {
+		return isState(Recording);
 	}
 
 	public final void addListener(AudioBufferProcessor listener) {
@@ -317,7 +343,7 @@ public class CyborgAudioRecorder
 		dispatchModuleEvent("Error reading buffer", new Processor<AudioRecorderErrorListener>() {
 			@Override
 			public void process(AudioRecorderErrorListener listener) {
-
+				listener.onErrorReadingBuffer();
 			}
 		});
 	}
@@ -326,7 +352,7 @@ public class CyborgAudioRecorder
 		dispatchModuleEvent("Error audio record will not initialize", new Processor<AudioRecorderErrorListener>() {
 			@Override
 			public void process(AudioRecorderErrorListener listener) {
-
+				listener.onErrorInitializingAudioRecord();
 			}
 		});
 	}
@@ -335,7 +361,7 @@ public class CyborgAudioRecorder
 		dispatchModuleEvent("Error getting audio buffer size", new Processor<AudioRecorderErrorListener>() {
 			@Override
 			public void process(AudioRecorderErrorListener listener) {
-
+				listener.onErrorGettingBufferSize();
 			}
 		});
 	}
@@ -344,48 +370,16 @@ public class CyborgAudioRecorder
 		dispatchModuleEvent("Error Starting Audio Recorder - No Permission", new Processor<AudioRecorderErrorListener>() {
 			@Override
 			public void process(AudioRecorderErrorListener listener) {
-
+				listener.onNoPermission();
 			}
 		});
 	}
 
 	@SuppressWarnings("unused")
 	public class RecorderBuilder
-		implements Runnable {
+		extends BaseRecorderBuilder {
 
-		int maxBufferSize = MaxBufferSize;
-		int sampleRate = SampleRate;
-		int recordingChannel = RecordingChannel;
-		int recordingEncoding = RecordingEncoding;
-		int recordingSource = RecordingSource;
-
-		private RecorderBuilder() {
-		}
-
-		public RecorderBuilder setRecordingEncoding(int recordingEncoding) {
-			this.recordingEncoding = recordingEncoding;
-			return this;
-		}
-
-		public RecorderBuilder setRecordingSource(int recordingSource) {
-			this.recordingSource = recordingSource;
-			return this;
-		}
-
-		public RecorderBuilder setMaxBufferSize(int maxBufferSize) {
-			this.maxBufferSize = maxBufferSize;
-			return this;
-		}
-
-		public RecorderBuilder setSampleRate(int sampleRate) {
-			this.sampleRate = sampleRate;
-			return this;
-		}
-
-		public RecorderBuilder setRecordingChannel(int recordingChannel) {
-			this.recordingChannel = recordingChannel;
-			return this;
-		}
+		private RecorderBuilder() {}
 
 		public final void startRecording() {
 			if (record.get()) {
@@ -456,5 +450,176 @@ public class CyborgAudioRecorder
 		AudioRecordingException(String message) {
 			super(message);
 		}
+	}
+
+	public abstract class BaseRecorderBuilder<T extends BaseRecorderBuilder>
+		implements Runnable {
+
+		int sampleRate = SampleRate;
+		int recordingEncoding = RecordingEncoding;
+		int recordingChannel = RecordingChannel;
+		int recordingSource = RecordingSource;
+		int maxBufferSize = MaxBufferSize;
+
+		public abstract void startRecording();
+
+		public T setRecordingEncoding(int recordingEncoding) {
+			this.recordingEncoding = recordingEncoding;
+			return (T) this;
+		}
+
+		public T setRecordingSource(int recordingSource) {
+			this.recordingSource = recordingSource;
+			return (T) this;
+		}
+
+		public T setMaxBufferSize(int maxBufferSize) {
+			this.maxBufferSize = maxBufferSize;
+			return (T) this;
+		}
+
+		public T setSampleRate(int sampleRate) {
+			this.sampleRate = sampleRate;
+			return (T) this;
+		}
+
+		public T setRecordingChannel(int recordingChannel) {
+			this.recordingChannel = recordingChannel;
+			return (T) this;
+		}
+
+		@Override
+		public void run() {}
+	}
+
+	public class RecordToFileBuilder
+		extends BaseRecorderBuilder {
+
+		private RecorderProgressListener listener;
+		private MediaRecorder recorder;
+		private int outputFormat = DEFAULT;
+		private String outputFile;
+		private long recordingStarted;
+		private int progressDelay = 999;
+		Runnable progressUpdater = new Runnable() {
+			@Override
+			public void run() {
+				if (listener != null)
+					listener.onProgress(System.currentTimeMillis() - recordingStarted);
+
+				if (!record.get())
+					return;
+
+				postOnUI(progressDelay, this);
+			}
+		};
+
+		public RecordToFileBuilder() {}
+
+		public RecordToFileBuilder setOutputfile(String outputFile) {
+			this.outputFile = outputFile;
+			return this;
+		}
+
+		public RecordToFileBuilder setOutputFormat(int outputFormat) {
+			this.outputFormat = outputFormat;
+			return this;
+		}
+
+		public RecordToFileBuilder setProgressListener(RecorderProgressListener listener) {
+			this.listener = listener;
+			return this;
+		}
+
+		public RecordToFileBuilder setProgressDelay(int progressDelay) {
+			this.progressDelay = progressDelay;
+			return this;
+		}
+
+		@Override
+		public void startRecording() {
+			if (!getModule(PermissionModule.class).isPermissionGranted(permission.RECORD_AUDIO)) {
+				dispatchErrorNoPermission();
+				return;
+			}
+			if (record.get()) {
+				logDebug("Already recording...");
+				return;
+			}
+
+			record.set(true);
+			setState(Preparing);
+			recorderHandler.post(this);
+		}
+
+		public void stopRecording() {
+			recorderHandler.removeCallbacksAndMessages(null);
+			removeActionFromBackground(progressUpdater);
+			setState(Idle);
+			if (recorder == null)
+				return;
+
+			recorder.stop();
+			recorder.release();
+			recorder = null;
+
+			record.set(false);
+
+			logInfo("Called Stop Recording To File...");
+		}
+
+		@Override
+		public void run() {
+			if (recorder != null)
+				stopRecording();
+
+			recorder = new MediaRecorder();
+			recorder.setAudioSource(recordingSource);
+			recorder.setOutputFormat(outputFormat);
+			recorder.setAudioEncoder(recordingEncoding);
+			recorder.setOutputFile(outputFile);
+
+			recorder.setOnInfoListener(new OnInfoListener() {
+				@Override
+				public void onInfo(MediaRecorder mr, int what, int extra) {
+					stopRecording(); // needed?
+				}
+			});
+
+			recorder.setOnErrorListener(new OnErrorListener() {
+				@Override
+				public void onError(MediaRecorder mr, int what, int extra) {
+					stopRecording();
+					dispatchRecordingError();
+				}
+			});
+
+			try {
+				final File parentFile = new File(outputFile).getParentFile();
+				if (parentFile != null)
+					FileTools.mkDir(parentFile);
+				recorder.prepare();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			setState(Recording);
+			recorder.start();
+			recordingStarted = System.currentTimeMillis();
+			postOnUI(990, progressUpdater);
+		}
+
+		private void dispatchRecordingError() {
+			dispatchEvent("Error Recording to File", new Processor<AudioRecorderErrorListener>() {
+				@Override
+				public void process(AudioRecorderErrorListener listener) {
+					listener.onRecordingToFileError();
+				}
+			});
+		}
+	}
+
+	public interface RecorderProgressListener {
+
+		void onProgress(long progress);
 	}
 }
