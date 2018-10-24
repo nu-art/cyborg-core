@@ -230,6 +230,6 @@ public class PowerModule
 	}
 
 	private String getStatusString() {
-		return "{Health=" + batteryHealth + ", ChargingSource=" + chargingSource + ", ChargingState=" + chargingState + ", BatteryPercentage=" + batteryLevel + "]";
+		return "[Health=" + batteryHealth + ", ChargingSource=" + chargingSource + ", ChargingState=" + chargingState + ", BatteryPercentage=" + batteryLevel + "]";
 	}
 }
