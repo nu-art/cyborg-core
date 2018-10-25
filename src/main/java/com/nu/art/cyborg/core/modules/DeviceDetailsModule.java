@@ -36,7 +36,7 @@ import com.nu.art.cyborg.common.consts.DeviceScreenSize;
 import com.nu.art.cyborg.common.consts.DeviceValuesFolder;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
+import com.nu.art.cyborg.core.modules.crashReport.ModuleStateCollector;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -46,7 +46,7 @@ import java.util.HashMap;
 @ModuleDescriptor(usesPermissions = {})
 public final class DeviceDetailsModule
 	extends CyborgModule
-	implements CrashReportListener {
+	implements ModuleStateCollector {
 
 	private DeviceScreenSize screenSize;
 
@@ -105,7 +105,7 @@ public final class DeviceDetailsModule
 //	}
 
 	@Override
-	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
+	public void collectModuleState(HashMap<String, Object> moduleCrashData) {
 //		moduleCrashData.put("androidId", androidId);
 		moduleCrashData.put("ScreenDpi", screenDensity.name());
 		moduleCrashData.put("ScreenSize", screenSize.name());

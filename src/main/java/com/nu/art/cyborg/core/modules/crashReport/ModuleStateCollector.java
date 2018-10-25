@@ -25,7 +25,7 @@ import java.util.HashMap;
  *
  * @author TacB0sS
  */
-public interface CrashReportListener {
+public interface ModuleStateCollector {
 
 	/**
 	 * Upon application crash, this method would be called, allowing you to add content to the crash report.<br>
@@ -33,6 +33,6 @@ public interface CrashReportListener {
 	 *
 	 * @param moduleCrashData The specific crash report data for the module.
 	 */
-	void onApplicationCrashed(HashMap<String, Object> moduleCrashData)
+	void collectModuleState(HashMap<String, Object> moduleCrashData)
 		throws Exception;
 }

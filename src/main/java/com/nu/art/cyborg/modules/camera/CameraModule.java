@@ -28,7 +28,7 @@ import android.view.SurfaceView;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
+import com.nu.art.cyborg.core.modules.crashReport.ModuleStateCollector;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ import java.util.List;
                   usesPermissions = {permission.CAMERA})
 public final class CameraModule
 	extends CyborgModule
-	implements CrashReportListener {
+	implements ModuleStateCollector {
 
 	public static final int CAMERA_FACING_BACK = 0;
 
@@ -290,7 +290,7 @@ public final class CameraModule
 	}
 
 	@Override
-	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
+	public void collectModuleState(HashMap<String, Object> moduleCrashData) {
 		moduleCrashData.put("state", state);
 	}
 

@@ -32,7 +32,7 @@ import com.nu.art.cyborg.common.utils.BootStarterReceiver.OnBootCompletedListene
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule;
 import com.nu.art.cyborg.core.modules.PreferencesModule.StringPreference;
-import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
+import com.nu.art.cyborg.core.modules.crashReport.ModuleStateCollector;
 import com.nu.art.cyborg.tools.CryptoTools;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
@@ -46,10 +46,10 @@ import java.util.UUID;
                   dependencies = {PreferencesModule.class})
 public final class AppDetailsModule
 	extends CyborgModule
-	implements AnalyticsConstants, CrashReportListener {
+	implements AnalyticsConstants, ModuleStateCollector {
 
 	@Override
-	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
+	public void collectModuleState(HashMap<String, Object> moduleCrashData) {
 		moduleCrashData.put("Certificate", getCertificate().toString());
 	}
 
