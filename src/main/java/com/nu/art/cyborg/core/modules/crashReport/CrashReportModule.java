@@ -22,7 +22,6 @@ import android.os.Build;
 import android.os.StrictMode;
 
 import com.nu.art.core.archiver.ArchiveWriter;
-import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Serializer;
 import com.nu.art.core.tools.ExceptionTools;
@@ -47,8 +46,6 @@ import java.util.Map;
 public class CrashReportModule
 	extends CyborgModule
 	implements UncaughtExceptionHandler, ModuleStateCollector {
-
-	private CrashReportHandler crashReportHandler;
 
 	private UncaughtExceptionHandler defaultExceptionHandler;
 
@@ -90,19 +87,12 @@ public class CrashReportModule
 		sendDebugCrashReports.set(reportInDebug);
 	}
 
-	public void setCrashReportHandler(CrashReportHandler crashReportHandler) {
-		this.crashReportHandler = crashReportHandler;
-	}
-
 	public void setDefaultExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler) {
 		this.defaultExceptionHandler = defaultExceptionHandler;
 	}
 
 	@Override
 	protected void init() {
-		if (crashReportHandler == null)
-			throw new ImplementationMissingException("MUST provide this module with a crash report handler in your module pack!");
-
 		sendDebugCrashReports = getModule(PreferencesModule.class).new BooleanPreference("sendDebugCrashReports", false);
 		hasCrashReportWaiting = getModule(PreferencesModule.class).new BooleanPreference("hasCrashReportWaiting", false);
 
