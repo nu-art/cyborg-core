@@ -21,7 +21,7 @@ package com.nu.art.cyborg.modules;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.preferences.IntegerPreference;
+import com.nu.art.storage.IntegerPreference;
 
 /**
  * Created by TacB0sS on 28-Feb 2017.

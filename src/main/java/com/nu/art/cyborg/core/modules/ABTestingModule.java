@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core.modules;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.tools.MathTools;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.preferences.FloatPreference;
+import com.nu.art.storage.FloatPreference;
 
 import java.util.HashMap;
 import java.util.Random;
