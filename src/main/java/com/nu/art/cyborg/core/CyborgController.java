@@ -55,7 +55,6 @@ import android.widget.TextView;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
@@ -93,6 +92,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
+import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 
 /**
  * So this is what Cyborg is ALL about... It all comes down to this.<br><br>
@@ -256,6 +256,10 @@ public abstract class CyborgController
 		return state;
 	}
 
+	protected final boolean isState(LifecycleState expectedState) {
+		return state == expectedState;
+	}
+
 	protected final <ViewType extends View> ViewType getViewById(int id) {
 		return (ViewType) getViewById(View.class, id);
 	}
@@ -337,7 +341,7 @@ public abstract class CyborgController
 				return (CyborgStackController) controller;
 		}
 
-		throw new ImplementationMissingException("In order to use the stack, this view must be a contained within a StackController");
+		throw ExceptionGenerator.triedToCreateStackLayerWhenNotInStack();
 	}
 
 	protected final <ControllerType extends CyborgController> ControllerType injectController(@IdRes int viewId, Class<ControllerType> controller) {
@@ -423,7 +427,7 @@ public abstract class CyborgController
 				onResume();
 				break;
 			case OnPause:
-				if (this.state != LifecycleState.OnResume)
+				if (this.state != OnResume)
 					return;
 
 				setState(newState);
@@ -567,10 +571,6 @@ public abstract class CyborgController
 
 	protected final Intent getIntent() {
 		return activityBridge.getIntent();
-	}
-
-	protected final boolean isDestroyed() {
-		return activityBridge.isDestroyed();
 	}
 
 	protected final void finishActivity() {
@@ -737,7 +737,7 @@ public abstract class CyborgController
 		}
 
 		boolean canReceiveEvents() {
-			return getState() == LifecycleState.OnResume;
+			return isState(OnResume);
 		}
 
 		@Override
@@ -985,8 +985,8 @@ public abstract class CyborgController
 		}
 	}
 
-	public final <ListenerType> void dispatchEvent(String message, Processor<ListenerType> processor) {
-		cyborg.dispatchEvent(this, message, processor);
+	public final <ListenerType> void dispatchEvent(String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		cyborg.dispatchEvent(this, message, listenerType, processor);
 	}
 
 	@Override

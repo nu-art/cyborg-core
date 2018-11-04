@@ -133,7 +133,7 @@ public class WifiItem_AdapterState
 		private void setState(final WifiAdapterState state) {
 			this.state = state;
 
-			dispatchGlobalEvent("Wifi adapter state changed: " + state, new Processor<WifiAdapterStateListener>() {
+			dispatchGlobalEvent("Wifi adapter state changed: " + state, WifiAdapterStateListener.class, new Processor<WifiAdapterStateListener>() {
 				@Override
 				public void process(WifiAdapterStateListener listener) {
 					listener.onWifiAdapterStateChanged(state);

@@ -143,8 +143,7 @@ public class PowerModule
 
 		if (!hasChanged)
 			return;
-
-		dispatchGlobalEvent("Battery state changed.", new Processor<BatteryStateListener>() {
+		dispatchGlobalEvent("Battery state changed: " + getStatusString(), BatteryStateListener.class, new Processor<BatteryStateListener>() {
 			@Override
 			public void process(BatteryStateListener batteryStateListener) {
 				batteryStateListener.onBatteryStateChanged();
@@ -224,9 +223,13 @@ public class PowerModule
 	}
 
 	/**
-	 * @return Battery charge percentange, 0 is empty, 100 is full.
+	 * @return Battery charge percentage, 0 is empty, 100 is full.
 	 */
 	public int getBatteryPercentage() {
 		return batteryLevel;
+	}
+
+	private String getStatusString() {
+		return "[Health=" + batteryHealth + ", ChargingSource=" + chargingSource + ", ChargingState=" + chargingState + ", BatteryPercentage=" + batteryLevel + "]";
 	}
 }

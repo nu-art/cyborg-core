@@ -26,7 +26,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.provider.Settings.Secure;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -37,7 +36,7 @@ import com.nu.art.cyborg.common.consts.DeviceScreenSize;
 import com.nu.art.cyborg.common.consts.DeviceValuesFolder;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
+import com.nu.art.cyborg.core.modules.crashReport.ModuleStateCollector;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -47,7 +46,7 @@ import java.util.HashMap;
 @ModuleDescriptor(usesPermissions = {})
 public final class DeviceDetailsModule
 	extends CyborgModule
-	implements CrashReportListener {
+	implements ModuleStateCollector {
 
 	private DeviceScreenSize screenSize;
 
@@ -55,7 +54,7 @@ public final class DeviceDetailsModule
 
 	private DeviceValuesFolder deviceValues;
 
-	private String androidId;
+//	private String androidId;
 
 	private Point screenResolution = new Point();
 
@@ -76,7 +75,7 @@ public final class DeviceDetailsModule
 		} catch (Exception e) {
 			deviceValues = DeviceValuesFolder.UNKNOWN;
 		}
-		androidId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+//		androidId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 	}
 
 	public Point getScreenResolution() {
@@ -88,7 +87,7 @@ public final class DeviceDetailsModule
 	protected void printModuleDetails() {
 		String currentTime = new SimpleDateFormat("HH:mm dd-MM-yyyy").format(new Date());
 
-		logInfo("    Android Device Id: " + androidId);
+//		logInfo("    Android Device Id: " + androidId);
 		logInfo("    Device timestamp: " + currentTime);
 		logInfo("    Device values folder: " + deviceValues.getFolderName());
 		logInfo("    Screen Density: " + screenDensity.name());
@@ -101,13 +100,13 @@ public final class DeviceDetailsModule
 		return pathToSuperUserFile.exists();
 	}
 
-	public final String getAndroidDeviceId() {
-		return androidId;
-	}
+//	public final String getAndroidDeviceId() {
+//		return androidId;
+//	}
 
 	@Override
-	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
-		moduleCrashData.put("androidId", androidId);
+	public void collectModuleState(HashMap<String, Object> moduleCrashData) {
+//		moduleCrashData.put("androidId", androidId);
 		moduleCrashData.put("ScreenDpi", screenDensity.name());
 		moduleCrashData.put("ScreenSize", screenSize.name());
 		moduleCrashData.put("isRooted", isSuperUser());

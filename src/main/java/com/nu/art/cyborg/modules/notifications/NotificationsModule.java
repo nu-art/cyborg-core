@@ -81,15 +81,20 @@ public final class NotificationsModule
 	@SuppressWarnings("unchecked")
 	<HandlerType extends NotificationHandler> void processNotification(Intent intent) {
 		String handlerTypeClassName = intent.getStringExtra(ExtraKey_HandlerType);
-		Class<HandlerType> handlerType;
+		HandlerType notificationHandler;
 		try {
-			handlerType = (Class<HandlerType>) Class.forName(handlerTypeClassName);
-		} catch (Exception e1) {
-			throw new MUST_NeverHappenException("Cannot find class type: " + handlerTypeClassName);
+			Class<HandlerType> handlerType = (Class<HandlerType>) Class.forName(handlerTypeClassName);
+			logInfo("Received notification event of type: " + handlerType);
+			notificationHandler = getNotificationHandler(handlerType);
+		} catch (Exception e) {
+			MUST_NeverHappenException exception = new MUST_NeverHappenException("Cannot find class type: " + handlerTypeClassName, e);
+			if (isDebug())
+				throw exception;
+
+			logError(exception);
+			return;
 		}
 
-		HandlerType notificationHandler = (HandlerType) notificationHandlers.get(handlerType);
-		logInfo("Received notification event of type: " + handlerType);
 		try {
 			Bundle bundle = intent.getBundleExtra(ExtraKey_DataBundle);
 			int notificationId = intent.getIntExtra(ExtraKey_Id, -1);

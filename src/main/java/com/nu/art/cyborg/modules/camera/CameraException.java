@@ -15,24 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.nu.art.cyborg.modules.camera;
 
-package com.nu.art.cyborg.core.modules.crashReport;
+public final class CameraException
+	extends Exception {
 
-import java.util.HashMap;
+	private static final long serialVersionUID = -248757845745430397L;
 
-/**
- * Any module that would want to append data to the crash report, would have to implement this interface.
- *
- * @author TacB0sS
- */
-public interface CrashReportListener {
+	public CameraException(String reason, Throwable e) {
+		super(reason, e);
+	}
 
-	/**
-	 * Upon application crash, this method would be called, allowing you to add content to the crash report.<br>
-	 * all you have to do is simply add another key to the map with the data you want to add to the crash report.
-	 *
-	 * @param moduleCrashData The specific crash report data for the module.
-	 */
-	void onApplicationCrashed(HashMap<String, Object> moduleCrashData)
-		throws Exception;
+	public CameraException(String reason) {
+		super(reason);
+	}
 }

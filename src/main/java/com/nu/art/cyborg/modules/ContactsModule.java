@@ -23,11 +23,15 @@ import android.Manifest.permission;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 
-@ModuleDescriptor(usesPermissions = permission.READ_CONTACTS)
+@ModuleDescriptor(usesPermissions = {
+	permission.READ_CONTACTS,
+	permission.READ_PHONE_STATE
+})
 public class ContactsModule
 	extends CyborgModule {
 
 	private static final String phoneNumberSpecialChars = "- \\*N\\(\\)/,;\\+\\.";
+	private static final String AlphaBeticChars = "[a-z][A-Z]";
 	private static final String regex = "[" + phoneNumberSpecialChars + "]?";
 
 	private static final String[] NumberToLetterConverter = {
@@ -46,15 +50,10 @@ public class ContactsModule
 
 	}
 
-	private String getLettersForDigit(char digit) {
-		if (digit >= '2' && digit <= '9')
-			return NumberToLetterConverter[digit - '0'];
-
-		return "";
-	}
-
-	public final String convertToLetterRegexp(String query) {
+	public static String convertToLetterRegexp(String query) {
 		query = query.replaceAll(phoneNumberSpecialChars, "");
+		query = query.replaceAll(AlphaBeticChars, "");
+
 		char[] chars = query.toCharArray();
 
 		StringBuilder sb = new StringBuilder();
@@ -62,7 +61,7 @@ public class ContactsModule
 
 		for (char character : chars) {
 			if (character >= '2' && character <= '9')
-				sb.append(NumberToLetterConverter[character - '0']);
+				sb.append(NumberToLetterConverter[character - '2']);
 			else
 				sb.append(character).append("?");
 		}
@@ -71,18 +70,23 @@ public class ContactsModule
 		return sb.toString();
 	}
 
-	public final String convertToNumericRegexp(String query) {
+	public static String convertToNumericRegexp(String query) {
+		return convertToNumericRegexp(query, false);
+	}
+
+	public static String convertToNumericRegexp(String query, boolean strict) {
 		if (query == null || query.length() == 0)
 			return query;
 
 		query = query.replaceAll(phoneNumberSpecialChars, "");
+		query = query.replaceAll(AlphaBeticChars, "");
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(".*?");
 
 		int startIndex = 0;
 		char[] chars = query.toCharArray();
-		if (chars[0] == '0') {
+		if (!strict && chars.length > 0 && chars[0] == '0') {
 			sb.append("0?");
 			startIndex = 1;
 		}
@@ -95,5 +99,28 @@ public class ContactsModule
 
 		sb.append(".*");
 		return sb.toString();
+	}
+
+	public static String getInitialsFromName(String name) {
+		name = removeSpecialCharsFromName(name);
+		String[] split = name.split(" ");
+		String initials = "";
+		if (split.length == 0)
+			return "N/A";
+
+		for (String aSplit : split) {
+			if (aSplit.length() <= 0)
+				continue;
+
+			initials += String.valueOf(aSplit.charAt(0)).toUpperCase();
+
+			if (initials.length() == 2)
+				break;
+		}
+		return initials;
+	}
+
+	public static String removeSpecialCharsFromName(String string) {
+		return string.replaceAll("[-\\[\\]^/,'*:.!><~@#$%+=?|\"\\\\()]+", "");
 	}
 }

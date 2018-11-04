@@ -498,7 +498,7 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		cyborg.dispatchModuleEvent(this, screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, new Processor<OnActivityResultListener>() {
+		cyborg.dispatchModuleEvent(this, screenName + ": onActivityResult requestCode: " + requestCode + ", resultCode: " + resultCode, OnActivityResultListener.class, new Processor<OnActivityResultListener>() {
 			@Override
 			public void process(OnActivityResultListener listener) {
 				listener.onActivityResult(requestCode, resultCode, data);
@@ -513,7 +513,10 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <ListenerType> void dispatchEvent(ILogger originator, String message, final Processor<ListenerType> processor) {
+	public final <ListenerType> void dispatchEvent(ILogger originator,
+	                                               String message,
+	                                               final Class<ListenerType> listenerType,
+	                                               final Processor<ListenerType> processor) {
 		if (originator != null)
 			originator.logInfo("Dispatching UI Event: " + message);
 
@@ -525,7 +528,7 @@ public class CyborgActivityBridgeImpl
 				if (isDestroyed() || isSavedState())
 					return;
 
-				eventDispatcher.dispatchEvent(whoCalledThis, processor);
+				eventDispatcher.dispatchEvent(whoCalledThis, listenerType, processor);
 			}
 		});
 	}

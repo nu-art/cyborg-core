@@ -21,8 +21,7 @@ package com.nu.art.cyborg.core.modules;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.tools.MathTools;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.preferences.PreferencesModule;
-import com.nu.art.cyborg.core.modules.preferences.PreferencesModule.FloatPreference;
+import com.nu.art.cyborg.core.modules.preferences.FloatPreference;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -70,7 +69,7 @@ public class ABTestingModule
 		if (options.length > rating.length)
 			logWarning("Will never return later elements after index: " + rating.length);
 
-		FloatPreference storedResult = getModule(PreferencesModule.class).new FloatPreference("ABTesting_" + key, -1, StorageGroup);
+		FloatPreference storedResult = new FloatPreference("ABTesting_" + key, -1, StorageGroup);
 		float previousFloat = storedResult.get();
 		if (saveResult && previousFloat != -1)
 			return getOptionFromRatio(rating, previousFloat, options);

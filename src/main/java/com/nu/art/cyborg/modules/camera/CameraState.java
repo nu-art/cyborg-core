@@ -15,24 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.nu.art.cyborg.modules.camera;
 
-package com.nu.art.cyborg.ui.tools;
-
-/**
- * A convenient wrapper for runnable to be called on the main thread, without knowing which thread is going to run it.
- */
-public abstract class RunnableTimer
-	implements Runnable {
-
-	@Override
-	public final void run() {
-		long started = System.currentTimeMillis();
-		execute();
-
-		postExecute(System.currentTimeMillis() - started);
-	}
-
-	protected abstract void execute();
-
-	protected abstract void postExecute(long duration);
+public enum CameraState {
+	NotAcquired,
+	Acquired,
+	Configured,
+	Streaming;
 }

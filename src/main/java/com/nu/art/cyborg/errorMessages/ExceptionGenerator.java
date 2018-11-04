@@ -116,4 +116,11 @@ public class ExceptionGenerator {
 		String message = "<uses-permission android:name=\"" + permission + "\"/>";
 		return new ImplementationMissingException("Permission not present in your manifest. Add the following:\n\n    " + message);
 	}
+
+	public static ImplementationMissingException triedToCreateStackLayerWhenNotInStack() {
+		return new ImplementationMissingException("Trying to create a stack layer while not in stack." +
+			                                          "\nThis can also be due to a race condition while a transition between controllers within the stack!!" +
+			                                          "\n    MAKE SURE you use the canExecute() method within the controller before adding another layer." +
+			                                          "\n    alternatively you might want to change the BusyState duration to fit your stack transition!!");
+	}
 }

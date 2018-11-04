@@ -31,7 +31,7 @@ public final class CrashReport {
 
 	public final static SimpleDateFormat DefaultTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public String uuid;
+	public String fileName;
 
 	public final long timestampLong = System.currentTimeMillis();
 
@@ -45,11 +45,11 @@ public final class CrashReport {
 
 	public String threadTraces;
 
-	public CrashReport(String uuid) {
-		this.uuid = uuid == null ? UUID.randomUUID().toString() : uuid;
+	public CrashReport(String fileName) {
+		this.fileName = fileName == null ? UUID.randomUUID().toString() : fileName;
 	}
 
 	public CrashReport() {
-		this(UUID.randomUUID().toString());
+		this(null);
 	}
 }

@@ -84,7 +84,7 @@ public abstract class STT_Client
 	public abstract void setKeywords(String[] keywords);
 
 	protected final void dispatchStopped() {
-		dispatchGlobalEvent("STT Stopped", new Processor<STT_Listener>() {
+		dispatchGlobalEvent("STT Stopped", STT_Listener.class, new Processor<STT_Listener>() {
 			@Override
 			public void process(STT_Listener listener) {
 				listener.onStopped();
@@ -93,7 +93,7 @@ public abstract class STT_Client
 	}
 
 	protected final void dispatchRecognized(final String finalText) {
-		dispatchGlobalEvent("STT Recognized: " + finalText, new Processor<STT_Listener>() {
+		dispatchGlobalEvent("STT Recognized: " + finalText, STT_Listener.class, new Processor<STT_Listener>() {
 			@Override
 			public void process(STT_Listener listener) {
 				listener.onRecognized(finalText);
@@ -102,7 +102,7 @@ public abstract class STT_Client
 	}
 
 	protected final void dispatchCancelled() {
-		dispatchGlobalEvent("STT Cancelled", new Processor<STT_Listener>() {
+		dispatchGlobalEvent("STT Cancelled", STT_Listener.class, new Processor<STT_Listener>() {
 			@Override
 			public void process(STT_Listener listener) {
 				listener.onCancelled();
@@ -111,7 +111,7 @@ public abstract class STT_Client
 	}
 
 	protected final void dispatchPartialResults(final String partialResults) {
-		dispatchGlobalEvent("STT Partial Results: " + partialResults, new Processor<STT_Listener>() {
+		dispatchGlobalEvent("STT Partial Results: " + partialResults, STT_Listener.class, new Processor<STT_Listener>() {
 			@Override
 			public void process(STT_Listener listener) {
 				listener.onPartialResults(partialResults);
@@ -120,7 +120,7 @@ public abstract class STT_Client
 	}
 
 	protected final void dispatchPrepared() {
-		dispatchGlobalEvent("STT Prepared", new Processor<STT_Listener>() {
+		dispatchGlobalEvent("STT Prepared", STT_Listener.class, new Processor<STT_Listener>() {
 			@Override
 			public void process(STT_Listener listener) {
 				listener.onPrepared();

@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.modules.downloader;
 
+import android.Manifest.permission;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.CacheModule;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
@@ -39,13 +41,13 @@ import java.lang.ref.WeakReference;
 /**
  * Created by tacb0ss on 14/06/2017.
  */
-
+@ModuleDescriptor(usesPermissions = {permission.INTERNET},
+                  dependencies = {GenericDownloaderModule.class})
 public class ImageDownloaderModule
 	extends CyborgModule {
 
 	@Override
 	protected void init() {
-
 	}
 
 	public ImageDownloaderBuilder createDownloader(ImageView target, String url) {
@@ -55,6 +57,8 @@ public class ImageDownloaderModule
 
 		if (downloader == null) {
 			downloader = new ImageDownloaderBuilderImpl();
+			if (target != null)
+				target.setTag(downloader);
 		}
 
 		downloader.setUrl(url);
@@ -122,9 +126,11 @@ public class ImageDownloaderModule
 		}
 
 		private void setUrl(String url) {
-			sameUrl = this.url != null && url != null && this.url.equals(url);
-			if (!sameUrl)
-				cancel();
+			if (this.url != null) {
+				sameUrl = url != null && this.url.equals(url);
+				if (!sameUrl)
+					cancel();
+			}
 
 			this.url = url;
 		}
@@ -201,6 +207,7 @@ public class ImageDownloaderModule
 
 		@Override
 		public ImageDownloaderBuilder cancel() {
+			logDebug("Cancelling... " + this.url);
 			cancelled = true;
 			if (downloaderBuilder != null)
 				downloaderBuilder.cancel();

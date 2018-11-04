@@ -53,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
+import static com.nu.art.cyborg.core.consts.LifecycleState.OnPause;
+import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 
 /**
  * Created by TacB0sS on 25-Jun 2015.
@@ -300,7 +302,7 @@ public final class CyborgStackController
 			if (controller == null)
 				return;
 
-			controller.dispatchLifeCycleEvent(LifecycleState.OnPause);
+			controller.dispatchLifeCycleEvent(OnPause);
 			controller.dispatchLifeCycleEvent(LifecycleState.OnDestroy);
 			removeNestedController(controller);
 			controller = null;
@@ -388,12 +390,32 @@ public final class CyborgStackController
 		return getTopLayer(false);
 	}
 
+	private StackLayer[] getTopLayers() {
+		ArrayList<StackLayer> visibleLayers = new ArrayList<>();
+		StackLayer topLayer;
+		while ((topLayer = getTopLayer(visibleLayers.size())) != null) {
+			visibleLayers.add(0, topLayer);
+			if (!topLayer.keepBackground)
+				break;
+		}
+
+		return ArrayTools.asArray(visibleLayers, StackLayer.class);
+	}
+
 	private StackLayer getAndRemoveTopLayer() {
 		return getTopLayer(true);
 	}
 
+	private StackLayer getTopLayer(int offset) {
+		return getTopLayer(offset, false);
+	}
+
 	private StackLayer getTopLayer(boolean remove) {
-		int size = layersStack.size();
+		return getTopLayer(0, remove);
+	}
+
+	private StackLayer getTopLayer(int offset, boolean remove) {
+		int size = layersStack.size() - offset;
 		int index = size == (withRoot && remove ? 1 : 0) ? -1 : size - 1;
 		if (index == -1)
 			return null;
@@ -465,24 +487,27 @@ public final class CyborgStackController
 			restoreState();
 
 			// JUST FOR THE RECORD... I HATE THIS CONDITION>> ()
-			if (!fromXml)
+			//			this condition breaks in my current setup..
+			if (!fromXml) {
 				controller.onReady();
+			}
 			// --------------------------------------------------------------------
 
+			fromXml = false;
 			resume();
 			CyborgStackController.this.addNestedController(controller);
 		}
 
 		@Override
 		protected void pause() {
-			if (getState() == LifecycleState.OnResume)
-				controller.dispatchLifeCycleEvent(LifecycleState.OnPause);
+			if (isState(OnResume))
+				controller.dispatchLifeCycleEvent(OnPause);
 		}
 
 		@Override
 		protected void resume() {
-			if (getState() == LifecycleState.OnResume)
-				controller.dispatchLifeCycleEvent(LifecycleState.OnResume);
+			if (isState(OnResume))
+				controller.dispatchLifeCycleEvent(OnResume);
 		}
 
 		private void createLayoutLayer() {
@@ -582,12 +607,14 @@ public final class CyborgStackController
 		//		activityBridge.removeController(this);
 		//		activityBridge.addController(this);
 
-		StackLayer topLayer = getTopLayer();
-		if (targetLayerToBeAdded.keepBackground)
-			topLayer.pause();
-		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground ? null : topLayer;
-		if (originLayerToBeDisposed != null)
-			originLayerToBeDisposed.preDestroy();
+		StackLayer[] topLayers = getTopLayers();
+
+		for (StackLayer layer : topLayers) {
+			if (targetLayerToBeAdded.keepBackground)
+				layer.pause();
+			else
+				layer.preDestroy();
+		}
 
 		addStackLayer(targetLayerToBeAdded);
 		targetLayerToBeAdded.create();
@@ -601,18 +628,20 @@ public final class CyborgStackController
 		 * is in progress, and we want the events not to collide with regards to the state of the stack, we need to make sure that
 		 * the stack is updated as soon as the interaction begins.
 		 */
-		if (originLayerToBeDisposed != null) {
+		if (!targetLayerToBeAdded.keepBackground) {
+			for (StackLayer layer : topLayers) {
+				// we must call clear animation to ensure onAnimationEnd is called.
+				layer.getRootView().clearAnimation();
 
-			// we must call clear animation to ensure onAnimationEnd is called.
-			originLayerToBeDisposed.getRootView().clearAnimation();
-
-			// remove the layer from the stack if at the end of this transition it should not be there.
-			originLayerToBeDisposed.toBeDisposed = true;
+				// remove the layer from the stack if at the end of this transition it should not be there.
+				layer.toBeDisposed = true;
+			}
 		}
 
 		if (isDebuggableFlag())
-			logInfo("push: " + originLayerToBeDisposed + " => " + targetLayerToBeAdded);
+			logInfo("push: " + Arrays.toString(topLayers) + " => " + targetLayerToBeAdded);
 
+		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground || topLayers.length == 0 ? null : topLayers[topLayers.length - 1];
 		final AnimationListenerImpl listener = new AnimationListenerImpl() {
 			@Override
 			public void onAnimationEnd(Animation animation) {

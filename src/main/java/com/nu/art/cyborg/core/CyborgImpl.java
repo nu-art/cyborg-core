@@ -298,7 +298,7 @@ final class CyborgImpl
 	@Override
 	public final void sendView(final String viewName) {
 		String message = "Analytics Screen: " + viewName;
-		dispatchModuleEvent(this, message, new Processor<IAnalyticsModule>() {
+		dispatchModuleEvent(this, message, IAnalyticsModule.class, new Processor<IAnalyticsModule>() {
 
 			@Override
 			public void process(IAnalyticsModule module) {
@@ -310,7 +310,7 @@ final class CyborgImpl
 	@Override
 	public final void sendEvent(final String category, final String action, final String label, final long value) {
 		String message = "Analytics Event: " + category + " - " + action + " - " + label + " - " + value;
-		dispatchModuleEvent(this, message, new Processor<IAnalyticsModule>() {
+		dispatchModuleEvent(this, message, IAnalyticsModule.class, new Processor<IAnalyticsModule>() {
 
 			@Override
 			public void process(IAnalyticsModule module) {
@@ -322,7 +322,7 @@ final class CyborgImpl
 	@Override
 	public final void sendException(final String description, final Throwable t, final boolean crash) {
 		String message = "Analytics Exception: " + description;
-		dispatchModuleEvent(this, message, new Processor<IAnalyticsModule>() {
+		dispatchModuleEvent(this, message, IAnalyticsModule.class, new Processor<IAnalyticsModule>() {
 
 			@Override
 			public void process(IAnalyticsModule module) {
@@ -631,13 +631,16 @@ final class CyborgImpl
 	}
 
 	@Override
-	public <ListenerType> void dispatchEvent(ILogger originator, String message, Processor<ListenerType> processor) {
-		activityStackHandler.dispatchEvent(originator, message, processor);
+	public <ListenerType> void dispatchEvent(ILogger originator, String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
+		activityStackHandler.dispatchEvent(originator, message, listenerType, processor);
 	}
 
 	@Override
-	public final <ListenerType> void dispatchModuleEvent(ILogger originator, final String message, final Processor<ListenerType> processor) {
-		moduleManager.dispatchModuleEvent(originator, message, processor);
+	public final <ListenerType> void dispatchModuleEvent(ILogger originator,
+	                                                     final String message,
+	                                                     Class<ListenerType> listenerType,
+	                                                     final Processor<ListenerType> processor) {
+		moduleManager.dispatchModuleEvent(originator, message, listenerType, processor);
 	}
 
 	@Override
@@ -645,11 +648,11 @@ final class CyborgImpl
 		return AnimationUtils.loadAnimation(getApplicationContext(), animationId);
 	}
 
-	<ListenerType> void dispatchGlobalEvent(Logger logger, String message, Processor<ListenerType> processor) {
+	<ListenerType> void dispatchGlobalEvent(Logger logger, String message, Class<ListenerType> listenerType, Processor<ListenerType> processor) {
 		if (logger != null)
 			logger.logInfo("Dispatching global event: " + message);
-		dispatchModuleEvent(null, message, processor);
-		dispatchEvent(null, message, processor);
+		dispatchModuleEvent(null, message, listenerType, processor);
+		dispatchEvent(null, message, listenerType, processor);
 	}
 
 	private class AppMeta {

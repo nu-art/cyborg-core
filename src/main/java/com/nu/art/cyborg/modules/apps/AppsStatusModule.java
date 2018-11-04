@@ -52,7 +52,7 @@ public class AppsStatusModule
 			return;
 		}
 
-		dispatchGlobalEvent("App Uninstalled: " + packageName + ", " + (isUninstallEvent ? "Cleared Data" : "Data Preserved"), new Processor<AppsListener>() {
+		dispatchGlobalEvent("App Uninstalled: " + packageName + ", " + (isUninstallEvent ? "Cleared Data" : "Data Preserved"), AppsListener.class, new Processor<AppsListener>() {
 			@Override
 			public void process(AppsListener listener) {
 				listener.onApplicationUninstalled(packageName, isUninstallEvent);
@@ -67,7 +67,7 @@ public class AppsStatusModule
 			return;
 		}
 
-		dispatchGlobalEvent("App Installed: " + packageName, new Processor<AppsListener>() {
+		dispatchGlobalEvent("App Installed: " + packageName, AppsListener.class, new Processor<AppsListener>() {
 			@Override
 			public void process(AppsListener listener) {
 				listener.onApplicationInstalled(packageName);
@@ -76,7 +76,7 @@ public class AppsStatusModule
 	}
 
 	final void onAppUpdated(final String packageName) {
-		dispatchGlobalEvent("App Updated: " + packageName, new Processor<AppsListener>() {
+		dispatchGlobalEvent("App Updated: " + packageName, AppsListener.class, new Processor<AppsListener>() {
 			@Override
 			public void process(AppsListener listener) {
 				listener.onApplicationUpdated(packageName);

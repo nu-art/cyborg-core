@@ -61,7 +61,7 @@ public final class ActivityStack
 		}
 	}
 
-	<ListenerType> void dispatchEvent(ILogger originator, String message, Processor<ListenerType> processor) {
+	<ListenerType> void dispatchEvent(ILogger originator, String message, Class<ListenerType> eventType, Processor<ListenerType> processor) {
 		if (activity == null) {
 			if (originator == null)
 				originator = this;
@@ -70,7 +70,7 @@ public final class ActivityStack
 			return;
 		}
 
-		activity.dispatchEvent(originator, message, processor);
+		activity.dispatchEvent(originator, message, eventType, processor);
 	}
 
 	private PoolQueue<ActivityStackAction> queue = new PoolQueue<ActivityStackAction>() {

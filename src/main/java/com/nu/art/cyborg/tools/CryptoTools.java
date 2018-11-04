@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.tools;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by tacb0ss on 06/01/2018.
@@ -26,9 +27,12 @@ import java.security.MessageDigest;
 
 public class CryptoTools {
 
-	public static String doFingerprint(byte[] certificateBytes, MessageDigest md) {
-		md.update(certificateBytes);
-		byte[] digest = md.digest();
+	public static String doFingerprint(byte[] certificateBytes, String algorithm)
+		throws NoSuchAlgorithmException {
+		MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+		messageDigest.update(certificateBytes);
+
+		byte[] digest = messageDigest.digest();
 
 		StringBuilder toRet = new StringBuilder();
 		for (int i = 0; i < digest.length; i++) {

@@ -474,10 +474,11 @@ public class CyborgAdapter<Item>
 		@Override
 		public CyborgDefaultHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 			ItemRenderer<? extends Item> renderer = createRendererForType(parent, viewType);
-			callRendererLifeCycle(renderer);
 
 			renderer.getRootView().setOnClickListener(this);
 			renderer.getRootView().setOnLongClickListener(this);
+
+			callRendererLifeCycle(renderer);
 			return new CyborgDefaultHolder(renderer);
 		}
 

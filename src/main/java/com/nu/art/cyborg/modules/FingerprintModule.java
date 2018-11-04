@@ -157,7 +157,7 @@ public class FingerprintModule
 			@Override
 			public void onAuthenticationError(final int errorCode, final CharSequence errString) {
 				cancellationSignal = null;
-				dispatchGlobalEvent("Authentication help(" + errorCode + "): " + errString, new Processor<FingerprintAuthenticationListener>() {
+				dispatchGlobalEvent("Authentication help(" + errorCode + "): " + errString, FingerprintAuthenticationListener.class, new Processor<FingerprintAuthenticationListener>() {
 					@Override
 					public void process(FingerprintAuthenticationListener listener) {
 						listener.onAuthenticationError(errorCode, errString);
@@ -167,7 +167,7 @@ public class FingerprintModule
 
 			@Override
 			public void onAuthenticationHelp(final int helpCode, final CharSequence helpString) {
-				dispatchGlobalEvent("Authentication help(" + helpCode + "): " + helpString, new Processor<FingerprintAuthenticationListener>() {
+				dispatchGlobalEvent("Authentication help(" + helpCode + "): " + helpString, FingerprintAuthenticationListener.class, new Processor<FingerprintAuthenticationListener>() {
 					@Override
 					public void process(FingerprintAuthenticationListener listener) {
 						listener.onAuthenticationHelp(helpCode, helpString);
@@ -178,7 +178,7 @@ public class FingerprintModule
 			@Override
 			public void onAuthenticationSucceeded(final AuthenticationResult result) {
 				cancellationSignal = null;
-				dispatchGlobalEvent("Authentication successful", new Processor<FingerprintAuthenticationListener>() {
+				dispatchGlobalEvent("Authentication successful", FingerprintAuthenticationListener.class, new Processor<FingerprintAuthenticationListener>() {
 					@Override
 					public void process(FingerprintAuthenticationListener listener) {
 						listener.onAuthenticationSucceeded(result);
@@ -188,7 +188,7 @@ public class FingerprintModule
 
 			@Override
 			public void onAuthenticationFailed() {
-				dispatchGlobalEvent("Authentication failed", new Processor<FingerprintAuthenticationListener>() {
+				dispatchGlobalEvent("Authentication failed", FingerprintAuthenticationListener.class, new Processor<FingerprintAuthenticationListener>() {
 					@Override
 					public void process(FingerprintAuthenticationListener listener) {
 						listener.onAuthenticationFailed();

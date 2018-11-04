@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core.modules;
 
 import com.nu.art.android.views.RoundedImageView.RoundedImageViewSetter;
+import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
@@ -62,6 +63,7 @@ public class CyborgBasePack
 
 	@Override
 	protected final void init() {
+		getModule(PreferencesModule.class).setStorageFolder(CyborgBuilder.getInstance().getApplicationContext().getFilesDir().getAbsolutePath());
 		AttributeModule attributeModule = getModule(AttributeModule.class);
 		attributeModule.registerAttributesSetter(SquareViewSetter.class);
 		attributeModule.registerAttributesSetter(FontTypeSetter.class);

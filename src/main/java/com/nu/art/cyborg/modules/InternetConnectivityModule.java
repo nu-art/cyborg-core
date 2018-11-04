@@ -18,21 +18,23 @@
 
 package com.nu.art.cyborg.modules;
 
+import android.Manifest.permission;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgReceiver;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
+@ModuleDescriptor(usesPermissions = permission.INTERNET)
 public class InternetConnectivityModule
 	extends CyborgModule {
-
-	private static final String DEFAULT_HOST = "google.com";
 
 	public interface InternetConnectivityListener {
 
@@ -70,10 +72,12 @@ public class InternetConnectivityModule
 				boolean connected;
 				try {
 					logVerbose("checking connectivity");
-					InetAddress byName = InetAddress.getByName(DEFAULT_HOST);
-					connected = byName.isReachable(5000);
+					Socket sock = new Socket();
+					sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+					sock.close();
+					connected = true;
 				} catch (Exception e) {
-					logError("Couldn't ping google.com", e);
+					logError("Couldn't ping 8.8.8.8", e);
 					connected = false;
 				}
 
@@ -81,7 +85,7 @@ public class InternetConnectivityModule
 					return;
 
 				setConnected(connected);
-				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), new Processor<InternetConnectivityListener>() {
+				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), InternetConnectivityListener.class, new Processor<InternetConnectivityListener>() {
 					@Override
 					public void process(InternetConnectivityListener listener) {
 						listener.onInternetConnectivityChanged();

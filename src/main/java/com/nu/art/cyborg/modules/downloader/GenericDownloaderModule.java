@@ -18,12 +18,14 @@
 
 package com.nu.art.cyborg.modules.downloader;
 
+import android.Manifest.permission;
 import android.net.Uri;
 import android.os.Handler;
 
 import com.nu.art.core.GenericListener;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.CacheModule;
@@ -40,7 +42,7 @@ import java.net.URI;
 /**
  * Created by tacb0ss on 14/06/2017.
  */
-
+@ModuleDescriptor(usesPermissions = {permission.INTERNET})
 public class GenericDownloaderModule
 	extends CyborgModule {
 
@@ -74,8 +76,6 @@ public class GenericDownloaderModule
 		DownloaderBuilder setUrl(String url);
 
 		String getUrl();
-
-		boolean isSameUrl(String url);
 
 		<Type> DownloaderBuilder onSuccess(Function<InputStream, Type> converter, Processor<Type> processor);
 
@@ -145,11 +145,6 @@ public class GenericDownloaderModule
 		private Runnable onBefore;
 
 		private Runnable onAfter;
-
-		@Override
-		public boolean isSameUrl(String url) {
-			return this.url.equals(url);
-		}
 
 		public final DownloaderBuilder setUrl(String url) {
 			this.url = url;
@@ -225,22 +220,27 @@ public class GenericDownloaderModule
 		}
 
 		public final void download() {
+			logDebug("Downloading: " + url);
+
 			if (url == null || url.trim().length() == 0) {
 				IOException error = new IOException("url is null or empty");
 				onError(error);
-
-				return;
-			}
-
-			if (cacheable != null && cacheable.isCached()) {
-				loadFromCache();
 				return;
 			}
 
 			if (onBefore != null)
 				onBefore.run();
 
-			if (url.startsWith("android.resource://")) {
+			if (cacheable != null && cacheable.isCached()) {
+				logDebug("Already cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
+				loadFromCache();
+				return;
+			}
+
+			logDebug("Not cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
+
+
+			if (url.startsWith("android.resource://") || url.startsWith("content://")) {
 				loadFromResources(downloadListener);
 				return;
 			}

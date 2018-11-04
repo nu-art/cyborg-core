@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewDebug;
 
+import com.nu.art.belog.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -107,6 +109,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * </pre>
  */
 public class ViewServer
+	extends Logger
 	implements Runnable {
 
 	/**
@@ -185,7 +188,8 @@ public class ViewServer
 				try {
 					sServer.start();
 				} catch (IOException e) {
-					Log.d(LOG_TAG, "Error:", e);
+					Log.e(LOG_TAG, "Error:", e);
+					sServer = new NoopViewServer();
 				}
 			}
 		} else {
@@ -249,7 +253,7 @@ public class ViewServer
 				try {
 					mThreadPool.shutdownNow();
 				} catch (SecurityException e) {
-					Log.w(LOG_TAG, "Could not stop all rootView server threads");
+					logWarning("Could not stop all rootView server threads");
 				}
 			}
 
@@ -261,7 +265,7 @@ public class ViewServer
 				mServer = null;
 				return true;
 			} catch (IOException e) {
-				Log.w(LOG_TAG, "Could not close the rootView server");
+				logWarning("Could not close the rootView server");
 			}
 		}
 
@@ -402,7 +406,7 @@ public class ViewServer
 		try {
 			mServer = new ServerSocket(mPort, VIEW_SERVER_MAX_CONNECTIONS, InetAddress.getLocalHost());
 		} catch (Exception e) {
-			Log.w(LOG_TAG, "Starting ServerSocket error: ", e);
+			logWarning("Starting ServerSocket error: ", e);
 		}
 
 		while (mServer != null && Thread.currentThread() == mThread) {
@@ -419,7 +423,7 @@ public class ViewServer
 					}
 				}
 			} catch (Exception e) {
-				Log.w(LOG_TAG, "Connection error: ", e);
+				logWarning("Connection error: ", e);
 			}
 		}
 	}
@@ -627,10 +631,10 @@ public class ViewServer
 				}
 
 				if (!result) {
-					Log.w(LOG_TAG, "An error occurred with the command: " + command);
+					logWarning("An error occurred with the command: " + command);
 				}
 			} catch (IOException e) {
-				Log.w(LOG_TAG, "Connection error: ", e);
+				logWarning("Connection error: ", e);
 			} finally {
 				if (in != null) {
 					try {
@@ -685,7 +689,7 @@ public class ViewServer
 					out.flush();
 				}
 			} catch (Exception e) {
-				Log.w(LOG_TAG, "Could not send command " + command + " with parameters " + parameters, e);
+				logWarning("Could not send command " + command + " with parameters " + parameters, e);
 				success = false;
 			} finally {
 				if (out != null) {
@@ -854,7 +858,7 @@ public class ViewServer
 					}
 				}
 			} catch (Exception e) {
-				Log.w(LOG_TAG, "Connection error: ", e);
+				logWarning("Connection error: ", e);
 			} finally {
 				if (out != null) {
 					try {

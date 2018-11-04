@@ -30,14 +30,13 @@ import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.common.utils.BootStarterReceiver.OnBootCompletedListener;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.modules.crashReport.ModuleStateCollector;
 import com.nu.art.cyborg.core.modules.preferences.PreferencesModule;
-import com.nu.art.cyborg.core.modules.preferences.PreferencesModule.StringPreference;
-import com.nu.art.cyborg.core.modules.crashReport.CrashReportListener;
+import com.nu.art.cyborg.core.modules.preferences.StringPreference;
 import com.nu.art.cyborg.tools.CryptoTools;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.io.ByteArrayInputStream;
-import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -47,10 +46,10 @@ import java.util.UUID;
                   dependencies = {PreferencesModule.class})
 public final class AppDetailsModule
 	extends CyborgModule
-	implements AnalyticsConstants, CrashReportListener {
+	implements AnalyticsConstants, ModuleStateCollector {
 
 	@Override
-	public void onApplicationCrashed(HashMap<String, Object> moduleCrashData) {
+	public void collectModuleState(HashMap<String, Object> moduleCrashData) {
 		moduleCrashData.put("Certificate", getCertificate().toString());
 	}
 
@@ -66,6 +65,28 @@ public final class AppDetailsModule
 	}
 
 	private StringPreference installationUUID;
+
+	private final MemorySnapshot MemorySnapshot = new MemorySnapshot();
+
+	public final class MemorySnapshot {
+
+		private transient final Runtime runtime = Runtime.getRuntime();
+
+		private MemorySnapshot() {
+		}
+
+		public long usedMemory;
+		public long maxMemory;
+
+		public final float getMemoryFactor() {
+			return usedMemory * 1f / maxMemory;
+		}
+
+		public void update() {
+			usedMemory = runtime.totalMemory() - runtime.freeMemory();
+			maxMemory = runtime.maxMemory();
+		}
+	}
 
 	public enum DummyCertificate
 		implements CyborgAppCertificate {
@@ -94,6 +115,8 @@ public final class AppDetailsModule
 	private boolean automated;
 
 	private boolean debugSimulationMode;
+
+	private Runtime runtime;
 
 	private Class<? extends Enum<?>> certificateType = DummyCertificate.class;
 
@@ -132,8 +155,9 @@ public final class AppDetailsModule
 
 	@Override
 	protected void init() {
-		PreferencesModule preferences = getModule(PreferencesModule.class);
-		installationUUID = preferences.new StringPreference("installationUUID", null);
+		runtime = Runtime.getRuntime();
+
+		installationUUID = new StringPreference("installationUUID", null);
 
 		String installationId = installationUUID.get();
 		if (installationId == null) {
@@ -149,6 +173,10 @@ public final class AppDetailsModule
 		checkCertificate();
 	}
 
+	public MemorySnapshot getMemorySnapshot() {
+		return MemorySnapshot;
+	}
+
 	@SuppressWarnings("unchecked")
 	@SuppressLint("PackageManagerGetSignatures")
 	private <Type extends Enum<?>> void checkCertificate() {
@@ -158,11 +186,11 @@ public final class AppDetailsModule
 			PackageManager pm = cyborg.getPackageManager();
 			PackageInfo packageInfo = pm.getPackageInfo(cyborg.getPackageName(), PackageManager.GET_SIGNATURES);
 			Signature sig = packageInfo.signatures[0];
-			String md5Fingerprint = CryptoTools.doFingerprint(sig.toByteArray(), MessageDigest.getInstance("MD5"));
+			String md5Fingerprint = CryptoTools.doFingerprint(sig.toByteArray(), "MD5");
 			Type[] certificateList = (Type[]) ReflectiveTools.getEnumValues(certificateType);
 			logDebug("Certificate found  (MD5) => " + md5Fingerprint);
 			try {
-				logDebug("Certificate found  (SHA1) => " + CryptoTools.doFingerprint(sig.toByteArray(), MessageDigest.getInstance("SHA-1")));
+				logDebug("Certificate found  (SHA1) => " + CryptoTools.doFingerprint(sig.toByteArray(), "SHA-1"));
 			} catch (Exception ignore) {
 			}
 			for (Type type : certificateList) {
@@ -191,7 +219,7 @@ public final class AppDetailsModule
 	}
 
 	public final void onBootCompleted() {
-		dispatchModuleEvent("Boot completed", new Processor<OnBootCompletedListener>() {
+		dispatchModuleEvent("Boot completed", OnBootCompletedListener.class, new Processor<OnBootCompletedListener>() {
 			@Override
 			public void process(OnBootCompletedListener onBootCompletedListener) {
 				onBootCompletedListener.onBootCompleted();

@@ -26,7 +26,7 @@ import static com.nu.art.cyborg.core.modules.preferences.PreferencesModule.Defau
 import static com.nu.art.cyborg.core.modules.preferences.PreferencesModule.EXPIRES_POSTFIX;
 
 @SuppressWarnings("WeakerAccess")
-public abstract class PreferenceKey<ItemType>
+abstract class PreferenceKey<ItemType>
 	implements Getter<ItemType> {
 
 	final String key;
@@ -63,7 +63,7 @@ public abstract class PreferenceKey<ItemType>
 	public final ItemType get(boolean printToLog) {
 		SharedPrefs preferences = getPreferences();
 		ItemType cache;
-		if (expires == -1 || System.currentTimeMillis() - preferences.get(key + EXPIRES_POSTFIX, -1) < expires) {
+		if (expires == -1 || System.currentTimeMillis() - preferences.get(key + EXPIRES_POSTFIX, -1L) < expires) {
 			cache = _get(preferences, key, defaultValue);
 			if (printToLog)
 				getPrefsModule().logInfo("+----+ LOADED: " + key + ": " + cache);

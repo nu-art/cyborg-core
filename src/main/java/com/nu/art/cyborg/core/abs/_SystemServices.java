@@ -24,6 +24,8 @@ import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.hardware.SensorManager;
+import android.hardware.camera2.CameraManager;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -84,6 +86,10 @@ public interface _SystemServices {
 	ServiceType<AlarmManager> AlarmService = new ServiceType<>(Context.ALARM_SERVICE);
 
 	ServiceType<BluetoothManager> BluetoothService = new ServiceType<>(Context.BLUETOOTH_SERVICE);
+
+	ServiceType<SensorManager> SensorService = new ServiceType<>(Context.SENSOR_SERVICE);
+
+	ServiceType<CameraManager> CameraService = new ServiceType<>(Context.CAMERA_SERVICE);
 
 	/**
 	 * Get Android's Service without casting.

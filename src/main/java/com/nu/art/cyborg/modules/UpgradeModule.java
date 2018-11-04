@@ -21,8 +21,7 @@ package com.nu.art.cyborg.modules;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.preferences.PreferencesModule;
-import com.nu.art.cyborg.core.modules.preferences.PreferencesModule.IntegerPreference;
+import com.nu.art.cyborg.core.modules.preferences.IntegerPreference;
 
 /**
  * Created by TacB0sS on 28-Feb 2017.
@@ -40,8 +39,7 @@ public class UpgradeModule
 
 	@Override
 	protected void init() {
-		PreferencesModule preferences = getModule(PreferencesModule.class);
-		IntegerPreference appVersionCode = preferences.new IntegerPreference("appVersionCode", 0);
+		IntegerPreference appVersionCode = new IntegerPreference("appVersionCode", 0);
 		int versionCode = cyborg.getVersionCode();
 		int previousVersionCode = appVersionCode.get();
 
@@ -52,7 +50,7 @@ public class UpgradeModule
 	}
 
 	private void dispatchOnAppUpgraded(final int previousVersionCode, final int versionCode) {
-		dispatchModuleEvent("Application upgraded: " + previousVersionCode + " ==> " + versionCode, new Processor<OnAppUpgradedListener>() {
+		dispatchModuleEvent("Application upgraded: " + previousVersionCode + " ==> " + versionCode, OnAppUpgradedListener.class, new Processor<OnAppUpgradedListener>() {
 
 			@Override
 			public void process(OnAppUpgradedListener listener) {

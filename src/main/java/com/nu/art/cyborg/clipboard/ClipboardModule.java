@@ -147,7 +147,7 @@ public class ClipboardModule
 	}
 
 	private void dispatchTextChangedEvent(final String newText) {
-		dispatchModuleEvent("On clipboard changed: " + oldText + " => " + newText, new Processor<OnClipboardChangedListener>() {
+		dispatchModuleEvent("On clipboard changed: " + oldText + " => " + newText, OnClipboardChangedListener.class, new Processor<OnClipboardChangedListener>() {
 			@Override
 			public void process(OnClipboardChangedListener listener) {
 				listener.onClipboardChanged(oldText, newText);

@@ -27,8 +27,8 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.utils.ThreadMonitor.RunnableMonitor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
-import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
+import com.nu.art.modular.core.Module;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,8 @@ import java.util.HashMap;
                    })
 @ModuleDescriptor(usesPermissions = {})
 public final class PreferencesModule
-	extends CyborgModule {
+	extends Module {
+
 
 	public interface PreferencesListener {
 
@@ -166,7 +167,7 @@ public final class PreferencesModule
 					temp.putAll(data);
 					FileTools.writeToFile(gson.toJson(data), new File(pathToFile), Charsets.UTF_8);
 				} catch (final IOException e) {
-					dispatchGlobalEvent("Error saving shared preferences: " + name, new Processor<PreferencesListener>() {
+					dispatchModuleEvent("Error saving shared preferences: " + name, PreferencesListener.class, new Processor<PreferencesListener>() {
 						@Override
 						public void process(PreferencesListener listener) {
 							listener.onSavingError(e);
@@ -187,7 +188,7 @@ public final class PreferencesModule
 				String textRead = FileTools.readFullyAsString(new File(pathToFile), Charsets.UTF_8);
 				data.putAll(gson.fromJson(textRead, HashMap.class));
 			} catch (final IOException e) {
-				dispatchGlobalEvent("Error loading shared preferences: " + name, new Processor<PreferencesListener>() {
+				dispatchModuleEvent("Error loading shared preferences: " + name, PreferencesListener.class, new Processor<PreferencesListener>() {
 					@Override
 					public void process(PreferencesListener listener) {
 						listener.onLoadingError(e);
@@ -204,8 +205,13 @@ public final class PreferencesModule
 	private Gson gson = new Gson();
 	private HashMap<String, SharedPrefs> preferencesMap = new HashMap<>();
 	private Handler savingHandler;
+	private String storageFolder;
 
 	private PreferencesModule() {}
+
+	public void setStorageFolder(String storageFolder) {
+		this.storageFolder = storageFolder;
+	}
 
 	@Override
 	protected void init() {
@@ -240,7 +246,7 @@ public final class PreferencesModule
 	final SharedPrefs getPreferences(String storageGroup) {
 		SharedPrefs sharedPreferences = preferencesMap.get(storageGroup);
 		if (sharedPreferences == null) {
-			String pathToStorageFile = getApplicationContext().getFilesDir().getAbsolutePath() + "/" + storageGroup;
+			String pathToStorageFile = storageFolder + "/" + storageGroup;
 			preferencesMap.put(storageGroup, sharedPreferences = createStorageGroupImpl(storageGroup, pathToStorageFile));
 		}
 

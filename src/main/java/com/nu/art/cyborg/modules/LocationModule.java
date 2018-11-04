@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg.modules;
 
-import android.Manifest;
+import android.Manifest.permission;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -38,9 +38,9 @@ import static com.nu.art.cyborg.modules.LocationModule.LocationService.OFFLINE;
 /**
  * Created by TacB0sS on 15-Sep 2017.
  */
-@ModuleDescriptor(usesPermissions = {//
-	Manifest.permission.ACCESS_COARSE_LOCATION,
-	Manifest.permission.ACCESS_FINE_LOCATION
+@ModuleDescriptor(usesPermissions = {
+	permission.ACCESS_COARSE_LOCATION,
+	permission.ACCESS_FINE_LOCATION
 })
 public class LocationModule
 	extends CyborgModule
@@ -61,7 +61,7 @@ public class LocationModule
 	@Override
 	public void onLocationChanged(final Location location) {
 		logInfo("location: onLocationChanged");
-		dispatchGlobalEvent("update location to: " + location, new Processor<OnLocationUpdatedListener>() {
+		dispatchGlobalEvent("update location to: " + location, OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
 			@Override
 			public void process(OnLocationUpdatedListener listener) {
 				listener.onLocationUpdated(location);
@@ -184,7 +184,7 @@ public class LocationModule
 
 		if (bestLocation == null) {
 			toastDebug("Could not find location");
-			dispatchGlobalEvent("location update error", new Processor<OnLocationUpdatedListener>() {
+			dispatchGlobalEvent("location update error", OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
 				@Override
 				public void process(OnLocationUpdatedListener listener) {
 					listener.onLocationUpdateError();
@@ -194,7 +194,7 @@ public class LocationModule
 		}
 
 		final Location location = bestLocation;
-		dispatchGlobalEvent("update location to: " + location, new Processor<OnLocationUpdatedListener>() {
+		dispatchGlobalEvent("update location to: " + location, OnLocationUpdatedListener.class, new Processor<OnLocationUpdatedListener>() {
 			@Override
 			public void process(OnLocationUpdatedListener listener) {
 				listener.onLocationUpdated(location);

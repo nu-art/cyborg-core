@@ -144,7 +144,15 @@ public class QueryBuilder {
 		return query;
 	}
 
-	public Cursor execute(ContentResolver contentResolver) {
-		return contentResolver.query(uri, selectColumnsClause, whereClause, whereClauseArgs, orderByClause);
+	public Cursor execute(ContentResolver contentResolver)
+		throws QueryException {
+		Cursor query;
+		try {
+			query = contentResolver.query(uri, selectColumnsClause, whereClause, whereClauseArgs, orderByClause);
+		} catch (Throwable e) {
+			throw new QueryException("Error while executing query: " + buildQuery("TABLE", true), e);
+		}
+
+		return query;
 	}
 }
