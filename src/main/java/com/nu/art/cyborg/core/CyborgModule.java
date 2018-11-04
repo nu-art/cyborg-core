@@ -100,8 +100,8 @@ public abstract class CyborgModule
 			return;
 		}
 
-		Class<? extends CyborgModule>[] dependencies = descriptor.dependencies();
-		for (Class<? extends CyborgModule> dependencyModuleType : dependencies) {
+		Class<? extends Module>[] dependencies = descriptor.dependencies();
+		for (Class<? extends Module> dependencyModuleType : dependencies) {
 			if (getModule(dependencyModuleType) == null) {
 				result.addEntry(this, "MISSING Dependency Module of type: '" + dependencyModuleType.getName() + "'");
 			}

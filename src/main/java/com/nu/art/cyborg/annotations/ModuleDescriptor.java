@@ -23,6 +23,7 @@ import android.Manifest.permission;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.modular.core.Module;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -61,9 +62,9 @@ public @interface ModuleDescriptor {
 	 * Upon launch your application would be check for these dependency modules array, and would throw a
 	 * {@link ImplementationMissingException} if one or more of these modules are not found!
 	 *
-	 * @return an array of {@link CyborgModule} types.
+	 * @return an array of {@link Module} types.
 	 */
-	Class<? extends CyborgModule>[] dependencies() default {};
+	Class<? extends Module>[] dependencies() default {};
 
 	/**
 	 * Upon launch your application would be checked for these features and would throw a
