@@ -349,15 +349,6 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	@SuppressWarnings( {
-		                   "rawtypes",
-		                   "unchecked"
-	                   })
-	public final <ModuleType extends Module> ModuleType getModule(Class<ModuleType> moduleType) {
-		return (ModuleType) cyborg.getModule((Class<CyborgModule>) moduleType);
-	}
-
-	@Override
 	public final void vibrate(int repeat, long... interval) {
 		cyborg.vibrate(repeat, interval);
 	}
