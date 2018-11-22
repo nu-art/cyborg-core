@@ -154,8 +154,8 @@ final class CyborgImpl
 
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		logVerbose(" Application Created...");
-
-		moduleManager = new CyborgModulesBuilder().setCyborg(this).addModulePacks(modulesPacks).build();
+		moduleManager = new ModuleManager();
+		new CyborgModulesBuilder().setCyborg(this).addModulePacks(modulesPacks).build(moduleManager);
 
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
