@@ -25,7 +25,6 @@ import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModuleManagerBuilder;
-import com.nu.art.modular.core.ModulesPack;
 
 /**
  * This is an internal object.
@@ -34,23 +33,21 @@ final class CyborgModulesBuilder
 	extends ModuleManagerBuilder
 	implements AnalyticsConstants {
 
-	@SafeVarargs
-	CyborgModulesBuilder(Class<? extends ModulesPack>... modulesPacksTypes) {
-		super(CyborgModuleManager.class);
-		setModulesPacksTypes(modulesPacksTypes);
+	CyborgModulesBuilder() {
 	}
 
-	private Cyborg cyborgImpl;
+	private Cyborg cyborg;
 
 	protected AppDetailsModule configuration;
 
-	final void setCyborg(CyborgImpl application) {
-		this.cyborgImpl = application;
+	final CyborgModulesBuilder setCyborg(Cyborg cyborg) {
+		this.cyborg = cyborg;
+		return this;
 	}
 
 	@SuppressWarnings("unused")
 	private boolean checkFeature(String feature) {
-		FeatureInfo[] features = cyborgImpl.getPackageManager().getSystemAvailableFeatures();
+		FeatureInfo[] features = cyborg.getPackageManager().getSystemAvailableFeatures();
 		for (FeatureInfo featureInfo : features) {
 			if (featureInfo.name == null)
 				continue;
@@ -66,10 +63,6 @@ final class CyborgModulesBuilder
 		if (!(module instanceof CyborgModule))
 			return;
 
-		((CyborgModule) module).setCyborg(cyborgImpl);
-	}
-
-	final CyborgModuleManager getCyborgModuleManager() {
-		return (CyborgModuleManager) moduleManager;
+		((CyborgModule) module).setCyborg(cyborg);
 	}
 }

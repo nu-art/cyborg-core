@@ -180,15 +180,14 @@ public class CrashReportModule
 			addFileToGroup(group, saveToFile(outputFileName, data));
 		}
 
-		public void logTracesANR(String group, String outputFileName)
+		public void logTracesANR(String group)
 			throws IOException {
 			File tracesFile = new File("/data/anr/traces.txt");
 			if (!tracesFile.exists())
 				return;
 
-			File file = new File(reportDir, outputFileName);
-			FileTools.copyFile(tracesFile, file);
-			addFileToGroup(group, file);
+			FileTools.copyFile(tracesFile, reportDir);
+			addFileToGroup(group, new File(reportDir, tracesFile.getName()));
 		}
 
 		private File saveToFile(String outputFileName, String data)

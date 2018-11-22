@@ -60,6 +60,7 @@ import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManager;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
 import com.nu.art.modular.core.ModulesPack;
 
@@ -93,7 +94,7 @@ final class CyborgImpl
 
 	private ActivityStack activityStackHandler;
 
-	private CyborgModuleManager moduleManager;
+	private ModuleManager moduleManager;
 
 	private AppMeta meta;
 
@@ -148,18 +149,13 @@ final class CyborgImpl
 			throw new MUST_NeverHappenException("", e);
 		}
 
-		CyborgModulesBuilder builder = new CyborgModulesBuilder(modulesPacks);
-		builder.setCyborg(this);
-
-		moduleManager = builder.getCyborgModuleManager();
-
 		activityStackHandler = new ActivityStack(CyborgImpl.this);
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
 		BeLogged.getInstance().addClient(new AndroidLogClient());
 		logVerbose(" Application Created...");
 
-		builder.buildMainManager();
+		moduleManager = new CyborgModulesBuilder().setCyborg(this).addModulePacks(modulesPacks).build();
 
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
