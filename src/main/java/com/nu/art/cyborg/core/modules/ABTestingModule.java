@@ -69,7 +69,7 @@ public class ABTestingModule
 		if (options.length > rating.length)
 			logWarning("Will never return later elements after index: " + rating.length);
 
-		FloatPreference storedResult = new FloatPreference("ABTesting_" + key, -1, StorageGroup);
+		FloatPreference storedResult = new FloatPreference("ABTesting_" + key, -1f).setStorageGroup(StorageGroup);
 		float previousFloat = storedResult.get();
 		if (saveResult && previousFloat != -1)
 			return getOptionFromRatio(rating, previousFloat, options);
