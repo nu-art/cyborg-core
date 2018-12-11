@@ -158,6 +158,10 @@ public final class CyborgBuilder {
 		return instance;
 	}
 
+	public synchronized static long getStartupDuration() {
+		return instance.getStartupDuration();
+	}
+
 	@SuppressWarnings("unchecked")
 	public synchronized static Cyborg getInEditMode(Context context) {
 		if (instance != null)
