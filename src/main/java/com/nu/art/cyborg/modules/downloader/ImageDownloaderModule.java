@@ -94,7 +94,7 @@ public class ImageDownloaderModule
 
 		ImageDownloaderBuilder onError(Processor<Throwable> onError);
 
-		void download();
+		ImageDownloaderBuilder download();
 	}
 
 	private class ImageDownloaderBuilderImpl
@@ -215,10 +215,10 @@ public class ImageDownloaderModule
 			return this;
 		}
 
-		public final void download() {
+		public final ImageDownloaderBuilder download() {
 			if (sameUrl) {
 				logWarning("Same url... will not download");
-				return;
+				return this;
 			}
 
 			cancelled = false;
@@ -296,6 +296,7 @@ public class ImageDownloaderModule
 			});
 
 			downloaderBuilder.download();
+			return this;
 		}
 
 		@Nullable

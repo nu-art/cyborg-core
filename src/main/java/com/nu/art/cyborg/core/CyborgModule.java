@@ -157,12 +157,6 @@ public abstract class CyborgModule
 		return true;
 	}
 
-	protected final void printDetails() {
-		logInfo("----------- " + getClass().getSimpleName() + " ------------");
-		printModuleDetails();
-		logInfo("-------- End of " + getClass().getSimpleName() + " --------");
-	}
-
 	protected final void reCreateScreen() {
 		postActivityAction(new ActivityStackAction() {
 
@@ -182,6 +176,15 @@ public abstract class CyborgModule
 		return moduleItem;
 	}
 
+	@Override
+	protected void printDetails() {
+		printModuleDetails();
+	}
+
+	/**
+	 * Override printDetails
+	 */
+	@Deprecated
 	protected void printModuleDetails() {
 	}
 
