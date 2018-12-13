@@ -69,7 +69,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -90,6 +89,7 @@ final class CyborgImpl
 	private final WeakReference<Context> applicationRef;
 
 	private final Handler uiHandler;
+
 	private List<String> permissionsInManifest;
 
 	private ActivityStack activityStackHandler;
@@ -105,6 +105,7 @@ final class CyborgImpl
 	private LaunchConfiguration launchConfiguration;
 
 	static boolean inEditMode;
+	private long startupDuration;
 
 	public CyborgImpl(Context application, LaunchConfiguration launchConfiguration) {
 		this.applicationRef = new WeakReference<>(application);
@@ -136,6 +137,8 @@ final class CyborgImpl
 
 	@SuppressWarnings("unchecked")
 	final void init(Class<? extends ModulesPack>... modulesPacks) {
+		long startedAt = System.currentTimeMillis();
+
 		if (loaded)
 			throw new BadImplementationException("Trying to load Cyborg for the second time!");
 
@@ -144,7 +147,7 @@ final class CyborgImpl
 
 		try {
 			PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
-			permissionsInManifest = Arrays.asList(packageInfo.requestedPermissions);
+			permissionsInManifest = ArrayTools.asList(packageInfo.requestedPermissions);
 		} catch (NameNotFoundException e) {
 			throw new MUST_NeverHappenException("", e);
 		}
@@ -160,6 +163,8 @@ final class CyborgImpl
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
 		}
+
+		startupDuration = System.currentTimeMillis() - startedAt;
 	}
 
 	@Override
@@ -209,6 +214,10 @@ final class CyborgImpl
 	@Override
 	public final void postActivityAction(ActivityStackAction action) {
 		activityStackHandler.addItem(action);
+	}
+
+	public long getStartupDuration() {
+		return startupDuration;
 	}
 
 	public final boolean isSuperUser() {
