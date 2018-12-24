@@ -18,8 +18,8 @@
 
 package com.nu.art.cyborg.modules.wifi.transceiver;
 
-import com.nu.art.cyborg.io.transceiver.PacketSerializer;
-import com.nu.art.cyborg.io.transceiver.SocketWrapper;
+import com.nu.art.io.PacketSerializer;
+import com.nu.art.io.SocketWrapper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
