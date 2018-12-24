@@ -22,7 +22,9 @@ dependencies {
     api(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
     api(resolveDependency('local-storage', 'com.nu-art-software', "${NU_ART_VERSION}"))
     api(resolveDependency('reflection', 'com.nu-art-software', "${NU_ART_VERSION}"))
+    api(resolveDependency('nu-art-io', 'com.nu-art-software', "${NU_ART_VERSION}"))
     api(resolveDependency('nu-art-core', 'com.nu-art-software', "${NU_ART_VERSION}"))
+
     api "com.android.support:support-v4:${ANDROID_SUPPORT_VERSION}"
     api "com.android.support:recyclerview-v7:${ANDROID_SUPPORT_VERSION}"
 
