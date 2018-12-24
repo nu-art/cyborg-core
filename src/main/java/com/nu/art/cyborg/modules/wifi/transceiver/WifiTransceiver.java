@@ -18,9 +18,9 @@
 
 package com.nu.art.cyborg.modules.wifi.transceiver;
 
-import com.nu.art.modular.io.BaseTransceiver;
-import com.nu.art.modular.io.PacketSerializer;
-import com.nu.art.modular.io.SocketWrapper;
+import com.nu.art.io.BaseTransceiver;
+import com.nu.art.io.PacketSerializer;
+import com.nu.art.io.SocketWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
