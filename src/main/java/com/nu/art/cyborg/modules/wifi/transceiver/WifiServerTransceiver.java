@@ -16,49 +16,52 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.io.transceiver.wifi;
+package com.nu.art.cyborg.modules.wifi.transceiver;
 
 import com.nu.art.cyborg.io.transceiver.PacketSerializer;
 import com.nu.art.cyborg.io.transceiver.SocketWrapper;
 
-import java.net.InetSocketAddress;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
-public class WifiClientTransceiver
+public final class WifiServerTransceiver
 	extends WifiTransceiver {
 
-	private final String serverIpAddress;
+	private ServerSocket serverSocket;
 
-	private int timeout = 30000;
+	private String remoteAddress;
 
-	public WifiClientTransceiver(String serverIpAddress, int serverPort, String name, PacketSerializer packetSerializer) {
+	public WifiServerTransceiver(int serverPort, String name, PacketSerializer packetSerializer) {
 		super(name, packetSerializer, serverPort);
-		this.serverIpAddress = serverIpAddress;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
 	}
 
 	@Override
 	protected SocketWrapper connectImpl()
 		throws Exception {
-		setOneShot();
-		logDebug("Connecting on: " + serverIpAddress + ":" + port);
-		Socket socket = new Socket();
-		socket.bind(null);
-		socket.connect((new InetSocketAddress(serverIpAddress, port)), this.timeout);
 
+		serverSocket = new ServerSocket(port);
+		Socket socket = serverSocket.accept();
+		remoteAddress = socket.getInetAddress().getHostAddress();
 		return new WifiSocketWrapper(socket);
+	}
+
+	public void disconnectImpl() {
+		try {
+			if (serverSocket != null)
+				serverSocket.close();
+		} catch (IOException e) {
+			notifyError(e);
+		}
 	}
 
 	@Override
 	protected String extraLog() {
-		return serverIpAddress + ":" + port;
+		return "Port: " + port;
 	}
 
 	@Override
 	public String getRemoteAddress() {
-		return serverIpAddress;
+		return remoteAddress;
 	}
 }

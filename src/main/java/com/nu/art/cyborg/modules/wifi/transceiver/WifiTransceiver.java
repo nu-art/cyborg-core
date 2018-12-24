@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.io.transceiver.wifi;
+package com.nu.art.cyborg.modules.wifi.transceiver;
 
-import com.nu.art.cyborg.io.transceiver.BaseTransceiver;
-import com.nu.art.cyborg.io.transceiver.PacketSerializer;
-import com.nu.art.cyborg.io.transceiver.SocketWrapper;
+import com.nu.art.modular.io.BaseTransceiver;
+import com.nu.art.modular.io.PacketSerializer;
+import com.nu.art.modular.io.SocketWrapper;
 
 import java.io.IOException;
 import java.io.InputStream;
