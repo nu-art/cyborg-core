@@ -121,8 +121,11 @@ public class CyborgView
 				e = e.getCause();
 			}
 			Log.e("CYBORG", "As Android's exception handling is crappy, here is the reason for the failure: ", e);
-			//noinspection ConstantConditions
-			throw (RuntimeException) e;
+			if (e instanceof RuntimeException)
+				//noinspection ConstantConditions
+				throw (RuntimeException) e;
+
+			throw new BadImplementationException("Error inflating xml", e);
 		}
 		setTag(controller);
 
