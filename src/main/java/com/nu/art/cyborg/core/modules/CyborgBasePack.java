@@ -19,12 +19,12 @@
 package com.nu.art.cyborg.core.modules;
 
 import com.nu.art.android.views.RoundedImageView.RoundedImageViewSetter;
+import com.nu.art.cyborg.clipboard.ClipboardModule;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
 import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
-import com.nu.art.storage.PreferencesModule;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.CacheModule;
@@ -36,6 +36,7 @@ import com.nu.art.cyborg.ui.views.SquareView.SquareViewSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
+import com.nu.art.storage.PreferencesModule;
 
 /**
  * Created by tacb0ss on 4/16/15.
@@ -46,6 +47,7 @@ public class CyborgBasePack
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
 		PreferencesModule.class,
+		ClipboardModule.class,
 		CacheModule.class,
 		PermissionModule.class,
 		AppDetailsModule.class,

@@ -23,6 +23,7 @@ import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothManager;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CameraManager;
@@ -33,7 +34,6 @@ import android.net.wifi.WifiManager;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
-import android.text.ClipboardManager;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -65,7 +65,7 @@ public interface _SystemServices {
 
 	ServiceType<ActivityManager> ActivityService = new ServiceType<>(Context.ACTIVITY_SERVICE);
 
-	ServiceType<ClipboardManager> ClipboardService_Pre_11 = new ServiceType<>(Context.CLIPBOARD_SERVICE);
+	ServiceType<ClipboardManager> ClipboardService = new ServiceType<>(Context.CLIPBOARD_SERVICE);
 
 	ServiceType<PowerManager> PowerService = new ServiceType<>(Context.POWER_SERVICE);
 

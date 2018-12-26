@@ -18,132 +18,54 @@
 
 package com.nu.art.cyborg.clipboard;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ClipboardManager.OnPrimaryClipChangedListener;
-import android.content.Context;
-import android.os.Handler;
 
+import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.modules.ThreadsModule;
-import com.nu.art.core.generics.Processor;
 
 @ModuleDescriptor(usesPermissions = {})
 public class ClipboardModule
-	extends CyborgModule {
+	extends CyborgModule
+	implements OnPrimaryClipChangedListener {
 
 	public interface OnClipboardChangedListener {
 
 		void onClipboardChanged(String oldText, String newText);
 	}
 
-	private abstract class BaseClipboard<Clipboard> {
-
-		protected abstract void setText(String label, String text);
-
-		protected abstract String getText();
-
-		Clipboard clipboard;
-
-		BaseClipboard(ServiceType<Clipboard> serviceType) {
-			super();
-			clipboard = getSystemService(serviceType);
-			oldText = getText();
-		}
-
-		protected abstract boolean hasText();
-	}
-
-	@SuppressWarnings("deprecation")
-	private class Pre11_Clipboard
-		extends BaseClipboard<android.text.ClipboardManager>
-		implements Runnable {
-
-		private Handler handler;
-
-		private Pre11_Clipboard() {
-			super(ClipboardService_Pre_11);
-			handler = getModule(ThreadsModule.class).getDefaultHandler("Clipboard Query Thread");
-			run();
-		}
-
-		@Override
-		public void setText(String label, String text) {
-			super.clipboard.setText(text);
-		}
-
-		@Override
-		public String getText() {
-			CharSequence text = super.clipboard.getText();
-			return text != null ? text.toString() : null;
-		}
-
-		@Override
-		protected boolean hasText() {
-			return super.clipboard.hasText();
-		}
-
-		@Override
-		public void run() {
-			String newText = getText();
-			if (newText != null && !newText.equals(oldText)) {
-				dispatchTextChangedEvent(newText);
-			}
-			handler.postDelayed(this, 500);
-		}
-	}
-
-	private class Post11_Clipboard
-		extends BaseClipboard<android.content.ClipboardManager>
-		implements OnPrimaryClipChangedListener {
-
-		private Post11_Clipboard() {
-			super(new ServiceType<android.content.ClipboardManager>(Context.CLIPBOARD_SERVICE));
-			super.clipboard.addPrimaryClipChangedListener(this);
-		}
-
-		@Override
-		public void setText(String label, String text) {
-			clipboard.setText(text);
-		}
-
-		@Override
-		public String getText() {
-			if (!clipboard.hasPrimaryClip())
-				return null;
-			CharSequence text = super.clipboard.getText();
-			return text != null ? text.toString() : null;
-		}
-
-		@Override
-		protected boolean hasText() {
-			return super.clipboard.hasPrimaryClip();
-		}
-
-		@Override
-		public void onPrimaryClipChanged() {
-			String newText = getText();
-			if (newText != null && !newText.equals(oldText)) {
-				dispatchTextChangedEvent(newText);
-			}
-		}
-	}
-
 	private String oldText;
-
-	@SuppressWarnings( {
-		                   "unused",
-		                   "FieldCanBeLocal"
-	                   })
-	private BaseClipboard<?> clipboard;
+	private ClipboardManager clipboard;
 
 	@Override
 	protected void init() {
-		int sdk = android.os.Build.VERSION.SDK_INT;
-		if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-			clipboard = new Pre11_Clipboard();
-		} else {
-			clipboard = new Post11_Clipboard();
+		clipboard = getSystemService(ClipboardService);
+		clipboard.addPrimaryClipChangedListener(this);
+	}
+
+	public void onPrimaryClipChanged() {
+		String newText = getText();
+		if (newText != null && !newText.equals(oldText)) {
+			dispatchTextChangedEvent(newText);
 		}
+	}
+
+	public String getText() {
+		if (!clipboard.hasPrimaryClip())
+			return null;
+
+		CharSequence text = clipboard.getText();
+		return text != null ? text.toString() : null;
+	}
+
+	public void copyToClipboard(String text) {
+		copyToClipboard(null, text);
+	}
+
+	public void copyToClipboard(String label, String text) {
+		clipboard.setPrimaryClip(ClipData.newPlainText(label, text));
 	}
 
 	private void dispatchTextChangedEvent(final String newText) {
