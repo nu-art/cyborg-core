@@ -517,7 +517,7 @@ public class CyborgActivityBridgeImpl
 	                                               String message,
 	                                               final Class<ListenerType> listenerType,
 	                                               final Processor<ListenerType> processor) {
-		if (originator != null)
+		if (originator != null && message != null && message.length() > 0)
 			originator.logInfo("Dispatching UI Event: " + message);
 
 		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event (" + Thread.currentThread().getName() + "): " + message);
