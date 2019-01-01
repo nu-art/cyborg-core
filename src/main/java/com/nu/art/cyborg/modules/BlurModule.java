@@ -19,6 +19,9 @@
 package com.nu.art.cyborg.modules;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
@@ -26,8 +29,6 @@ import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.utils.PoolQueue;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
-
-import java.lang.ref.WeakReference;
 
 public class BlurModule
 	extends CyborgModule {
@@ -65,19 +66,19 @@ public class BlurModule
 	@SuppressWarnings("WeakerAccess")
 	public final class BlurBuilder {
 
-		private WeakReference<Processor<Bitmap>> onSuccess;
-		private WeakReference<Getter<Bitmap>> bitmapResolver;
+		private Processor<Bitmap> onSuccess;
+		private Getter<Bitmap> bitmapResolver;
 		private Cacheable cacheable;
 		private String name;
-		private int radius = 20;
+		private int radius = 12;
 
 		public BlurBuilder setBitmapResolver(Getter<Bitmap> bitmapResolver) {
-			this.bitmapResolver = new WeakReference<>(bitmapResolver);
+			this.bitmapResolver = bitmapResolver;
 			return this;
 		}
 
 		public BlurBuilder setOnSuccess(Processor<Bitmap> onSuccess) {
-			this.onSuccess = new WeakReference<>(onSuccess);
+			this.onSuccess = onSuccess;
 			return this;
 		}
 
@@ -119,7 +120,7 @@ public class BlurModule
 			throw new BadImplementationException("MUST not call this method on the UI Thread!");
 
 		long started = System.currentTimeMillis();
-		Getter<Bitmap> bitmapGetter = blurBuilder.bitmapResolver.get();
+		Getter<Bitmap> bitmapGetter = blurBuilder.bitmapResolver;
 		if (bitmapGetter == null) {
 			logWarning("blur ignored.. bitmapGetter is not set or was GC");
 			return;
@@ -127,15 +128,15 @@ public class BlurModule
 
 		logDebug("+---- starting blur " + blurBuilder.name);
 		Bitmap bitmap = bitmapGetter.get();
-		blurImpl(bitmap, blurBuilder.radius);
-		Processor<Bitmap> bitmapProcessor = blurBuilder.onSuccess.get();
+		Bitmap blurred = blurImpl(bitmap, blurBuilder.radius);
+		Processor<Bitmap> bitmapProcessor = blurBuilder.onSuccess;
 		if (bitmapProcessor != null)
-			bitmapProcessor.process(bitmap);
+			bitmapProcessor.process(blurred);
 
 		logInfo("+---- blur took: " + (System.currentTimeMillis() - started) + "ms");
 	}
 
-	private void blurImpl(Bitmap bitmap, int radius) {
+	private Bitmap blurImpl(Bitmap bitmap, int radius) {
 		// Stack Blur v1.0 from
 		// http://www.quasimondo.com/StackBlurForCanvas/StackBlurDemo.html
 		//
@@ -163,16 +164,25 @@ public class BlurModule
 		// the following line:
 		//
 		// Stack Blur Algorithm by Mario Klingemann <mario@quasimondo.com>
+		float height = bitmap.getHeight() * 1f;
+		float width = bitmap.getWidth() * 1f;
+		Bitmap target = Bitmap.createBitmap((int) width, (int) height, Config.ARGB_8888);
+		Rect dst = new Rect(0, 0, (int) (width), (int) (height));
+		Rect originRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
 
-		int w = bitmap.getWidth();
-		int h = bitmap.getHeight();
+		Canvas c = new Canvas(target);
+
+		c.drawBitmap(bitmap, originRect, dst, null);
+
+		int w = target.getWidth();
+		int h = target.getHeight();
 		int wm = w - 1;
 		int hm = h - 1;
 		int wh = w * h;
 		int div = radius + radius + 1;
 
 		int[] pix = new int[wh];
-		bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+		target.getPixels(pix, 0, w, 0, 0, w, h);
 
 		int r[] = new int[wh];
 		int g[] = new int[wh];
@@ -182,34 +192,27 @@ public class BlurModule
 
 		int divsum = (div + 1) >> 1;
 		divsum *= divsum;
-
 		int dv[] = new int[256 * divsum];
 		for (i = 0; i < 256 * divsum; i++)
+
+		{
 			dv[i] = (i / divsum);
+		}
 
 		yw = yi = 0;
 
 		int[][] stack = new int[div][3];
 		int stackpointer;
 		int stackstart;
+		int[] sir;
 		int rbs;
 		int r1 = radius + 1;
 		int routsum, goutsum, boutsum;
 		int rinsum, ginsum, binsum;
 
-		logDebug("+-- radius: " + radius);
-		logDebug("+-- bitmap (w, h): (" + w + ", " + h + ")");
-		logDebug("+-- image footprint: " + (pix.length + r.length + g.length + b.length) + " * int");
-		logDebug("+-- pix: " + pix.length);
-		logDebug("+-- r: " + r.length);
-		logDebug("+-- g: " + g.length);
-		logDebug("+-- b: " + b.length);
-		logDebug("+-- vmin: " + vmin.length);
-		logDebug("+-- dv: " + dv.length);
-		logDebug("+-- stack: " + stack.length + " * 3");
+		for (y = 0; y < h; y++)
 
-		int[] sir; // assigned, not allocated!!
-		for (y = 0; y < h; y++) {
+		{
 			rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
 			for (i = -radius; i <= radius; i++) {
 				p = pix[yi + Math.min(wm, Math.max(i, 0))];
@@ -283,7 +286,9 @@ public class BlurModule
 			yw += w;
 		}
 
-		for (x = 0; x < w; x++) {
+		for (x = 0; x < w; x++)
+
+		{
 			rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
 			yp = -radius * w;
 			for (i = -radius; i <= radius; i++) {
@@ -315,7 +320,6 @@ public class BlurModule
 					yp += w;
 				}
 			}
-
 			yi = x;
 			stackpointer = radius;
 			for (y = 0; y < h; y++) {
@@ -365,9 +369,7 @@ public class BlurModule
 			}
 		}
 
-		if (!bitmap.isMutable())
-			bitmap = bitmap.copy(bitmap.getConfig(), true);
-
-		bitmap.setPixels(pix, 0, w, 0, 0, w, h);
+		target.setPixels(pix, 0, w, 0, 0, w, h);
+		return target;
 	}
 }
