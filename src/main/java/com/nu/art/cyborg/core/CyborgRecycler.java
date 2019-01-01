@@ -21,11 +21,14 @@ package com.nu.art.cyborg.core;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.nu.art.cyborg.R;
@@ -93,6 +96,25 @@ public class CyborgRecycler
 		}
 
 		@Override
+		public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+			final LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
+
+				@Override
+				public PointF computeScrollVectorForPosition(int targetPosition) {
+					return super.computeScrollVectorForPosition(targetPosition);
+				}
+
+				@Override
+				protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+					return 1f * scrollInchMs / displayMetrics.densityDpi;
+				}
+			};
+
+			linearSmoothScroller.setTargetPosition(position);
+			startSmoothScroll(linearSmoothScroller);
+		}
+
+		@Override
 		public boolean supportsPredictiveItemAnimations() {
 			Adapter adapter = getAdapter();
 			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super.supportsPredictiveItemAnimations();
@@ -121,6 +143,9 @@ public class CyborgRecycler
 
 	@Restorable
 	private int horizontalSpacing = 2;
+
+	@Restorable
+	private int scrollInchMs = 25;
 
 	public CyborgRecycler(Context context) {
 		this(context, null);
@@ -254,6 +279,10 @@ public class CyborgRecycler
 		this.verticalSpacing = verticalSpacing;
 	}
 
+	public void setScrollInchMs(int scrollInchMs) {
+		this.scrollInchMs = scrollInchMs;
+	}
+
 	public void setHorizontalSpacing(int horizontalSpacing) {
 		this.horizontalSpacing = horizontalSpacing;
 	}
@@ -273,6 +302,7 @@ public class CyborgRecycler
 			R.styleable.Recycler_orientation,
 			R.styleable.Recycler_horizontalSpacing,
 			R.styleable.Recycler_verticalSpacing,
+			R.styleable.Recycler_scrollInchMs,
 			R.styleable.Recycler_landscapeColumnsCount,
 			R.styleable.Recycler_portraitColumnsCount
 		};
@@ -291,6 +321,11 @@ public class CyborgRecycler
 			if (attr == R.styleable.Recycler_horizontalSpacing) {
 				int horizontalSpacing = a.getDimensionPixelSize(attr, 0);
 				instance.setHorizontalSpacing(horizontalSpacing);
+				return;
+			}
+			if (attr == R.styleable.Recycler_scrollInchMs) {
+				int scrollInchMs = a.getInt(attr, 25);
+				instance.setScrollInchMs(scrollInchMs);
 				return;
 			}
 			if (attr == R.styleable.Recycler_verticalSpacing) {

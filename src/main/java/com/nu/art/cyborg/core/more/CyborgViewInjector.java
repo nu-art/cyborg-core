@@ -161,7 +161,8 @@ public final class CyborgViewInjector
 			throw ExceptionGenerator.developerSetViewIdOfIncompatibleViewForController(viewField);
 
 		CyborgController controller = ((CyborgView) view).getController();
-		controller.setVisibility(forDev ? View.GONE : View.VISIBLE);
+		if (controller.getVisibility() != View.GONE)
+			controller.setVisibility(forDev ? View.GONE : View.VISIBLE);
 
 		return controller;
 	}

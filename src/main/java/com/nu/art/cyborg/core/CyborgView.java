@@ -193,6 +193,11 @@ public class CyborgView
 		return null;
 	}
 
+	@Override
+	public void setVisibility(int visibility) {
+		super.setVisibility(visibility);
+	}
+
 	final void setController(CyborgController controller) {
 		this.controller = controller;
 	}
