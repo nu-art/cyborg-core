@@ -20,8 +20,11 @@ package com.nu.art.cyborg.core;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +39,7 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
+import com.nu.art.cyborg.core.dataModels.ListDataModel;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
@@ -407,13 +411,13 @@ public class CyborgAdapter<Item>
 		}
 	}
 
-	private class CyborgDefaultHolder
+	private static class CyborgDefaultHolder<T>
 		extends ViewHolder
 		implements PositionResolver {
 
-		private ItemRenderer<? extends Item> renderer;
+		private ItemRenderer<? extends T> renderer;
 
-		public CyborgDefaultHolder(ItemRenderer<? extends Item> renderer) {
+		public CyborgDefaultHolder(ItemRenderer<? extends T> renderer) {
 			super(renderer.getRootView());
 			this.renderer = renderer;
 			this.renderer.setPositionResolver(this);
@@ -514,5 +518,51 @@ public class CyborgAdapter<Item>
 	public interface PositionResolver {
 
 		int getItemPosition();
+	}
+
+	public static class TouchHelper
+		extends SimpleCallback {
+
+		private final ItemTouchHelper helper;
+
+		public TouchHelper(int dragDirs, int swipeDirs) {
+			super(dragDirs, swipeDirs);
+			helper = new ItemTouchHelper(this);
+		}
+
+		public TouchHelper() {
+			this(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
+		}
+
+		public <T extends ItemRenderer> T getRendererFromHolder(ViewHolder viewHolder) {
+			return (T) ((CyborgDefaultHolder) viewHolder).renderer;
+		}
+
+		@Override
+		public boolean onMove(RecyclerView recyclerView, ViewHolder viewHolder, ViewHolder target) {
+			return true;
+		}
+
+		@Override
+		public void onSwiped(ViewHolder viewHolder, int direction) {
+		}
+
+		@Override
+		public boolean isLongPressDragEnabled() {
+			return false;
+		}
+
+		@Override
+		public boolean isItemViewSwipeEnabled() {
+			return false;
+		}
+
+		public final void attachToRecyclerView(RecyclerView recyclerView) {
+			helper.attachToRecyclerView(recyclerView);
+		}
+
+		public final void startDrag(ViewHolder holder) {
+			helper.startDrag(holder);
+		}
 	}
 }

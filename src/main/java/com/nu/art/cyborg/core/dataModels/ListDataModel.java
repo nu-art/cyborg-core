@@ -21,6 +21,7 @@ package com.nu.art.cyborg.core.dataModels;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,6 +62,10 @@ public class ListDataModel<Item>
 		//		if (adapter != null)
 		//			adapter.onItemRangeInserted(size, items.size());
 
+	}
+	public void swapItemsByPosition(int fromPosition, int toPosition) {
+		Collections.swap(items, fromPosition, toPosition);
+		notifyItemMoved(fromPosition, toPosition);
 	}
 
 	public final void removeItems(int index) {
