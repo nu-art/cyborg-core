@@ -85,14 +85,6 @@ public final class CyborgStackController
 
 	private RelativeLayout containerLayout;
 
-	private Class<? extends CyborgController> rootControllerType;
-
-	private int rootLayoutId = -1;
-
-	private boolean rootSaveState = false;
-
-	private String rootTag;
-
 	private int transitionDuration = 300;
 
 	private boolean animatingTransition;
@@ -107,24 +99,18 @@ public final class CyborgStackController
 
 	private boolean focused = true;
 
+	private StackLayerBuilder rootLayerBuilder;
+
 	private CyborgStackController() {
 		super(-1);
 	}
 
-	final void setRootSaveState(boolean rootSaveState) {
-		this.rootSaveState = rootSaveState;
-	}
-
-	final void setRootControllerType(Class<? extends CyborgController> rootControllerType) {
-		this.rootControllerType = rootControllerType;
-	}
-
-	final void setRootTag(String rootTag) {
-		this.rootTag = rootTag;
-	}
-
-	final void setRootLayoutId(int rootLayoutId) {
-		this.rootLayoutId = rootLayoutId;
+	final StackLayerBuilder getRootLayerBuilder() {
+		if (rootLayerBuilder == null) {
+			rootLayerBuilder = createLayerBuilder();
+			rootLayerBuilder.fromXml = true;
+		}
+		return rootLayerBuilder;
 	}
 
 	final void setPopOnBackPress(boolean popOnBackPress) {
@@ -144,23 +130,11 @@ public final class CyborgStackController
 	}
 
 	private void assignRootController() {
-		if (rootLayoutId == -1 && rootControllerType == null)
+		if (rootLayerBuilder == null)
 			return;
 
-		StackLayerBuilder layerBuilder = createLayerBuilder();
-		if (rootLayoutId != -1)
-			layerBuilder.setLayoutId(rootLayoutId);
-
-		if (rootTag != null)
-			layerBuilder.setRefKey(rootTag);
-
-		if (rootControllerType != null)
-			layerBuilder.setControllerType(rootControllerType);
-
-		layerBuilder.setSaveState(rootSaveState);
-		layerBuilder.fromXml = true;
 		withRoot = true;
-		layerBuilder.build();
+		rootLayerBuilder.build();
 	}
 
 	@Override
@@ -193,6 +167,12 @@ public final class CyborgStackController
 		controller.handleAttributes(context, attrs);
 	}
 
+	@SuppressWarnings( {
+		                   "WeakerAccess",
+		                   "UnusedReturnValue"
+		                   ,
+		                   "unused"
+	                   })
 	public abstract class StackLayer {
 
 		private StackTransitionAnimator[] stackTransitionAnimator;
@@ -247,6 +227,9 @@ public final class CyborgStackController
 		}
 
 		public final StackLayer setRefKey(String refKey) {
+			if (refKey == null && this.refKey != null)
+				return this;
+
 			this.refKey = refKey;
 			return this;
 		}

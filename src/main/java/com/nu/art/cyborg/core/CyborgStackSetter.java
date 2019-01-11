@@ -33,22 +33,16 @@ import com.nu.art.reflection.annotations.ReflectiveInitialization;
 public class CyborgStackSetter
 	extends AttributesSetter<CyborgStackController> {
 
-	private static int[] ids = {//
+	private static int[] ids = {
 		R.styleable.StackController_transition,
-		//
 		R.styleable.StackController_transitionOrientation,
-		//
 		R.styleable.StackController_transitionDuration,
-		//
 		R.styleable.StackController_popOnBackPress,
-		//
 		R.styleable.StackController_rootLayoutId,
-		//
 		R.styleable.StackController_rootSaveState,
-		//
 		R.styleable.StackController_rootController,
-		//
-		R.styleable.StackController_rootTag
+		R.styleable.StackController_rootTag,
+		R.styleable.StackController_rootKeep,
 	};
 
 	private CyborgStackSetter() {
@@ -83,13 +77,16 @@ public class CyborgStackSetter
 
 		if (attr == R.styleable.StackController_rootSaveState) {
 			boolean saveState = a.getBoolean(attr, true);
-			instance.setRootSaveState(saveState);
+			instance.getRootLayerBuilder().setSaveState(saveState);
 			return;
 		}
 
 		if (attr == R.styleable.StackController_rootLayoutId) {
 			int layoutId = a.getResourceId(attr, -1);
-			instance.setRootLayoutId(layoutId);
+			if (layoutId == -1)
+				return;
+
+			instance.getRootLayerBuilder().setLayoutId(layoutId);
 			return;
 		}
 
@@ -99,13 +96,20 @@ public class CyborgStackSetter
 				return;
 
 			Class<? extends CyborgController> rootControllerType = resolveClassType(CyborgController.class, controllerName);
-			instance.setRootControllerType(rootControllerType);
+			instance.getRootLayerBuilder().setControllerType(rootControllerType);
+
+			return;
+		}
+
+		if (attr == R.styleable.StackController_rootKeep) {
+			boolean keepRoot = a.getBoolean(attr, true);
+			instance.getRootLayerBuilder().setKeepInStack(keepRoot);
 			return;
 		}
 
 		if (attr == R.styleable.StackController_rootTag) {
 			String rootTag = a.getString(attr);
-			instance.setRootTag(rootTag);
+			instance.getRootLayerBuilder().setRefKey(rootTag);
 			return;
 		}
 
