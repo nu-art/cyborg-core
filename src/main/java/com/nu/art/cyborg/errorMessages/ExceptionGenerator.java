@@ -54,6 +54,13 @@ public class ExceptionGenerator {
 		return new BadImplementationException(errorMessage);
 	}
 
+	public static BadImplementationException developerHaveSetViewIdsButMemberIsNotAnArray(Field viewField) {
+		String fieldName = viewField.getName();
+		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
+		String errorMessage = "Your annotation declares multiple views, but your member is NOT an array of Views!!\n Member: '" + fieldName + "' in class: '" + classSimpleName + "'";
+		return new BadImplementationException(errorMessage);
+	}
+
 	public static BadImplementationException developerDidNotSetViewIdForViewInjector(Field viewField) {
 		String fieldName = viewField.getName();
 		String classSimpleName = viewField.getDeclaringClass().getSimpleName();

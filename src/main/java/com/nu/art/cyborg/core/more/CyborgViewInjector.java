@@ -92,6 +92,9 @@ public final class CyborgViewInjector
 		if (!fieldType.isArray()) {
 			int parentViewId = viewIdentifier.parentViewId();
 			int viewId = viewIdentifier.viewId();
+			if (viewIdentifier.viewIds().length > 0)
+				throw ExceptionGenerator.developerHaveSetViewIdsButMemberIsNotAnArray(viewField);
+
 			if (viewId == -1 && fieldValue == null)
 				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
 
