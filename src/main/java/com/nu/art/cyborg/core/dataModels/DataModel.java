@@ -72,7 +72,7 @@ public abstract class DataModel<Item> {
 		return 0;
 	}
 
-	abstract int getRealItemsCount();
+	public abstract int getRealItemsCount();
 
 	public abstract int getPositionForItem(Item item);
 
