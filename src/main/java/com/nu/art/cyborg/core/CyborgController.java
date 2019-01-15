@@ -679,7 +679,7 @@ public abstract class CyborgController
 		injectMembers();
 	}
 
-	protected final StackLayerBuilder createNewLayerBuilder() {
+	protected StackLayerBuilder createLayerBuilder() {
 		return getStack().createLayerBuilder();
 	}
 
