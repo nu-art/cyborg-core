@@ -162,8 +162,16 @@ public class CyborgAdapter<Item>
 		return dataModel.getItemTypeByPosition(position);
 	}
 
-	private Item getItemForPosition(int position) {
+	public Item getItemForPosition(int position) {
 		return dataModel.getItemForPosition(position);
+	}
+
+	public int getPositionForItem(Item item) {
+		return dataModel.getPositionForItem(item);
+	}
+
+	public int getRealItemsCount(Item item) {
+		return dataModel.getRealItemsCount();
 	}
 
 	public CyborgRecyclerAdapter getRecyclerAdapter(CyborgRecycler cyborgRecycler) {

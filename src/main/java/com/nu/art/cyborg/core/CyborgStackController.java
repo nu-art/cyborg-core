@@ -133,6 +133,9 @@ public class CyborgStackController
 		if (rootLayerBuilder == null)
 			return;
 
+		if (rootLayerBuilder.controllerType == null && rootLayerBuilder.layoutId == -1)
+			return;
+
 		withRoot = true;
 		rootLayerBuilder.build();
 	}

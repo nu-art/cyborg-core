@@ -53,7 +53,7 @@ import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemLongClickListener;
  */
 public interface UserActionsDelegator
 	extends OnClickListener, OnTouchListener, OnLongClickListener, OnSeekBarChangeListener, OnRecyclerItemClickListener, OnRecyclerItemLongClickListener,
-	        OnItemSelectedListener, OnItemClickListener, OnItemLongClickListener, OnRatingBarChangeListener, OnPageChangeListener, OnMenuItemClickListener,
+	        OnItemSelectedListener, OnRatingBarChangeListener, OnPageChangeListener, OnMenuItemClickListener,
 	        OnEditorActionListener, OnFocusChangeListener, OnKeyListener, OnTextChangedListener {
 
 	boolean onKeyShortcut(int keyCode, KeyEvent event);
@@ -90,12 +90,6 @@ public interface UserActionsDelegator
 
 	@Override
 	void onStopTrackingTouch(SeekBar seekBar);
-
-	@Override
-	void onItemClick(AdapterView<?> parentView, View clickedView, int position, long id);
-
-	@Override
-	boolean onItemLongClick(AdapterView<?> parentView, View clickedView, int position, long id);
 
 	@Override
 	void onItemSelected(AdapterView<?> parentView, View selectedView, int position, long id);
