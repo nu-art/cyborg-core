@@ -59,7 +59,7 @@ import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 /**
  * Created by TacB0sS on 25-Jun 2015.
  */
-public final class CyborgStackController
+public class CyborgStackController
 	extends CyborgController {
 
 	public static abstract class StackTransitionAnimator {
