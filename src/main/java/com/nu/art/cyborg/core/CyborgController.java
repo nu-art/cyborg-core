@@ -739,7 +739,7 @@ public abstract class CyborgController
 		return adapter;
 	}
 
-	protected final StackLayerBuilder createNewLayerBuilder() {
+	protected StackLayerBuilder createLayerBuilder() {
 		return getStack().createLayerBuilder();
 	}
 

@@ -60,7 +60,7 @@ import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 /**
  * Created by TacB0sS on 25-Jun 2015.
  */
-public final class CyborgStackController
+public class CyborgStackController
 	extends CyborgController {
 
 	public static abstract class StackTransitionAnimator {
@@ -102,7 +102,7 @@ public final class CyborgStackController
 
 	private StackLayerBuilder rootLayerBuilder;
 
-	private CyborgStackController() {
+	protected CyborgStackController() {
 		super(-1);
 	}
 
@@ -847,6 +847,7 @@ public final class CyborgStackController
 		while ((topLayer = getTopLayer(true)) != null) {
 			topLayer.detachView();
 		}
+		layersStack.clear();
 	}
 
 	@Override
