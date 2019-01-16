@@ -22,8 +22,8 @@ import com.nu.art.core.GenericListener;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.tools.StreamTools;
 import com.nu.art.core.utils.RunnableQueue;
-import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.tools.CryptoTools;
+import com.nu.art.modular.core.Module;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,12 +31,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by tacb0ss on 14/06/2017.
  */
+@SuppressWarnings("unused")
 public class CacheModule
-	extends CyborgModule {
+	extends Module {
 
 	public class Cacheable {
 
@@ -49,6 +52,11 @@ public class CacheModule
 		private long interval;
 
 		private boolean must = true;
+
+		@Override
+		public String toString() {
+			return key + "<>" + getLocalCacheFile().getAbsolutePath();
+		}
 
 		/**
 		 * @param key The key that would be used to identify the cached item, can be any unique string you want.
@@ -101,7 +109,7 @@ public class CacheModule
 		/**
 		 * Whether this item MUST be cached or can we live on with it not being cached.
 		 *
-		 * @param must Must this item be cahced
+		 * @param must Must this item be cached
 		 *
 		 * @return The instance {@link Cacheable} you currently edit
 		 */
@@ -138,14 +146,10 @@ public class CacheModule
 		 * Cache the item on the calling thread.
 		 *
 		 * @param inputStream the input stream to cache.
-		 *
-		 * @return whether or not the item was cached, and you can still try to recover the stream.
-		 *
-		 * @throws IOException if the item must be cached, and you cannot recover from an error.
+		 * @param listener    callback to notify caching completion
 		 */
-		public void cacheSync(InputStream inputStream)
-			throws IOException {
-			CacheModule.this.cacheSync(this, inputStream);
+		public void cacheSync(InputStream inputStream, CacheListener listener) {
+			CacheModule.this.cacheSync(this, inputStream, listener);
 		}
 
 		public void load(GenericListener<InputStream> listener) {
@@ -168,24 +172,32 @@ public class CacheModule
 
 	public interface CacheListener {
 
-		void onItemCacheError(Cacheable key, Exception e);
+		void onItemCacheError(Cacheable cacheable, Throwable e);
 
-		void onItemCacheCompleted(Cacheable key);
+		void onItemCacheCompleted(Cacheable cacheable);
 	}
 
 	private RunnableQueue cacheQueue = new RunnableQueue();
 
-	private File filesDir;
+	private File persistentDir;
 
 	private File cacheDir;
 
 	private int threadCount = 5;
 
+	private final HashMap<String, ArrayList<CacheListener>> currentlyCaching = new HashMap<>();
+
 	@Override
 	protected void init() {
-		filesDir = getApplicationContext().getFilesDir();
-		cacheDir = getApplicationContext().getCacheDir();
 		cacheQueue.createThreads("Caching Thread", threadCount);
+	}
+
+	public void setPersistentDir(File persistentDir) {
+		this.persistentDir = persistentDir;
+	}
+
+	public void setCacheDir(File cacheDir) {
+		this.cacheDir = cacheDir;
 	}
 
 	public void setThreadCount(int threadCount) {
@@ -195,17 +207,20 @@ public class CacheModule
 	private boolean isCached(Cacheable cacheable) {
 		File file = getFile(cacheable);
 		if (!file.exists()) {
-//			logVerbose("File does not exist: " + file.getAbsolutePath());
+			if (DebugFlag.isEnabled())
+				logVerbose("File does not exist: " + file.getAbsolutePath());
 			return false;
 		}
 
 		if (!file.isFile()) {
-//			logVerbose("Not a file: " + file.getAbsolutePath());
+			if (DebugFlag.isEnabled())
+				logVerbose("Not a file: " + file.getAbsolutePath());
 			return false;
 		}
 
 		if (file.length() == 0) {
-//			logVerbose("File empty: " + file.getAbsolutePath());
+			if (DebugFlag.isEnabled())
+				logVerbose("File empty: " + file.getAbsolutePath());
 			return false;
 		}
 
@@ -213,8 +228,9 @@ public class CacheModule
 			return true;
 
 		boolean isValidCacheInterval = System.currentTimeMillis() - file.lastModified() < cacheable.interval;
-//		if (!isValidCacheInterval)
-//			logVerbose("cacheTimeout: " + file.getAbsolutePath());
+		if (!isValidCacheInterval)
+			if (DebugFlag.isEnabled())
+				logVerbose("cacheTimeout: " + file.getAbsolutePath());
 
 		return isValidCacheInterval;
 	}
@@ -224,7 +240,7 @@ public class CacheModule
 		if (cacheable.pathToDir != null)
 			dir = new File(cacheable.pathToDir);
 		else
-			dir = cacheable.interval > 0 ? filesDir : cacheDir;
+			dir = cacheable.interval > 0 ? persistentDir : cacheDir;
 
 		String fileName;
 		try {
@@ -236,28 +252,74 @@ public class CacheModule
 	}
 
 	private void cacheAsync(final Cacheable cacheable, final InputStream inputStream, final CacheListener listener) {
+		if (DebugFlag.isEnabled())
+			logDebug("Added Cacheable to queue: " + cacheable.getLocalCacheFile().getAbsolutePath());
 		cacheQueue.addItem(new Runnable() {
 
 			@Override
 			public void run() {
-				try {
-					cacheSync(cacheable, inputStream);
-					listener.onItemCacheCompleted(cacheable);
-				} catch (final IOException e) {
-					listener.onItemCacheError(cacheable, e);
-				}
+				cacheSync(cacheable, inputStream, listener);
 			}
 		});
 	}
 
-	private void cacheSync(Cacheable cacheable, InputStream inputStream)
+	private void cacheSync(Cacheable cacheable, InputStream inputStream, CacheListener listener) {
+		String absolutePath = cacheable.getLocalCacheFile().getAbsolutePath();
+		try {
+			synchronized (currentlyCaching) {
+				if (DebugFlag.isEnabled())
+					logDebug("Register Cacheable Listener: " + cacheable.getLocalCacheFile().getAbsolutePath());
+
+				ArrayList<CacheListener> cacheListeners = currentlyCaching.get(absolutePath);
+				if (cacheListeners != null) {
+					cacheListeners.add(listener);
+					return;
+				}
+
+				currentlyCaching.put(absolutePath, cacheListeners = new ArrayList<>());
+				cacheListeners.add(listener);
+			}
+
+			cacheSyncImpl(cacheable, inputStream);
+
+			synchronized (currentlyCaching) {
+				if (DebugFlag.isEnabled())
+					logDebug("Firing Cacheable Cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
+
+				ArrayList<CacheListener> listeners = currentlyCaching.get(absolutePath);
+				for (CacheListener cacheListener : listeners) {
+					cacheListener.onItemCacheCompleted(cacheable);
+				}
+			}
+		} catch (final Throwable e) {
+			synchronized (currentlyCaching) {
+				if (DebugFlag.isEnabled())
+					logDebug("Firing Cacheable Error: " + cacheable.getLocalCacheFile().getAbsolutePath());
+				ArrayList<CacheListener> listeners = currentlyCaching.get(absolutePath);
+				for (CacheListener cacheListener : listeners) {
+					cacheListener.onItemCacheError(cacheable, e);
+				}
+			}
+		}
+
+		synchronized (currentlyCaching) {
+			if (DebugFlag.isEnabled())
+				logDebug("Remove Cacheable Listeners: " + cacheable.getLocalCacheFile().getAbsolutePath());
+			currentlyCaching.remove(absolutePath);
+		}
+	}
+
+	private void cacheSyncImpl(Cacheable cacheable, InputStream inputStream)
 		throws IOException {
 		File file = getFile(cacheable);
 		File tempFile = new File(file.getParentFile(), "_" + file.getName());
-		logInfo("Started caching... to: " + tempFile.getAbsolutePath());
+		if (DebugFlag.isEnabled())
+			logDebug("Started caching to: " + tempFile.getAbsolutePath());
 
 		try {
 			// save the stream into a local temp file.
+			if (DebugFlag.isEnabled())
+				logDebug("Deleting temp cache file: " + tempFile.getAbsolutePath());
 			FileTools.delete(tempFile);
 			FileTools.createNewFile(tempFile);
 		} catch (IOException e) {
@@ -272,7 +334,8 @@ public class CacheModule
 			// Rename the file to the final expected name.
 			FileTools.delete(file);
 			FileTools.renameFile(tempFile, file);
-			logInfo("Caching completed to: " + file.getAbsolutePath());
+			if (DebugFlag.isEnabled())
+				logDebug("Caching completed to: " + file.getAbsolutePath());
 		} catch (IOException e) {
 			logError("Error caching stream... ", e);
 
@@ -282,7 +345,8 @@ public class CacheModule
 			} catch (IOException e1) {
 				logError("Error deleting cache file!", e1);
 			}
-			throw e;
+
+			throw new UnableToCacheException("Error Caching cacheable: " + cacheable.key + " => " + tempFile.getAbsolutePath(), e);
 		}
 	}
 
@@ -303,6 +367,8 @@ public class CacheModule
 					listener.onSuccess(fis);
 				} catch (FileNotFoundException e) {
 					listener.onError(e);
+				} catch (Throwable e) {
+					listener.onError(new RuntimeException("Error loading image from cache: " + cacheable.getLocalCacheFile().getAbsolutePath(), e));
 				} finally {
 					try {
 						if (fis != null)
@@ -318,16 +384,12 @@ public class CacheModule
 	public static class UnableToCacheException
 		extends IOException {
 
-		public UnableToCacheException(String message) {
+		UnableToCacheException(String message) {
 			super(message);
 		}
 
-		public UnableToCacheException(String message, Throwable cause) {
+		UnableToCacheException(String message, Throwable cause) {
 			super(message, cause);
-		}
-
-		public UnableToCacheException(Throwable cause) {
-			super(cause);
 		}
 	}
 }

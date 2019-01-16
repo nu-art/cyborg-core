@@ -29,6 +29,7 @@ import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.CacheModule;
+import com.nu.art.cyborg.modules.CacheModule.CacheListener;
 import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.CacheModule.UnableToCacheException;
 
@@ -104,20 +105,42 @@ public class GenericDownloaderModule
 		private final GenericListener<InputStream> downloadListener = new GenericListener<InputStream>() {
 
 			@Override
-			public void onSuccess(InputStream inputStream) {
+			public void onSuccess(final InputStream inputStream) {
 				if (cacheable == null) {
 					handleResponse(inputStream);
 					return;
 				}
 
-				try {
-					cacheable.cacheSync(inputStream);
-					loadFromCache();
-				} catch (UnableToCacheException e) {
-					logWarning("COULD NOT CACHE... ", e);
-					handleResponse(inputStream);
-				} catch (IOException e) {
-					onError(e);
+				final Object syncHack = new Object();
+				cacheable.cacheAsync(inputStream, new CacheListener() {
+					@Override
+					public void onItemCacheError(Cacheable key, Throwable e) {
+						logWarning("COULD NOT CACHE... ", e);
+						if (e instanceof UnableToCacheException)
+							handleResponse(inputStream);
+						else if (e instanceof IOException)
+							onError(e);
+
+						synchronized (syncHack) {
+							syncHack.notify();
+						}
+					}
+
+					@Override
+					public void onItemCacheCompleted(Cacheable key) {
+						synchronized (syncHack) {
+							syncHack.notify();
+						}
+						loadFromCache();
+					}
+				});
+
+				synchronized (syncHack) {
+					try {
+						syncHack.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 
@@ -238,7 +261,6 @@ public class GenericDownloaderModule
 			}
 
 			logDebug("Not cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
-
 
 			if (url.startsWith("android.resource://") || url.startsWith("content://")) {
 				loadFromResources(downloadListener);

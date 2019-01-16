@@ -62,6 +62,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
@@ -125,7 +126,7 @@ public abstract class CyborgController
 	extends Logger
 	implements ICyborgController {
 
-	public static final String DebugFlag = "Debug_" + CyborgController.class.getSimpleName();
+	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgController.class);
 
 	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 
@@ -161,7 +162,8 @@ public abstract class CyborgController
 
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+
+		if (Debug_Performance.isEnabled())
 			logVerbose("Instantiated");
 		this.layoutId = layoutId;
 		cyborg = CyborgBuilder.getInstance();
@@ -228,25 +230,25 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	private void injectMembers() {
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("injectMembers");
 		CyborgViewInjector viewInjector = new CyborgViewInjector(rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("viewInjector");
 		viewInjector.injectToInstance(this);
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("moduleInjector");
 		moduleInjector.injectToInstance(this);
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("done");
 	}
 
 	final void setState(LifecycleState newState) {
-		if (DebugFlags.isDebuggableFlag(DebugFlag))
+		if (Debug_Performance.isEnabled())
 			logDebug("State Changed: " + this.state + " ==> " + newState);
 
 		if (state == newState)
@@ -410,7 +412,7 @@ public abstract class CyborgController
 
 	final void dispatchLifeCycleEvent(LifecycleState newState) {
 		if (newState == state)
-			if (DebugFlags.isDebuggableFlag(DebugFlag))
+			if (DebugFlag.isEnabled())
 				logWarning("ALREADY IN STATE: " + newState);
 
 		for (CyborgController nestedController : nestedControllers) {

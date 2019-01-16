@@ -31,6 +31,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    testCompile project(path: ':http-module')
 }
 
 if (project.hasProperty("addTask_DeployAndroidArtifactToCentral")) {

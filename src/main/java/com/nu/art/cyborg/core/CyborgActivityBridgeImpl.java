@@ -41,6 +41,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.common.interfaces.ScenarioRecorder;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
@@ -88,7 +89,7 @@ public class CyborgActivityBridgeImpl
 		CyborgBuilder.getInstance().openActivityInStack(intent);
 	}
 
-	public static final String DebugFlag = "Debug_" + CyborgActivityBridgeImpl.class.getSimpleName();
+	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgActivityBridgeImpl.class);
 
 	private final CyborgActivity activity;
 
@@ -473,9 +474,8 @@ public class CyborgActivityBridgeImpl
 	public final void addController(CyborgController controller) {
 		_controllerList = ArrayTools.appendElement(_controllerList, new WeakReference<>(controller));
 		eventDispatcher.addListener(controller);
-		if (DebugFlags.isDebuggableFlag(DebugFlag)) {
+		if (DebugFlag.isEnabled())
 			logDebug("Added controller(" + _controllerList.length + "): " + controller);
-		}
 	}
 
 	@Override
@@ -633,7 +633,7 @@ public class CyborgActivityBridgeImpl
 		Logs
  	 **********************************/
 	private void logLifeCycle(String log) {
-		if (DebugFlags.isDebuggableFlag(DebugFlag))
+		if (DebugFlag.isEnabled())
 			logDebug("Activity State Changed: " + log);
 	}
 }

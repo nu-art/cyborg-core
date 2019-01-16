@@ -56,7 +56,7 @@ public abstract class ItemRenderer<ItemType>
 	public final void render() {
 		long startMs = System.currentTimeMillis();
 		renderItem(item);
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("Render duration: " + (System.currentTimeMillis() - startMs) + "ms");
 	}
 

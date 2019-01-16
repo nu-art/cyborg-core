@@ -18,11 +18,15 @@
 
 package com.nu.art.cyborg.core.abs;
 
+import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.core.utils.DebugFlags.DebugFlag;
+import com.nu.art.cyborg.modules.CacheModule;
+
 /**
  * Created by tacb0ss on 16/03/2018.
  */
 
 public interface _DebugFlags {
 
-	String Debug_Performance = "Debug_Performance";
+	DebugFlags.DebugFlag Debug_Performance = DebugFlags.createFlag("Debug_Performance");
 }

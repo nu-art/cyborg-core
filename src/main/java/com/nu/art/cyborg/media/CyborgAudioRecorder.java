@@ -35,7 +35,9 @@ import com.nu.art.core.interfaces.Condition;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.CyborgStackController;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
@@ -54,8 +56,6 @@ import static com.nu.art.cyborg.media.CyborgAudioRecorder.AudioRecorderState.Rec
 
 public class CyborgAudioRecorder
 	extends CyborgModule {
-
-	public static final String DebugFlag = "Debug_" + CyborgAudioRecorder.class.getSimpleName();
 
 	public enum AudioChannelType {
 		CHANNEL_IN_MONO(AudioFormat.CHANNEL_IN_MONO),
@@ -249,7 +249,7 @@ public class CyborgAudioRecorder
 		while (this.buffer.size() > currentBuilder.maxBufferSize)
 			this.buffer.remove(0);
 
-		if (DebugFlags.isDebuggableFlag(DebugFlag))
+		if (DebugFlag.isEnabled())
 			logDebug("Recording buffer, buffer size(" + this.buffer.size() + "), listeners size(" + listeners.length + ")");
 
 		for (AudioBufferProcessor listener : listeners) {
@@ -278,7 +278,7 @@ public class CyborgAudioRecorder
 		int bufferSize;
 		try {
 			bufferSize = builder.calculateBufferSize();
-			if (DebugFlags.isDebuggableFlag(DebugFlag))
+			if (DebugFlag.isEnabled())
 				logDebug("BufferSize: " + bufferSize);
 		} catch (AudioRecordingException e) {
 			dispatchErrorGettingBufferSize(e);
