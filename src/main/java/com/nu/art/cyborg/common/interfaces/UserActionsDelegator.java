@@ -18,8 +18,6 @@
 
 package com.nu.art.cyborg.common.interfaces;
 
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -42,6 +40,9 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.nu.art.cyborg.common.beans.ModelEvent;
 import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemClickListener;
 import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemLongClickListener;
@@ -53,7 +54,7 @@ import com.nu.art.cyborg.core.CyborgRecycler.OnRecyclerItemLongClickListener;
  */
 public interface UserActionsDelegator
 	extends OnClickListener, OnTouchListener, OnLongClickListener, OnSeekBarChangeListener, OnRecyclerItemClickListener, OnRecyclerItemLongClickListener,
-	        OnItemSelectedListener, OnItemClickListener, OnItemLongClickListener, OnRatingBarChangeListener, OnPageChangeListener, OnMenuItemClickListener,
+	        OnItemSelectedListener, OnItemClickListener, OnItemLongClickListener, OnRatingBarChangeListener, ViewPager.OnPageChangeListener, OnMenuItemClickListener,
 	        OnEditorActionListener, OnFocusChangeListener, OnKeyListener, OnTextChangedListener {
 
 	boolean onKeyShortcut(int keyCode, KeyEvent event);

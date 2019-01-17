@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.core.more;
 
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -28,6 +27,8 @@ import android.widget.AdapterView;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nu.art.cyborg.common.beans.ModelEvent;
 import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;

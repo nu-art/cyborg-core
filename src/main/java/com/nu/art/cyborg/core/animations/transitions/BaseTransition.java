@@ -19,10 +19,11 @@
 package com.nu.art.cyborg.core.animations.transitions;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+
+import androidx.annotation.IntDef;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

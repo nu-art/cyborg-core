@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat.Builder;
 
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.reflection.utils.GenericMap;
@@ -105,7 +104,7 @@ public final class NotificationsModule
 		}
 	}
 
-	final Notification postNotification(Builder builder, int notificationId) {
+	final Notification postNotification(Notification.Builder builder, int notificationId) {
 		Notification notification;
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN)
 			notification = builder.build();

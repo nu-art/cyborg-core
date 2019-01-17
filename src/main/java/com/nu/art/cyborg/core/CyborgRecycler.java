@@ -23,21 +23,19 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.core.CyborgAdapter.CyborgRecyclerAdapter;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.dataModels.ListDataModel;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;

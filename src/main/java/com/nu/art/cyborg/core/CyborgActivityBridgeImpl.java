@@ -23,8 +23,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.support.ViewServer;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +31,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;

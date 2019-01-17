@@ -25,9 +25,10 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
-import android.support.annotation.IdRes;
 import android.view.Surface;
 import android.view.animation.Interpolator;
+
+import androidx.annotation.IdRes;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.tools.DateTimeTools;

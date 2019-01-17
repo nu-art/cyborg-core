@@ -32,8 +32,9 @@ import android.os.CancellationSignal;
 import android.os.Handler;
 import android.security.keystore.KeyGenParameterSpec.Builder;
 import android.security.keystore.KeyProperties;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RequiresPermission;
+
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresPermission;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModule;

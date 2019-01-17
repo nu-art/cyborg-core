@@ -18,8 +18,6 @@
 
 package com.nu.art.cyborg.common.consts;
 
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -40,6 +38,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
@@ -88,9 +88,9 @@ public enum ViewListener {
 	 */
 	OnRatingChanged(ListenersMethods._SetOnRatingBarChangeListener, RatingBar.class, OnRatingBarChangeListener.class),
 	/**
-	 * Adds an {@link OnPageChangeListener} to the Rating bar instance.
+	 * Adds an {@link ViewPager.OnPageChangeListener} to the Rating bar instance.
 	 */
-	OnPageChange(ListenersMethods._OnPageChangeListener, ViewPager.class, OnPageChangeListener.class), /**/
+	OnPageChange(ListenersMethods._OnPageChangeListener, ViewPager.class, ViewPager.OnPageChangeListener.class), /**/
 	OnEditorAction(ListenersMethods._OnEditorActionListener, TextView.class, OnEditorActionListener.class), /**/
 	OnFocusChange(ListenersMethods._OnFocusChangeListener, View.class, OnFocusChangeListener.class), /**/
 	OnKeyListener(ListenersMethods._OnKeyListener, View.class, OnKeyListener.class), /**/

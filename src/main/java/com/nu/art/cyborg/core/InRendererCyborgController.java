@@ -18,7 +18,8 @@
 
 package com.nu.art.cyborg.core;
 
-import android.support.annotation.LayoutRes;
+
+import androidx.annotation.LayoutRes;
 
 public class InRendererCyborgController
 	extends CyborgController {

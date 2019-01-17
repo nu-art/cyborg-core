@@ -19,8 +19,9 @@
 package com.nu.art.cyborg.core.abs;
 
 import android.os.Handler;
-import android.support.annotation.AnimRes;
 import android.view.animation.Animation;
+
+import androidx.annotation.AnimRes;
 
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 

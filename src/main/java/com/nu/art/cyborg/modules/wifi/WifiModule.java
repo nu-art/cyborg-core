@@ -24,10 +24,10 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.net.wifi.WifiInfo;
 import android.os.Build;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.modules.wifi.WifiItem_Connectivity.WifiConnectivityState;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.ScannedWifiInfo;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiStrength;

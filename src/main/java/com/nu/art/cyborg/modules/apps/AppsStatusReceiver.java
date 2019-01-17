@@ -20,7 +20,8 @@ package com.nu.art.cyborg.modules.apps;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.nu.art.cyborg.core.CyborgReceiver;
 

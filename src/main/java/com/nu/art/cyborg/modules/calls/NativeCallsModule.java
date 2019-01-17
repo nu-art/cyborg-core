@@ -20,8 +20,9 @@ package com.nu.art.cyborg.modules.calls;
 import android.Manifest.permission;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
+
+import androidx.annotation.RequiresPermission;
 
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Processor;

@@ -29,10 +29,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -52,6 +48,11 @@ import android.widget.AdapterView;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;

@@ -18,13 +18,6 @@
 
 package com.nu.art.cyborg.core;
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,13 +26,17 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+
 import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
-import com.nu.art.cyborg.core.dataModels.ListDataModel;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
@@ -412,7 +409,7 @@ public class CyborgAdapter<Item>
 	}
 
 	private static class CyborgDefaultHolder<T>
-		extends ViewHolder
+		extends RecyclerView.ViewHolder
 		implements PositionResolver {
 
 		private ItemRenderer<? extends T> renderer;
@@ -430,7 +427,7 @@ public class CyborgAdapter<Item>
 	}
 
 	public final class CyborgRecyclerAdapter
-		extends Adapter<CyborgDefaultHolder>
+		extends RecyclerView.Adapter<CyborgDefaultHolder>
 		implements OnClickListener, OnLongClickListener {
 
 		private long longClickTimeStamp;
@@ -521,7 +518,7 @@ public class CyborgAdapter<Item>
 	}
 
 	public static class TouchHelper
-		extends SimpleCallback {
+		extends ItemTouchHelper.SimpleCallback {
 
 		private final ItemTouchHelper helper;
 
@@ -534,17 +531,17 @@ public class CyborgAdapter<Item>
 			this(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
 		}
 
-		public <T extends ItemRenderer> T getRendererFromHolder(ViewHolder viewHolder) {
+		public <T extends ItemRenderer> T getRendererFromHolder(RecyclerView.ViewHolder viewHolder) {
 			return (T) ((CyborgDefaultHolder) viewHolder).renderer;
 		}
 
 		@Override
-		public boolean onMove(RecyclerView recyclerView, ViewHolder viewHolder, ViewHolder target) {
+		public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
 			return true;
 		}
 
 		@Override
-		public void onSwiped(ViewHolder viewHolder, int direction) {
+		public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 		}
 
 		@Override
@@ -561,7 +558,7 @@ public class CyborgAdapter<Item>
 			helper.attachToRecyclerView(recyclerView);
 		}
 
-		public final void startDrag(ViewHolder holder) {
+		public final void startDrag(RecyclerView.ViewHolder holder) {
 			helper.startDrag(holder);
 		}
 	}

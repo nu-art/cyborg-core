@@ -21,7 +21,8 @@ package com.nu.art.cyborg.modules.wifi;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;

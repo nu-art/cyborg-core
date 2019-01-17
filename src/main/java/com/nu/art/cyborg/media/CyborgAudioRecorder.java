@@ -28,7 +28,8 @@ import android.media.MediaRecorder.OnErrorListener;
 import android.media.MediaRecorder.OnInfoListener;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Condition;

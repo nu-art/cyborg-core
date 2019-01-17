@@ -33,10 +33,11 @@ import android.net.Uri;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
-import android.support.annotation.NonNull;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.FileTools;

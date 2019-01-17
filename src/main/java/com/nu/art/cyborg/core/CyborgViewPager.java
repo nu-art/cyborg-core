@@ -20,10 +20,11 @@ package com.nu.art.cyborg.core;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.modules.AttributeModule;

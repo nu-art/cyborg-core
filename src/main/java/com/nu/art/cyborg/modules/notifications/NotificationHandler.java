@@ -21,7 +21,6 @@ package com.nu.art.cyborg.modules.notifications;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat.Builder;
 
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;
@@ -36,12 +35,12 @@ public abstract class NotificationHandler
 		module = getModule(NotificationsModule.class);
 	}
 
-	protected final Builder createBasicBuilder(short notificationId) {
+	protected final Notification.Builder createBasicBuilder(short notificationId) {
 		return createBasicBuilder(notificationId, new Bundle());
 	}
 
-	protected Builder createBasicBuilder(short notificationId, Bundle data) {
-		Builder builder = new Builder(getApplicationContext());
+	protected Notification.Builder createBasicBuilder(short notificationId, Bundle data) {
+		Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
 		PendingIntent clickedPendingIntent = createPendingIntent(notificationId, Action_Click, data);
 		builder.setContentIntent(clickedPendingIntent);
@@ -55,15 +54,15 @@ public abstract class NotificationHandler
 		module.disposeNotification(notificationId);
 	}
 
-	protected final Notification postNotification(Builder builder, short notificationId) {
+	protected final Notification postNotification(Notification.Builder builder, short notificationId) {
 		return module.postNotification(builder, notificationId);
 	}
 
-	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {
+	protected void addActionButton(Notification.Builder builder, short notificationId, String action, int iconResId, String label) {
 		addActionButton(builder, notificationId, action, iconResId, label, null);
 	}
 
-	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label, Bundle notificationData) {
+	protected void addActionButton(Notification.Builder builder, short notificationId, String action, int iconResId, String label, Bundle notificationData) {
 		PendingIntent moreInfoIntent = createPendingIntent(notificationId, action, notificationData, CyborgModule.getNextRandomPositiveShort());
 		builder.addAction(iconResId, label, moreInfoIntent);
 	}
