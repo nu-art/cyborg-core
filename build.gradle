@@ -31,8 +31,10 @@ dependencies {
     api "com.google.android.material:material:${MATERIAL_VERSION}"
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
+    testImplementation(resolveDependency('http-module', 'com.nu-art-software', "${NU_ART_VERSION}"))
+
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
 }
 
 if (project.hasProperty("addTask_DeployAndroidArtifactToCentral")) {

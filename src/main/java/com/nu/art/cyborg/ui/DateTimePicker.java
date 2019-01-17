@@ -53,7 +53,12 @@ public class DateTimePicker {
 	public DateTimePicker(Activity activity, long timestamp, OnDateTimeChangedListener listener) {
 		this.activity = activity;
 		this.listener = listener;
+		setTimestamp(timestamp);
+	}
+
+	public DateTimePicker setTimestamp(long timestamp) {
 		calendar.setTime(new Date(timestamp));
+		return this;
 	}
 
 	public final long getTimestamp() {

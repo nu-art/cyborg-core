@@ -105,12 +105,12 @@ public class CyborgAdapter<Item>
 
 	private ItemRenderer<? extends Item> createRendererForType(ViewGroup parent, int typeIndex) {
 		ItemRenderer<? extends Item> renderer = instantiateItemRendererType(typeIndex);
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("setActivityBridge");
 		renderer.setActivityBridge(controller.activityBridge);
 
 		try {
-			if (DebugFlags.isDebuggableFlag(Debug_Performance))
+			if (Debug_Performance.isEnabled())
 				logVerbose("_createView");
 			renderer._createView(LayoutInflater.from(parent.getContext()), parent);
 		} catch (Throwable e) {
@@ -122,15 +122,15 @@ public class CyborgAdapter<Item>
 			throw (RuntimeException) e;
 		}
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("extractMembersImpl");
 		renderer.extractMembersImpl();
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("setupRenderer");
 		setupRenderer(renderer);
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("return");
 		return renderer;
 	}
@@ -159,8 +159,16 @@ public class CyborgAdapter<Item>
 		return dataModel.getItemTypeByPosition(position);
 	}
 
-	private Item getItemForPosition(int position) {
+	public Item getItemForPosition(int position) {
 		return dataModel.getItemForPosition(position);
+	}
+
+	public int getPositionForItem(Item item) {
+		return dataModel.getPositionForItem(item);
+	}
+
+	public int getRealItemsCount(Item item) {
+		return dataModel.getRealItemsCount();
 	}
 
 	public CyborgRecyclerAdapter getRecyclerAdapter(CyborgRecycler cyborgRecycler) {

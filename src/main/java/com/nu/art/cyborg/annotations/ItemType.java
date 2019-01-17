@@ -16,17 +16,27 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.abs;
+package com.nu.art.cyborg.annotations;
 
-import com.nu.art.core.utils.DebugFlags;
-import com.nu.art.core.utils.DebugFlags.DebugFlag;
-import com.nu.art.cyborg.modules.CacheModule;
+import android.view.View;
+
+import com.nu.art.cyborg.common.consts.ViewListener;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE;
 
 /**
- * Created by tacb0ss on 16/03/2018.
+ * Defines the item type that is renders in the annotated {@link com.nu.art.cyborg.core.ItemRenderer}
+ *
+ * @author TacB0sS
  */
+@Target( {TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ItemType {
 
-public interface _DebugFlags {
-
-	DebugFlags.DebugFlag Debug_Performance = DebugFlags.createFlag("Debug_Performance");
+	Class<?> type();
 }

@@ -47,18 +47,24 @@ import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.core.utils.DebugFlags.DebugFlag;
+import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.common.beans.ModelEvent;
@@ -76,6 +82,8 @@ import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.core.dataModels.DataModel;
+import com.nu.art.cyborg.core.dataModels.ListDataModel;
 import com.nu.art.cyborg.core.interfaces.LifecycleListener;
 import com.nu.art.cyborg.core.modules.DeviceDetailsModule;
 import com.nu.art.cyborg.core.more.CyborgStateExtractor;
@@ -119,7 +127,7 @@ public abstract class CyborgController
 	extends Logger
 	implements ICyborgController {
 
-	public static final String DebugFlag = "Debug_" + CyborgController.class.getSimpleName();
+	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgController.class);
 
 	public static final CyborgController[] EmptyControllersArray = new CyborgController[0];
 
@@ -155,7 +163,8 @@ public abstract class CyborgController
 
 	public CyborgController(@LayoutRes int layoutId) {
 		super();
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+
+		if (Debug_Performance.isEnabled())
 			logVerbose("Instantiated");
 		this.layoutId = layoutId;
 		cyborg = CyborgBuilder.getInstance();
@@ -222,25 +231,25 @@ public abstract class CyborgController
 	protected void extractMembers() {}
 
 	private void injectMembers() {
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("injectMembers");
 		CyborgViewInjector viewInjector = new CyborgViewInjector(rootView, actionDelegator, isDebug());
 		ModuleInjector moduleInjector = cyborg.getModuleInjector();
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("viewInjector");
 		viewInjector.injectToInstance(this);
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("moduleInjector");
 		moduleInjector.injectToInstance(this);
 
-		if (DebugFlags.isDebuggableFlag(Debug_Performance))
+		if (Debug_Performance.isEnabled())
 			logVerbose("done");
 	}
 
 	final void setState(LifecycleState newState) {
-		if (DebugFlags.isDebuggableFlag(DebugFlag))
+		if (Debug_Performance.isEnabled())
 			logDebug("State Changed: " + this.state + " ==> " + newState);
 
 		if (state == newState)
@@ -404,7 +413,7 @@ public abstract class CyborgController
 
 	final void dispatchLifeCycleEvent(LifecycleState newState) {
 		if (newState == state)
-			if (DebugFlags.isDebuggableFlag(DebugFlag))
+			if (DebugFlag.isEnabled())
 				logWarning("ALREADY IN STATE: " + newState);
 
 		for (CyborgController nestedController : nestedControllers) {
@@ -680,7 +689,58 @@ public abstract class CyborgController
 		injectMembers();
 	}
 
-	protected final StackLayerBuilder createNewLayerBuilder() {
+	protected final <T> CyborgAdapter<T> setupRecycler(CyborgRecycler recycler,
+	                                                   final Processor<ListDataModel<T>> populator,
+	                                                   Class<? extends ItemRenderer<? extends T>>... renderers) {
+		CyborgAdapter<T> adapter = createAdapter(renderers, populator);
+		recycler.setAdapter(adapter);
+		return adapter;
+	}
+
+	protected final <T> CyborgAdapter<T> setupSpinner(Spinner spinner,
+	                                                  final Processor<ListDataModel<T>> populator,
+	                                                  Class<? extends ItemRenderer<? extends T>>... renderers) {
+		CyborgAdapter<T> adapter = createAdapter(renderers, populator);
+		spinner.setAdapter(adapter.getArrayAdapter());
+		return adapter;
+	}
+
+	protected final <T> CyborgAdapter<T> setupViewPager(ViewPager viewPager,
+														final Processor<ListDataModel<T>> populator,
+														Class<? extends ItemRenderer<? extends T>>... renderers) {
+		CyborgAdapter<T> adapter = createAdapter(renderers, populator);
+		viewPager.setAdapter(adapter.getPagerAdapter());
+		return adapter;
+	}
+
+	@NonNull
+	private <T> CyborgAdapter<T> createAdapter(Class<? extends ItemRenderer<? extends T>>[] renderers, final Processor<ListDataModel<T>> populator) {
+		CyborgAdapter<T> adapter = new CyborgAdapter<>(this, renderers);
+		final Class<? extends T>[] _types = new Class[renderers.length];
+		for (int i = 0; i < renderers.length; i++) {
+			Class<? extends ItemRenderer<? extends T>> renderer = renderers[i];
+			ItemType annotation = renderer.getAnnotation(ItemType.class);
+			if (annotation == null)
+				throw ExceptionGenerator.missingAnnotationForRendererType(renderer);
+
+			_types[i] = (Class<T>) annotation.type();
+		}
+
+		adapter.setResolver(new Getter<DataModel<T>>() {
+			@SuppressWarnings("unchecked")
+			private ListDataModel<T> dataModel = new ListDataModel<>(_types);
+
+			@Override
+			public DataModel<T> get() {
+				dataModel.clear();
+				populator.process(dataModel);
+				return dataModel;
+			}
+		});
+		return adapter;
+	}
+
+	protected StackLayerBuilder createLayerBuilder() {
 		return getStack().createLayerBuilder();
 	}
 
@@ -821,24 +881,6 @@ public abstract class CyborgController
 
 			super.onNothingSelected(parentView);
 			CyborgController.this.onNothingSelected(parentView);
-		}
-
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			if (!canReceiveEvents())
-				return;
-
-			super.onItemClick(parent, view, position, id);
-			CyborgController.this.onItemClick(parent, view, position, id);
-		}
-
-		@Override
-		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-			if (!canReceiveEvents())
-				return false;
-
-			super.onItemLongClick(parent, view, position, id);
-			return CyborgController.this.onItemLongClick(parent, view, position, id);
 		}
 
 		@Override
@@ -991,8 +1033,14 @@ public abstract class CyborgController
 	}
 
 	@Override
+	@Deprecated
 	public void onItemSelected(AdapterView<?> parentView, View selectedView, int position, long id) {
-		// Dummy method to be overridden in the inheriting class...
+		ItemRenderer renderer = (ItemRenderer) selectedView.getTag();
+		onItemSelected(renderer.getItem(), parentView, selectedView, position, id);
+	}
+
+	public void onItemSelected(Object selectedItem, AdapterView<?> parentView, View selectedView, int position, long id) {
+
 	}
 
 	@Override
@@ -1038,23 +1086,24 @@ public abstract class CyborgController
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parentView, View clickedView, int position, long id) {
-		// Dummy method to be overridden in the inheriting class...
-	}
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> parentView, View clickedView, int position, long id) {
-		// Dummy method to be overridden in the inheriting class...
-		return false;
-	}
-
-	@Override
+	@Deprecated
 	public void onRecyclerItemClicked(RecyclerView parentView, View view, int position) {
+		ItemRenderer renderer = (ItemRenderer) view.getTag();
+		onRecyclerItemClicked(renderer.getItem(), parentView, view, position);
+	}
+
+	public void onRecyclerItemClicked(Object clickedItem, RecyclerView parentView, View view, int position) {
 		// Dummy method to be overridden in the inheriting class...
 	}
 
 	@Override
+	@Deprecated
 	public boolean onRecyclerItemLongClicked(RecyclerView parentView, View view, int position) {
+		ItemRenderer renderer = (ItemRenderer) view.getTag();
+		return onRecyclerItemLongClicked(renderer.getItem(), parentView, view, position);
+	}
+
+	public boolean onRecyclerItemLongClicked(Object clickedItem, RecyclerView parentView, View view, int position) {
 		// Dummy method to be overridden in the inheriting class...
 		return false;
 	}

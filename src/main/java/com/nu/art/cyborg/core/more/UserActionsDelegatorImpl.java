@@ -144,21 +144,6 @@ public class UserActionsDelegatorImpl
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		for (UserActionsDelegator userActionDelegator : getModulesAssignableFrom()) {
-			userActionDelegator.onItemClick(parent, view, position, id);
-		}
-	}
-
-	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		for (UserActionsDelegator userActionDelegator : getModulesAssignableFrom()) {
-			userActionDelegator.onItemLongClick(parent, view, position, id);
-		}
-		return false;
-	}
-
-	@Override
 	public void onRecyclerItemClicked(RecyclerView parentView, View view, int position) {
 		for (UserActionsDelegator userActionDelegator : getModulesAssignableFrom()) {
 			userActionDelegator.onRecyclerItemClicked(parentView, view, position);

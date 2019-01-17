@@ -76,7 +76,7 @@ public class QueryBuilder {
 		return whereClause;
 	}
 
-	public Object[] getWhereClauseArgs() {
+	public String[] getWhereClauseArgs() {
 		return whereClauseArgs;
 	}
 

@@ -29,6 +29,7 @@ import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgAdapter;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
+import com.nu.art.cyborg.core.CyborgRecycler;
 import com.nu.art.cyborg.core.CyborgView;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.injector.AnnotatbleInjector;
@@ -92,6 +93,9 @@ public final class CyborgViewInjector
 		if (!fieldType.isArray()) {
 			int parentViewId = viewIdentifier.parentViewId();
 			int viewId = viewIdentifier.viewId();
+			if (viewIdentifier.viewIds().length > 0)
+				throw ExceptionGenerator.developerHaveSetViewIdsButMemberIsNotAnArray(viewField);
+
 			if (viewId == -1 && fieldValue == null)
 				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
 
@@ -146,7 +150,7 @@ public final class CyborgViewInjector
 		}
 
 		if (View.class.isAssignableFrom(fieldType)) {
-			return setupView(view, viewIdentifier.forDev(), viewIdentifier.listeners());
+			return setupView(viewField, view, viewIdentifier.forDev(), viewIdentifier.listeners());
 		}
 
 		if (CyborgController.class.isAssignableFrom(fieldType)) {
@@ -167,13 +171,13 @@ public final class CyborgViewInjector
 		return controller;
 	}
 
-	private View setupView(View view, boolean forDev, ViewListener[] listeners) {
+	private View setupView(Field viewField, View view, boolean forDev, ViewListener[] listeners) {
 		if (modelDelegator == null)
 			throw new BadImplementationException("modelDelegator == null");
 
 		for (ViewListener listener : listeners) {
 			if (!listener.getMethodOwnerType().isAssignableFrom(view.getClass()))
-				throw ExceptionGenerator.wrongListenerToViewAssignment(view, listener);
+				throw ExceptionGenerator.wrongListenerToViewAssignment(viewField, view, listener);
 
 			try {
 				listener.assign(view, modelDelegator);

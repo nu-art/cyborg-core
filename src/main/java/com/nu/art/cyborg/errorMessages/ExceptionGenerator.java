@@ -21,10 +21,14 @@ package com.nu.art.cyborg.errorMessages;
 import android.app.Service;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.common.consts.ViewListener;
 import com.nu.art.cyborg.core.CyborgController;
+import com.nu.art.cyborg.core.ItemRenderer;
 
 import java.lang.reflect.Field;
 
@@ -54,24 +58,23 @@ public class ExceptionGenerator {
 		return new BadImplementationException(errorMessage);
 	}
 
+	public static BadImplementationException developerHaveSetViewIdsButMemberIsNotAnArray(Field viewField) {
+		String errorMessage = "Your annotation declares multiple views, but your member is NOT an array of Views!!" + fieldDescription(viewField);
+		return new BadImplementationException(errorMessage);
+	}
+
 	public static BadImplementationException developerDidNotSetViewIdForViewInjector(Field viewField) {
-		String fieldName = viewField.getName();
-		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
-		String errorMessage = "You MUST set valid viewId id for field '" + fieldName + "' in class, '" + classSimpleName + "'";
+		String errorMessage = "You MUST set valid viewId id for" + fieldDescription(viewField);
 		return new BadImplementationException(errorMessage);
 	}
 
 	public static BadImplementationException developerSetViewIdForViewArrayInjector(Field viewField) {
-		String fieldName = viewField.getName();
-		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
-		String errorMessage = "You MUST NOT set a viewId id for array of views in field '" + fieldName + "' in class, '" + classSimpleName + "'";
+		String errorMessage = "You MUST NOT set a viewId id for array of views in" + fieldDescription(viewField);
 		return new BadImplementationException(errorMessage);
 	}
 
 	public static BadImplementationException developerDidNotSetViewIdsForViewArrayInjector(Field viewField) {
-		String fieldName = viewField.getName();
-		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
-		String errorMessage = "You MUST set valid viewIds id for field '" + fieldName + "' in class, '" + classSimpleName + "'";
+		String errorMessage = "You MUST set valid viewIds id for " + fieldDescription(viewField);
 		return new BadImplementationException(errorMessage);
 	}
 
@@ -84,23 +87,18 @@ public class ExceptionGenerator {
 	}
 
 	public static BadImplementationException developerSetViewIdOfIncompatibleViewForController(Field viewField) {
-		String fieldName = viewField.getName();
-		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
-		String message = "View id does not belong to a CyborgView in field '" + fieldName + "' in class, '" + classSimpleName + "'";
+		String message = "View id does not belong to a CyborgView " + fieldDescription(viewField);
 		return new BadImplementationException(message);
 	}
 
 	public static BadImplementationException couldNotFindViewForViewIdInLayout(Field viewField) {
-		String fieldName = viewField.getName();
-		String classSimpleName = viewField.getDeclaringClass().getSimpleName();
-
-		return new BadImplementationException("Could not find view for field '" + fieldName + "' in class, '" + classSimpleName + "'");
+		return new BadImplementationException("Could not find view for field" + fieldDescription(viewField));
 	}
 
-	public static BadImplementationException wrongListenerToViewAssignment(View view, ViewListener listener) {
+	public static BadImplementationException wrongListenerToViewAssignment(Field viewField, View view, ViewListener listener) {
 		String viewSimpleName = view.getClass().getSimpleName();
 		String listenerSimpleName = listener.getMethodOwnerType().getSimpleName();
-		return new BadImplementationException("Cannot assign '" + listener + "' listener to type: " + viewSimpleName + ", it does not inherit from super type: " + listenerSimpleName);
+		return new BadImplementationException("Cannot assign '" + listener + "' listener to type: " + viewSimpleName + ", it does not inherit from super type: " + listenerSimpleName + fieldDescription(viewField));
 	}
 
 	public static BadImplementationException errorWhileAssigningListenerToView(Exception e) {
@@ -122,5 +120,16 @@ public class ExceptionGenerator {
 			                                          "\nThis can also be due to a race condition while a transition between controllers within the stack!!" +
 			                                          "\n    MAKE SURE you use the canExecute() method within the controller before adding another layer." +
 			                                          "\n    alternatively you might want to change the BusyState duration to fit your stack transition!!");
+	}
+
+	public static <T> ImplementationMissingException missingAnnotationForRendererType(Class<? extends ItemRenderer<? extends T>> renderer) {
+		String message = "In order to use this interface, you would need to annotate the " + renderer.getSimpleName() + " with " + ItemType.class.getSimpleName() + "";
+		return new ImplementationMissingException(message);
+	}
+
+	@NonNull
+	private static String fieldDescription(Field viewField) {
+		return "\n  Member: '" + viewField.getDeclaringClass()
+		                                  .getSimpleName() + "." + viewField.getName() + "'\n  Class: '" + viewField.getDeclaringClass() + "'\n";
 	}
 }

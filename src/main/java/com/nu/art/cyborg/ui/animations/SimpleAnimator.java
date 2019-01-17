@@ -7,17 +7,28 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 
 import com.nu.art.belog.Logger;
 
-public abstract class SimpleAnimator
+/**
+ * Animates between 0 and 1, float.
+ * The duration is set for the maximum animation, from 0 to 1 or vice versa, if only animation a part of this value(say from 0 to 0.5), the duration will be
+ * exactly relatively shorter.
+ */
+public class SimpleAnimator
 	extends Logger {
 
-	private static final int Default_AnimationDuration = 700;
+	public interface AnimatorProgressListener {
+
+		void onAnimationProgressed(float currentProgress);
+	}
+
+	public static final int Default_AnimationDuration = 700;
 
 	private int duration = Default_AnimationDuration;
 	private float currentProgress;
 	private Animator animator;
 	private AnimatorListener listener;
+	private AnimatorProgressListener updateListener;
 
-	protected SimpleAnimator() {
+	public SimpleAnimator() {
 	}
 
 	public void init(float initialProgress) {
@@ -32,6 +43,11 @@ public abstract class SimpleAnimator
 
 	public SimpleAnimator setListener(AnimatorListener listener) {
 		this.listener = listener;
+		return this;
+	}
+
+	public SimpleAnimator setListener(AnimatorProgressListener listener) {
+		this.updateListener = listener;
 		return this;
 	}
 
@@ -60,13 +76,22 @@ public abstract class SimpleAnimator
 		animator.start();
 	}
 
-	protected abstract void onAnimationProgressed(float currentProgress);
+	@Deprecated
+	protected void onAnimationProgressed(float currentProgress) {
+		if (updateListener != null)
+			updateListener.onAnimationProgressed(currentProgress);
+	}
 
 	protected Animator createAnimate(float currentProgress, float target) {
 		return ValueAnimator.ofFloat(currentProgress, target);
 	}
 
 	public void cancel() {
-		animator.cancel();
+		if (animator != null)
+			animator.cancel();
+	}
+
+	public int getDuration() {
+		return duration;
 	}
 }

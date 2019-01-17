@@ -40,6 +40,7 @@ import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
+import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
@@ -59,7 +60,7 @@ import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 /**
  * Created by TacB0sS on 25-Jun 2015.
  */
-public final class CyborgStackController
+public class CyborgStackController
 	extends CyborgController {
 
 	public static abstract class StackTransitionAnimator {
@@ -77,21 +78,13 @@ public final class CyborgStackController
 		protected abstract void animateOut(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
 	}
 
-	public static final String DebugFlag = "Debug_" + CyborgStackController.class.getSimpleName();
+	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgStackController.class);
 
 	private LayoutInflater inflater;
 
 	private ArrayList<StackLayer> layersStack = new ArrayList<>();
 
 	private RelativeLayout containerLayout;
-
-	private Class<? extends CyborgController> rootControllerType;
-
-	private int rootLayoutId = -1;
-
-	private boolean rootSaveState = false;
-
-	private String rootTag;
 
 	private int transitionDuration = 300;
 
@@ -107,24 +100,18 @@ public final class CyborgStackController
 
 	private boolean focused = true;
 
-	private CyborgStackController() {
+	private StackLayerBuilder rootLayerBuilder;
+
+	protected CyborgStackController() {
 		super(-1);
 	}
 
-	final void setRootSaveState(boolean rootSaveState) {
-		this.rootSaveState = rootSaveState;
-	}
-
-	final void setRootControllerType(Class<? extends CyborgController> rootControllerType) {
-		this.rootControllerType = rootControllerType;
-	}
-
-	final void setRootTag(String rootTag) {
-		this.rootTag = rootTag;
-	}
-
-	final void setRootLayoutId(int rootLayoutId) {
-		this.rootLayoutId = rootLayoutId;
+	final StackLayerBuilder getRootLayerBuilder() {
+		if (rootLayerBuilder == null) {
+			rootLayerBuilder = createLayerBuilder();
+			rootLayerBuilder.fromXml = true;
+		}
+		return rootLayerBuilder;
 	}
 
 	final void setPopOnBackPress(boolean popOnBackPress) {
@@ -144,23 +131,14 @@ public final class CyborgStackController
 	}
 
 	private void assignRootController() {
-		if (rootLayoutId == -1 && rootControllerType == null)
+		if (rootLayerBuilder == null)
 			return;
 
-		StackLayerBuilder layerBuilder = createLayerBuilder();
-		if (rootLayoutId != -1)
-			layerBuilder.setLayoutId(rootLayoutId);
+		if (rootLayerBuilder.controllerType == null && rootLayerBuilder.layoutId == -1)
+			return;
 
-		if (rootTag != null)
-			layerBuilder.setRefKey(rootTag);
-
-		if (rootControllerType != null)
-			layerBuilder.setControllerType(rootControllerType);
-
-		layerBuilder.setSaveState(rootSaveState);
-		layerBuilder.fromXml = true;
 		withRoot = true;
-		layerBuilder.build();
+		rootLayerBuilder.build();
 	}
 
 	@Override
@@ -193,6 +171,12 @@ public final class CyborgStackController
 		controller.handleAttributes(context, attrs);
 	}
 
+	@SuppressWarnings( {
+		                   "WeakerAccess",
+		                   "UnusedReturnValue"
+		                   ,
+		                   "unused"
+	                   })
 	public abstract class StackLayer {
 
 		private StackTransitionAnimator[] stackTransitionAnimator;
@@ -247,6 +231,9 @@ public final class CyborgStackController
 		}
 
 		public final StackLayer setRefKey(String refKey) {
+			if (refKey == null && this.refKey != null)
+				return this;
+
 			this.refKey = refKey;
 			return this;
 		}
@@ -292,7 +279,7 @@ public final class CyborgStackController
 		}
 
 		void detachView() {
-			if (isDebuggableFlag())
+			if (DebugFlag.isEnabled())
 				logWarning("Removing view: " + this + " " + (rootView == null ? "--- NULL" : ""));
 
 			getFrameRootView().removeView(rootView);
@@ -350,12 +337,8 @@ public final class CyborgStackController
 		}
 	}
 
-	private boolean isDebuggableFlag() {
-		return DebugFlags.isDebuggableFlag(DebugFlag);
-	}
-
 	private void printStateTags() {
-		if (!isDebuggableFlag())
+		if (!DebugFlag.isEnabled())
 			return;
 
 		logWarning(" Views Tags: " + Arrays.toString(getViewsTags()));
@@ -450,7 +433,7 @@ public final class CyborgStackController
 			if (rootView != null)
 				return;
 
-			if (isDebuggableFlag())
+			if (DebugFlag.isEnabled())
 				logWarning("Create: " + this);
 
 			if (layoutId != -1)
@@ -576,7 +559,7 @@ public final class CyborgStackController
 
 			push(this);
 
-			if (DebugFlags.isDebuggableFlag(Debug_Performance))
+			if (Debug_Performance.isEnabled())
 				logDebug("Open Controller (" + controllerType + "): " + (System.currentTimeMillis() - started) + "ms");
 		}
 	}
@@ -598,7 +581,7 @@ public final class CyborgStackController
 
 	private void push(final StackLayer targetLayerToBeAdded) {
 		if (animatingTransition) {
-			if (isDebuggableFlag())
+			if (DebugFlag.isEnabled())
 				logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
 		}
 
@@ -638,7 +621,7 @@ public final class CyborgStackController
 			}
 		}
 
-		if (isDebuggableFlag())
+		if (DebugFlag.isEnabled())
 			logInfo("push: " + Arrays.toString(topLayers) + " => " + targetLayerToBeAdded);
 
 		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground || topLayers.length == 0 ? null : topLayers[topLayers.length - 1];
@@ -646,7 +629,7 @@ public final class CyborgStackController
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (originLayerToBeDisposed != null) {
-					if (isDebuggableFlag())
+					if (DebugFlag.isEnabled())
 						logInfo("disposing-push: " + originLayerToBeDisposed);
 				}
 
@@ -754,7 +737,7 @@ public final class CyborgStackController
 		final AnimationListenerImpl listener = new AnimationListenerImpl() {
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				if (isDebuggableFlag())
+				if (DebugFlag.isEnabled())
 					logDebug("disposing-pop: " + targetLayerToBeRemove);
 				disposeLayer(targetLayerToBeRemove, false);
 
@@ -792,7 +775,7 @@ public final class CyborgStackController
 		if (originLayerToBeRestored != null)
 			originLayerToBeRestored.getRootView().clearAnimation();
 
-		if (isDebuggableFlag())
+		if (DebugFlag.isEnabled())
 			logDebug("pop: " + targetLayerToBeRemove + " => " + originLayerToBeRestored);
 
 		final Runnable startAnimation = new Runnable() {
@@ -864,6 +847,7 @@ public final class CyborgStackController
 		while ((topLayer = getTopLayer(true)) != null) {
 			topLayer.detachView();
 		}
+		layersStack.clear();
 	}
 
 	@Override

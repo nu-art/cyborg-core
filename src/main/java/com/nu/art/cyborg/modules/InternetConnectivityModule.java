@@ -36,6 +36,8 @@ import java.net.Socket;
 public class InternetConnectivityModule
 	extends CyborgModule {
 
+	private int timeout = 5000;
+
 	public interface InternetConnectivityListener {
 
 		void onInternetConnectivityChanged();
@@ -44,6 +46,10 @@ public class InternetConnectivityModule
 	private Handler handler;
 
 	private volatile boolean isConnected;
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
 
 	@Override
 	protected void init() {
@@ -73,7 +79,7 @@ public class InternetConnectivityModule
 				try {
 					logVerbose("checking connectivity");
 					Socket sock = new Socket();
-					sock.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+					sock.connect(new InetSocketAddress("8.8.8.8", 53), timeout);
 					sock.close();
 					connected = true;
 				} catch (Exception e) {
@@ -85,7 +91,8 @@ public class InternetConnectivityModule
 					return;
 
 				setConnected(connected);
-				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet" : "No Internet"), InternetConnectivityListener.class, new Processor<InternetConnectivityListener>() {
+				dispatchGlobalEvent("Internet Check - " + (isConnected ? "Has Internet"
+				                                                       : "No Internet"), InternetConnectivityListener.class, new Processor<InternetConnectivityListener>() {
 					@Override
 					public void process(InternetConnectivityListener listener) {
 						listener.onInternetConnectivityChanged();
