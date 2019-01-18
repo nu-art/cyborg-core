@@ -20,13 +20,16 @@
 <manifest
     package="com.nu.art.cyborg"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@android:style/Theme.NoTitleBar"
+    xmlns:tools="http://schemas.android.com/tools"
     >
 
-    <application>
+    <application
+        android:theme="@style/AppTheme"
+        >
+
         <activity
             android:name="com.nu.art.cyborg.ui.ApplicationLauncher"
-            android:theme="@style/Theme.Transparent"
+            android:theme="@style/AppTheme"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -38,7 +41,9 @@
         <activity
             android:name="com.nu.art.cyborg.core.CyborgActivity"
             android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden"
+
             />
 
         <receiver android:name="com.nu.art.cyborg.modules.notifications.NotificationReceiver"/>
