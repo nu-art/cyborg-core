@@ -20,13 +20,12 @@
 <manifest
     package="com.nu.art.cyborg"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@android:style/Theme.NoTitleBar"
     >
 
     <application>
         <activity
             android:name="com.nu.art.cyborg.ui.ApplicationLauncher"
-            android:theme="@style/Theme.Transparent"
+            android:theme="@style/Theme_ApplicationLauncher"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
