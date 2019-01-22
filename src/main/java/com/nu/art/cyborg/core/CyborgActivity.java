@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,7 +51,7 @@ import static com.nu.art.cyborg.core.consts.IntentKeys.WindowFeature;
  */
 @SuppressWarnings("unused")
 public class CyborgActivity
-	extends AppCompatActivity
+	extends FragmentActivity
 	implements ILogger {
 
 	protected final String TAG = getClass().getSimpleName();
