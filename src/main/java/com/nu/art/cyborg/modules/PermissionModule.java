@@ -106,7 +106,7 @@ public class PermissionModule
 		});
 	}
 
-	public boolean onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+	public void onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		switch (requestCode) {
 			case RequestCode_Permissions: {
 				final ArrayList<String> rejected = new ArrayList<>();
@@ -118,7 +118,7 @@ public class PermissionModule
 				}
 
 				String message = "Permissions request: " + (grantResults.length - rejected.size()) + "/" + grantResults.length + " Granted";
-				dispatchModuleEvent(message, PermissionResultListener.class, new Processor<PermissionResultListener>() {
+				dispatchGlobalEvent(message, PermissionResultListener.class, new Processor<PermissionResultListener>() {
 					@Override
 					public void process(PermissionResultListener listener) {
 						if (rejected.size() > 0)
@@ -129,6 +129,5 @@ public class PermissionModule
 				});
 			}
 		}
-		return true;
 	}
 }
