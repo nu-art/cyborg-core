@@ -39,6 +39,7 @@
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden"
             />
+            <!--android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
 
         <receiver android:name="com.nu.art.cyborg.modules.notifications.NotificationReceiver"/>
 
