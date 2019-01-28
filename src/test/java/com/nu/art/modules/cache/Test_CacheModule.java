@@ -7,24 +7,24 @@ public class Test_CacheModule
 
 	@Test
 	public void test_CacheOne() {
-		AsyncTestim<Boolean> testGroup = createTestGroup();
-		testGroup.addTest(cacheUrlSuccess("Jazz Icon", "png", URL_musicIconCategoryJazz));
+		AsyncScenario testGroup = createAsyncScenario();
+		testGroup.addTest(cacheUrlSuccess("JazzIcon", "png", URL_musicIconCategoryJazz));
 		testGroup.execute();
 	}
 
 	@Test
 	public void test_CacheTwoTheDifferent() {
-		AsyncTestim<Boolean> testGroup = createTestGroup();
-		testGroup.addTest(cacheUrlSuccess("Jazz Icon", "png", URL_musicIconCategoryJazz));
-		testGroup.addTest(cacheUrlSuccess("Jazz Icon", "png", URL_musicIconCategoryClassical));
+		AsyncScenario testGroup = createAsyncScenario();
+		testGroup.addTest(cacheUrlSuccess("JazzIcon", "png", URL_musicIconCategoryJazz));
+		testGroup.addTest(cacheUrlSuccess("JazzIcon", "png", URL_musicIconCategoryClassical));
 		testGroup.execute();
 	}
 
 	@Test
 	public void test_CacheTwoTheSame() {
-		AsyncTestim<Boolean> testGroup = createTestGroup();
-		testGroup.addTest(cacheUrlSuccess("Jazz Icon 1", "png", URL_musicIconCategoryJazz).setTimeout(10000000));
-		testGroup.addTest(cacheUrlSuccess("Jazz Icon 2", "png", URL_musicIconCategoryJazz));
+		AsyncScenario testGroup = createAsyncScenario();
+		testGroup.addTest(cacheUrlSuccess("JazzIcon-1", "png", URL_musicIconCategoryJazz));
+		testGroup.addTest(cacheUrlSuccess("JazzIcon-2", "png", URL_musicIconCategoryJazz));
 		testGroup.execute();
 	}
 }
