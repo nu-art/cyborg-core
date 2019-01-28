@@ -14,8 +14,10 @@ import com.nu.art.http.HttpResponseListener;
 import com.nu.art.modular.core.ModuleManagerBuilder;
 import com.nu.art.modular.core.ModulesPack;
 import com.nu.art.modular.tests.BaseTest;
+import com.nu.art.modular.tests.ModuleManager_TestClass;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.InputStream;
@@ -23,7 +25,7 @@ import java.io.InputStream;
 import static com.nu.art.http.consts.HttpMethod.Get;
 
 public class Test_BaseCacheTest
-	extends BaseTest {
+	extends ModuleManager_TestClass {
 
 	public static final String URL_musicIconCategoryJazz = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_jazz.png";
 	public static final String URL_musicIconCategoryClassical = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_classical.png";
@@ -35,7 +37,7 @@ public class Test_BaseCacheTest
 	public static final String URL_musicIconCategoryBroadway = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_broadway.png";
 	public static final String URL_musicIconCategoryInternational = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_international.png";
 
-	public class DownloadTransaction
+	public static class DownloadTransaction
 		extends BaseTransaction {
 
 		public void download(final String url, final String suffix, final GenericListener<InputStream> listener) {
@@ -73,7 +75,7 @@ public class Test_BaseCacheTest
 		}
 	}
 
-	private DownloadTransaction dt;
+	private static DownloadTransaction dt;
 
 	static class _ModulePack
 		extends ModulesPack {
@@ -91,11 +93,10 @@ public class Test_BaseCacheTest
 		}
 	}
 
-	@Before
+	@BeforeClass
 	@SuppressWarnings("unchecked")
-	public void setUp() {
-		BeLogged.getInstance().addClient(new DefaultLogClient());
-		new ModuleManagerBuilder().addModulePacks(_ModulePack.class).build();
+	public static void setUp() {
+		initWithPacks(_ModulePack.class);
 		dt = new DownloadTransaction();
 	}
 
