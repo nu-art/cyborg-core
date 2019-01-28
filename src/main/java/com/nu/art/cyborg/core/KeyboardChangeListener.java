@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -89,6 +90,13 @@ public class KeyboardChangeListener
 			viewTreeObserver.removeGlobalOnLayoutListener(layoutChangeListener);
 	}
 
+	private final Rect r = new Rect();
+
+	private final int DefaultKeyboardDP = 100;
+
+	// From @nathanielwolf answer...  Lollipop includes button bar in the root. Add height of button bar (48dp) to maxDiff (https://stackoverflow.com/a/27005787/348189)
+	private final int EstimatedKeyboardDP = DefaultKeyboardDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
+
 	private void addLayoutChangeListener() {
 		final View activityRootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
 		if (activityRootView == null)
@@ -96,23 +104,11 @@ public class KeyboardChangeListener
 
 		activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(layoutChangeListener = new OnGlobalLayoutListener() {
 
-			private final int DefaultKeyboardDP = 100;
-
-			// From @nathanielwolf answer...  Lollipop includes button bar in the root. Add height of button bar (48dp) to maxDiff
-			private final int EstimatedKeyboardDP = DefaultKeyboardDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
-
-			private final Rect r = new Rect();
-
 			private boolean wasOpened;
 
 			@Override
 			public void onGlobalLayout() {
-				int estimatedKeyboardHeight = cyborg.dpToPx(EstimatedKeyboardDP);
-
-				activityRootView.getWindowVisibleDisplayFrame(r);
-				int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
-				final boolean isShown = heightDiff >= estimatedKeyboardHeight;
-
+				final boolean isShown = isKeyboardShown(activityRootView);
 				if (isShown == wasOpened)
 					return;
 
@@ -125,5 +121,12 @@ public class KeyboardChangeListener
 				});
 			}
 		});
+	}
+
+	public boolean isKeyboardShown(View activityRootView) {
+		int estimatedKeyboardHeight = cyborg.dpToPx(EstimatedKeyboardDP);
+		activityRootView.getWindowVisibleDisplayFrame(r);
+		int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
+		return heightDiff >= estimatedKeyboardHeight;
 	}
 }
