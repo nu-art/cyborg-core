@@ -30,6 +30,7 @@ import com.nu.art.cyborg.core.CyborgController;
 import com.nu.art.cyborg.core.ItemRenderer;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * Created by tacb0ss on 02/06/2017.
@@ -124,6 +125,19 @@ public class ExceptionGenerator {
 	public static <T> ImplementationMissingException missingAnnotationForRendererType(Class<? extends ItemRenderer<? extends T>> renderer) {
 		String message = "In order to use this interface, you would need to annotate the " + renderer.getSimpleName() + " with " + ItemType.class.getSimpleName() + "";
 		return new ImplementationMissingException(message);
+	}
+
+	public static BadImplementationException recyclerMismatchBetweenRendererTypesAndItemsTypesCounts(CyborgController controller,
+	                                                                                                 Class<?>[] itemTypes,
+	                                                                                                 Class<? extends ItemRenderer<?>>[] renderersTypes) {
+
+		String message = "Recycler count conflict in" +
+			"\nController: " + controller.getClass().getSimpleName() +
+			"\n\nMismatch between:" +
+			"\n  itemTypes(" + itemTypes.length + "): " + Arrays.toString(itemTypes) +
+			"\nAND" +
+			"\n  renderersTypes(" + renderersTypes.length + "): " + Arrays.toString(renderersTypes);
+		return new BadImplementationException(message);
 	}
 
 	@NonNull

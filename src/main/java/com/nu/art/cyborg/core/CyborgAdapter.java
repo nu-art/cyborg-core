@@ -40,6 +40,7 @@ import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.cyborg.core.dataModels.ListDataModel;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.lang.reflect.Modifier;
@@ -90,6 +91,9 @@ public class CyborgAdapter<Item>
 
 	public final void invalidateDataModel() {
 		DataModel<Item> dataModel = resolver.get();
+		if (dataModel.getItemTypesCount() != renderersTypes.length)
+			throw ExceptionGenerator.recyclerMismatchBetweenRendererTypesAndItemsTypesCounts(controller, dataModel.getItemTypes(), renderersTypes);
+
 		setDataModel(dataModel);
 		dataModel.notifyDataSetChanged();
 	}
