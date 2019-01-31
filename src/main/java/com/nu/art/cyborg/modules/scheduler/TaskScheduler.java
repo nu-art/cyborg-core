@@ -26,6 +26,7 @@ import android.os.Bundle;
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.interfaces.Serializer;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.storage.PreferencesModule.JsonSerializer;
 
 /**
  * In Order for this to work you need to enable the {@link TasksReceiver} in your manifest
@@ -33,7 +34,7 @@ import com.nu.art.cyborg.core.CyborgModule;
 public class TaskScheduler
 	extends CyborgModule {
 
-	private Serializer<Object, String> serializer;
+	private Serializer<Object, String> serializer = JsonSerializer._Serializer;
 	private static final String Key_TaskType = "TaskType";
 	private static final String Key_TaskData = "TaskData";
 	private AlarmManager alarmManager;
@@ -60,6 +61,12 @@ public class TaskScheduler
 		alarmManager.set(AlarmManager.RTC_WAKEUP, utcWakeupTime, taskPendingIntent);
 
 		return taskPendingIntent;
+	}
+
+	public final void cancel(short id) {
+		Intent taskIntent = new Intent(getApplicationContext(), TasksReceiver.class);
+		PendingIntent taskPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), id, taskIntent, PendingIntent.FLAG_ONE_SHOT);
+		alarmManager.cancel(taskPendingIntent);
 	}
 
 	public final void cancel(PendingIntent taskPendingIntent) {
@@ -89,10 +96,7 @@ public class TaskScheduler
 		logInfo("processing action: " + taskTypeClassName + " with data: " + dataAsString);
 
 		if (task.dataType != Void.class && dataAsString != null) {
-			if (task.dataType == String.class)
-				data = (DataType) dataAsString;
-			else
-				data = (DataType) serializer.deserialize(dataAsString, task.dataType);
+			data = (DataType) serializer.deserialize(dataAsString, task.dataType);
 		}
 
 		task.execute(data);

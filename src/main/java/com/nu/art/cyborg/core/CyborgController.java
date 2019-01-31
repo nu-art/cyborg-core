@@ -587,6 +587,10 @@ public abstract class CyborgController
 		activityBridge.finish();
 	}
 
+	protected final boolean isKeyboardVisible() {
+		return activityBridge.isKeyboardVisible();
+	}
+
 	/**
 	 * Hide the soft keyboard
 	 */

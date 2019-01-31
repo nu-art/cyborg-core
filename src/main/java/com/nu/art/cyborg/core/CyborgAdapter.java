@@ -26,20 +26,20 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.nu.art.belog.Logger;
+import com.nu.art.core.interfaces.Getter;
+import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.core.dataModels.DataModel;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
+import com.nu.art.reflection.tools.ReflectiveTools;
+
+import java.lang.reflect.Modifier;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
-
-import com.nu.art.belog.Logger;
-import com.nu.art.core.interfaces.Getter;
-import com.nu.art.core.utils.DebugFlags;
-import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.consts.LifecycleState;
-import com.nu.art.cyborg.core.dataModels.DataModel;
-import com.nu.art.reflection.tools.ReflectiveTools;
-
-import java.lang.reflect.Modifier;
 
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 
@@ -87,6 +87,9 @@ public class CyborgAdapter<Item>
 
 	public final void invalidateDataModel() {
 		DataModel<Item> dataModel = resolver.get();
+		if (dataModel.getItemTypesCount() != renderersTypes.length)
+			throw ExceptionGenerator.recyclerMismatchBetweenRendererTypesAndItemsTypesCounts(controller, dataModel.getItemTypes(), renderersTypes);
+
 		setDataModel(dataModel);
 		dataModel.notifyDataSetChanged();
 	}

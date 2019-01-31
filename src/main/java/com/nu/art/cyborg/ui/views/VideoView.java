@@ -117,6 +117,13 @@ public class VideoView
 	}
 
 	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		mediaPlayer.dispose();
+		surface.release();
+	}
+
+	@Override
 	public void logVerbose(String verbose) {
 		if (logger != null)
 			logger.logVerbose(verbose);

@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
@@ -89,6 +90,8 @@ public class CyborgActivityBridgeImpl
 	public static void startActivityInStack(Intent intent) {
 		CyborgBuilder.getInstance().openActivityInStack(intent);
 	}
+
+	private KeyboardChangeListener keyboardListener;
 
 	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgActivityBridgeImpl.class);
 
@@ -169,6 +172,15 @@ public class CyborgActivityBridgeImpl
 	}
 
 	@Override
+	public boolean isKeyboardVisible() {
+		View rootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+		if (rootView == null)
+			return false;
+
+		return keyboardListener.isKeyboardShown(rootView);
+	}
+
+	@Override
 	public final void hideKeyboard(View rootView) {
 		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
 		inputServiceManager.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
@@ -190,7 +202,7 @@ public class CyborgActivityBridgeImpl
 			scenarioRecorder.onActivityStarted(activity.getIntent());
 		}
 
-		new KeyboardChangeListener(cyborg, activity);
+		keyboardListener = new KeyboardChangeListener(cyborg, activity);
 		eventDispatcher.addListener(activity);
 		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
 		dispatchLifecycleEvent(LifecycleState.OnCreate);

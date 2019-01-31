@@ -244,7 +244,7 @@ public class CacheModule
 
 		String fileName;
 		try {
-			fileName = CryptoTools.doFingerprint(cacheable.key.getBytes(), "MD5");
+			fileName = CryptoTools.doFingerprint(cacheable.key.getBytes(), "MD5").replaceAll(":", "");
 		} catch (NoSuchAlgorithmException e) {
 			fileName = cacheable.key.hashCode() + "";
 		}

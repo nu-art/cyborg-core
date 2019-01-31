@@ -43,8 +43,6 @@ import java.util.List;
 public class PermissionModule
 	extends CyborgModule {
 
-	private static final int RequestCode_Permissions = 100;
-
 	public interface PermissionResultListener {
 
 		void onPermissionsRejected(int requestCode, String[] rejected);
@@ -107,29 +105,24 @@ public class PermissionModule
 		});
 	}
 
-	public boolean onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		switch (requestCode) {
-			case RequestCode_Permissions: {
-				final ArrayList<String> rejected = new ArrayList<>();
+	public void onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		final ArrayList<String> rejected = new ArrayList<>();
 
-				for (int i = 0; i < grantResults.length; i++) {
-					if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-						rejected.add(permissions[i]);
-					}
-				}
-
-				String message = "Permissions request: " + (grantResults.length - rejected.size()) + "/" + grantResults.length + " Granted";
-				dispatchModuleEvent(message, PermissionResultListener.class, new Processor<PermissionResultListener>() {
-					@Override
-					public void process(PermissionResultListener listener) {
-						if (rejected.size() > 0)
-							listener.onPermissionsRejected(requestCode, ArrayTools.asArray(rejected, String.class));
-						else
-							listener.onAllPermissionsGranted(requestCode);
-					}
-				});
+		for (int i = 0; i < grantResults.length; i++) {
+			if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+				rejected.add(permissions[i]);
 			}
 		}
-		return true;
+
+		String message = "Permissions request: " + (grantResults.length - rejected.size()) + "/" + grantResults.length + " Granted";
+		dispatchGlobalEvent(message, PermissionResultListener.class, new Processor<PermissionResultListener>() {
+			@Override
+			public void process(PermissionResultListener listener) {
+				if (rejected.size() > 0)
+					listener.onPermissionsRejected(requestCode, ArrayTools.asArray(rejected, String.class));
+				else
+					listener.onAllPermissionsGranted(requestCode);
+			}
+		});
 	}
 }

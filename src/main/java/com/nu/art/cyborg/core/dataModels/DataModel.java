@@ -25,13 +25,13 @@ import com.nu.art.cyborg.core.CyborgAdapter;
  */
 public abstract class DataModel<Item> {
 
-	private final Class<? extends Item>[] itemsType;
+	private final Class<? extends Item>[] itemTypes;
 	private CyborgAdapter adapter;
 	private boolean cyclic;
 	protected boolean autoNotifyChanges = true;
 
-	public DataModel(Class<? extends Item>[] itemsType) {
-		this.itemsType = itemsType;
+	public DataModel(Class<? extends Item>[] itemTypes) {
+		this.itemTypes = itemTypes;
 	}
 
 	public void setCyclic(boolean cyclic) {
@@ -47,7 +47,11 @@ public abstract class DataModel<Item> {
 	}
 
 	public final int getItemTypesCount() {
-		return itemsType.length;
+		return itemTypes.length;
+	}
+
+	public final Class<? extends Item>[] getItemTypes() {
+		return itemTypes;
 	}
 
 	public final int getItemTypeByPosition(int position) {
@@ -59,13 +63,13 @@ public abstract class DataModel<Item> {
 	}
 
 	private int getItemTypeByItem(Item item) {
-		for (int i = 0; i < itemsType.length; i++) {
-			if (item.getClass() == itemsType[i])
+		for (int i = 0; i < itemTypes.length; i++) {
+			if (item.getClass() == itemTypes[i])
 				return i;
 		}
 
-		for (int i = 0; i < itemsType.length; i++) {
-			if (itemsType[i].isAssignableFrom(item.getClass()))
+		for (int i = 0; i < itemTypes.length; i++) {
+			if (itemTypes[i].isAssignableFrom(item.getClass()))
 				return i;
 		}
 

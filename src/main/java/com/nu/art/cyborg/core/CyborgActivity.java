@@ -24,7 +24,6 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 
 import androidx.annotation.IdRes;
@@ -138,12 +137,6 @@ public class CyborgActivity
 	public void onUserInteraction() {
 		//		bridge.onUserInteraction();
 		super.onUserInteraction();
-	}
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		boolean toRet = bridge.onMenuItemSelected(featureId, item);
-		return toRet | super.onMenuItemSelected(featureId, item);
 	}
 
 	@Override
