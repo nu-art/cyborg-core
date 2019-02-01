@@ -35,7 +35,7 @@ import java.io.InputStream;
 import static com.nu.art.core.generics.GenericParamExtractor._GenericParamExtractor;
 
 /**
- * Created by tacb0ss on 05/04/2018.
+ * Created by TacB0sS on 05/04/2018.
  */
 
 @RunWith(AndroidJUnit4.class)

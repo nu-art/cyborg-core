@@ -21,7 +21,7 @@ package com.nu.art.cyborg.common.interfaces;
 import android.content.Intent;
 
 /**
- * Created by tacb0ss on 19/04/2018.
+ * Created by TacB0sS on 19/04/2018.
  */
 
 public interface ScenarioRecorder {

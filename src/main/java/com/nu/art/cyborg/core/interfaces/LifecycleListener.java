@@ -21,7 +21,7 @@ package com.nu.art.cyborg.core.interfaces;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 
 /**
- * Created by tacb0ss on 13/05/2018.
+ * Created by TacB0sS on 13/05/2018.
  */
 
 public interface LifecycleListener {

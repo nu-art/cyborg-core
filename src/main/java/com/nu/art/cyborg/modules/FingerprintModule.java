@@ -57,7 +57,7 @@ import javax.crypto.SecretKey;
 import static android.Manifest.permission.USE_FINGERPRINT;
 
 /**
- * Created by tacb0ss on 29/04/2018.
+ * Created by TacB0sS on 29/04/2018.
  */
 @TargetApi(VERSION_CODES.M)
 public class FingerprintModule

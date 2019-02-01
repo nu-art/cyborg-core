@@ -30,7 +30,7 @@ import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
 
 /**
- * Created by tacb0ss on 4/16/15.
+ * Created by TacB0sS on 4/16/15.
  */
 @SuppressWarnings("unchecked")
 public class CyborgEditModePack

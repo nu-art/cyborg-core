@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 /**
- * Created by tacb0ss on 02/06/2017.
+ * Created by TacB0sS on 02/06/2017.
  */
 
 public class ExceptionGenerator {

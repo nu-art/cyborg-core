@@ -39,7 +39,7 @@ import com.nu.art.modular.core.ModulesPack;
 import com.nu.art.storage.PreferencesModule;
 
 /**
- * Created by tacb0ss on 4/16/15.
+ * Created by TacB0sS on 4/16/15.
  */
 @SuppressWarnings("unchecked")
 public class CyborgBasePack

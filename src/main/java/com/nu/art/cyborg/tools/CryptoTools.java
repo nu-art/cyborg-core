@@ -22,7 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by tacb0ss on 06/01/2018.
+ * Created by TacB0sS on 06/01/2018.
  */
 
 public class CryptoTools {
