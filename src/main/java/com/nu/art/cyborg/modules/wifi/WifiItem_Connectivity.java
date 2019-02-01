@@ -45,7 +45,7 @@ import java.util.Set;
 import static com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode.EAP;
 
 /**
- * Created by tacb0ss on 12/07/2017.
+ * Created by TacB0sS on 12/07/2017.
  */
 
 @SuppressWarnings("MissingPermission")

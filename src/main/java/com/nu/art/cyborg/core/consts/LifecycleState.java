@@ -19,7 +19,7 @@
 package com.nu.art.cyborg.core.consts;
 
 /**
- * Created by tacb0ss on 13/05/2018.
+ * Created by TacB0sS on 13/05/2018.
  */
 
 public enum LifecycleState {

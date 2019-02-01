@@ -23,7 +23,7 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgModule;
 
 /**
- * Created by tacb0ss on 14/05/2018.
+ * Created by TacB0sS on 14/05/2018.
  */
 
 public class AppsStatusModule

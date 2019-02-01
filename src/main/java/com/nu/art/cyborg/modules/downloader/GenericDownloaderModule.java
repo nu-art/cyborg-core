@@ -41,7 +41,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 /**
- * Created by tacb0ss on 14/06/2017.
+ * Created by TacB0sS on 14/06/2017.
  */
 @ModuleDescriptor(usesPermissions = {permission.INTERNET})
 public class GenericDownloaderModule

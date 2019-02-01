@@ -27,7 +27,7 @@ import com.nu.art.core.generics.Function;
 import java.io.InputStream;
 
 /**
- * Created by tacb0ss on 14/06/2017.
+ * Created by TacB0sS on 14/06/2017.
  */
 
 @SuppressWarnings("unused")

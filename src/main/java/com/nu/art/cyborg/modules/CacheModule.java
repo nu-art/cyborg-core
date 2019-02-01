@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by tacb0ss on 14/06/2017.
+ * Created by TacB0sS on 14/06/2017.
  */
 @SuppressWarnings("unused")
 public class CacheModule

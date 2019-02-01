@@ -40,7 +40,7 @@ import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by tacb0ss on 14/06/2017.
+ * Created by TacB0sS on 14/06/2017.
  */
 @ModuleDescriptor(usesPermissions = {permission.INTERNET},
                   dependencies = {GenericDownloaderModule.class})

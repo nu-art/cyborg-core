@@ -24,7 +24,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
 /**
- * Created by tacb0ss on 23/11/2017.
+ * Created by TacB0sS on 23/11/2017.
  */
 
 public interface Interpolators {

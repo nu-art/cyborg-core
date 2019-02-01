@@ -28,7 +28,7 @@ import com.nu.art.cyborg.core.CyborgReceiver;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 /**
- * Created by tacb0ss on 12/07/2017.
+ * Created by TacB0sS on 12/07/2017.
  */
 
 @SuppressWarnings("MissingPermission")

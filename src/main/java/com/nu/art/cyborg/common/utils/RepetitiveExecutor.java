@@ -21,7 +21,7 @@ package com.nu.art.cyborg.common.utils;
 import android.os.Handler;
 
 /**
- * Created by tacb0ss on 11/07/2017.
+ * Created by TacB0sS on 11/07/2017.
  */
 
 public class RepetitiveExecutor
