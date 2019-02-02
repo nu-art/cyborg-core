@@ -50,7 +50,7 @@ public @interface ViewIdentifier {
 	int parentViewId() default -1;
 
 	/**
-	 * Use this method only in case of a single rootView, eg. <br>
+	 * Use this method in case of a single or multiple items rootView, eg. <br>
 	 *
 	 * @return The rootView Id as defined in your layout xmls.
 	 *
@@ -59,20 +59,21 @@ public @interface ViewIdentifier {
 	 * }<br>
 	 * </code>
 	 */
-	int viewId() default -1;
+	int[] viewId() default -1;
 
-	/**
-	 * Use this method only in case of a multiple views, eg. <br>
-	 *
-	 * @return An array of rootView ids. The size of the rootView array would correspond with size of the return array of this
-	 * method!!
-	 *
-	 * <code>class ClassName {
-	 * private &lt;ViewType extends View&gt; <b>ViewType</b>[] multipleViews;
-	 * }<br>
-	 * </code>
-	 */
-	int[] viewIds() default {};
+	//	/**
+	//	 * Use this method only in case of a multiple views, eg. <br>
+	//	 *
+	//	 * @return An array of rootView ids. The size of the rootView array would correspond with size of the return array of this
+	//	 * method!!
+	//	 *
+	//	 * <code>class ClassName {
+	//	 * private &lt;ViewType extends View&gt; <b>ViewType</b>[] multipleViews;
+	//	 * }<br>
+	//	 * </code>
+	//	 */
+	//	int[] viewIds() default {};
+	//
 
 	/**
 	 * @return An array of {@link ViewListener} to setup for this rootView.

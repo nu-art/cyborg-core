@@ -59,7 +59,7 @@ public class ExceptionGenerator {
 		return new BadImplementationException(errorMessage);
 	}
 
-	public static BadImplementationException developerHaveSetViewIdsButMemberIsNotAnArray(Field viewField) {
+	public static BadImplementationException developerHaveSetViewIdButMemberIsNotAnArray(Field viewField) {
 		String errorMessage = "Your annotation declares multiple views, but your member is NOT an array of Views!!" + fieldDescription(viewField);
 		return new BadImplementationException(errorMessage);
 	}

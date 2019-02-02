@@ -29,7 +29,6 @@ import com.nu.art.cyborg.common.interfaces.UserActionsDelegator;
 import com.nu.art.cyborg.core.CyborgAdapter;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
-import com.nu.art.cyborg.core.CyborgRecycler;
 import com.nu.art.cyborg.core.CyborgView;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.injector.AnnotatbleInjector;
@@ -90,30 +89,28 @@ public final class CyborgViewInjector
 	protected Object getValueFromAnnotationAndField(Object fieldValue, ViewIdentifier annotation, Field viewField) {
 		Class<?> fieldType = viewField.getType();
 		ViewIdentifier viewIdentifier = viewField.getAnnotation(ViewIdentifier.class);
+		int[] viewIds = viewIdentifier.viewId();
 		if (!fieldType.isArray()) {
 			int parentViewId = viewIdentifier.parentViewId();
-			int viewId = viewIdentifier.viewId();
-			if (viewIdentifier.viewIds().length > 0)
-				throw ExceptionGenerator.developerHaveSetViewIdsButMemberIsNotAnArray(viewField);
+			if (viewIds.length > 1)
+				throw ExceptionGenerator.developerHaveSetViewIdButMemberIsNotAnArray(viewField);
 
-			if (viewId == -1 && fieldValue == null)
+			if (viewIds.length == 0 && fieldValue == null)
 				throw ExceptionGenerator.developerDidNotSetViewIdForViewInjector(viewField);
 
-			return setupItem(fieldValue, viewField, fieldType, viewIdentifier, parentViewId, viewId);
+			return setupItem(fieldValue, viewField, fieldType, viewIdentifier, parentViewId, viewIds[0]);
 		}
 
 		Class<?> componentType = fieldType.getComponentType();
 
 		int parentViewId = viewIdentifier.parentViewId();
-		int viewId = viewIdentifier.viewId();
-		if (viewId != -1)
+		if (viewIds.length == 0)
 			throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
 
-		int[] ids = viewIdentifier.viewIds();
-		if (ids.length == 0 && fieldValue == null)
+		if (fieldValue == null)
 			throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
 
-		return getArrayValueFromAnnotationAndField(fieldValue, viewField, viewIdentifier, componentType, parentViewId, ids);
+		return getArrayValueFromAnnotationAndField(fieldValue, viewField, viewIdentifier, componentType, parentViewId, viewIds);
 	}
 
 	private <ComponentType> ComponentType[] getArrayValueFromAnnotationAndField(Object fieldValue,
