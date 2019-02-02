@@ -469,11 +469,6 @@ public class CyborgStackController
 
 			restoreState();
 
-			// JUST FOR THE RECORD... I HATE THIS CONDITION>> ()
-			//			this condition breaks in my current setup..
-			if (!fromXml) {
-				controller.onReady();
-			}
 			// --------------------------------------------------------------------
 
 			fromXml = false;

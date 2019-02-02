@@ -408,8 +408,6 @@ public abstract class CyborgController
 		return rootView.isInEditMode();
 	}
 
-	protected void onReady() {}
-
 	final void dispatchLifeCycleEvent(LifecycleState newState) {
 		if (newState == state)
 			if (DebugFlag.isEnabled())
@@ -633,7 +631,7 @@ public abstract class CyborgController
 
 		this.stateTag = stateTag;
 		if (!stateTag.equals(getClass().getSimpleName()))
-			setTag(getClass().getSimpleName() + "-" + stateTag);
+			setTag(stateTag);
 	}
 
 	final String getStateTag() {

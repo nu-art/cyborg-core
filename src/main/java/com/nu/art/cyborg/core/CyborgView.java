@@ -77,7 +77,6 @@ public class CyborgView
 		super(activity);
 		this.controller = ReflectiveTools.newInstance(controllerType);
 		initController();
-		controller.onReady();
 	}
 
 	public CyborgView(Context context, AttributeSet attrs) {
@@ -87,7 +86,6 @@ public class CyborgView
 	public CyborgView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		initController(attrs, defStyle);
-		controller.onReady();
 	}
 
 	private Cyborg resolveCyborg() {
