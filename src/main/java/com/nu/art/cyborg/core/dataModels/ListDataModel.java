@@ -18,6 +18,8 @@
 
 package com.nu.art.cyborg.core.dataModels;
 
+import com.nu.art.core.tools.ArrayTools;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,8 +35,12 @@ public class ListDataModel<Item>
 
 	private ArrayList<Item> items = new ArrayList<>();
 
-	public ListDataModel(Class<? extends Item>... itemsType) {
-		super(itemsType);
+	public ListDataModel(Class<? extends Item> firstItem, Class<? extends Item>... itemTypes) {
+		super(ArrayTools.insertElement(itemTypes, firstItem, 0));
+	}
+
+	public ListDataModel(Class<? extends Item>[] itemTypes) {
+		super(itemTypes);
 	}
 
 	public final void add(Item... items) {
@@ -63,6 +69,7 @@ public class ListDataModel<Item>
 		//			adapter.onItemRangeInserted(size, items.size());
 
 	}
+
 	public void swapItemsByPosition(int fromPosition, int toPosition) {
 		Collections.swap(items, fromPosition, toPosition);
 		notifyItemMoved(fromPosition, toPosition);
