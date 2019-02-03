@@ -48,10 +48,10 @@ public class AndroidLogClient
 	});
 
 	@Override
-	protected void log(LogLevel level, String thread, String tag, String message, Throwable t) {
+	protected void log(LogLevel level, Thread thread, String tag, String message, Throwable t) {
 		StringBuffer buffer = syncBuffer.get();
 		buffer.setLength(0);
-		buffer.append(thread).append("/").append(tag);
+		buffer.append(thread.getName()).append("/").append(tag);
 
 		String tagWithThread = buffer.toString();
 
