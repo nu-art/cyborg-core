@@ -104,11 +104,12 @@ public final class CyborgViewInjector
 		Class<?> componentType = fieldType.getComponentType();
 
 		int parentViewId = viewIdentifier.parentViewId();
-		if (viewIds.length == 0)
-			throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
+		if (viewIds.length == 0) {
+			if (fieldValue == null)
+				throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
 
-		if (fieldValue == null)
-			throw ExceptionGenerator.developerDidNotSetViewIdsForViewArrayInjector(viewField);
+			throw ExceptionGenerator.developerSetViewIdForViewArrayInjector(viewField);
+		}
 
 		return getArrayValueFromAnnotationAndField(fieldValue, viewField, viewIdentifier, componentType, parentViewId, viewIds);
 	}
