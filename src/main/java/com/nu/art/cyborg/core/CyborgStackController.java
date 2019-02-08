@@ -86,7 +86,7 @@ public class CyborgStackController
 
 	private RelativeLayout containerLayout;
 
-	private int transitionDuration = 300;
+	private int transitionDuration = 2000;
 
 	private boolean animatingTransition;
 
@@ -626,12 +626,17 @@ public class CyborgStackController
 				if (originLayerToBeDisposed != null) {
 					if (DebugFlag.isEnabled())
 						logInfo("disposing-push: " + originLayerToBeDisposed);
+					originLayerToBeDisposed.rootView.setVisibility(View.GONE);
 				}
 
-				alignChildViewsToStack();
-
-				setInAnimationState(false);
-				targetLayerToBeAdded.onAnimatedIn();
+				postOnUI(new Runnable() {
+					@Override
+					public void run() {
+						alignChildViewsToStack();
+						setInAnimationState(false);
+						targetLayerToBeAdded.onAnimatedIn();
+					}
+				});
 			}
 		};
 
@@ -653,16 +658,24 @@ public class CyborgStackController
 					treeObserver.removeGlobalOnLayoutListener(this);
 				}
 				setInAnimationState(true);
+				targetLayerToBeAdded.rootView.setVisibility(View.GONE);
+				postOnUI(new Runnable() {
+					@Override
+					public void run() {
+						targetLayerToBeAdded.rootView.setVisibility(View.VISIBLE);
 
-				for (StackTransitionAnimator animator : transitionAnimators) {
-					Interpolator interpolator = targetLayerToBeAdded.interpolator;
-					if (interpolator != null)
-						animator.setInterpolator(interpolator);
+						logWarning("starting animation");
+						for (StackTransitionAnimator animator : transitionAnimators) {
+							Interpolator interpolator = targetLayerToBeAdded.interpolator;
+							if (interpolator != null)
+								animator.setInterpolator(interpolator);
 
-					// All Animations are performed together, the listener MUST be called only once
-					animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
-					                   animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
-				}
+							// All Animations are performed together, the listener MUST be called only once
+							animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
+							                   animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+						}
+					}
+				});
 			}
 		});
 	}
