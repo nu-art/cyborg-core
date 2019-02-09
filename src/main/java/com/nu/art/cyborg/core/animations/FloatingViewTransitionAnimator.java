@@ -135,7 +135,7 @@ public class FloatingViewTransitionAnimator
 	                          Bitmap imageToAnimate,
 	                          int duration,
 	                          final AnimationListener listener) {
-		final FrameLayout rootView = (FrameLayout) fromParent.getRootView().findViewById(android.R.id.content);
+		final FrameLayout rootView = fromParent.getRootView().findViewById(android.R.id.content);
 		Context context = rootView.getContext();
 
 		final RelativeLayout renderingLayer = new RelativeLayout(context);
