@@ -36,7 +36,7 @@ import android.widget.RelativeLayout;
 import com.nu.art.core.generics.Function;
 import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
 import com.nu.art.cyborg.common.utils.Tools;
-import com.nu.art.cyborg.core.CyborgStackController.StackLayer;
+import com.nu.art.cyborg.core.CyborgStackController;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 
 /**
@@ -45,26 +45,26 @@ import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 public class FloatingViewTransitionAnimator
 	extends StackTransitionAnimator {
 
-	private final Function<StackLayer, View> getOriginView;
+	private final Function<CyborgStackController.StackLayerBuilder, View> getOriginView;
 
-	private final Function<StackLayer, View> getTargetView;
+	private final Function<CyborgStackController.StackLayerBuilder, View> getTargetView;
 
 	public FloatingViewTransitionAnimator(final int originViewId, final int targetViewId) {
-		this.getOriginView = new Function<StackLayer, View>() {
+		this.getOriginView = new Function<CyborgStackController.StackLayerBuilder, View>() {
 			@Override
-			public View map(StackLayer stackLayer) {
-				return stackLayer.getRootView().findViewById(originViewId);
+			public View map(CyborgStackController.StackLayerBuilder stackLayerBuilder) {
+				return stackLayerBuilder.getRootView().findViewById(originViewId);
 			}
 		};
-		this.getTargetView = new Function<StackLayer, View>() {
+		this.getTargetView = new Function<CyborgStackController.StackLayerBuilder, View>() {
 			@Override
-			public View map(StackLayer stackLayer) {
-				return stackLayer.getRootView().findViewById(targetViewId);
+			public View map(CyborgStackController.StackLayerBuilder stackLayerBuilder) {
+				return stackLayerBuilder.getRootView().findViewById(targetViewId);
 			}
 		};
 	}
 
-	public FloatingViewTransitionAnimator(Function<StackLayer, View> getOriginView, Function<StackLayer, View> getTargetView) {
+	public FloatingViewTransitionAnimator(Function<CyborgStackController.StackLayerBuilder, View> getOriginView, Function<CyborgStackController.StackLayerBuilder, View> getTargetView) {
 		this.getOriginView = getOriginView;
 		this.getTargetView = getTargetView;
 	}
@@ -108,7 +108,7 @@ public class FloatingViewTransitionAnimator
 	}
 
 	@Override
-	public void animateIn(StackLayer originLayer, StackLayer targetLayer, int duration, AnimationListener listener) {
+	public void animateIn(CyborgStackController.StackLayerBuilder originLayer, CyborgStackController.StackLayerBuilder targetLayer, int duration, AnimationListener listener) {
 
 		// prepare data for animation
 		final View originViewToAnimate = getOriginView.map(originLayer);
@@ -120,7 +120,7 @@ public class FloatingViewTransitionAnimator
 	}
 
 	@Override
-	public void animateOut(StackLayer originLayer, StackLayer targetLayer, int duration, final AnimationListener listener) {
+	public void animateOut(CyborgStackController.StackLayerBuilder originLayer, CyborgStackController.StackLayerBuilder targetLayer, int duration, final AnimationListener listener) {
 		// prepare data for animation
 		final View originViewToAnimate = getOriginView.map(originLayer);
 		final View targetViewToAnimate = getTargetView.map(targetLayer);

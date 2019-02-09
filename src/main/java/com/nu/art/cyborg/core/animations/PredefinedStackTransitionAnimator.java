@@ -25,7 +25,7 @@ import android.view.animation.Animation.AnimationListener;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
-import com.nu.art.cyborg.core.CyborgStackController.StackLayer;
+import com.nu.art.cyborg.core.CyborgStackController;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.BaseTransitionHelper;
@@ -65,7 +65,7 @@ public class PredefinedStackTransitionAnimator
 	}
 
 	@Override
-	public void animateIn(StackLayer originLayer, StackLayer targetLayer, int duration, AnimationListener listener) {
+	public void animateIn(CyborgStackController.StackLayerBuilder originLayer, CyborgStackController.StackLayerBuilder targetLayer, int duration, AnimationListener listener) {
 		if (inTarget != null)
 			inTarget.setInterpolator(interpolator);
 		if (outOrigin != null)
@@ -79,7 +79,7 @@ public class PredefinedStackTransitionAnimator
 	}
 
 	@Override
-	public void animateOut(StackLayer originLayer, StackLayer targetLayer, int duration, AnimationListener listener) {
+	public void animateOut(CyborgStackController.StackLayerBuilder originLayer, CyborgStackController.StackLayerBuilder targetLayer, int duration, AnimationListener listener) {
 		if (outTarget != null)
 			outTarget.setInterpolator(reverseInterpolator);
 		if (inOrigin != null)
