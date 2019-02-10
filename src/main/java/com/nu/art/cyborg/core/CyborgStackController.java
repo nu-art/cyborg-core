@@ -49,6 +49,7 @@ import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
@@ -325,7 +326,7 @@ public class CyborgStackController
 
 		void detachView() {
 			if (DebugFlag.isEnabled())
-				logWarning("Removing Controller: " + this + " " + controller);
+				logWarning("detachView: " + this);
 
 			getRootViewImpl().removeView(controller.getRootViewImpl());
 			printStateTags();
@@ -459,10 +460,12 @@ public class CyborgStackController
 	}
 
 	public final void popLast() {
+		ThreadsModule.assertMainThread();
 		onBackPressed();
 	}
 
 	public void popUntil(String refKey) {
+		ThreadsModule.assertMainThread();
 	}
 
 	public void setFocused(boolean focused) {
@@ -478,11 +481,11 @@ public class CyborgStackController
 	 * @param targetLayerToBeAdded
 	 */
 	private void push(final StackLayerBuilder targetLayerToBeAdded) {
+		ThreadsModule.assertMainThread();
 		StackLayerBuilder[] visibleLayers = getVisibleLayers();
 
 		for (StackLayerBuilder layer : visibleLayers) {
-			if (targetLayerToBeAdded.keepBackground)
-				layer.pause();
+			layer.pause();
 		}
 
 		final StackLayerBuilder originLayerToBeDisposed =
@@ -545,7 +548,7 @@ public class CyborgStackController
 		};
 
 		if (DebugFlag.isEnabled())
-			logInfo("popping: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeRemove);
+			logInfo("popping: " + targetLayerToBeRemove + " => " + Arrays.toString(visibleLayers));
 
 		animate(false, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
 	}
@@ -559,9 +562,6 @@ public class CyborgStackController
 
 		if (animatingTransition && DebugFlag.isEnabled())
 			logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
-
-		if (DebugFlag.isEnabled())
-			logDebug("popping: " + fromLayer + " => " + toLayer);
 
 		final AnimationListenerImpl listener = new AnimationListenerImpl() {
 			@Override
