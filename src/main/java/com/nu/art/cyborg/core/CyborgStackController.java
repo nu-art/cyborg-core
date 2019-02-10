@@ -458,6 +458,10 @@ public class CyborgStackController
 		return new StackLayerBuilder();
 	}
 
+	public final void popLast() {
+		onBackPressed();
+	}
+
 	public void popUntil(String refKey) {
 	}
 
@@ -469,6 +473,10 @@ public class CyborgStackController
 	// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
 	//		activityBridge.removeController(this);
 	//		activityBridge.addController(this);
+
+	/**
+	 * @param targetLayerToBeAdded
+	 */
 	private void push(final StackLayerBuilder targetLayerToBeAdded) {
 		StackLayerBuilder[] visibleLayers = getVisibleLayers();
 
@@ -510,122 +518,7 @@ public class CyborgStackController
 		if (DebugFlag.isEnabled())
 			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeAdded);
 
-		animateIn(true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
-	}
-
-	private void animateIn(boolean in,
-	                       final StackLayerBuilder fromLayer,
-	                       final StackLayerBuilder toLayer,
-	                       final Runnable animationEnded) {
-
-		final StackLayerBuilder animatingLayer = (in ? toLayer : fromLayer);
-
-		if (animatingTransition && DebugFlag.isEnabled())
-			logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
-
-		if (DebugFlag.isEnabled())
-			logDebug("pushing: " + fromLayer + " => " + toLayer);
-
-		final AnimationListenerImpl listener = new AnimationListenerImpl() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (fromLayer != null && DebugFlag.isEnabled())
-					logInfo("disposing-push: " + fromLayer);
-
-				animationEnded.run();
-				setInAnimationState(false);
-			}
-		};
-
-		// we must call clear animation to ensure onAnimationEnd is called.
-		if (fromLayer != null)
-			fromLayer.getRootView().clearAnimation();
-
-		if (toLayer != null)
-			toLayer.getRootView().clearAnimation();
-
-		// Animating layer can never be null!!
-		final StackTransitionAnimator[] transitionAnimators = animatingLayer.stackTransitionAnimator;
-		if (transitionAnimators == null) {
-			// if there is no animation transitioning between the two layer, just dispose the older layer
-			listener.onAnimationEnd(null);
-			return;
-		}
-
-		final Interpolator interpolator = animatingLayer.interpolator;
-		final int transitionDuration = animatingLayer.transitionDuration;
-
-		Runnable startAnimation = new Runnable() {
-
-			@Override
-			public void run() {
-				setInAnimationState(true);
-
-				logWarning("starting animation");
-				for (StackTransitionAnimator animator : transitionAnimators) {
-					if (interpolator != null)
-						animator.setInterpolator(interpolator);
-
-					// All Animations are performed together, the listener MUST be called only once
-					animator.animateIn(fromLayer, toLayer, transitionDuration,
-					                   animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
-				}
-			}
-		};
-
-		/*
-
-
-
-			animatingLayer == toLayer
-
-		 */
-
-		// When animating in, the animatingLayer can never be null
-		waitForLayoutChanges(animatingLayer, startAnimation);
-	}
-
-	private void waitForLayoutChanges(final StackLayerBuilder animatingToLayout, final Runnable animate) {
-		final View viewToBeAnimated = animatingToLayout == null ? null : animatingToLayout.getRootView();
-
-		// when animating out and when the stack is empty.. the animating to view would be null and we will not receive a layout change event
-		// therefore we skip the listener and invoke the animate runnable directly
-		/*
-				if (animatingLayer.keepBackground) {
-					startAnimation.run();
-					return;
-				}
-
-				Could it be that the following condition also takes the above one???
-
-		 */
-
-		if (viewToBeAnimated == null) {
-			animate.run();
-			return;
-		}
-
-		final ViewTreeObserver treeObserver = viewToBeAnimated.getViewTreeObserver();
-		treeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-
-			@Override
-			@SuppressLint("ObsoleteSdkInt")
-			@SuppressWarnings("deprecation")
-			public void onGlobalLayout() {
-				ViewTreeObserver treeObserver = viewToBeAnimated.getViewTreeObserver();
-				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-					treeObserver.removeOnGlobalLayoutListener(this);
-				} else {
-					treeObserver.removeGlobalOnLayoutListener(this);
-				}
-
-				animate.run();
-			}
-		});
-	}
-
-	public void popLast() {
-		onBackPressed();
+		animate(true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
 	}
 
 	private void popLast(final StackLayerBuilder targetLayerToBeRemove) {
@@ -654,13 +547,13 @@ public class CyborgStackController
 		if (DebugFlag.isEnabled())
 			logInfo("popping: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeRemove);
 
-		animateOut(false, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
+		animate(false, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
 	}
 
-	private void animateOut(final boolean in,
-	                        final StackLayerBuilder fromLayer,
-	                        final StackLayerBuilder toLayer,
-	                        final Runnable animationEnded) {
+	private void animate(final boolean in,
+	                     final StackLayerBuilder fromLayer,
+	                     final StackLayerBuilder toLayer,
+	                     final Runnable animationEnded) {
 
 		final StackLayerBuilder animatingLayer = (in ? toLayer : fromLayer);
 
@@ -681,6 +574,7 @@ public class CyborgStackController
 			}
 		};
 
+		// we must call clear animation to ensure onAnimationEnd is called.
 		if (fromLayer != null)
 			fromLayer.getRootView().clearAnimation();
 
@@ -694,9 +588,12 @@ public class CyborgStackController
 			listener.onAnimationEnd(null);
 			return;
 		}
+
 		final Interpolator interpolator = animatingLayer.interpolator;
 		final int transitionDuration = animatingLayer.transitionDuration;
-		final Runnable startAnimation = new Runnable() {
+
+		final Runnable animate = new Runnable() {
+
 			@Override
 			public void run() {
 				setInAnimationState(true);
@@ -707,19 +604,50 @@ public class CyborgStackController
 						animator.setInterpolator(interpolator);
 
 					// All Animations are performed together, the listener MUST be called only once
-					animator.animateOut(toLayer, fromLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					if (in)
+						animator.animateIn(fromLayer, toLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					else
+						animator.animateOut(toLayer, fromLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
 				}
 			}
 		};
 
+		final View toView = toLayer == null ? null : toLayer.getRootView();
+
+		// when animating out and when the stack is empty.. the animating to view would be null and we will not receive a layout change event
+		// therefore we skip the listener and invoke the animate runnable directly
 		/*
+				if (animatingLayer.keepBackground) {
+					startAnimation.run();
+					return;
+				}
 
-
-
-			animatingLayer == fromLayer
+				Could it be that the following condition also takes the above one???
 
 		 */
-		waitForLayoutChanges(toLayer, startAnimation);
+
+		if (toView == null) {
+			animate.run();
+			return;
+		}
+
+		final ViewTreeObserver treeObserver = toView.getViewTreeObserver();
+		treeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+			@Override
+			@SuppressLint("ObsoleteSdkInt")
+			@SuppressWarnings("deprecation")
+			public void onGlobalLayout() {
+				ViewTreeObserver treeObserver = toView.getViewTreeObserver();
+				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+					treeObserver.removeOnGlobalLayoutListener(this);
+				} else {
+					treeObserver.removeGlobalOnLayoutListener(this);
+				}
+
+				animate.run();
+			}
+		});
 	}
 
 	private final ArrayList<StackLayerBuilder> toBeDisposed = new ArrayList<>();
