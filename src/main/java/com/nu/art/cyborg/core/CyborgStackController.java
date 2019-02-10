@@ -624,7 +624,11 @@ public class CyborgStackController
 		});
 	}
 
-	public void popLast(final StackLayerBuilder targetLayerToBeRemove) {
+	public void popLast() {
+		onBackPressed();
+	}
+
+	private void popLast(final StackLayerBuilder targetLayerToBeRemove) {
 		StackLayerBuilder[] visibleLayers = getVisibleLayers();
 
 		for (StackLayerBuilder layer : visibleLayers) {
