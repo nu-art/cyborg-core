@@ -22,7 +22,7 @@ import com.nu.art.android.views.RoundedImageView.RoundedImageViewSetter;
 import com.nu.art.cyborg.clipboard.ClipboardModule;
 import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
-import com.nu.art.cyborg.core.CyborgStackSetter;
+import com.nu.art.cyborg.core.CyborgStackController.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
 import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
 import com.nu.art.cyborg.modules.AppDetailsModule;
