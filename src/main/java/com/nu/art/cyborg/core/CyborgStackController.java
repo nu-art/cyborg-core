@@ -504,7 +504,8 @@ public class CyborgStackController
 		targetLayerToBeAdded.create();
 		addStackLayer(targetLayerToBeAdded);
 
-		/* so after long trials, this seems to be the best behavior, if we invoke a second transition pop or push while another
+		/*
+		 * so after long trials, this seems to be the best behavior, if we invoke a second transition pop or push while another
 		 * is in progress, and we want the events not to collide with regards to the state of the stack, we need to make sure that
 		 * the stack is updated as soon as the interaction begins.
 		 */
@@ -614,18 +615,8 @@ public class CyborgStackController
 
 		final View toView = toLayer == null ? null : toLayer.getRootView();
 
-		// when animating out and when the stack is empty.. the animating to view would be null and we will not receive a layout change event
+		// when animating out and when the stack is empty.. the animating toView would be null and we will not receive a layout change event
 		// therefore we skip the listener and invoke the animate runnable directly
-		/*
-				if (animatingLayer.keepBackground) {
-					startAnimation.run();
-					return;
-				}
-
-				Could it be that the following condition also takes the above one???
-
-		 */
-
 		if (toView == null) {
 			animate.run();
 			return;
