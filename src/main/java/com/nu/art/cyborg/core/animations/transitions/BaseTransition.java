@@ -39,19 +39,6 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 public abstract class BaseTransition
 	extends Animation {
 
-	@Documented
-	@Retention(SOURCE)
-	@Target( {
-		         PARAMETER,
-		         FIELD,
-		         LOCAL_VARIABLE
-	         })
-	@IntDef( {
-		         ORIENTATION_HORIZONTAL,
-		         ORIENTATION_VERTICAL
-	         })
-	public @interface TransitionOrientation {}
-
 	public interface BaseTransitionHelper {
 
 		Animation getTargetAnimationInstance(Context context, int orientation, boolean reverse);

@@ -24,12 +24,12 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.cyborg.annotations.TransitionOrientation;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayer;
 import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition.BaseTransitionHelper;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 
 /**
  * Created by TacB0sS on 19-Jul 2015.

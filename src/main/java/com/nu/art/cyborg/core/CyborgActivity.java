@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
@@ -148,6 +149,12 @@ public class CyborgActivity
 	protected void onRestoreInstanceState(Bundle inState) {
 		super.onRestoreInstanceState(inState);
 		bridge.onRestoreInstanceState(inState);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		bridge.onConfigurationChanged(newConfig);
 	}
 
 	@Override
