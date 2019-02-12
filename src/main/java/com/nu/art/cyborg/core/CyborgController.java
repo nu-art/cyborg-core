@@ -392,6 +392,10 @@ public abstract class CyborgController
 	 * @return The root view of the controller.
 	 */
 	public final View getRootView() {
+		return getRootViewImpl();
+	}
+
+	View getRootViewImpl() {
 		return rootView;
 	}
 

@@ -18,12 +18,13 @@
 
 package com.nu.art.cyborg.core;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,19 +42,24 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
+import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
+import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.core.modules.ThreadsModule;
+import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
+import com.nu.art.reflection.annotations.ReflectiveInitialization;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
+import static com.nu.art.cyborg.core.animations.transitions.BaseTransition.ORIENTATION_HORIZONTAL;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnPause;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 
@@ -73,30 +79,22 @@ public class CyborgStackController
 			this.reverseInterpolator = new ReverseInterpolator(interpolator);
 		}
 
-		protected abstract void animateIn(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
+		protected abstract void animateIn(StackLayerBuilder origin, StackLayerBuilder target, int duration, AnimationListener listener);
 
-		protected abstract void animateOut(StackLayer origin, StackLayer target, int duration, AnimationListener listener);
+		protected abstract void animateOut(StackLayerBuilder origin, StackLayerBuilder target, int duration, AnimationListener listener);
 	}
 
 	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgStackController.class);
 
 	private LayoutInflater inflater;
 
-	private ArrayList<StackLayer> layersStack = new ArrayList<>();
+	private ArrayList<StackLayerBuilder> layersStack = new ArrayList<>();
 
 	private RelativeLayout containerLayout;
 
-	private int transitionDuration = 300;
+	private final StackConfig config = new StackConfig();
 
 	private boolean animatingTransition;
-
-	private PredefinedTransitions defaultTransition;
-
-	private int defaultTransitionOrientation;
-
-	private boolean popOnBackPress = true;
-
-	private boolean withRoot;
 
 	private boolean focused = true;
 
@@ -106,38 +104,30 @@ public class CyborgStackController
 		super(-1);
 	}
 
-	final StackLayerBuilder getRootLayerBuilder() {
-		if (rootLayerBuilder == null) {
+	public StackConfig getConfig() {
+		return config;
+	}
+
+	@Override
+	final ViewGroup getRootViewImpl() {
+		return containerLayout;
+	}
+
+	private StackLayerBuilder getRootLayerBuilder() {
+		if (rootLayerBuilder == null)
 			rootLayerBuilder = createLayerBuilder();
-			rootLayerBuilder.fromXml = true;
-		}
+
 		return rootLayerBuilder;
 	}
 
-	final void setPopOnBackPress(boolean popOnBackPress) {
-		this.popOnBackPress = popOnBackPress;
-	}
-
-	final void setDefaultTransition(PredefinedTransitions defaultTransition) {
-		this.defaultTransition = defaultTransition;
-	}
-
-	final void setDefaultTransitionOrientation(int defaultTransitionOrientation) {
-		this.defaultTransitionOrientation = defaultTransitionOrientation;
-	}
-
-	final void setTransitionDuration(int transitionDuration) {
-		this.transitionDuration = transitionDuration;
+	private boolean hasRoot() {
+		return rootLayerBuilder != null && rootLayerBuilder.controllerType != null;
 	}
 
 	private void assignRootController() {
-		if (rootLayerBuilder == null)
+		if (!hasRoot())
 			return;
 
-		if (rootLayerBuilder.controllerType == null && rootLayerBuilder.layoutId == -1)
-			return;
-
-		withRoot = true;
 		rootLayerBuilder.build();
 	}
 
@@ -159,7 +149,7 @@ public class CyborgStackController
 		assignRootController();
 
 		// If the developer didn't specify a root layer in the xml
-		StackLayer topLayer = getTopLayer();
+		StackLayerBuilder topLayer = getTopLayer();
 		if (topLayer == null)
 			return;
 
@@ -177,286 +167,106 @@ public class CyborgStackController
 		                   ,
 		                   "unused"
 	                   })
-	public abstract class StackLayer {
+	public class StackLayerBuilder {
 
-		private StackTransitionAnimator[] stackTransitionAnimator;
+		private transient StackTransitionAnimator[] stackTransitionAnimator;
+		private transient Processor<?> processor;
+		private transient Interpolator interpolator;
+		private transient Class<? extends CyborgController> controllerType;
 
-		protected Processor<?> processor;
+		private transient boolean toBeDisposed;
+		private transient CyborgController controller;
+		private transient Bundle stateBundle = new Bundle();
 
-		protected String refKey;
-
-		protected CyborgController controller;
-
-		protected View rootView;
-
-		private Bundle stateBundle = new Bundle();
-
-		private int duration = transitionDuration;
-
-		private boolean saveState = true;
-
+		private String controllerClassAsString;
+		private String stateTag;
+		private int transitionDuration = config.transitionDuration;
 		private boolean keepBackground;
+		private boolean keepInStack = true;
 
-		protected boolean keepInStack = true;
-
-		private Interpolator interpolator;
-
-		private boolean toBeDisposed;
-
-		private StackLayer() {
-			if (defaultTransition != null) {
-				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), defaultTransition, defaultTransitionOrientation);
+		private StackLayerBuilder() {
+			if (config.transition != null) {
+				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), config.transition, config.transitionOrientation);
 				this.stackTransitionAnimator = new StackTransitionAnimator[]{transitionAnimator};
 			}
 		}
 
-		public abstract StackLayer setControllerType(Class<? extends CyborgController> controllerType);
-
-		public abstract StackLayer setLayoutId(int layoutId);
-
 		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
-		public final StackLayer setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
+		public final StackLayerBuilder setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
 			this.stackTransitionAnimator = stackTransitionAnimators;
 			return this;
 		}
 
-		public final StackLayer setAnimationInterpolator(Interpolator interpolator) {
+		public final StackLayerBuilder setAnimationInterpolator(Interpolator interpolator) {
 			this.interpolator = interpolator;
 			return this;
 		}
 
-		public final StackLayer setKeepInStack(boolean keepInStack) {
+		public final StackLayerBuilder setKeepInStack(boolean keepInStack) {
 			this.keepInStack = keepInStack;
 			return this;
 		}
 
-		public final StackLayer setRefKey(String refKey) {
-			if (refKey == null && this.refKey != null)
+		public final StackLayerBuilder setStateTag(String stateTag) {
+			if (stateTag == null && this.stateTag != null)
 				return this;
 
-			this.refKey = refKey;
+			this.stateTag = stateTag;
 			return this;
 		}
 
-		public final StackLayer setDuration(int duration) {
-			this.duration = duration;
+		public final StackLayerBuilder setTransitionDuration(int transitionDuration) {
+			this.transitionDuration = transitionDuration;
 			return this;
 		}
 
-		public final StackLayer setSaveState(boolean saveState) {
-			this.saveState = saveState;
+		/**
+		 * Use {@link #setTransitionDuration(int)}
+		 */
+		@Deprecated
+		public final StackLayerBuilder setDuration(int duration) {
+			this.transitionDuration = duration;
 			return this;
 		}
 
-		public final StackLayer setKeepBackground(boolean keepBackground) {
+		public final StackLayerBuilder setKeepBackground(boolean keepBackground) {
 			this.keepBackground = keepBackground;
 			return this;
 		}
 
-		public final StackLayer setProcessor(Processor<?> processor) {
+		public final StackLayerBuilder setProcessor(Processor<?> processor) {
 			this.processor = processor;
 			return this;
 		}
 
-		protected abstract void resume();
-
-		protected abstract void create();
-
-		protected abstract void pause();
-
-		public abstract void append();
-
-		public abstract void build();
-
-		void restoreState() {
-			if (controller == null)
-				return;
-
-			if (!saveState)
-				return;
-
-			controller.onRestoreInstanceState(stateBundle);
+		protected void pause() {
+			if (isState(OnResume))
+				controller.dispatchLifeCycleEvent(OnPause);
 		}
 
-		void detachView() {
-			if (DebugFlag.isEnabled())
-				logWarning("Removing view: " + this + " " + (rootView == null ? "--- NULL" : ""));
-
-			getFrameRootView().removeView(rootView);
-			printStateTags();
-
-			rootView = null;
-			if (controller == null)
-				return;
-
-			controller.dispatchLifeCycleEvent(OnPause);
-			controller.dispatchLifeCycleEvent(LifecycleState.OnDestroy);
-			removeNestedController(controller);
-			controller = null;
+		protected void resume() {
+			if (isState(OnResume))
+				controller.dispatchLifeCycleEvent(OnResume);
 		}
 
-		void saveState() {
-			if (!saveState)
-				return;
-
-			stateBundle.clear();
-			if (controller == null)
-				return;
-
-			controller.onSaveInstanceState(stateBundle);
-		}
-
-		void preDestroy() {}
-
-		public View getRootView() {
-			return rootView;
-		}
-
-		public int getDuration() {
-			return duration;
-		}
-
-		public boolean isSaveState() {
-			return saveState;
-		}
-
-		public CyborgController getController() {
-			return controller;
-		}
-
-		private void onAnimatedIn() {
-			if (controller == null)
-				return;
-
-			controller._onAnimatedIn();
-		}
-
-		@Override
-		public String toString() {
-			return refKey;
-		}
-	}
-
-	private void printStateTags() {
-		if (!DebugFlag.isEnabled())
-			return;
-
-		logWarning(" Views Tags: " + Arrays.toString(getViewsTags()));
-		logWarning("Layers Tags: " + Arrays.toString(getStackLayersTags()));
-	}
-
-	public final String[] getViewsTags() {
-		int childCount = getFrameRootView().getChildCount();
-		String[] viewsTags = new String[childCount];
-		for (int i = 0; i < childCount; i++) {
-			View childAt = getFrameRootView().getChildAt(i);
-			CyborgController controller = (CyborgController) childAt.getTag();
-			if (controller != null)
-				viewsTags[i] = controller.getStateTag();
-			else
-				viewsTags[i] = childAt.getId() + "-" + childAt.getClass().getSimpleName();
-		}
-		return viewsTags;
-	}
-
-	public final String[] getStackLayersTags() {
-		return ArrayTools.map(String.class, new Function<StackLayer, String>() {
-
-			@Override
-			public String map(StackLayer stackLayer) {
-				return stackLayer.refKey;
-			}
-		}, ArrayTools.asArray(layersStack, StackLayer.class));
-	}
-
-	private StackLayer getTopLayer() {
-		return getTopLayer(false);
-	}
-
-	private StackLayer[] getTopLayers() {
-		ArrayList<StackLayer> visibleLayers = new ArrayList<>();
-		StackLayer topLayer;
-		while ((topLayer = getTopLayer(visibleLayers.size())) != null) {
-			visibleLayers.add(0, topLayer);
-			if (!topLayer.keepBackground)
-				break;
-		}
-
-		return ArrayTools.asArray(visibleLayers, StackLayer.class);
-	}
-
-	private StackLayer getAndRemoveTopLayer() {
-		return getTopLayer(true);
-	}
-
-	private StackLayer getTopLayer(int offset) {
-		return getTopLayer(offset, false);
-	}
-
-	private StackLayer getTopLayer(boolean remove) {
-		return getTopLayer(0, remove);
-	}
-
-	private StackLayer getTopLayer(int offset, boolean remove) {
-		int size = layersStack.size() - offset;
-		int index = size == (withRoot && remove ? 1 : 0) ? -1 : size - 1;
-		if (index == -1)
-			return null;
-
-		StackLayer layer = layersStack.get(index);
-
-		if (remove)
-			removeStackLayer(layer);
-
-		return layer;
-	}
-
-	private void addStackLayer(StackLayer stackLayer) {
-		layersStack.add(stackLayer);
-	}
-
-	private void removeStackLayer(StackLayer stackLayer) {
-		layersStack.remove(stackLayer);
-	}
-
-	public class StackLayerBuilder
-		extends StackLayer {
-
-		private Class<? extends CyborgController> controllerType;
-
-		private int layoutId = -1;
-
-		private boolean fromXml;
-
-		@Override
 		protected void create() {
-			if (rootView != null)
-				return;
-
 			if (DebugFlag.isEnabled())
 				logWarning("Create: " + this);
 
-			if (layoutId != -1)
-				createLayoutLayer();
-			else if (controllerType != null)
-				createControllerLayer();
-			else
+			if (controllerType == null)
 				throw new BadImplementationException("Stack Layer was not configured properly");
-		}
 
-		private void createControllerLayer() {
 			controller = ReflectiveTools.newInstance(controllerType);
 			//			if(CyborgBuilder.getInEditMode())
 			CyborgActivityBridge activityBridge = getActivity().getBridge();
 			controller.setActivityBridge(activityBridge);
 			controller.setKeepInStack(keepInStack);
 
-			controller.setStateTag(refKey);
-			controller._createView(inflater, getFrameRootView(), false);
-			rootView = controller.getRootView();
+			controller.setStateTag(stateTag);
+			controller._createView(inflater, getRootViewImpl(), false);
 
 			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
-			getFrameRootView().addView(rootView);
+			getRootViewImpl().addView(controller.getRootView());
 
 			controller.extractMembersImpl();
 			// xml attribute for root controller are handled in the handleAttributes method
@@ -471,51 +281,8 @@ public class CyborgStackController
 
 			// --------------------------------------------------------------------
 
-			fromXml = false;
 			resume();
 			CyborgStackController.this.addNestedController(controller);
-		}
-
-		@Override
-		protected void pause() {
-			if (isState(OnResume))
-				controller.dispatchLifeCycleEvent(OnPause);
-		}
-
-		@Override
-		protected void resume() {
-			if (isState(OnResume))
-				controller.dispatchLifeCycleEvent(OnResume);
-		}
-
-		private void createLayoutLayer() {
-			try {
-				rootView = inflater.inflate(this.layoutId, getFrameRootView(), false);
-			} catch (Exception e) {
-				Throwable t = getCauseError(e);
-				if (t instanceof RuntimeException)
-					throw (RuntimeException) t;
-				else
-					throw new RuntimeException("", t);
-			}
-			getFrameRootView().addView(rootView);
-
-			if (rootView instanceof CyborgView) {
-				controller = ((CyborgView) rootView).getController();
-				controller.setStateTag(refKey);
-
-				// the dispatchLifeCycleEvent for the onCreate is called from CyborgView
-			}
-		}
-
-		private Throwable getCauseError(Throwable e) {
-			if (e == null)
-				return null;
-
-			if (e instanceof InflateException || e instanceof InvocationTargetException)
-				return getCauseError(e.getCause());
-
-			return e;
 		}
 
 		public StackLayerBuilder setControllerType(Class<? extends CyborgController> controllerType) {
@@ -523,17 +290,9 @@ public class CyborgStackController
 				throw new BadImplementationException("Already set layoutId, cannot also set controllerType");
 
 			this.controllerType = controllerType;
-			if (refKey == null)
-				refKey = controllerType.getSimpleName();
+			if (stateTag == null)
+				stateTag = controllerType.getSimpleName();
 
-			return this;
-		}
-
-		public StackLayerBuilder setLayoutId(int layoutId) {
-			if (controllerType != null)
-				throw new BadImplementationException("Already set controller type, cannot also set layoutId");
-
-			this.layoutId = layoutId;
 			return this;
 		}
 
@@ -549,65 +308,209 @@ public class CyborgStackController
 		public final void build() {
 			long started = System.currentTimeMillis();
 
-			if (refKey == null)
-				throw new ImplementationMissingException("MUST specify a refKey when using a layoutId");
+			if (stateTag == null)
+				throw new ImplementationMissingException("MUST specify a stateTag when using a layoutId");
 
 			push(this);
 
 			if (Debug_Performance.isEnabled())
 				logDebug("Open Controller (" + controllerType + "): " + (System.currentTimeMillis() - started) + "ms");
 		}
+
+		void restoreState() {
+			if (controller == null)
+				return;
+
+			controller.onRestoreInstanceState(stateBundle);
+		}
+
+		void detachView() {
+			if (DebugFlag.isEnabled())
+				logWarning("detachView: " + this);
+
+			getRootViewImpl().removeView(controller.getRootViewImpl());
+			printStateTags();
+
+			if (controller == null)
+				return;
+
+			controller.dispatchLifeCycleEvent(OnPause);
+			controller.dispatchLifeCycleEvent(LifecycleState.OnDestroy);
+			removeNestedController(controller);
+			controller = null;
+		}
+
+		void saveState() {
+			stateBundle.clear();
+			if (controller == null)
+				return;
+
+			controller.onSaveInstanceState(stateBundle);
+		}
+
+		public View getRootView() {
+			return controller == null ? null : controller.getRootView();
+		}
+
+		public int getDuration() {
+			return transitionDuration;
+		}
+
+		public CyborgController getController() {
+			return controller;
+		}
+
+		private void onAnimatedIn() {
+			if (controller == null)
+				return;
+
+			controller._onAnimatedIn();
+		}
+
+		@Override
+		public String toString() {
+			return stateTag;
+		}
+	}
+
+	private void printStateTags() {
+		if (!DebugFlag.isEnabled())
+			return;
+
+		logWarning(" Views Tags: " + Arrays.toString(getViewsTags()));
+		logWarning("Layers Tags: " + Arrays.toString(getStackLayersTags()));
+	}
+
+	public final String[] getViewsTags() {
+		int childCount = getRootViewImpl().getChildCount();
+		String[] viewsTags = new String[childCount];
+		for (int i = 0; i < childCount; i++) {
+			View childAt = getRootViewImpl().getChildAt(i);
+			CyborgController controller = (CyborgController) childAt.getTag();
+			if (controller != null)
+				viewsTags[i] = controller.getStateTag();
+			else
+				viewsTags[i] = childAt.getId() + "-" + childAt.getClass().getSimpleName();
+		}
+		return viewsTags;
+	}
+
+	public final String[] getStackLayersTags() {
+		return ArrayTools.map(String.class, new Function<StackLayerBuilder, String>() {
+
+			@Override
+			public String map(StackLayerBuilder stackLayerBuilder) {
+				return stackLayerBuilder.stateTag;
+			}
+		}, ArrayTools.asArray(layersStack, StackLayerBuilder.class));
+	}
+
+	private StackLayerBuilder getTopLayer() {
+		return getTopLayer(false);
+	}
+
+	private StackLayerBuilder[] getVisibleLayers() {
+		ArrayList<StackLayerBuilder> visibleLayers = new ArrayList<>();
+		StackLayerBuilder topLayer;
+		while ((topLayer = getTopLayer(visibleLayers.size())) != null) {
+			visibleLayers.add(0, topLayer);
+			if (!topLayer.keepBackground)
+				break;
+		}
+
+		return ArrayTools.asArray(visibleLayers, StackLayerBuilder.class);
+	}
+
+	private StackLayerBuilder getAndRemoveTopLayer() {
+		return getTopLayer(true);
+	}
+
+	private StackLayerBuilder getTopLayer(int offset) {
+		return getTopLayer(offset, false);
+	}
+
+	private StackLayerBuilder getTopLayer(boolean remove) {
+		return getTopLayer(0, remove);
+	}
+
+	private StackLayerBuilder getTopLayer(int offset, boolean remove) {
+		int size = layersStack.size() - offset;
+		int index = size == (hasRoot() && remove ? 1 : 0) ? -1 : size - 1;
+		if (index == -1)
+			return null;
+
+		StackLayerBuilder layer = layersStack.get(index);
+
+		if (remove)
+			removeStackLayer(layer);
+
+		return layer;
+	}
+
+	private void addStackLayer(StackLayerBuilder stackLayerBuilder) {
+		layersStack.add(stackLayerBuilder);
+	}
+
+	private void removeStackLayer(StackLayerBuilder stackLayerBuilder) {
+		layersStack.remove(stackLayerBuilder);
 	}
 
 	public final StackLayerBuilder createLayerBuilder() {
 		return new StackLayerBuilder();
 	}
 
-	private RelativeLayout getFrameRootView() {
-		return containerLayout;
+	public final void popLast() {
+		ThreadsModule.assertMainThread();
+		onBackPressed();
 	}
 
 	public void popUntil(String refKey) {
+		ThreadsModule.assertMainThread();
 	}
 
 	public void setFocused(boolean focused) {
 		this.focused = focused;
 	}
 
-	private void push(final StackLayer targetLayerToBeAdded) {
-		if (animatingTransition) {
-			if (DebugFlag.isEnabled())
-				logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
+	// promote this stack in the hierarchy, so it will receive the events first.
+	// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
+	//		activityBridge.removeController(this);
+	//		activityBridge.addController(this);
+
+	/**
+	 * @param targetLayerToBeAdded
+	 */
+	private void push(final StackLayerBuilder targetLayerToBeAdded) {
+		ThreadsModule.assertMainThread();
+		StackLayerBuilder[] visibleLayers = getVisibleLayers();
+
+		for (StackLayerBuilder layer : visibleLayers) {
+			layer.pause();
 		}
 
-		// promote this stack in the hierarchy, so it will receive the events first.
-		// SHOULD I MANAGE A STACK OF STACKS, THAT WILL DEFINE THE ORDER OF WHICH EVENTS ARE RECEIVED, ACCORDING TO PUSH RECENCY...?
-		//		activityBridge.removeController(this);
-		//		activityBridge.addController(this);
+		final StackLayerBuilder originLayerToBeDisposed =
+			targetLayerToBeAdded.keepBackground || visibleLayers.length == 0 ? null : visibleLayers[visibleLayers.length - 1];
 
-		StackLayer[] topLayers = getTopLayers();
+		final Runnable animationEnded = new Runnable() {
+			@Override
+			public void run() {
+				alignChildViewsToStack();
+				targetLayerToBeAdded.onAnimatedIn();
+			}
+		};
 
-		for (StackLayer layer : topLayers) {
-			if (targetLayerToBeAdded.keepBackground)
-				layer.pause();
-			else
-				layer.preDestroy();
-		}
+		///
 
-		addStackLayer(targetLayerToBeAdded);
 		targetLayerToBeAdded.create();
+		addStackLayer(targetLayerToBeAdded);
 
-		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeAdded.stackTransitionAnimator;
-
-		// we must call clear animation to ensure onAnimationEnd is called.
-		targetLayerToBeAdded.getRootView().clearAnimation();
-
-		/* so after long trials, this seems to be the best behavior, if we invoke a second transition pop or push while another
+		/*
+		 * so after long trials, this seems to be the best behavior, if we invoke a second transition pop or push while another
 		 * is in progress, and we want the events not to collide with regards to the state of the stack, we need to make sure that
 		 * the stack is updated as soon as the interaction begins.
 		 */
 		if (!targetLayerToBeAdded.keepBackground) {
-			for (StackLayer layer : topLayers) {
+			for (StackLayerBuilder layer : visibleLayers) {
 				// we must call clear animation to ensure onAnimationEnd is called.
 				layer.getRootView().clearAnimation();
 
@@ -617,81 +520,152 @@ public class CyborgStackController
 		}
 
 		if (DebugFlag.isEnabled())
-			logInfo("push: " + Arrays.toString(topLayers) + " => " + targetLayerToBeAdded);
+			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeAdded);
 
-		final StackLayer originLayerToBeDisposed = targetLayerToBeAdded.keepBackground || topLayers.length == 0 ? null : topLayers[topLayers.length - 1];
-		final AnimationListenerImpl listener = new AnimationListenerImpl() {
+		animate(true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
+	}
+
+	private void popLast(final StackLayerBuilder targetLayerToBeRemove) {
+		StackLayerBuilder[] visibleLayers = getVisibleLayers();
+
+		for (StackLayerBuilder layer : visibleLayers) {
+			if (targetLayerToBeRemove.keepBackground)
+				layer.resume();
+			else
+				layer.create();
+		}
+
+		// background is already visible do not animate it
+		final StackLayerBuilder originLayerToBeRestored = targetLayerToBeRemove.keepBackground ? null : getTopLayer();
+
+		final Runnable animationEnded = new Runnable() {
 			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (originLayerToBeDisposed != null) {
-					if (DebugFlag.isEnabled())
-						logInfo("disposing-push: " + originLayerToBeDisposed);
-				}
+			public void run() {
+				disposeLayer(targetLayerToBeRemove, false);
 
-				alignChildViewsToStack();
-
-				setInAnimationState(false);
-				targetLayerToBeAdded.onAnimatedIn();
+				if (originLayerToBeRestored != null)
+					originLayerToBeRestored.onAnimatedIn();
 			}
 		};
 
+		if (DebugFlag.isEnabled())
+			logInfo("popping: " + targetLayerToBeRemove + " => " + Arrays.toString(visibleLayers));
+
+		animate(false, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
+	}
+
+	private void animate(final boolean in,
+	                     final StackLayerBuilder fromLayer,
+	                     final StackLayerBuilder toLayer,
+	                     final Runnable animationEnded) {
+
+		final StackLayerBuilder animatingLayer = (in ? toLayer : fromLayer);
+
+		if (animatingTransition && DebugFlag.isEnabled())
+			logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
+
+		final AnimationListenerImpl listener = new AnimationListenerImpl() {
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				if (fromLayer != null && DebugFlag.isEnabled())
+					logInfo("disposing: " + fromLayer);
+
+				animationEnded.run();
+				setInAnimationState(false);
+			}
+		};
+
+		// we must call clear animation to ensure onAnimationEnd is called.
+		if (fromLayer != null)
+			fromLayer.getRootView().clearAnimation();
+
+		if (toLayer != null)
+			toLayer.getRootView().clearAnimation();
+
+		// Animating layer can never be null!!
+		final StackTransitionAnimator[] transitionAnimators = animatingLayer.stackTransitionAnimator;
 		if (transitionAnimators == null) {
 			// if there is no animation transitioning between the two layer, just dispose the older layer
 			listener.onAnimationEnd(null);
 			return;
 		}
 
-		final View targetView = targetLayerToBeAdded.getRootView();
-		final ViewTreeObserver treeObserver = targetView.getViewTreeObserver();
-		treeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+		final Interpolator interpolator = animatingLayer.interpolator;
+		final int transitionDuration = animatingLayer.transitionDuration;
+
+		final Runnable animate = new Runnable() {
+
 			@Override
+			public void run() {
+				setInAnimationState(true);
+
+				logWarning("starting animation");
+				for (StackTransitionAnimator animator : transitionAnimators) {
+					if (interpolator != null)
+						animator.setInterpolator(interpolator);
+
+					// All Animations are performed together, the listener MUST be called only once
+					if (in)
+						animator.animateIn(fromLayer, toLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+					else
+						animator.animateOut(toLayer, fromLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+				}
+			}
+		};
+
+		final View toView = toLayer == null ? null : toLayer.getRootView();
+
+		// when animating out and when the stack is empty.. the animating toView would be null and we will not receive a layout change event
+		// therefore we skip the listener and invoke the animate runnable directly
+		if (toView == null) {
+			animate.run();
+			return;
+		}
+
+		final ViewTreeObserver treeObserver = toView.getViewTreeObserver();
+		treeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+			@Override
+			@SuppressLint("ObsoleteSdkInt")
+			@SuppressWarnings("deprecation")
 			public void onGlobalLayout() {
-				ViewTreeObserver treeObserver = targetView.getViewTreeObserver();
+				ViewTreeObserver treeObserver = toView.getViewTreeObserver();
 				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
 					treeObserver.removeOnGlobalLayoutListener(this);
 				} else {
 					treeObserver.removeGlobalOnLayoutListener(this);
 				}
-				setInAnimationState(true);
 
-				for (StackTransitionAnimator animator : transitionAnimators) {
-					Interpolator interpolator = targetLayerToBeAdded.interpolator;
-					if (interpolator != null)
-						animator.setInterpolator(interpolator);
-
-					// All Animations are performed together, the listener MUST be called only once
-					animator.animateIn(originLayerToBeDisposed, targetLayerToBeAdded, targetLayerToBeAdded.duration,
-					                   animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
-				}
+				animate.run();
 			}
 		});
 	}
 
-	private final ArrayList<StackLayer> toBeDisposed = new ArrayList<>();
+	private final ArrayList<StackLayerBuilder> toBeDisposed = new ArrayList<>();
 
 	private void alignChildViewsToStack() {
-		for (StackLayer stackLayer : layersStack) {
-			if (!stackLayer.toBeDisposed)
+		for (StackLayerBuilder stackLayerBuilder : layersStack) {
+			if (!stackLayerBuilder.toBeDisposed)
 				continue;
 
-			toBeDisposed.add(stackLayer);
+			toBeDisposed.add(stackLayerBuilder);
 		}
 
 		boolean keepInStack;
 
-		for (StackLayer stackLayer : toBeDisposed) {
-			if (stackLayer.controller == null)
+		for (StackLayerBuilder stackLayerBuilder : toBeDisposed) {
+			if (stackLayerBuilder.controller == null)
 				// if there is no controller for this layer, take the boolean set in the layer
-				keepInStack = stackLayer.keepInStack;
+				keepInStack = stackLayerBuilder.keepInStack;
 			else
 				// in case there is a controller, use the boolean within that controller
-				keepInStack = stackLayer.controller.keepInStack;
+				keepInStack = stackLayerBuilder.controller.keepInStack;
 
-			disposeLayer(stackLayer, true);
-			stackLayer.toBeDisposed = false;
+			disposeLayer(stackLayerBuilder, true);
+			stackLayerBuilder.toBeDisposed = false;
 
 			if (!keepInStack)
-				layersStack.remove(stackLayer);
+				layersStack.remove(stackLayerBuilder);
 		}
 
 		toBeDisposed.clear();
@@ -711,113 +685,7 @@ public class CyborgStackController
 		activityBridge.setPriorityStack(this);
 	}
 
-	public boolean popLast() {
-		if (animatingTransition) {
-			logDebug("TRANSITION ANIMATION IN PROGRESS!!!");
-		}
-
-		final StackLayer targetLayerToBeRemove = getAndRemoveTopLayer();
-		if (targetLayerToBeRemove == null)
-			return false;
-
-		final StackLayer originLayerToBeRestored = getTopLayer();
-
-		if (originLayerToBeRestored != null) {
-			if (targetLayerToBeRemove.keepBackground)
-				originLayerToBeRestored.resume();
-			else
-				originLayerToBeRestored.create();
-		}
-
-		final AnimationListenerImpl listener = new AnimationListenerImpl() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (DebugFlag.isEnabled())
-					logDebug("disposing-pop: " + targetLayerToBeRemove);
-				disposeLayer(targetLayerToBeRemove, false);
-
-				if (originLayerToBeRestored != null)
-					originLayerToBeRestored.onAnimatedIn();
-
-				setInAnimationState(false);
-			}
-		};
-
-		final StackTransitionAnimator[] transitionAnimators = targetLayerToBeRemove.stackTransitionAnimator;
-		if (transitionAnimators == null) {
-			listener.onAnimationEnd(null);
-			targetLayerToBeRemove.detachView();
-
-			// need to generify this to follow the same flow as with transition...
-			if (originLayerToBeRestored != null)
-				originLayerToBeRestored.onAnimatedIn();
-			return true;
-		}
-
-		final View viewToBeRestored;
-		if (originLayerToBeRestored != null) {
-			viewToBeRestored = originLayerToBeRestored.getRootView();
-		} else
-			viewToBeRestored = null;
-
-		final int duration;
-		if (originLayerToBeRestored != null)
-			duration = targetLayerToBeRemove.duration;
-		else
-			duration = transitionDuration;
-
-		targetLayerToBeRemove.getRootView().clearAnimation();
-		if (originLayerToBeRestored != null)
-			originLayerToBeRestored.getRootView().clearAnimation();
-
-		if (DebugFlag.isEnabled())
-			logDebug("pop: " + targetLayerToBeRemove + " => " + originLayerToBeRestored);
-
-		final Runnable startAnimation = new Runnable() {
-			@Override
-			public void run() {
-				setInAnimationState(true);
-
-				for (StackTransitionAnimator animator : transitionAnimators) {
-					Interpolator interpolator = targetLayerToBeRemove.interpolator;
-					if (interpolator != null)
-						animator.setInterpolator(interpolator);
-
-					StackLayer originLayer = targetLayerToBeRemove.keepBackground ? null : originLayerToBeRestored; // background is already visible do not animate it
-
-					// All Animations are performed together, the listener MUST be called only once
-					animator.animateOut(originLayer, targetLayerToBeRemove, duration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
-				}
-			}
-		};
-
-		if (viewToBeRestored == null) {
-			startAnimation.run();
-			return true;
-		}
-
-		if (targetLayerToBeRemove.keepBackground) {
-			startAnimation.run();
-			return true;
-		}
-
-		final ViewTreeObserver treeObserver = viewToBeRestored.getViewTreeObserver();
-		treeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				ViewTreeObserver treeObserver = viewToBeRestored.getViewTreeObserver();
-				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-					treeObserver.removeOnGlobalLayoutListener(this);
-				} else {
-					treeObserver.removeGlobalOnLayoutListener(this);
-				}
-				startAnimation.run();
-			}
-		});
-		return true;
-	}
-
-	private void disposeLayer(StackLayer layerToBeDisposed, boolean saveState) {
+	private void disposeLayer(StackLayerBuilder layerToBeDisposed, boolean saveState) {
 		if (layerToBeDisposed == null) {
 			logError("Will not dispose - layer is null");
 			return;
@@ -838,7 +706,7 @@ public class CyborgStackController
 	}
 
 	public void clear() {
-		StackLayer topLayer;
+		StackLayerBuilder topLayer;
 		while ((topLayer = getTopLayer(true)) != null) {
 			topLayer.detachView();
 		}
@@ -847,14 +715,126 @@ public class CyborgStackController
 
 	@Override
 	public boolean onBackPressed() {
-		StackLayer topLayer = getTopLayer();
+		StackLayerBuilder topLayer = getTopLayer();
 		if (topLayer != null && topLayer.controller != null)
 			if (topLayer.controller.onBackPressed())
 				return true;
 
-		if (!popOnBackPress || !focused)
+		if (!config.popOnBackPress || !focused)
 			return super.onBackPressed();
 
-		return popLast();
+		if (topLayer == null)
+			return false;
+
+		topLayer = getAndRemoveTopLayer();
+		if (topLayer != null)
+			popLast(topLayer);
+
+		return true;
+	}
+
+	/**
+	 * Setting the xml attributes onto a {@link CyborgStackController} instance.
+	 */
+	@ReflectiveInitialization
+	public static class CyborgStackSetter
+		extends AttributesSetter<CyborgStackController> {
+
+		private static int[] ids = {
+			R.styleable.StackController_transition,
+			R.styleable.StackController_transitionOrientation,
+			R.styleable.StackController_transitionDuration,
+			R.styleable.StackController_popOnBackPress,
+			R.styleable.StackController_rootController,
+			R.styleable.StackController_rootTag,
+			R.styleable.StackController_rootKeep,
+		};
+
+		private CyborgStackSetter() {
+			super(CyborgStackController.class, R.styleable.StackController, ids);
+		}
+
+		@SuppressWarnings("UnnecessaryReturnStatement")
+		@Override
+		protected void setAttribute(CyborgStackController instance, TypedArray a, int attr) {
+			if (attr == R.styleable.StackController_transition) {
+				int transition = a.getInt(attr, -1);
+				if (transition == -1)
+					return;
+
+				instance.getConfig().setTransition(PredefinedTransitions.values()[transition]);
+				return;
+			}
+
+			if (attr == R.styleable.StackController_popOnBackPress) {
+				boolean popOnBackPress = a.getBoolean(attr, true);
+				instance.getConfig().setPopOnBackPress(popOnBackPress);
+				return;
+			}
+
+			if (attr == R.styleable.StackController_transitionOrientation) {
+				int transitionOrientation = a.getInt(attr, ORIENTATION_HORIZONTAL);
+				instance.getConfig().setTransitionOrientation(transitionOrientation);
+				return;
+			}
+
+			if (attr == R.styleable.StackController_transitionDuration) {
+				int duration = a.getInt(attr, -1);
+				if (duration == -1)
+					return;
+
+				instance.getConfig().setTransitionDuration(duration);
+				return;
+			}
+
+			if (attr == R.styleable.StackController_rootController) {
+				String controllerName = a.getString(attr);
+				if (controllerName == null)
+					return;
+
+				Class<? extends CyborgController> rootControllerType = resolveClassType(CyborgController.class, controllerName);
+				instance.getRootLayerBuilder().setControllerType(rootControllerType);
+
+				return;
+			}
+
+			if (attr == R.styleable.StackController_rootKeep) {
+				boolean keepRoot = a.getBoolean(attr, true);
+				instance.getRootLayerBuilder().setKeepInStack(keepRoot);
+				return;
+			}
+
+			if (attr == R.styleable.StackController_rootTag) {
+				String rootTag = a.getString(attr);
+				instance.getRootLayerBuilder().setStateTag(rootTag);
+				return;
+			}
+		}
+	}
+
+	public static class StackConfig {
+
+		@TransitionOrientation
+		int transitionOrientation = ORIENTATION_HORIZONTAL;
+
+		int transitionDuration = 300;
+		PredefinedTransitions transition = PredefinedTransitions.Fade;
+		boolean popOnBackPress = true;
+
+		void setTransition(PredefinedTransitions transition) {
+			this.transition = transition;
+		}
+
+		void setTransitionDuration(int transitionDuration) {
+			this.transitionDuration = transitionDuration;
+		}
+
+		void setTransitionOrientation(int transitionOrientation) {
+			this.transitionOrientation = transitionOrientation;
+		}
+
+		void setPopOnBackPress(boolean popOnBackPress) {
+			this.popOnBackPress = popOnBackPress;
+		}
 	}
 }
