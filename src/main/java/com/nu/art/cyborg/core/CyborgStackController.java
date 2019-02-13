@@ -629,11 +629,15 @@ public class CyborgStackController
 			@SuppressLint("ObsoleteSdkInt")
 			@SuppressWarnings("deprecation")
 			public void onGlobalLayout() {
-				ViewTreeObserver treeObserver = toView.getViewTreeObserver();
+				ViewTreeObserver _treeObserver = treeObserver;
+
+				if (!treeObserver.isAlive())
+					_treeObserver = toView.getViewTreeObserver();
+
 				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-					treeObserver.removeOnGlobalLayoutListener(this);
+					_treeObserver.removeOnGlobalLayoutListener(this);
 				} else {
-					treeObserver.removeGlobalOnLayoutListener(this);
+					_treeObserver.removeGlobalOnLayoutListener(this);
 				}
 
 				animate.run();
