@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Handler;
 
 import com.nu.art.core.GenericListener;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
@@ -77,6 +78,8 @@ public class GenericDownloaderModule
 		DownloaderBuilder setUrl(String url);
 
 		String getUrl();
+
+		Cacheable getCacheable();
 
 		<Type> DownloaderBuilder onSuccess(Function<InputStream, Type> converter, Processor<Type> processor);
 
@@ -172,6 +175,10 @@ public class GenericDownloaderModule
 		public final DownloaderBuilder setUrl(String url) {
 			this.url = url;
 			return this;
+		}
+
+		public Cacheable getCacheable() {
+			return cacheable;
 		}
 
 		@Override
@@ -330,7 +337,10 @@ public class GenericDownloaderModule
 		@SuppressWarnings("unchecked")
 		private <Type> void handleResponse(InputStream inputStream) {
 			Type value = ((Function<InputStream, Type>) converter).map(inputStream);
-			((Processor<Type>) onSuccess).process(value);
+
+			// might be wanting to just cache a file... no need for extra processing
+			if (onSuccess != null)
+				((Processor<Type>) onSuccess).process(value);
 
 			if (onAfter != null)
 				onAfter.run();
