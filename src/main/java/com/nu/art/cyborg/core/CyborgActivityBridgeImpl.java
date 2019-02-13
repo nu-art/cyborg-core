@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager.OnActivityResultListener;
@@ -558,6 +559,17 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void setInputMode(int softInputMode) {
 		getWindow().setSoftInputMode(softInputMode);
+	}
+
+	@Override
+	public void onConfigurationChanged(final Configuration newConfig) {
+		processControllers(new ControllerProcessor() {
+			@Override
+			public boolean process(CyborgController controller) {
+				controller.onConfigurationChanged(newConfig);
+				return false;
+			}
+		});
 	}
 
 	@Override

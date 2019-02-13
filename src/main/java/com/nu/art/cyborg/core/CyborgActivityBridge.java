@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.core;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -132,4 +133,6 @@ public interface CyborgActivityBridge {
 	void showKeyboard(View view);
 
 	void setInputMode(int softInputMode);
+
+	void onConfigurationChanged(Configuration newConfig);
 }

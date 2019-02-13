@@ -66,7 +66,9 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.annotations.Restorable;
+import com.nu.art.cyborg.annotations.TransitionOrientation;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
+import com.nu.art.cyborg.annotations.Visibility;
 import com.nu.art.cyborg.common.beans.ModelEvent;
 import com.nu.art.cyborg.common.consts.ScreenOrientation;
 import com.nu.art.cyborg.common.interfaces.ICyborgController;
@@ -80,7 +82,6 @@ import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
 import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.cyborg.core.dataModels.ListDataModel;
@@ -766,10 +767,11 @@ public abstract class CyborgController
 		nestedControllers = ArrayTools.removeElement(nestedControllers, controller);
 	}
 
-	public void setVisibility(int visibility) {
+	public void setVisibility(@Visibility int visibility) {
 		rootView.setVisibility(visibility);
 	}
 
+	@Visibility
 	public int getVisibility() {
 		return rootView.getVisibility();
 	}

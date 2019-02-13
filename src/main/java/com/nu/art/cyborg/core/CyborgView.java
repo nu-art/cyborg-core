@@ -95,12 +95,6 @@ public class CyborgView
 		return CyborgBuilder.getInstance();
 	}
 
-	@Override
-	protected void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		controller.onConfigurationChanged(newConfig);
-	}
-
 	private void initController() {
 		Context context = getContext();
 

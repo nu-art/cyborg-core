@@ -570,7 +570,7 @@ final class CyborgImpl
 	public final void toastDebug(String toastMessage) {
 		if (!isDebug())
 			return;
-		_toast(Toast.LENGTH_LONG, "DEBUG: " + toastMessage);
+		_toast(Toast.LENGTH_LONG, toastMessage);
 	}
 
 	@Override

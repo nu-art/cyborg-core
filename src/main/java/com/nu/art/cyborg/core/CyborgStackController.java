@@ -43,11 +43,11 @@ import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.R;
+import com.nu.art.cyborg.annotations.TransitionOrientation;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
 import com.nu.art.cyborg.core.animations.PredefinedTransitions;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition.TransitionOrientation;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
@@ -724,13 +724,15 @@ public class CyborgStackController
 			return super.onBackPressed();
 
 		if (topLayer == null)
-			return false;
+			return super.onBackPressed();
 
 		topLayer = getAndRemoveTopLayer();
-		if (topLayer != null)
+		if (topLayer != null) {
 			popLast(topLayer);
+			return true;
+		}
 
-		return true;
+		return super.onBackPressed();
 	}
 
 	/**
