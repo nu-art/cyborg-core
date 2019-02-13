@@ -1,10 +1,11 @@
 package com.nu.art.cyborg.annotations;
 
-import android.support.annotation.IntDef;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import androidx.annotation.IntDef;
 
 import static com.nu.art.cyborg.core.animations.transitions.BaseTransition.ORIENTATION_HORIZONTAL;
 import static com.nu.art.cyborg.core.animations.transitions.BaseTransition.ORIENTATION_VERTICAL;
