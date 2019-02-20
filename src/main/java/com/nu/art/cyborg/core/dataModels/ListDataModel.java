@@ -44,6 +44,9 @@ public class ListDataModel<Item>
 	}
 
 	public final void add(Item... items) {
+		if (items == null)
+			return;
+
 		addAll(Arrays.asList(items));
 	}
 
@@ -56,6 +59,9 @@ public class ListDataModel<Item>
 
 	public final void setItems(Item... items) {
 		this.items.clear();
+		if (items == null)
+			return;
+
 		this.items.addAll(Arrays.asList(items));
 		if (autoNotifyChanges)
 			notifyDataSetChanged();
@@ -82,6 +88,9 @@ public class ListDataModel<Item>
 	}
 
 	public final void removeItems(Item... items) {
+		if (items == null)
+			return;
+
 		removeItems(Arrays.asList(items));
 	}
 
