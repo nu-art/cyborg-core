@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.animations;
+package com.nu.art.cyborg.core.animations._old;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -37,7 +37,6 @@ import com.nu.art.core.generics.Function;
 import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
 import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.CyborgStackController;
-import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 
 /**
  * Created by TacB0sS on 30-Apr 2016.

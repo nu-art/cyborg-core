@@ -16,29 +16,21 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.animations.transitions;
+package com.nu.art.cyborg.core.animations._old;
 
 import android.view.View;
 
-public class ScaleTransition
+public class SlideTransition
 	extends BaseTransition {
 
-	public ScaleTransition() {}
+	public SlideTransition() {}
 
 	@Override
 	protected void applyTransform(float interpolatedTime, View view) {
 		if (orientation == ORIENTATION_HORIZONTAL) {
-			float scale = type == TYPE_TARGET ? 1 - interpolatedTime : 1 + interpolatedTime;
-			view.setPivotX(type == TYPE_TARGET ? width : 0);
-			view.setPivotY(height * 0.5f);
-			view.setScaleX(scale);
-			view.setScaleY(scale);
+			view.setTranslationX(parentWidth * interpolatedTime);
 		} else {
-			float scale = type == TYPE_TARGET ? 1 - interpolatedTime : 1 + interpolatedTime;
-			view.setPivotY(type == TYPE_TARGET ? 0 : height);
-			view.setPivotX(width * 0.5f);
-			view.setScaleX(scale);
-			view.setScaleY(scale);
+			view.setTranslationY(-parentHeight * interpolatedTime);
 		}
 	}
 }

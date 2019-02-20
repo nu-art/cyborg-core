@@ -16,28 +16,23 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.animations.transitions;
+package com.nu.art.cyborg.core.animations._old;
 
 import android.view.View;
 
-public class CubeTransition
+public class SquashTransition
 	extends BaseTransition {
 
-	public CubeTransition() {}
+	public SquashTransition() {}
 
 	@Override
 	protected void applyTransform(float interpolatedTime, View view) {
-		float rotationAngle = 90f * interpolatedTime;
 		if (orientation == ORIENTATION_HORIZONTAL) {
-			view.setTranslationX(parentWidth * interpolatedTime);
-			view.setPivotX(type == TYPE_TARGET ? 0 : width);
-			view.setPivotY(height * 0.5f);
-			view.setRotationY(rotationAngle);
+			view.setPivotX(type == TYPE_TARGET ? width : 0);
+			view.setScaleX(type == TYPE_TARGET ? 1 - interpolatedTime : 1 + interpolatedTime);
 		} else {
-			view.setTranslationY(-parentHeight * interpolatedTime);
-			view.setPivotY(type == TYPE_TARGET ? height : 0);
-			view.setPivotX(width * 0.5f);
-			view.setRotationX(rotationAngle);
+			view.setPivotY(type == TYPE_TARGET ? 0 : height);
+			view.setScaleY(type == TYPE_TARGET ? 1 - interpolatedTime : 1 + interpolatedTime);
 		}
 	}
 }

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.view.animation.Interpolator;
 
 import com.nu.art.belog.Logger;
 
@@ -27,18 +28,22 @@ public class SimpleAnimator
 	private Animator animator;
 	private AnimatorListener listener;
 	private AnimatorProgressListener updateListener;
+	private Interpolator interpolator;
 
 	public SimpleAnimator() {
 	}
 
 	public void init(float initialProgress) {
 		this.currentProgress = initialProgress;
-		onAnimationProgressed(currentProgress);
 	}
 
 	public final SimpleAnimator setDuration(int duration) {
 		this.duration = duration;
 		return this;
+	}
+
+	public void setInterpolator(Interpolator interpolator) {
+		this.interpolator = interpolator;
 	}
 
 	public SimpleAnimator setListener(AnimatorListener listener) {
@@ -67,19 +72,13 @@ public class SimpleAnimator
 				@Override
 				public void onAnimationUpdate(ValueAnimator animation) {
 					currentProgress = (float) animation.getAnimatedValue();
-					onAnimationProgressed(currentProgress);
+					updateListener.onAnimationProgressed(currentProgress);
 				}
 			});
 
 		if (listener != null)
 			animator.addListener(listener);
 		animator.start();
-	}
-
-	@Deprecated
-	protected void onAnimationProgressed(float currentProgress) {
-		if (updateListener != null)
-			updateListener.onAnimationProgressed(currentProgress);
 	}
 
 	protected Animator createAnimate(float currentProgress, float target) {

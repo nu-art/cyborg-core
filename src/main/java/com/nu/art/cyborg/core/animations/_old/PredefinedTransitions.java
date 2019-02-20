@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.animations;
+package com.nu.art.cyborg.core.animations._old;
 
 import android.content.Context;
 import android.view.View;
@@ -24,12 +24,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.nu.art.cyborg.R;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition.BaseTransitionHelper;
-import com.nu.art.cyborg.core.animations.transitions.CubeTransition;
-import com.nu.art.cyborg.core.animations.transitions.ScaleTransition;
-import com.nu.art.cyborg.core.animations.transitions.SlideTransition;
-import com.nu.art.cyborg.core.animations.transitions.SquashTransition;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
+import com.nu.art.cyborg.core.animations._old.BaseTransition.BaseTransitionHelper;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 /**

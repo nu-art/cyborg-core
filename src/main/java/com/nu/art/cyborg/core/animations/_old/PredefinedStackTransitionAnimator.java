@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.animations;
+package com.nu.art.cyborg.core.animations._old;
 
 import android.content.Context;
 import android.view.View;
@@ -24,12 +24,9 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
-import com.nu.art.cyborg.annotations.TransitionOrientation;
 import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
 import com.nu.art.cyborg.core.CyborgStackController;
-import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition.BaseTransitionHelper;
+import com.nu.art.cyborg.core.animations._old.BaseTransition.BaseTransitionHelper;
 
 /**
  * Created by TacB0sS on 19-Jul 2015.
@@ -49,11 +46,11 @@ public class PredefinedStackTransitionAnimator
 		this(context, transitionHelper, BaseTransition.ORIENTATION_HORIZONTAL);
 	}
 
-	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, @TransitionOrientation int orientation) {
+	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, int orientation) {
 		this(context, transitionHelper, orientation, false);
 	}
 
-	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, @TransitionOrientation int orientation, boolean reverse) {
+	public PredefinedStackTransitionAnimator(Context context, BaseTransitionHelper transitionHelper, int orientation, boolean reverse) {
 		if (orientation != BaseTransition.ORIENTATION_HORIZONTAL && orientation != BaseTransition.ORIENTATION_VERTICAL)
 			throw new BadImplementationException("wrong orientation type... = " + orientation);
 
@@ -65,7 +62,10 @@ public class PredefinedStackTransitionAnimator
 	}
 
 	@Override
-	public void animateIn(CyborgStackController.StackLayerBuilder originLayer, CyborgStackController.StackLayerBuilder targetLayer, int duration, AnimationListener listener) {
+	public void animateIn(CyborgStackController.StackLayerBuilder originLayer,
+	                      CyborgStackController.StackLayerBuilder targetLayer,
+	                      int duration,
+	                      AnimationListener listener) {
 		if (inTarget != null)
 			inTarget.setInterpolator(interpolator);
 		if (outOrigin != null)
@@ -79,7 +79,10 @@ public class PredefinedStackTransitionAnimator
 	}
 
 	@Override
-	public void animateOut(CyborgStackController.StackLayerBuilder originLayer, CyborgStackController.StackLayerBuilder targetLayer, int duration, AnimationListener listener) {
+	public void animateOut(CyborgStackController.StackLayerBuilder originLayer,
+	                       CyborgStackController.StackLayerBuilder targetLayer,
+	                       int duration,
+	                       AnimationListener listener) {
 		if (outTarget != null)
 			outTarget.setInterpolator(reverseInterpolator);
 		if (inOrigin != null)

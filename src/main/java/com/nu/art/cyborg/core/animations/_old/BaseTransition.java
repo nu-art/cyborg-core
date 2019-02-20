@@ -16,22 +16,12 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.animations.transitions;
+package com.nu.art.cyborg.core.animations._old;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 /**
  * Created by TacB0sS on 27-Jul 2015.
