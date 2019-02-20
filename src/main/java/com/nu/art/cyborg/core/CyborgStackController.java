@@ -44,8 +44,8 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
-import com.nu.art.cyborg.core.animations.NewTransition;
-import com.nu.art.cyborg.core.animations.NewTransitions;
+import com.nu.art.cyborg.core.animations.Transition;
+import com.nu.art.cyborg.core.animations.StackTransitions;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
@@ -73,19 +73,19 @@ public class CyborgStackController
 	extends CyborgController {
 
 	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgStackController.class);
-	private static final HashMap<String, NewTransition> transitions = new HashMap<>();
+	private static final HashMap<String, Transition> transitions = new HashMap<>();
 
 	static {
-		for (NewTransitions value : NewTransitions.values()) {
+		for (StackTransitions value : StackTransitions.values()) {
 			addTransition(value.name(), value);
 		}
 	}
 
-	private static NewTransition getTransition(String transition) {
+	private static Transition getTransition(String transition) {
 		return transitions.get(transition);
 	}
 
-	public static void addTransition(String key, NewTransition transition) {
+	public static void addTransition(String key, Transition transition) {
 		if (transitions.put(key, transition) != null)
 			throw new BadImplementationException("Transition with Key '" + key + "' already exists!!");
 	}
@@ -172,14 +172,14 @@ public class CyborgStackController
 
 		private SimpleAnimator animator;
 		private AnimatorListenerImpl listener;
-		private final NewTransition[] transitionAnimators;
+		private final Transition[] transitionAnimators;
 		private final boolean in;
 		private final StackLayerBuilder toLayer;
 		private final StackLayerBuilder fromLayer;
 
 		public StatefulAnimatorProgressor(SimpleAnimator animator,
 		                                  AnimatorListenerImpl listener,
-		                                  NewTransition[] transitionAnimators,
+		                                  Transition[] transitionAnimators,
 		                                  boolean in,
 		                                  StackLayerBuilder toLayer,
 		                                  StackLayerBuilder fromLayer) {
@@ -193,13 +193,13 @@ public class CyborgStackController
 
 		@Override
 		public void onAnimationProgressed(float currentProgress) {
-			for (NewTransition transition : transitionAnimators) {
+			for (Transition transition : transitionAnimators) {
 				animateLayer(transition, currentProgress, toLayer, in);
 				animateLayer(transition, currentProgress, fromLayer, !in);
 			}
 		}
 
-		private void animateLayer(NewTransition transition, float progress, StackLayerBuilder layer, boolean in) {
+		private void animateLayer(Transition transition, float progress, StackLayerBuilder layer, boolean in) {
 			if (layer == null)
 				return;
 
@@ -221,7 +221,7 @@ public class CyborgStackController
 	                   })
 	public class StackLayerBuilder {
 
-		private transient NewTransition[] transitions;
+		private transient Transition[] transitions;
 		private transient Processor<?> processor;
 		private transient Interpolator interpolator;
 		private transient Class<? extends CyborgController> controllerType;
@@ -238,11 +238,11 @@ public class CyborgStackController
 
 		private StackLayerBuilder() {
 			if (config.transition != null) {
-				this.transitions = new NewTransition[]{config.transition};
+				this.transitions = new Transition[]{config.transition};
 			}
 		}
 
-		public final StackLayerBuilder setTransitions(NewTransition... transitions) {
+		public final StackLayerBuilder setTransitions(Transition... transitions) {
 			this.transitions = transitions;
 			return this;
 		}
@@ -632,7 +632,7 @@ public class CyborgStackController
 			toLayer.getRootView().clearAnimation();
 
 		// Animating layer can never be null!!
-		final NewTransition[] transitionAnimators = animatingLayer.transitions;
+		final Transition[] transitionAnimators = animatingLayer.transitions;
 
 		final Interpolator interpolator = animatingLayer.interpolator;
 		final int transitionDuration = animatingLayer.transitionDuration;
@@ -846,11 +846,11 @@ public class CyborgStackController
 		protected void setAttribute(CyborgStackController instance, TypedArray a, int attr) {
 			if (attr == R.styleable.StackController_transition) {
 				String transitionKey = a.getString(attr);
-				NewTransition transition = CyborgStackController.getTransition(transitionKey);
+				Transition transition = CyborgStackController.getTransition(transitionKey);
 				if (transition == null)
 					logError("Error resolving transition animation from key: " + transitionKey);
 
-				transition = NewTransitions.Fade;
+				transition = StackTransitions.Fade;
 				instance.getConfig().setTransition(transition);
 				return;
 			}
@@ -898,10 +898,10 @@ public class CyborgStackController
 	public static class StackConfig {
 
 		int transitionDuration = 300;
-		NewTransition transition = NewTransitions.Slide;
+		Transition transition = StackTransitions.Slide;
 		boolean popOnBackPress = true;
 
-		void setTransition(NewTransition transition) {
+		void setTransition(Transition transition) {
 			this.transition = transition;
 		}
 

@@ -25,8 +25,8 @@ import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
 /**
  * Created by TacB0sS on 24-Jul 2015.
  */
-public enum NewTransitions
-	implements NewTransition {
+public enum StackTransitions
+	implements Transition {
 
 	Slide() {
 		@Override
