@@ -66,7 +66,6 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.annotations.Restorable;
-import com.nu.art.cyborg.annotations.TransitionOrientation;
 import com.nu.art.cyborg.annotations.ViewIdentifier;
 import com.nu.art.cyborg.annotations.Visibility;
 import com.nu.art.cyborg.common.beans.ModelEvent;
@@ -77,11 +76,7 @@ import com.nu.art.cyborg.common.utils.BusyState;
 import com.nu.art.cyborg.common.utils.Tools;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
-import com.nu.art.cyborg.core.CyborgStackController.StackTransitionAnimator;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
-import com.nu.art.cyborg.core.animations.PredefinedTransitions;
-import com.nu.art.cyborg.core.animations.transitions.BaseTransition;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
 import com.nu.art.cyborg.core.dataModels.ListDataModel;
@@ -749,14 +744,6 @@ public abstract class CyborgController
 
 	protected StackLayerBuilder createLayerBuilder() {
 		return getStack().createLayerBuilder();
-	}
-
-	protected final StackTransitionAnimator createLayerTransition(PredefinedTransitions transition) {
-		return new PredefinedStackTransitionAnimator(getActivity(), transition, BaseTransition.ORIENTATION_VERTICAL);
-	}
-
-	protected final StackTransitionAnimator createLayerTransition(PredefinedTransitions transition, @TransitionOrientation int orientation) {
-		return new PredefinedStackTransitionAnimator(getActivity(), transition, orientation);
 	}
 
 	final void addNestedController(CyborgController controller) {
