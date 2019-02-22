@@ -44,8 +44,8 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
-import com.nu.art.cyborg.core.animations.Transition;
 import com.nu.art.cyborg.core.animations.StackTransitions;
+import com.nu.art.cyborg.core.animations.Transition;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
@@ -290,11 +290,23 @@ public class CyborgStackController
 		}
 
 		protected void pause() {
+			if (controller == null) {
+				if (DebugFlag.isEnabled())
+					logWarning("cannot pause... no controller for layer: " + this);
+				return;
+			}
+
 			if (isState(OnResume))
 				controller.dispatchLifeCycleEvent(OnPause);
 		}
 
 		protected void resume() {
+			if (controller == null) {
+				if (DebugFlag.isEnabled())
+					logWarning("cannot resume... no controller for layer: " + this);
+				return;
+			}
+
 			if (isState(OnResume))
 				controller.dispatchLifeCycleEvent(OnResume);
 		}
@@ -377,6 +389,11 @@ public class CyborgStackController
 		void detachView() {
 			if (DebugFlag.isEnabled())
 				logWarning("detachView: " + this);
+
+			if (controller == null) {
+				logWarning("cannot detach view... no controller for layer: " + this);
+				return;
+			}
 
 			getRootViewImpl().removeView(controller.getRootViewImpl());
 			printStateTags();
@@ -531,7 +548,6 @@ public class CyborgStackController
 	 */
 	private void push(final StackLayerBuilder targetLayerToBeAdded) {
 		ThreadsModule.assertMainThread();
-		boolean waitForLayoutChanges = true;
 		final StackLayerBuilder[] visibleLayers = getVisibleLayers();
 
 		for (StackLayerBuilder layer : visibleLayers) {
@@ -561,22 +577,10 @@ public class CyborgStackController
 		targetLayerToBeAdded.create();
 		addStackLayer(targetLayerToBeAdded);
 
-		/*
-		 * so after long trials, this seems to be the best behavior, if we invoke a second transition pop or push while another
-		 * is in progress, and we want the events not to collide with regards to the state of the stack, we need to make sure that
-		 * the stack is updated as soon as the interaction begins.
-		 */
-		if (!targetLayerToBeAdded.keepBackground) {
-			for (StackLayerBuilder layer : visibleLayers) {
-				// we must call clear animation to ensure onAnimationEnd is called.
-				layer.getRootView().clearAnimation();
-			}
-		}
-
 		if (DebugFlag.isEnabled())
 			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeAdded);
 
-		animate(true, waitForLayoutChanges, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
+		animate(true, true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
 	}
 
 	private void popLast(final StackLayerBuilder targetLayerToBeRemove) {
@@ -613,6 +617,7 @@ public class CyborgStackController
 		animate(false, waitForLayoutChanges, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
 	}
 
+	@SuppressLint("WrongConstant")
 	private void animate(final boolean in,
 	                     final boolean waitForLayoutChanges,
 	                     final StackLayerBuilder fromLayer,
@@ -624,24 +629,30 @@ public class CyborgStackController
 		if (animatingTransition && DebugFlag.isEnabled())
 			logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
 
-		// we must call clear animation to ensure onAnimationEnd is called.
-		if (fromLayer != null)
-			fromLayer.getRootView().clearAnimation();
-
-		if (toLayer != null)
-			toLayer.getRootView().clearAnimation();
-
 		// Animating layer can never be null!!
 		final Transition[] transitionAnimators = animatingLayer.transitions;
 
 		final Interpolator interpolator = animatingLayer.interpolator;
 		final int transitionDuration = animatingLayer.transitionDuration;
+
+		final View toView = toLayer == null ? null : toLayer.getRootView();
+
+		final int previousVisibility;
+		if (toView == null)
+			previousVisibility = -1;
+		else {
+			previousVisibility = toView.getVisibility();
+			toView.setVisibility(View.GONE);
+		}
+
 		final Runnable animate = new Runnable() {
 			StatefulAnimatorProgressor _listener;
 
 			@Override
 			public void run() {
 				setInAnimationState(true);
+				if (toView != null)
+					toView.setVisibility(previousVisibility);
 
 				AnimatorListenerImpl listener = new AnimatorListenerImpl() {
 					@Override
@@ -677,7 +688,8 @@ public class CyborgStackController
 					}
 				}
 
-				logWarning("starting animation");
+				if (DebugFlag.isEnabled())
+					logWarning("starting animation");
 				SimpleAnimator animator = new SimpleAnimator();
 
 				animator.init(in ? 0 : 1);
@@ -689,12 +701,10 @@ public class CyborgStackController
 			}
 		};
 
-		final View toView = toLayer == null ? null : toLayer.getRootView();
-
 		// when animating out and when the stack is empty.. the animating toView would be null and we will not receive a layout change event
 		// therefore we skip the listener and invoke the animate runnable directly
 		if (!waitForLayoutChanges || toView == null) {
-			animate.run();
+			postOnUI(animate);
 			return;
 		}
 
@@ -717,12 +727,11 @@ public class CyborgStackController
 				} else {
 					_treeObserver.removeGlobalOnLayoutListener(this);
 				}
-
 				if (processed)
 					return;
 
 				processed = true;
-				animate.run();
+				postOnUI(animate);
 			}
 		});
 	}
