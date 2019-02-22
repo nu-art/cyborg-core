@@ -105,6 +105,7 @@ public class CyborgStackController
 	private boolean focused = true;
 
 	private StackLayerBuilder rootLayerBuilder;
+	private boolean processedRoot;
 
 	private StatefulAnimatorProgressor previousListener;
 
@@ -136,6 +137,10 @@ public class CyborgStackController
 		if (!hasRoot())
 			return;
 
+		if (processedRoot)
+			return;
+
+		processedRoot = true;
 		rootLayerBuilder.build();
 	}
 
@@ -152,21 +157,8 @@ public class CyborgStackController
 	}
 
 	@Override
-	public void handleAttributes(Context context, AttributeSet attrs) {
-		super.handleAttributes(context, attrs);
+	protected void onResume() {
 		assignRootController();
-
-		// If the developer didn't specify a root layer in the xml
-		StackLayerBuilder topLayer = getTopLayer();
-		if (topLayer == null)
-			return;
-
-		// If the developer used a root layer with a layoutId and no controller type
-		CyborgController controller = topLayer.controller;
-		if (controller == null)
-			return;
-
-		controller.handleAttributes(context, attrs);
 	}
 
 	@Override
@@ -192,11 +184,17 @@ public class CyborgStackController
 
 	@Override
 	protected void onRestoreComplexObjectState(Bundle inState) {
-		String layersAsString = inState.getString("layers");
+		String layersAsString = inState.getString("layers", "[]");
 		if (layersAsString == null)
 			return;
 
 		LayerData[] layers = JsonSerializer.gson.fromJson(layersAsString, LayerData[].class);
+		if (layers.length == 0) {
+			assignRootController();
+			return;
+		}
+
+		processedRoot = true;
 		for (LayerData layer : layers) {
 			layer.stateBundle = inState.getBundle("layer-" + layer.stateTag);
 		}
@@ -266,7 +264,7 @@ public class CyborgStackController
 
 	private static class LayerData {
 
-		protected StackTransitions[] transitions;
+		protected StackTransitions[] transitions = {};
 		protected String controllerClassAsString;
 		protected String stateTag;
 		protected int transitionDuration = -1;
@@ -656,8 +654,8 @@ public class CyborgStackController
 
 		///
 
-		targetLayerToBeAdded.create();
 		addStackLayer(targetLayerToBeAdded);
+		targetLayerToBeAdded.create();
 
 		if (DebugFlag.isEnabled())
 			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeAdded);
@@ -992,7 +990,7 @@ public class CyborgStackController
 		Transition[] transitions = {StackTransitions.Slide};
 		boolean popOnBackPress = true;
 
-		void setTransitions(Transition... transition) {
+		void setTransitions(Transition... transitions) {
 			this.transitions = transitions;
 		}
 
