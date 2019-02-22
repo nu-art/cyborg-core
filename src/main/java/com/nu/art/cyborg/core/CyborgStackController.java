@@ -201,8 +201,20 @@ public class CyborgStackController
 			layer.stateBundle = inState.getBundle("layer-" + layer.stateTag);
 		}
 
+		ArrayList<LayerData> visibleLayers = new ArrayList<>();
+		for (int i = layers.length - 1; i >= 0; i--) {
+			visibleLayers.add(layers[i]);
+			if (!layers[i].keepBackground)
+				break;
+		}
+
 		for (LayerData layer : layers) {
-			new StackLayerBuilder(layer).build();
+			StackLayerBuilder stackLayerBuilder = new StackLayerBuilder(layer);
+			if (!visibleLayers.contains(layer)) {
+				stackLayerBuilder.append();
+			} else {
+				stackLayerBuilder.build();
+			}
 		}
 	}
 
