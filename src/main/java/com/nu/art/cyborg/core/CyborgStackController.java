@@ -771,7 +771,7 @@ public class CyborgStackController
 				SimpleAnimator animator = new SimpleAnimator();
 
 				animator.init(in ? 0 : 1);
-				animator.setDuration(2000);
+				animator.setDuration(transitionDuration);
 				animator.setInterpolator(interpolator);
 				animator.setListener(listener);
 				animator.setListener(_listener = previousListener = new StatefulAnimatorProgressor(animator, listener, transitionAnimators, in, toLayer, fromLayer));
