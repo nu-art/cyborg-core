@@ -218,6 +218,8 @@ public class ImageDownloaderModule
 		public final ImageDownloaderBuilder download() {
 			if (sameUrl) {
 				logWarning("Same url... will not download");
+				if (onAfter != null)
+					onAfter.run();
 				return this;
 			}
 
