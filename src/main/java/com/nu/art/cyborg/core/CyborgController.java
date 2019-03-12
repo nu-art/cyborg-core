@@ -638,10 +638,6 @@ public abstract class CyborgController
 		return stateTag;
 	}
 
-	final void _createView(LayoutInflater inflater, ViewGroup parent) {
-		_createView(inflater, parent, true);
-	}
-
 	final void _createView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
 		rootView = createView(inflater, parent, attachToParent);
 		rootView.setTag(this);
@@ -666,6 +662,7 @@ public abstract class CyborgController
 	protected View createView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
 		if (layoutId == -1)
 			return createCustomView(inflater, parent, attachToParent);
+
 		try {
 			return inflater.inflate(layoutId, parent, attachToParent);
 		} catch (RuntimeException e) {

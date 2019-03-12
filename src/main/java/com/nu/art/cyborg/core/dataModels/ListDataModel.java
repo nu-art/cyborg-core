@@ -132,4 +132,8 @@ public class ListDataModel<Item>
 	private int getPositionByItem(Item item) {
 		return items.indexOf(item);
 	}
+
+	public final List<Item> getItems() {
+		return Collections.unmodifiableList(items);
+	}
 }
