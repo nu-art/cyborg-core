@@ -73,6 +73,11 @@ public class GenericDownloaderModule
 		void cancel();
 	}
 
+	public interface OnProgressListener {
+
+		void onProgress(float progressPercentage);
+	}
+
 	public interface DownloaderBuilder {
 
 		DownloaderBuilder setUrl(String url);
@@ -165,6 +170,8 @@ public class GenericDownloaderModule
 		private Processor<?> onSuccess;
 
 		private Processor<Throwable> onError;
+
+		private OnProgressListener progressListener;
 
 		private Downloader downloader;
 
@@ -267,7 +274,8 @@ public class GenericDownloaderModule
 				return;
 			}
 
-			logDebug("Not cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
+			if (cacheable != null)
+				logDebug("Not cached: " + cacheable.getLocalCacheFile().getAbsolutePath());
 
 			if (url.startsWith("android.resource://") || url.startsWith("content://")) {
 				loadFromResources(downloadListener);
