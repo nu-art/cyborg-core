@@ -115,7 +115,7 @@ public class CyborgAdapter<Item>
 		try {
 			if (Debug_Performance.isEnabled())
 				logVerbose("_createView");
-			renderer._createView(LayoutInflater.from(parent.getContext()), parent);
+			renderer._createView(LayoutInflater.from(parent.getContext()), parent, false);
 		} catch (Throwable e) {
 			while (e.getCause() != null) {
 				e = e.getCause();
