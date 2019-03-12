@@ -23,11 +23,6 @@
         <enum name="horizontal" value="1"/>
     </attr>
 
-    <attr name="transitionOrientation">
-        <enum name="vertical" value="0"/>
-        <enum name="horizontal" value="1"/>
-    </attr>
-
     <declare-styleable name="CustomFont">
         <attr name="cyborgFont" format="string"/>
     </declare-styleable>
@@ -37,17 +32,8 @@
         <attr name="tag" format="string"/>
     </declare-styleable>
 
-    <attr name="transition">
-        <enum name="Slide" value="0"/>
-        <enum name="Squash" value="1"/>
-        <enum name="Scale" value="2"/>
-        <enum name="Cube" value="3"/>
-        <enum name="Fade" value="4"/>
-    </attr>
-
     <declare-styleable name="StackController">
-        <attr name="transition"/>
-        <attr name="transitionOrientation"/>
+        <attr name="transition" format="string"/>
         <attr name="transitionDuration" format="integer"/>
         <attr name="popOnBackPress" format="boolean"/>
         <attr name="rootKeep" format="boolean"/>

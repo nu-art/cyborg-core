@@ -107,7 +107,7 @@ public class CyborgView
 
 		// inflating views
 		try {
-			controller._createView(LayoutInflater.from(context), this);
+			controller._createView(LayoutInflater.from(context), this, true);
 		} catch (Throwable e) {
 			while (e.getCause() != null) {
 				e = e.getCause();

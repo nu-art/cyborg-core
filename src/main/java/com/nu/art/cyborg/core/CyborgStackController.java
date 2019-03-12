@@ -18,73 +18,77 @@
 
 package com.nu.art.cyborg.core;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
+import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.R;
-import com.nu.art.cyborg.annotations.TransitionOrientation;
-import com.nu.art.cyborg.common.implementors.AnimationListenerImpl;
-import com.nu.art.cyborg.common.utils.Interpolators;
-import com.nu.art.cyborg.core.animations.PredefinedStackTransitionAnimator;
-import com.nu.art.cyborg.core.animations.PredefinedTransitions;
+import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
+import com.nu.art.cyborg.core.stackTransitions.StackTransitions;
+import com.nu.art.cyborg.core.stackTransitions.Transition;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
-import com.nu.art.cyborg.ui.animations.interpulator.ReverseInterpolator;
+import com.nu.art.cyborg.ui.animations.SimpleAnimator;
+import com.nu.art.cyborg.ui.animations.SimpleAnimator.AnimatorProgressListener;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
 import com.nu.art.reflection.tools.ReflectiveTools;
+import com.nu.art.storage.PreferencesModule.JsonSerializer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
-import static com.nu.art.cyborg.core.animations.transitions.BaseTransition.ORIENTATION_HORIZONTAL;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnPause;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
 
 /**
  * Created by TacB0sS on 25-Jun 2015.
  */
+@SuppressWarnings( {
+	                   "WeakerAccess",
+	                   "unused"
+                   })
 public class CyborgStackController
 	extends CyborgController {
 
-	public static abstract class StackTransitionAnimator {
+	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgStackController.class);
+	private static final HashMap<String, Transition> transitions = new HashMap<>();
 
-		protected Interpolator interpolator = Interpolators.LinearInterpolator;
-		protected Interpolator reverseInterpolator = new ReverseInterpolator(Interpolators.LinearInterpolator);
-
-		protected void setInterpolator(Interpolator interpolator) {
-			this.interpolator = interpolator;
-			this.reverseInterpolator = new ReverseInterpolator(interpolator);
+	static {
+		for (StackTransitions value : StackTransitions.values()) {
+			addTransition(value.name(), value);
 		}
-
-		protected abstract void animateIn(StackLayerBuilder origin, StackLayerBuilder target, int duration, AnimationListener listener);
-
-		protected abstract void animateOut(StackLayerBuilder origin, StackLayerBuilder target, int duration, AnimationListener listener);
 	}
 
-	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgStackController.class);
+	private static Transition getTransition(String transition) {
+		return transitions.get(transition);
+	}
+
+	public static void addTransition(String key, Transition transition) {
+		if (transitions.put(key, transition) != null)
+			throw new BadImplementationException("Transition with Key '" + key + "' already exists!!");
+	}
 
 	private LayoutInflater inflater;
 
@@ -99,6 +103,9 @@ public class CyborgStackController
 	private boolean focused = true;
 
 	private StackLayerBuilder rootLayerBuilder;
+	private boolean processedRoot;
+
+	private StatefulAnimatorProgressor previousListener;
 
 	protected CyborgStackController() {
 		super(-1);
@@ -128,6 +135,10 @@ public class CyborgStackController
 		if (!hasRoot())
 			return;
 
+		if (processedRoot)
+			return;
+
+		processedRoot = true;
 		rootLayerBuilder.build();
 	}
 
@@ -144,21 +155,123 @@ public class CyborgStackController
 	}
 
 	@Override
-	public void handleAttributes(Context context, AttributeSet attrs) {
-		super.handleAttributes(context, attrs);
+	protected void onResume() {
 		assignRootController();
+	}
 
-		// If the developer didn't specify a root layer in the xml
-		StackLayerBuilder topLayer = getTopLayer();
-		if (topLayer == null)
+	@Override
+	protected void onSaveComplexObjectState(Bundle outState) {
+		StackLayerBuilder[] visibleLayers = getVisibleLayers();
+		for (StackLayerBuilder visibleLayer : visibleLayers) {
+			visibleLayer.saveState();
+		}
+
+		LayerData[] layers = ArrayTools.map(LayerData.class, new Function<StackLayerBuilder, LayerData>() {
+			@Override
+			public LayerData map(StackLayerBuilder stackLayerBuilders) {
+				return stackLayerBuilders.serializableData;
+			}
+		}, layersStack);
+
+		for (LayerData layer : layers) {
+			outState.putBundle("layer-" + layer.stateTag, layer.stateBundle);
+		}
+
+		outState.putString("layers", JsonSerializer.gson.toJson(layers));
+	}
+
+	@Override
+	protected void onRestoreComplexObjectState(Bundle inState) {
+		String layersAsString = inState.getString("layers", "[]");
+		if (layersAsString == null)
 			return;
 
-		// If the developer used a root layer with a layoutId and no controller type
-		CyborgController controller = topLayer.controller;
-		if (controller == null)
+		LayerData[] layers = JsonSerializer.gson.fromJson(layersAsString, LayerData[].class);
+		if (layers.length == 0) {
+			assignRootController();
 			return;
+		}
 
-		controller.handleAttributes(context, attrs);
+		processedRoot = true;
+		for (LayerData layer : layers) {
+			layer.stateBundle = inState.getBundle("layer-" + layer.stateTag);
+		}
+
+		ArrayList<LayerData> visibleLayers = new ArrayList<>();
+		for (int i = layers.length - 1; i >= 0; i--) {
+			visibleLayers.add(layers[i]);
+			if (!layers[i].keepBackground)
+				break;
+		}
+
+		for (LayerData layer : layers) {
+			StackLayerBuilder stackLayerBuilder = new StackLayerBuilder(layer);
+			if (!visibleLayers.contains(layer)) {
+				stackLayerBuilder.append();
+			} else {
+				stackLayerBuilder.build();
+			}
+		}
+	}
+
+	private class StatefulAnimatorProgressor
+		implements AnimatorProgressListener {
+
+		private SimpleAnimator animator;
+		private AnimatorListenerImpl listener;
+		private final Transition[] transitionAnimators;
+		private final boolean in;
+		private final StackLayerBuilder toLayer;
+		private final StackLayerBuilder fromLayer;
+
+		public StatefulAnimatorProgressor(SimpleAnimator animator,
+		                                  AnimatorListenerImpl listener,
+		                                  Transition[] transitionAnimators,
+		                                  boolean in,
+		                                  StackLayerBuilder toLayer,
+		                                  StackLayerBuilder fromLayer) {
+			this.animator = animator;
+			this.listener = listener;
+			this.transitionAnimators = transitionAnimators;
+			this.in = in;
+			this.toLayer = toLayer;
+			this.fromLayer = fromLayer;
+		}
+
+		@Override
+		public void onAnimationProgressed(float currentProgress) {
+			for (Transition transition : transitionAnimators) {
+				animateLayer(transition, currentProgress, toLayer, in);
+				animateLayer(transition, currentProgress, fromLayer, !in);
+			}
+		}
+
+		private void animateLayer(Transition transition, float progress, StackLayerBuilder layer, boolean in) {
+			if (layer == null)
+				return;
+
+			if (layer.getRootView() == null)
+				return;
+
+			if (layer.getRootView().getParent() == null)
+				return;
+
+			transition.animate(layer, progress, in);
+		}
+	}
+
+	private static class LayerData {
+
+		protected StackTransitions[] transitions = {};
+		protected String controllerClassAsString;
+		protected String stateTag;
+		protected int transitionDuration = -1;
+		protected boolean keepBackground;
+		private transient Bundle stateBundle = new Bundle();
+
+		public void addTransition(StackTransitions transition) {
+			transitions = ArrayTools.appendElement(transitions, transition);
+		}
 	}
 
 	@SuppressWarnings( {
@@ -169,36 +282,55 @@ public class CyborgStackController
 	                   })
 	public class StackLayerBuilder {
 
-		private transient StackTransitionAnimator[] stackTransitionAnimator;
+		private transient Transition[] transitions;
 		private transient Processor<?> processor;
 		private transient Interpolator interpolator;
 		private transient Class<? extends CyborgController> controllerType;
 
 		private transient boolean toBeDisposed;
+		private transient boolean keepInStack = true;
 		private transient CyborgController controller;
-		private transient Bundle stateBundle = new Bundle();
-
-		private String controllerClassAsString;
-		private String stateTag;
-		private int transitionDuration = config.transitionDuration;
-		private boolean keepBackground;
-		private boolean keepInStack = true;
+		private LayerData serializableData;
 
 		private StackLayerBuilder() {
-			if (config.transition != null) {
-				PredefinedStackTransitionAnimator transitionAnimator = new PredefinedStackTransitionAnimator(getActivity(), config.transition, config.transitionOrientation);
-				this.stackTransitionAnimator = new StackTransitionAnimator[]{transitionAnimator};
+			serializableData = new LayerData();
+		}
+
+		@SuppressWarnings("unchecked")
+		private StackLayerBuilder(LayerData deserializeData) {
+			serializableData = deserializeData;
+			this.transitions = deserializeData.transitions;
+			try {
+				this.controllerType = (Class<? extends CyborgController>) Class.forName(deserializeData.controllerClassAsString);
+			} catch (ClassNotFoundException e) {
+				throw new MUST_NeverHappenException("error while restoring state with controller: " + deserializeData.controllerClassAsString, e);
 			}
 		}
 
-		// TODO need to find a way to enable two transition simultaneously, e.g. Fade and Cube
-		public final StackLayerBuilder setStackTransitionAnimators(StackTransitionAnimator... stackTransitionAnimators) {
-			this.stackTransitionAnimator = stackTransitionAnimators;
+		public final StackLayerBuilder setTransitions(Transition... transitions) {
+			this.transitions = transitions;
+			for (Transition transition : transitions) {
+				if (transition instanceof StackTransitions)
+					serializableData.addTransition((StackTransitions) transition);
+			}
+			return this;
+		}
+
+		public StackLayerBuilder setControllerType(Class<? extends CyborgController> controllerType) {
+			if (layoutId != -1)
+				throw new BadImplementationException("Already set layoutId, cannot also set controllerType");
+
+			this.controllerType = controllerType;
+			if (getStateTag() == null)
+				setStateTag(controllerType.getSimpleName());
+
+			serializableData.controllerClassAsString = controllerType.getName();
 			return this;
 		}
 
 		public final StackLayerBuilder setAnimationInterpolator(Interpolator interpolator) {
 			this.interpolator = interpolator;
+			// TBD save into serializableData?
 			return this;
 		}
 
@@ -208,15 +340,15 @@ public class CyborgStackController
 		}
 
 		public final StackLayerBuilder setStateTag(String stateTag) {
-			if (stateTag == null && this.stateTag != null)
+			if (stateTag == null && this.serializableData.stateTag != null)
 				return this;
 
-			this.stateTag = stateTag;
+			this.serializableData.stateTag = stateTag;
 			return this;
 		}
 
 		public final StackLayerBuilder setTransitionDuration(int transitionDuration) {
-			this.transitionDuration = transitionDuration;
+			this.serializableData.transitionDuration = transitionDuration;
 			return this;
 		}
 
@@ -225,12 +357,11 @@ public class CyborgStackController
 		 */
 		@Deprecated
 		public final StackLayerBuilder setDuration(int duration) {
-			this.transitionDuration = duration;
-			return this;
+			return setTransitionDuration(duration);
 		}
 
 		public final StackLayerBuilder setKeepBackground(boolean keepBackground) {
-			this.keepBackground = keepBackground;
+			this.serializableData.keepBackground = keepBackground;
 			return this;
 		}
 
@@ -240,11 +371,23 @@ public class CyborgStackController
 		}
 
 		protected void pause() {
+			if (controller == null) {
+				if (DebugFlag.isEnabled())
+					logWarning("cannot pause... no controller for layer: " + this);
+				return;
+			}
+
 			if (isState(OnResume))
 				controller.dispatchLifeCycleEvent(OnPause);
 		}
 
 		protected void resume() {
+			if (controller == null) {
+				if (DebugFlag.isEnabled())
+					logWarning("cannot resume... no controller for layer: " + this);
+				return;
+			}
+
 			if (isState(OnResume))
 				controller.dispatchLifeCycleEvent(OnResume);
 		}
@@ -262,7 +405,7 @@ public class CyborgStackController
 			controller.setActivityBridge(activityBridge);
 			controller.setKeepInStack(keepInStack);
 
-			controller.setStateTag(stateTag);
+			controller.setStateTag(getStateTag());
 			controller._createView(inflater, getRootViewImpl(), false);
 
 			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
@@ -285,17 +428,6 @@ public class CyborgStackController
 			CyborgStackController.this.addNestedController(controller);
 		}
 
-		public StackLayerBuilder setControllerType(Class<? extends CyborgController> controllerType) {
-			if (layoutId != -1)
-				throw new BadImplementationException("Already set layoutId, cannot also set controllerType");
-
-			this.controllerType = controllerType;
-			if (stateTag == null)
-				stateTag = controllerType.getSimpleName();
-
-			return this;
-		}
-
 		/**
 		 * Use this API to add potential screen to your stack to allow your user to navigate back.
 		 * for example when a user presses on a notification.. in most cases you'd like to take them deep into the application,
@@ -308,7 +440,7 @@ public class CyborgStackController
 		public final void build() {
 			long started = System.currentTimeMillis();
 
-			if (stateTag == null)
+			if (getStateTag() == null)
 				throw new ImplementationMissingException("MUST specify a stateTag when using a layoutId");
 
 			push(this);
@@ -321,12 +453,17 @@ public class CyborgStackController
 			if (controller == null)
 				return;
 
-			controller.onRestoreInstanceState(stateBundle);
+			controller.onRestoreInstanceState(serializableData.stateBundle);
 		}
 
 		void detachView() {
 			if (DebugFlag.isEnabled())
 				logWarning("detachView: " + this);
+
+			if (controller == null) {
+				logWarning("cannot detach view... no controller for layer: " + this);
+				return;
+			}
 
 			getRootViewImpl().removeView(controller.getRootViewImpl());
 			printStateTags();
@@ -341,11 +478,11 @@ public class CyborgStackController
 		}
 
 		void saveState() {
-			stateBundle.clear();
+			serializableData.stateBundle.clear();
 			if (controller == null)
 				return;
 
-			controller.onSaveInstanceState(stateBundle);
+			controller.onSaveInstanceState(serializableData.stateBundle);
 		}
 
 		public View getRootView() {
@@ -353,7 +490,7 @@ public class CyborgStackController
 		}
 
 		public int getDuration() {
-			return transitionDuration;
+			return this.serializableData.transitionDuration;
 		}
 
 		public CyborgController getController() {
@@ -369,7 +506,15 @@ public class CyborgStackController
 
 		@Override
 		public String toString() {
-			return stateTag;
+			return getStateTag();
+		}
+
+		public String getStateTag() {
+			return serializableData.stateTag;
+		}
+
+		public boolean isKeepBackground() {
+			return serializableData.keepBackground;
 		}
 	}
 
@@ -400,7 +545,7 @@ public class CyborgStackController
 
 			@Override
 			public String map(StackLayerBuilder stackLayerBuilder) {
-				return stackLayerBuilder.stateTag;
+				return stackLayerBuilder.getStateTag();
 			}
 		}, ArrayTools.asArray(layersStack, StackLayerBuilder.class));
 	}
@@ -414,7 +559,7 @@ public class CyborgStackController
 		StackLayerBuilder topLayer;
 		while ((topLayer = getTopLayer(visibleLayers.size())) != null) {
 			visibleLayers.add(0, topLayer);
-			if (!topLayer.keepBackground)
+			if (!topLayer.isKeepBackground())
 				break;
 		}
 
@@ -478,22 +623,28 @@ public class CyborgStackController
 	//		activityBridge.addController(this);
 
 	/**
-	 * @param targetLayerToBeAdded
 	 */
 	private void push(final StackLayerBuilder targetLayerToBeAdded) {
 		ThreadsModule.assertMainThread();
-		StackLayerBuilder[] visibleLayers = getVisibleLayers();
+		final StackLayerBuilder[] visibleLayers = getVisibleLayers();
 
 		for (StackLayerBuilder layer : visibleLayers) {
 			layer.pause();
 		}
 
 		final StackLayerBuilder originLayerToBeDisposed =
-			targetLayerToBeAdded.keepBackground || visibleLayers.length == 0 ? null : visibleLayers[visibleLayers.length - 1];
+			targetLayerToBeAdded.isKeepBackground() || visibleLayers.length == 0 ? null : visibleLayers[visibleLayers.length - 1];
 
 		final Runnable animationEnded = new Runnable() {
 			@Override
 			public void run() {
+				if (!targetLayerToBeAdded.isKeepBackground()) {
+					for (StackLayerBuilder layer : visibleLayers) {
+						// remove the layer from the stack if at the end of this transition it should not be there.
+						layer.toBeDisposed = true;
+					}
+				}
+
 				alignChildViewsToStack();
 				targetLayerToBeAdded.onAnimatedIn();
 			}
@@ -501,42 +652,32 @@ public class CyborgStackController
 
 		///
 
-		targetLayerToBeAdded.create();
 		addStackLayer(targetLayerToBeAdded);
-
-		/*
-		 * so after long trials, this seems to be the best behavior, if we invoke a second transition pop or push while another
-		 * is in progress, and we want the events not to collide with regards to the state of the stack, we need to make sure that
-		 * the stack is updated as soon as the interaction begins.
-		 */
-		if (!targetLayerToBeAdded.keepBackground) {
-			for (StackLayerBuilder layer : visibleLayers) {
-				// we must call clear animation to ensure onAnimationEnd is called.
-				layer.getRootView().clearAnimation();
-
-				// remove the layer from the stack if at the end of this transition it should not be there.
-				layer.toBeDisposed = true;
-			}
-		}
+		targetLayerToBeAdded.create();
 
 		if (DebugFlag.isEnabled())
 			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeAdded);
 
-		animate(true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
+		animate(true, true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
 	}
 
 	private void popLast(final StackLayerBuilder targetLayerToBeRemove) {
 		StackLayerBuilder[] visibleLayers = getVisibleLayers();
+		boolean waitForLayoutChanges = true;
 
 		for (StackLayerBuilder layer : visibleLayers) {
-			if (targetLayerToBeRemove.keepBackground)
+			if (targetLayerToBeRemove.isKeepBackground())
 				layer.resume();
-			else
+			else if (layer.controller == null)
 				layer.create();
+			else {
+				waitForLayoutChanges = false;
+				layer.resume();
+			}
 		}
 
 		// background is already visible do not animate it
-		final StackLayerBuilder originLayerToBeRestored = targetLayerToBeRemove.keepBackground ? null : getTopLayer();
+		final StackLayerBuilder originLayerToBeRestored = targetLayerToBeRemove.isKeepBackground() ? null : getTopLayer();
 
 		final Runnable animationEnded = new Runnable() {
 			@Override
@@ -551,10 +692,12 @@ public class CyborgStackController
 		if (DebugFlag.isEnabled())
 			logInfo("popping: " + targetLayerToBeRemove + " => " + Arrays.toString(visibleLayers));
 
-		animate(false, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
+		animate(false, waitForLayoutChanges, targetLayerToBeRemove, originLayerToBeRestored, animationEnded);
 	}
 
+	@SuppressLint("WrongConstant")
 	private void animate(final boolean in,
+	                     final boolean waitForLayoutChanges,
 	                     final StackLayerBuilder fromLayer,
 	                     final StackLayerBuilder toLayer,
 	                     final Runnable animationEnded) {
@@ -564,66 +707,89 @@ public class CyborgStackController
 		if (animatingTransition && DebugFlag.isEnabled())
 			logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
 
-		final AnimationListenerImpl listener = new AnimationListenerImpl() {
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				if (fromLayer != null && DebugFlag.isEnabled())
-					logInfo("disposing: " + fromLayer);
-
-				animationEnded.run();
-				setInAnimationState(false);
-			}
-		};
-
-		// we must call clear animation to ensure onAnimationEnd is called.
-		if (fromLayer != null)
-			fromLayer.getRootView().clearAnimation();
-
-		if (toLayer != null)
-			toLayer.getRootView().clearAnimation();
-
-		// Animating layer can never be null!!
-		final StackTransitionAnimator[] transitionAnimators = animatingLayer.stackTransitionAnimator;
-		if (transitionAnimators == null) {
-			// if there is no animation transitioning between the two layer, just dispose the older layer
-			listener.onAnimationEnd(null);
-			return;
-		}
+		Transition[] transitions = animatingLayer.transitions;
+		final Transition[] transitionAnimators = transitions == null || transitions.length == 0 ? config.transitions : transitions;
 
 		final Interpolator interpolator = animatingLayer.interpolator;
-		final int transitionDuration = animatingLayer.transitionDuration;
+		final int transitionDuration = animatingLayer.getDuration() > 0 ? animatingLayer.getDuration() : config.transitionDuration;
+
+		final View toView = toLayer == null ? null : toLayer.getRootView();
+
+		final int previousVisibility;
+		if (toView == null)
+			previousVisibility = -1;
+		else {
+			previousVisibility = toView.getVisibility();
+			toView.setVisibility(View.GONE);
+		}
 
 		final Runnable animate = new Runnable() {
+			StatefulAnimatorProgressor _listener;
 
 			@Override
 			public void run() {
 				setInAnimationState(true);
+				if (toView != null)
+					toView.setVisibility(previousVisibility);
 
-				logWarning("starting animation");
-				for (StackTransitionAnimator animator : transitionAnimators) {
-					if (interpolator != null)
-						animator.setInterpolator(interpolator);
+				AnimatorListenerImpl listener = new AnimatorListenerImpl() {
+					@Override
+					public void onAnimationEnd(Animator animator) {
+						super.onAnimationEnd(animator);
+						if (_listener != null && _listener.fromLayer != null && DebugFlag.isEnabled())
+							logInfo("disposing: " + _listener.fromLayer);
 
-					// All Animations are performed together, the listener MUST be called only once
-					if (in)
-						animator.animateIn(fromLayer, toLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
-					else
-						animator.animateOut(toLayer, fromLayer, transitionDuration, animator == transitionAnimators[transitionAnimators.length - 1] ? listener : null);
+						if (previousListener == _listener)
+							previousListener = null;
+
+						animationEnded.run();
+						setInAnimationState(false);
+					}
+				};
+
+				if (transitionAnimators == null) {
+					// if there is no animation transitioning between the two layer, just dispose the older layer
+					listener.onAnimationEnd(null);
+					return;
 				}
+
+				if (previousListener != null) {
+					if (previousListener.in && in) {
+						previousListener.animator.setListener((AnimatorListener) null);
+					}
+
+					if (previousListener.in && !in) {
+						previousListener.animator.setListener((AnimatorListener) null);
+						previousListener.animator.setListener(listener);
+						previousListener.animator.animateTo(0);
+						return;
+					}
+				}
+
+				if (DebugFlag.isEnabled())
+					logWarning("starting animation");
+				SimpleAnimator animator = new SimpleAnimator();
+
+				animator.init(in ? 0 : 1);
+				animator.setDuration(transitionDuration);
+				animator.setInterpolator(interpolator);
+				animator.setListener(listener);
+				animator.setListener(_listener = previousListener = new StatefulAnimatorProgressor(animator, listener, transitionAnimators, in, toLayer, fromLayer));
+				animator.animateTo(in ? 1 : 0);
 			}
 		};
 
-		final View toView = toLayer == null ? null : toLayer.getRootView();
-
 		// when animating out and when the stack is empty.. the animating toView would be null and we will not receive a layout change event
 		// therefore we skip the listener and invoke the animate runnable directly
-		if (toView == null) {
-			animate.run();
+		if (!waitForLayoutChanges || toView == null) {
+			postOnUI(animate);
 			return;
 		}
 
 		final ViewTreeObserver treeObserver = toView.getViewTreeObserver();
 		treeObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+
+			private boolean processed;
 
 			@Override
 			@SuppressLint("ObsoleteSdkInt")
@@ -639,8 +805,11 @@ public class CyborgStackController
 				} else {
 					_treeObserver.removeGlobalOnLayoutListener(this);
 				}
+				if (processed)
+					return;
 
-				animate.run();
+				processed = true;
+				postOnUI(animate);
 			}
 		});
 	}
@@ -748,7 +917,6 @@ public class CyborgStackController
 
 		private static int[] ids = {
 			R.styleable.StackController_transition,
-			R.styleable.StackController_transitionOrientation,
 			R.styleable.StackController_transitionDuration,
 			R.styleable.StackController_popOnBackPress,
 			R.styleable.StackController_rootController,
@@ -764,23 +932,19 @@ public class CyborgStackController
 		@Override
 		protected void setAttribute(CyborgStackController instance, TypedArray a, int attr) {
 			if (attr == R.styleable.StackController_transition) {
-				int transition = a.getInt(attr, -1);
-				if (transition == -1)
-					return;
+				String transitionKey = a.getString(attr);
+				Transition transition = CyborgStackController.getTransition(transitionKey);
+				if (transition == null)
+					logError("Error resolving transition animation from key: " + transitionKey);
 
-				instance.getConfig().setTransition(PredefinedTransitions.values()[transition]);
+				transition = StackTransitions.Fade;
+				instance.getConfig().setTransitions(transition);
 				return;
 			}
 
 			if (attr == R.styleable.StackController_popOnBackPress) {
 				boolean popOnBackPress = a.getBoolean(attr, true);
 				instance.getConfig().setPopOnBackPress(popOnBackPress);
-				return;
-			}
-
-			if (attr == R.styleable.StackController_transitionOrientation) {
-				int transitionOrientation = a.getInt(attr, ORIENTATION_HORIZONTAL);
-				instance.getConfig().setTransitionOrientation(transitionOrientation);
 				return;
 			}
 
@@ -820,23 +984,16 @@ public class CyborgStackController
 
 	public static class StackConfig {
 
-		@TransitionOrientation
-		int transitionOrientation = ORIENTATION_HORIZONTAL;
-
 		int transitionDuration = 300;
-		PredefinedTransitions transition = PredefinedTransitions.Fade;
+		Transition[] transitions = {StackTransitions.Slide};
 		boolean popOnBackPress = true;
 
-		void setTransition(PredefinedTransitions transition) {
-			this.transition = transition;
+		void setTransitions(Transition... transitions) {
+			this.transitions = transitions;
 		}
 
 		void setTransitionDuration(int transitionDuration) {
 			this.transitionDuration = transitionDuration;
-		}
-
-		void setTransitionOrientation(int transitionOrientation) {
-			this.transitionOrientation = transitionOrientation;
 		}
 
 		void setPopOnBackPress(boolean popOnBackPress) {

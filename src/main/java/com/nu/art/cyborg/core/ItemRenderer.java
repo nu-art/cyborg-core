@@ -62,13 +62,6 @@ public abstract class ItemRenderer<ItemType>
 
 	protected abstract void renderItem(ItemType itemType);
 
-	@Override
-	protected View createView(LayoutInflater inflater, ViewGroup parent, boolean attachToParent) {
-		if (layoutId == -1)
-			return createCustomView(inflater, parent, attachToParent);
-		return inflater.inflate(layoutId, parent, false);
-	}
-
 	public int getItemPosition() {
 		return positionResolver.getItemPosition();
 	}
