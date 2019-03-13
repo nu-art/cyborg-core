@@ -934,10 +934,11 @@ public class CyborgStackController
 			if (attr == R.styleable.StackController_transition) {
 				String transitionKey = a.getString(attr);
 				Transition transition = CyborgStackController.getTransition(transitionKey);
-				if (transition == null)
-					logError("Error resolving transition animation from key: " + transitionKey);
+				if (transition == null) {
+					logWarning("Error resolving transition animation from key: " + transitionKey);
+					transition = StackTransitions.Fade;
+				}
 
-				transition = StackTransitions.Fade;
 				instance.getConfig().setTransitions(transition);
 				return;
 			}
