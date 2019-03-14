@@ -720,7 +720,7 @@ public class CyborgStackController
 			previousVisibility = -1;
 		else {
 			previousVisibility = toView.getVisibility();
-			toView.setVisibility(View.GONE);
+			toView.setVisibility(View.INVISIBLE);
 		}
 
 		final Runnable animate = new Runnable() {
