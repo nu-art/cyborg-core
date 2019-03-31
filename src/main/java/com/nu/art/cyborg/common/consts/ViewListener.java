@@ -18,6 +18,8 @@
 
 package com.nu.art.cyborg.common.consts;
 
+import android.os.Build.VERSION_CODES;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
@@ -33,6 +35,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AutoCompleteTextView;
+import android.widget.AutoCompleteTextView.OnDismissListener;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.SeekBar;
@@ -94,6 +98,22 @@ public enum ViewListener {
 	OnEditorAction(ListenersMethods._OnEditorActionListener, TextView.class, OnEditorActionListener.class), /**/
 	OnFocusChange(ListenersMethods._OnFocusChangeListener, View.class, OnFocusChangeListener.class), /**/
 	OnKeyListener(ListenersMethods._OnKeyListener, View.class, OnKeyListener.class), /**/
+
+	/**
+	 * Adds an {@link OnItemSelectedListener} to an {@link AutoCompleteTextView} instance.
+	 */
+	OnAutoCompleteItemSelected(ListenersMethods._SetOnItemSelectedListener, AutoCompleteTextView.class, OnItemSelectedListener.class),
+
+	/**
+	 * Adds an {@link OnItemClickListener} to an {@link AutoCompleteTextView} instance.
+	 */
+	OnAutoCompleteItemClicked(ListenersMethods._SetOnItemClickListener, AutoCompleteTextView.class, OnItemClickListener.class),
+
+	/**
+	 * Adds an {@link OnDismissListener} to an {@link AutoCompleteTextView} instance.
+	 */
+	OnAutoCompleteOnDismiss(ListenersMethods._SetOnDismissListener, AutoCompleteTextView.class, OnDismissListener.class),
+
 	OnTextChangedListener(ListenersMethods._OnTextChangedListener, TextView.class, TextWatcher.class) {
 		@Override
 		public void assign(final View view, final UserActionsDelegator modelDelegator)
@@ -178,4 +198,6 @@ interface ListenersMethods {
 	String _OnKeyListener = "setOnKeyListener";
 
 	String _OnTextChangedListener = "addTextChangedListener";
+
+	String _SetOnDismissListener = "setOnDismissListener";
 }
