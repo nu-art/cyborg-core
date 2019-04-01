@@ -22,6 +22,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
+import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothManager;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -90,6 +91,8 @@ public interface _SystemServices {
 	ServiceType<SensorManager> SensorService = new ServiceType<>(Context.SENSOR_SERVICE);
 
 	ServiceType<CameraManager> CameraService = new ServiceType<>(Context.CAMERA_SERVICE);
+
+	ServiceType<DevicePolicyManager> PolicyManagerService = new ServiceType<>(Context.DEVICE_POLICY_SERVICE);
 
 	/**
 	 * Get Android's Service without casting.
