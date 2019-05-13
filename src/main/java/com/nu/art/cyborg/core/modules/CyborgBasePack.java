@@ -32,6 +32,7 @@ import com.nu.art.cyborg.modules.ImageUtilsModule;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.cyborg.modules.custom.FontTypeSetter;
+import com.nu.art.cyborg.tools.ReverseR_Module;
 import com.nu.art.cyborg.ui.views.SquareView.SquareViewSetter;
 import com.nu.art.cyborg.ui.views.valueChanger.ValueChangerSetter;
 import com.nu.art.modular.core.Module;
@@ -46,6 +47,7 @@ public class CyborgBasePack
 	extends ModulesPack {
 
 	private static final Class<? extends Module>[] modulesTypes = (Class<? extends Module>[]) new Class<?>[]{
+		ReverseR_Module.class,
 		PreferencesModule.class,
 		ClipboardModule.class,
 		CacheModule.class,

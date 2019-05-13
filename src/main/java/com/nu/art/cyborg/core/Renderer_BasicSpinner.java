@@ -25,9 +25,6 @@ public abstract class Renderer_BasicSpinner<Type>
 
 	@Override
 	protected void extractMembers() {
-		View tv = getViewById(textViewId);
-		if (tv == null)
-			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(Renderer_BasicSpinner.class, TextView.class);
-		tvText = (TextView) tv;
+		tvText = getViewById(TextView.class, textViewId);
 	}
 }

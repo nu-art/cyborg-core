@@ -19,6 +19,7 @@
 package com.nu.art.cyborg.errorMessages;
 
 import android.app.Service;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -26,8 +27,11 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.common.consts.ViewListener;
+import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
 import com.nu.art.cyborg.core.ItemRenderer;
+import com.nu.art.cyborg.tools.ResourceType;
+import com.nu.art.cyborg.tools.ReverseR_Module;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -95,9 +99,12 @@ public class ExceptionGenerator {
 		return new BadImplementationException("Could not find view for field" + fieldDescription(viewField));
 	}
 
-	public static BadImplementationException couldNotFindViewForViewIdInLayout(Class controllerClass, Class expectedClass) {
-		return new BadImplementationException("Could not find view for viewId of expected type(" + expectedClass.getSimpleName() + ") provided to class " + controllerClass
-			.getSimpleName());
+	public static BadImplementationException couldNotFindViewForViewIdInLayout(Class<? extends CyborgController> controllerType,
+	                                                                           Class<? extends View> viewType,
+	                                                                           @IdRes int viewId) {
+
+		String viewIdAsName = CyborgBuilder.getModule(ReverseR_Module.class).getName(ResourceType.Id, viewId);
+		return new BadImplementationException("View of type '" + viewType.getSimpleName() + "' not found in '" + controllerType.getSimpleName() + "' for id: " + viewIdAsName);
 	}
 
 	public static BadImplementationException wrongListenerToViewAssignment(Field viewField, View view, ViewListener listener) {

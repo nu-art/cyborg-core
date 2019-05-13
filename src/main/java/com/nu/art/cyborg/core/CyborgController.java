@@ -292,15 +292,15 @@ public abstract class CyborgController
 	 *
 	 * @return The view.
 	 */
-	protected final <ViewType extends View> ViewType getViewById(View container, Class<ViewType> viewType, int id) {
+	protected final <ViewType extends View> ViewType getViewById(View container, Class<ViewType> viewType, @IdRes int id) {
 		ViewType view = (ViewType) getView(id);
 		if (view != null) {
 			return view;
 		}
 
-		view = (ViewType) container.findViewById(id);
+		view = container.findViewById(id);
 		if (view == null) {
-			throw new BadImplementationException("View not found for constant: " + id);
+			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(getClass(), viewType, id);
 		}
 
 		views.put(id, view);
