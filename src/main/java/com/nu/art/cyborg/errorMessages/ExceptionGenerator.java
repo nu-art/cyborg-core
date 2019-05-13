@@ -95,6 +95,11 @@ public class ExceptionGenerator {
 		return new BadImplementationException("Could not find view for field" + fieldDescription(viewField));
 	}
 
+	public static BadImplementationException couldNotFindViewForViewIdInLayout(Class controllerClass, Class expectedClass) {
+		return new BadImplementationException("Could not find view for viewId of expected type(" + expectedClass.getSimpleName() + ") provided to class " + controllerClass
+			.getSimpleName());
+	}
+
 	public static BadImplementationException wrongListenerToViewAssignment(Field viewField, View view, ViewListener listener) {
 		String viewSimpleName = view.getClass().getSimpleName();
 		String listenerSimpleName = listener.getMethodOwnerType().getSimpleName();
