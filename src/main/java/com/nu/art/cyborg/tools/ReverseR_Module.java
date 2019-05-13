@@ -23,19 +23,17 @@ public final class ReverseR_Module
 	private ResourcesMap resourceMap;
 
 	public synchronized final String getName(ResourceType resourceType, int id) {
-		String name;
-		name = resourceMap.getName(resourceType, id);
+		String name = resourceMap.getName(resourceType, id);
 
 		if (name != null)
 			return name;
 
-		return "No name associated with id: " + id;
+		return "No resource '" + resourceType.type + "' name associated with id: " + id;
 		//		throw new IllegalArgumentException("Could not find field name for ResourceType '" + resourceType + "' && Id '" + id + "'");
 	}
 
 	public synchronized final int getId(ResourceType resourceType, String name) {
-		Integer id;
-		id = resourceMap.getId(resourceType, name);
+		Integer id = resourceMap.getId(resourceType, name);
 
 		if (id != null)
 			return id;
@@ -46,21 +44,17 @@ public final class ReverseR_Module
 
 	private static final class ValuesMap {
 
-		private final Class<?> resourceClass;
-
 		/**
 		 * A constant to class field name mapping.
 		 */
 		private HashMap<Object, Object> resourcesValues;
 
-		ValuesMap(Class<?> resourceClass) {
-			this.resourceClass = resourceClass;
-			resourcesValues = ReflectiveTools.getFieldsCrossMappings(resourceClass);
+		ValuesMap() {
+			resourcesValues = new HashMap<>();
 		}
 
-		@SuppressWarnings("unused")
-		public Class<?> getResourceClass() {
-			return resourceClass;
+		ValuesMap(Class<?> resourceClass) {
+			resourcesValues = ReflectiveTools.getFieldsCrossMappings(resourceClass);
 		}
 
 		String getName(int id) {
@@ -74,29 +68,46 @@ public final class ReverseR_Module
 
 	private static final class ResourcesMap {
 
+		private final Class<?> rClass;
 		/**
 		 * An inner resources class name to its values map.
 		 */
-		private HashMap<String, ValuesMap> resourcesValuesMap = new HashMap<>();
+		private HashMap<ResourceType, ValuesMap> resourcesValuesMap = new HashMap<>();
 
 		ResourcesMap() {
+			rClass = null;
 		}
 
 		ResourcesMap(Class<?> rClass) {
-			Class<?>[] resourcesClasses = rClass.getDeclaredClasses();
-			for (Class<?> resourceClass : resourcesClasses) {
-				if (resourceClass.getSimpleName().equals("id")) {
-					resourcesValuesMap.put(resourceClass.getSimpleName(), new ValuesMap(resourceClass));
-				}
-			}
+			this.rClass = rClass;
 		}
 
 		String getName(ResourceType resourceType, int id) {
-			return resourcesValuesMap.get(resourceType.getClassName()).getName(id);
+			return getOrCreateValuesMap(resourceType).getName(id);
 		}
 
 		Integer getId(ResourceType resourceType, String name) {
-			return resourcesValuesMap.get(resourceType.getClassName()).getId(name);
+			return getOrCreateValuesMap(resourceType).getId(name);
+		}
+
+		private ValuesMap getOrCreateValuesMap(ResourceType resourceType) {
+			ValuesMap valuesMap = resourcesValuesMap.get(resourceType);
+			if (valuesMap == null) {
+				if (rClass == null)
+					valuesMap = new ValuesMap(null);
+				else {
+					Class<?>[] resourcesClasses = rClass.getDeclaredClasses();
+					for (Class<?> resourceClass : resourcesClasses) {
+						if (!resourceClass.getSimpleName().equals(resourceType.type))
+							continue;
+
+						valuesMap = new ValuesMap(resourceClass);
+					}
+				}
+			}
+
+			resourcesValuesMap.put(resourceType, valuesMap);
+			return valuesMap;
 		}
 	}
 }

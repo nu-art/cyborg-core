@@ -4,14 +4,14 @@ public enum ResourceType {
 	Layout("layout"),
 	Id("id");
 
-	private final String className;
+	public final String type;
 
 	ResourceType(String name) {
-		this.className = name;
+		this.type = name;
 	}
 
 	public String getClassName() {
-		return className;
+		return type;
 	}
 
 }
