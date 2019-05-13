@@ -47,6 +47,7 @@ import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.core.stackTransitions.StackTransitions;
 import com.nu.art.cyborg.core.stackTransitions.Transition;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.cyborg.ui.animations.SimpleAnimator;
 import com.nu.art.cyborg.ui.animations.SimpleAnimator.AnimatorProgressListener;
@@ -77,7 +78,7 @@ public class CyborgStackController
 
 	static {
 		for (StackTransitions value : StackTransitions.values()) {
-			addTransition(value.name(), value);
+			addTransition(value.name(), value, true);
 		}
 	}
 
@@ -85,9 +86,9 @@ public class CyborgStackController
 		return transitions.get(transition);
 	}
 
-	public static void addTransition(String key, Transition transition) {
-		if (transitions.put(key, transition) != null)
-			throw new BadImplementationException("Transition with Key '" + key + "' already exists!!");
+	public static void addTransition(String key, Transition transition, boolean override) {
+		if (transitions.put(key, transition) != null && !override)
+			throw ExceptionGenerator.tryingToOverrideExistingStackTransitionForKey(key);
 	}
 
 	private LayoutInflater inflater;
@@ -321,9 +322,6 @@ public class CyborgStackController
 		}
 
 		public StackLayerBuilder setControllerType(Class<? extends CyborgController> controllerType) {
-			if (layoutId != -1)
-				throw new BadImplementationException("Already set layoutId, cannot also set controllerType");
-
 			this.controllerType = controllerType;
 			if (getStateTag() == null)
 				setStateTag(controllerType.getSimpleName());
@@ -401,7 +399,7 @@ public class CyborgStackController
 				logWarning("Create: " + this);
 
 			if (controllerType == null)
-				throw new BadImplementationException("Stack Layer was not configured properly");
+				throw ExceptionGenerator.stackLayerHasNoControllerType();
 
 			controller = ReflectiveTools.newInstance(controllerType);
 			//			if(CyborgBuilder.getInEditMode())
@@ -701,10 +699,10 @@ public class CyborgStackController
 
 	@SuppressLint("WrongConstant")
 	protected void animate(final boolean in,
-	                     final boolean waitForLayoutChanges,
-	                     final StackLayerBuilder fromLayer,
-	                     final StackLayerBuilder toLayer,
-	                     final Runnable animationEnded) {
+	                       final boolean waitForLayoutChanges,
+	                       final StackLayerBuilder fromLayer,
+	                       final StackLayerBuilder toLayer,
+	                       final Runnable animationEnded) {
 
 		final StackLayerBuilder animatingLayer = (in ? toLayer : fromLayer);
 

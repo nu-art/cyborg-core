@@ -171,7 +171,7 @@ public final class CyborgViewInjector
 
 	private View setupView(Field viewField, View view, boolean forDev, ViewListener[] listeners) {
 		if (modelDelegator == null)
-			throw new BadImplementationException("modelDelegator == null");
+			throw ExceptionGenerator.tryingToInjectViewWithoutModelDelgator();
 
 		for (ViewListener listener : listeners) {
 			if (!listener.getMethodOwnerType().isAssignableFrom(view.getClass()))

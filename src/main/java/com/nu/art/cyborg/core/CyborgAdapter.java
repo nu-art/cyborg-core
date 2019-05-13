@@ -35,11 +35,9 @@ import android.widget.ArrayAdapter;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.interfaces.Getter;
-import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.dataModels.DataModel;
-import com.nu.art.cyborg.core.dataModels.ListDataModel;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.tools.ReflectiveTools;
 

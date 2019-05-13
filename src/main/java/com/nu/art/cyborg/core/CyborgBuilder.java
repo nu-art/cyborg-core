@@ -23,11 +23,13 @@ import android.os.Looper;
 import android.util.AttributeSet;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.DontCallThisException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.modules.CyborgBasePack;
 import com.nu.art.cyborg.core.modules.CyborgEditModePack;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
@@ -94,7 +96,7 @@ public final class CyborgBuilder {
 	private static CyborgImpl instance;
 
 	private CyborgBuilder() {
-		throw new BadImplementationException("Stateless static");
+		throw new DontCallThisException("Stateless static");
 	}
 
 	public static void handleAttributes(Object object, Context context, AttributeSet attrs) {
@@ -154,7 +156,7 @@ public final class CyborgBuilder {
 
 	public synchronized static Cyborg getInstance() {
 		if (instance == null)
-			throw new BadImplementationException("MUST first called from the onCreate of your custom application class!");
+			throw ExceptionGenerator.cyborgWasNotInitializedProperly();
 		return instance;
 	}
 
@@ -174,10 +176,10 @@ public final class CyborgBuilder {
 	@SuppressWarnings("unchecked")
 	public synchronized static void startCyborg(final CyborgConfiguration configuration) {
 		if (Thread.currentThread() != Looper.getMainLooper().getThread())
-			throw new BadImplementationException("Must be called from UI thread to be more specific from the onCreate of your custom application class!");
+			throw ExceptionGenerator.cyborgWasInitializedFromTheWrongThread();
 
 		if (instance != null)
-			throw new BadImplementationException("Seriously?? You've already created Cyborg, what is the point of calling this method from two places?? call it only from your custom application onCreate method!!!");
+			throw ExceptionGenerator.cyborgWasInitializedForTheSecondTime();
 
 		instance = new CyborgImpl(configuration.application, configuration.launchConfiguration);
 		instance.init(configuration.modulesPacks);
