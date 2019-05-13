@@ -5,6 +5,8 @@ import android.support.annotation.LayoutRes;
 import android.view.View;
 import android.widget.TextView;
 
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
+
 public abstract class Renderer_BasicSpinner<Type>
 	extends ItemRenderer<Type> {
 
@@ -24,7 +26,8 @@ public abstract class Renderer_BasicSpinner<Type>
 	@Override
 	protected void extractMembers() {
 		View tv = getViewById(textViewId);
-		if (tv != null && tv instanceof TextView)
-			tvText = (TextView) tv;
+		if (tv == null)
+			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(Renderer_BasicSpinner.class, TextView.class);
+		tvText = (TextView) tv;
 	}
 }
