@@ -43,10 +43,10 @@ import com.nu.art.core.utils.DebugFlags;
 import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
-import com.nu.art.cyborg.core.stackTransitions.StackTransitions;
-import com.nu.art.cyborg.core.stackTransitions.Transition;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
+import com.nu.art.cyborg.core.stackTransitions.StackTransitions;
+import com.nu.art.cyborg.core.stackTransitions.Transition;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.cyborg.ui.animations.SimpleAnimator;
 import com.nu.art.cyborg.ui.animations.SimpleAnimator.AnimatorProgressListener;
@@ -316,6 +316,10 @@ public class CyborgStackController
 			return this;
 		}
 
+		protected void setToBeDisposed(boolean toBeDisposed) {
+			this.toBeDisposed = toBeDisposed;
+		}
+
 		public StackLayerBuilder setControllerType(Class<? extends CyborgController> controllerType) {
 			if (layoutId != -1)
 				throw new BadImplementationException("Already set layoutId, cannot also set controllerType");
@@ -497,7 +501,7 @@ public class CyborgStackController
 			return controller;
 		}
 
-		private void onAnimatedIn() {
+		protected void onAnimatedIn() {
 			if (controller == null)
 				return;
 
@@ -554,7 +558,7 @@ public class CyborgStackController
 		return getTopLayer(false);
 	}
 
-	private StackLayerBuilder[] getVisibleLayers() {
+	protected StackLayerBuilder[] getVisibleLayers() {
 		ArrayList<StackLayerBuilder> visibleLayers = new ArrayList<>();
 		StackLayerBuilder topLayer;
 		while ((topLayer = getTopLayer(visibleLayers.size())) != null) {
@@ -574,7 +578,7 @@ public class CyborgStackController
 		return getTopLayer(offset, false);
 	}
 
-	private StackLayerBuilder getTopLayer(boolean remove) {
+	protected StackLayerBuilder getTopLayer(boolean remove) {
 		return getTopLayer(0, remove);
 	}
 
@@ -592,7 +596,7 @@ public class CyborgStackController
 		return layer;
 	}
 
-	private void addStackLayer(StackLayerBuilder stackLayerBuilder) {
+	protected void addStackLayer(StackLayerBuilder stackLayerBuilder) {
 		layersStack.add(stackLayerBuilder);
 	}
 
@@ -624,7 +628,7 @@ public class CyborgStackController
 
 	/**
 	 */
-	private void push(final StackLayerBuilder targetLayerToBeAdded) {
+	protected void push(final StackLayerBuilder targetLayerToBeAdded) {
 		ThreadsModule.assertMainThread();
 		final StackLayerBuilder[] visibleLayers = getVisibleLayers();
 
@@ -696,7 +700,7 @@ public class CyborgStackController
 	}
 
 	@SuppressLint("WrongConstant")
-	private void animate(final boolean in,
+	protected void animate(final boolean in,
 	                     final boolean waitForLayoutChanges,
 	                     final StackLayerBuilder fromLayer,
 	                     final StackLayerBuilder toLayer,
@@ -816,7 +820,7 @@ public class CyborgStackController
 
 	private final ArrayList<StackLayerBuilder> toBeDisposed = new ArrayList<>();
 
-	private void alignChildViewsToStack() {
+	protected void alignChildViewsToStack() {
 		for (StackLayerBuilder stackLayerBuilder : layersStack) {
 			if (!stackLayerBuilder.toBeDisposed)
 				continue;
