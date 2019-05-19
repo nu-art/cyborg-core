@@ -58,7 +58,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.nu.art.belog.Logger;
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.tools.ArrayTools;
@@ -248,9 +247,6 @@ public abstract class CyborgController
 		if (Debug_Performance.isEnabled())
 			logDebug("State Changed: " + this.state + " ==> " + newState);
 
-		if (state == newState)
-			throw new BadImplementationException("States are not managed well");
-
 		for (LifecycleListener lifecycleListener : lifecycleListeners) {
 			lifecycleListener.onLifecycleChanged(state);
 		}
@@ -293,16 +289,18 @@ public abstract class CyborgController
 	 *
 	 * @return The view.
 	 */
-	protected final <ViewType extends View> ViewType getViewById(View container, Class<ViewType> viewType, int id) {
+	protected final <ViewType extends View> ViewType getViewById(View container, Class<ViewType> viewType, @IdRes int id) {
 		ViewType view = (ViewType) getView(id);
 		if (view != null) {
 			return view;
 		}
 
-		view = (ViewType) container.findViewById(id);
-		if (view == null) {
-			throw new BadImplementationException("View not found for constant: " + id);
-		}
+		view = container.findViewById(id);
+		if (view == null)
+			throw ExceptionGenerator.couldNotFindViewForViewIdInLayout(getClass(), viewType, id);
+
+		if (!viewType.isAssignableFrom(view.getClass()))
+			throw ExceptionGenerator.foundWrongViewType(getClass(), view.getClass(), viewType, id);
 
 		views.put(id, view);
 		return view;
@@ -356,16 +354,10 @@ public abstract class CyborgController
 		int id = Tools.generateValidViewId(getActivity());
 		viewToInject.setId(id);
 
-		View view = getViewById(viewId);
-		if (view == null)
-			throw new BadImplementationException("The provided viewId does not exists in this controller");
+		ViewGroup view = getViewById(ViewGroup.class, viewId);
 
-		if (!(view instanceof ViewGroup))
-			throw new BadImplementationException("The provided viewId is to a " + view.getClass()
-			                                                                          .getSimpleName() + ".\n  --  When injecting a controller you must specify a valid ViewGroup id");
-
-		((ViewGroup) view).removeAllViews();
-		((ViewGroup) view).addView(viewToInject);
+		view.removeAllViews();
+		view.addView(viewToInject);
 		return (ControllerType) viewToInject.getController();
 	}
 
@@ -541,7 +533,7 @@ public abstract class CyborgController
 
 	protected final void saveStatefulObject(String key, Bundle outState, Object o) {
 		if (o == this)
-			throw new BadImplementationException("Do not pass the controller as the object to save it!! Cyborg is doing it perfectly on its own.");
+			throw ExceptionGenerator.userPassedTheControllerToBeSaved();
 
 		String injectorKey = stateTag + "-" + key;
 		CyborgStateExtractor stateInjector = new CyborgStateExtractor(injectorKey, outState);
@@ -554,7 +546,7 @@ public abstract class CyborgController
 
 	protected final void restoreStatefulObject(String key, Bundle inState, Object o) {
 		if (o == this)
-			throw new BadImplementationException("Do not pass the controller as the object to restore it!! Cyborg is doing it perfectly on its own.");
+			throw ExceptionGenerator.userPassedTheControllerToBeSaved();
 
 		String injectorKey = stateTag + "-" + key;
 		CyborgStateInjector stateInjector = new CyborgStateInjector(injectorKey, inState);
@@ -666,9 +658,12 @@ public abstract class CyborgController
 
 		try {
 			return inflater.inflate(layoutId, parent, attachToParent);
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-			throw e;
+		} catch (Throwable e) {
+			while (e.getCause() != null) {
+				e = e.getCause();
+			}
+			Log.e("CYBORG", "As Android's exception handling is crappy, here is the reason for the failure: ", e);
+			throw ExceptionGenerator.failedToInflateLayoutXml(getClass(), layoutId, e);
 		}
 	}
 

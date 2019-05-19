@@ -45,7 +45,7 @@ public class InternetConnectivityModule
 
 	private Handler handler;
 
-	private volatile boolean isConnected;
+	private volatile Boolean isConnected;
 
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
@@ -64,7 +64,7 @@ public class InternetConnectivityModule
 	}
 
 	public synchronized boolean isConnected() {
-		return isConnected;
+		return isConnected != null && isConnected;
 	}
 
 	public synchronized void setConnected(boolean connected) {
@@ -87,7 +87,7 @@ public class InternetConnectivityModule
 					connected = false;
 				}
 
-				if (isConnected() == connected)
+				if (isConnected != null && isConnected == connected)
 					return;
 
 				setConnected(connected);

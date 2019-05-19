@@ -140,7 +140,7 @@ final class CyborgImpl
 		long startedAt = System.currentTimeMillis();
 
 		if (loaded)
-			throw new BadImplementationException("Trying to load Cyborg for the second time!");
+			throw ExceptionGenerator.initializingCyborgForTheSecondTime();
 
 		meta = new AppMeta();
 		meta.populate();
@@ -545,7 +545,7 @@ final class CyborgImpl
 	@Override
 	public void assertMainThread() {
 		if (!isMainThread())
-			throw new BadImplementationException("---- MUST BE CALLED ON A UI THREAD ----  Method was called on the '" + Thread.currentThread().getName() + "'");
+			throw ExceptionGenerator.mustBeCalledOnMainThread();
 	}
 
 	@Override

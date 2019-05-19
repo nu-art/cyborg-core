@@ -28,9 +28,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.core.exceptions.runtime.ThisShouldNotHappenException;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.consts.LifecycleState;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
@@ -59,8 +61,6 @@ import com.nu.art.reflection.tools.ReflectiveTools;
 public class CyborgView
 	extends RelativeLayout {
 
-	protected final String TAG = getClass().getSimpleName();
-
 	protected Cyborg cyborg;
 
 	private CyborgController controller;
@@ -75,7 +75,7 @@ public class CyborgView
 
 	public CyborgView(CyborgActivity activity, Class<? extends CyborgController> controllerType) {
 		super(activity);
-		this.controller = ReflectiveTools.newInstance(controllerType);
+		this.controller = instantiateController(controllerType);
 		initController();
 	}
 
@@ -109,15 +109,11 @@ public class CyborgView
 		try {
 			controller._createView(LayoutInflater.from(context), this, true);
 		} catch (Throwable e) {
-			while (e.getCause() != null) {
-				e = e.getCause();
-			}
-			Log.e("CYBORG", "As Android's exception handling is crappy, here is the reason for the failure: ", e);
 			if (e instanceof RuntimeException)
 				//noinspection ConstantConditions
 				throw (RuntimeException) e;
 
-			throw new BadImplementationException("Error inflating xml", e);
+			throw new ThisShouldNotHappenException("We should not get here...", e);
 		}
 		setTag(controller);
 
@@ -141,10 +137,6 @@ public class CyborgView
 
 		// First set attributes to this CyborgView
 		cyborg.getModule(AttributeModule.class).setAttributes(context, attrs, this);
-
-		// MUST have a controller at this point
-		if (controller == null)
-			throw new BadImplementationException("MUST specify a valid controller class name");
 
 		initController();
 
@@ -225,7 +217,8 @@ public class CyborgView
 			if (attr == R.styleable.CyborgView_controller) {
 				String controllerName = a.getString(attr);
 				Class<? extends CyborgController> controllerType = resolveClassType(CyborgController.class, controllerName);
-				CyborgController controller = ReflectiveTools.newInstance(controllerType);
+				CyborgController controller;
+				controller = instantiateController(controllerType);
 				instance.setController(controller);
 			}
 
@@ -234,5 +227,15 @@ public class CyborgView
 				instance.setStateTag(xmlTag);
 			}
 		}
+	}
+
+	private static CyborgController instantiateController(Class<? extends CyborgController> controllerType) {
+		CyborgController controller;
+		try {
+			controller = ReflectiveTools.newInstance(controllerType);
+		} catch (Exception e) {
+			throw ExceptionGenerator.failedToInstantiateController(controllerType, e);
+		}
+		return controller;
 	}
 }

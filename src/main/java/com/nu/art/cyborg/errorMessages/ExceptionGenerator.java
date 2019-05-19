@@ -21,14 +21,18 @@ package com.nu.art.cyborg.errorMessages;
 import android.app.Service;
 import android.view.View;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.cyborg.annotations.ItemType;
 import com.nu.art.cyborg.common.consts.ViewListener;
+import com.nu.art.cyborg.core.CyborgBuilder;
 import com.nu.art.cyborg.core.CyborgController;
 import com.nu.art.cyborg.core.ItemRenderer;
+import com.nu.art.cyborg.tools.ResourceType;
+import com.nu.art.cyborg.tools.ReverseR_Module;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -41,6 +45,14 @@ public class ExceptionGenerator {
 
 	private ExceptionGenerator() {
 		throw new BadImplementationException("Don't be naughty");
+	}
+
+	private static String getViewNameFromId(@IdRes int viewId) {
+		return CyborgBuilder.getModule(ReverseR_Module.class).getName(ResourceType.Id, viewId);
+	}
+
+	private static String getLayoutNameFromId(@IdRes int viewId) {
+		return CyborgBuilder.getModule(ReverseR_Module.class).getName(ResourceType.Layout, viewId);
 	}
 
 	public static BadImplementationException noValueForControllerClassNameSpecified() {
@@ -96,6 +108,25 @@ public class ExceptionGenerator {
 		return new BadImplementationException("Could not find view for field" + fieldDescription(viewField));
 	}
 
+	public static BadImplementationException couldNotFindViewForViewIdInLayout(Class<? extends CyborgController> controllerType,
+	                                                                           Class<? extends View> viewType,
+	                                                                           @IdRes int viewId) {
+
+		String viewIdAsName = getViewNameFromId(viewId);
+		String message = "View of type '" + viewType.getSimpleName() + "' not found in '" + controllerType.getSimpleName() + "' for id: " + viewIdAsName;
+		return new BadImplementationException(message);
+	}
+
+	public static BadImplementationException foundWrongViewType(Class<? extends CyborgController> controllerType,
+	                                                            Class<? extends View> foundViewType,
+	                                                            Class<? extends View> expectedViewType,
+	                                                            @IdRes int viewId) {
+
+		String message1 = "In controller: '" + controllerType.getSimpleName() + "' found WRONG view type for viewId: '" + getViewNameFromId(viewId) + "'\n";
+		String message2 = "Expected view of type: '" + expectedViewType.getSimpleName() + "' but found with type: '" + foundViewType.getSimpleName() + "'";
+		return new BadImplementationException(message1 + message2);
+	}
+
 	public static BadImplementationException wrongListenerToViewAssignment(Field viewField, View view, ViewListener listener) {
 		String viewSimpleName = view.getClass().getSimpleName();
 		String listenerSimpleName = listener.getMethodOwnerType().getSimpleName();
@@ -145,5 +176,51 @@ public class ExceptionGenerator {
 	private static String fieldDescription(Field viewField) {
 		return "\n  Member: '" + viewField.getDeclaringClass()
 		                                  .getSimpleName() + "." + viewField.getName() + "'\n  Class: '" + viewField.getDeclaringClass() + "'\n";
+	}
+
+	public static BadImplementationException userPassedTheControllerToBeSaved() {
+		return new BadImplementationException("Do not pass the controller as the object to save it!! Cyborg is doing it perfectly on its own.");
+	}
+
+	public static BadImplementationException tryingToInjectViewWithoutModelDelgator() {
+		return new BadImplementationException("modelDelegator == null");
+	}
+
+	public static BadImplementationException failedToInflateLayoutXml(Class<? extends CyborgController> controllerType, int layoutId, Throwable t) {
+		String message = "Failed to inflate layout: '" + getLayoutNameFromId(layoutId) + "' in controller of type: '" + controllerType.getSimpleName() + "'";
+		return new BadImplementationException(message, t);
+	}
+
+	public static BadImplementationException failedToInstantiateController(Class<? extends CyborgController> controllerType, Exception e) {
+		String message = "Failed to instantiate controller of type: '" + controllerType.getSimpleName();
+		return new BadImplementationException(message, e);
+	}
+
+	public static BadImplementationException initializingCyborgForTheSecondTime() {
+		return new BadImplementationException("Trying to initialize Cyborg for the second time!");
+	}
+
+	public static BadImplementationException mustBeCalledOnMainThread() {
+		return new BadImplementationException("---- MUST BE CALLED ON A UI THREAD ----  Method was called on the '" + Thread.currentThread().getName() + "'");
+	}
+
+	public static BadImplementationException tryingToOverrideExistingStackTransitionForKey(String key) {
+		return new BadImplementationException("Transition with Key '" + key + "' already exists!!");
+	}
+
+	public static BadImplementationException cyborgWasNotInitializedProperly() {
+		return new BadImplementationException("MUST first called from the onCreate of your custom application class!");
+	}
+
+	public static BadImplementationException cyborgWasInitializedFromTheWrongThread() {
+		return new BadImplementationException("Must be called from UI thread to be more specific from the onCreate of your custom application class!");
+	}
+
+	public static BadImplementationException cyborgWasInitializedForTheSecondTime() {
+		return new BadImplementationException("Seriously?? You've already created Cyborg, what is the point of calling this method from two places?? call it only from your custom application onCreate method!!!");
+	}
+
+	public static BadImplementationException stackLayerHasNoControllerType() {
+		return new BadImplementationException("Stack Layer was not configured properly.. no controllerType");
 	}
 }
