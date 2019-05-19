@@ -24,6 +24,7 @@ import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManager.ModuleCreatedListener;
 import com.nu.art.modular.core.ModuleManagerBuilder;
 
 /**
@@ -31,10 +32,9 @@ import com.nu.art.modular.core.ModuleManagerBuilder;
  */
 final class CyborgModulesBuilder
 	extends ModuleManagerBuilder
-	implements AnalyticsConstants {
+	implements AnalyticsConstants, ModuleCreatedListener {
 
-	CyborgModulesBuilder() {
-	}
+	CyborgModulesBuilder() { }
 
 	private Cyborg cyborg;
 
@@ -59,7 +59,7 @@ final class CyborgModulesBuilder
 	}
 
 	@Override
-	protected void setupModule(Module module) {
+	public void onModuleCreated(Module module) {
 		if (!(module instanceof CyborgModule))
 			return;
 
