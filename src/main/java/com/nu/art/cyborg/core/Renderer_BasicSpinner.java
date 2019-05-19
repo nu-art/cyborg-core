@@ -1,8 +1,9 @@
 package com.nu.art.cyborg.core;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
 import android.widget.TextView;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 
 public abstract class Renderer_BasicSpinner<Type>
 	extends ItemRenderer<Type> {
