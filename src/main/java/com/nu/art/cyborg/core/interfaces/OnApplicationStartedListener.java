@@ -21,10 +21,7 @@ package com.nu.art.cyborg.core.interfaces;
 /**
  * @author TacB0sS
  */
-public interface ApplicationInstalledListener {
+public interface OnApplicationStartedListener {
 
-	/**
-	 * When the application firstly launched on a device, this callback would be called.
-	 */
-	public void onApplicationInstalled();
+	void onApplicationStarted();
 }

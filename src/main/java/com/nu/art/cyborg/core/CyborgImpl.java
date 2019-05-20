@@ -54,8 +54,10 @@ import com.nu.art.cyborg.common.utils.GenericServiceConnection.ServiceConnection
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.core.interfaces.OnApplicationStartedListener;
 import com.nu.art.cyborg.core.modules.AndroidLogClient;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
+import com.nu.art.cyborg.core.modules.crashReport.CrashReportModule.OnApplicationCrashed;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
@@ -84,8 +86,6 @@ final class CyborgImpl
 
 	private final long CurrentElapsedDelta = SystemClock.elapsedRealtime() - System.currentTimeMillis();
 
-	private final ArrayList<Processor<Cyborg>> completionListeners;
-
 	private final WeakReference<Context> applicationRef;
 
 	private final Handler uiHandler;
@@ -110,7 +110,6 @@ final class CyborgImpl
 	public CyborgImpl(Context application, LaunchConfiguration launchConfiguration) {
 		this.applicationRef = new WeakReference<>(application);
 		this.launchConfiguration = launchConfiguration;
-		this.completionListeners = new ArrayList<>();
 		this.uiHandler = new Handler();
 	}
 
@@ -127,12 +126,6 @@ final class CyborgImpl
 	@Override
 	public LaunchConfiguration getLaunchConfiguration() {
 		return launchConfiguration;
-	}
-
-	public final void addCompletionProcessor(Processor<Cyborg> processor) {
-		synchronized (CyborgBuilder.class) {
-			completionListeners.add(processor);
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -174,14 +167,13 @@ final class CyborgImpl
 
 	@SuppressWarnings("unchecked")
 	private void dispatchOnLoadingCompleted() {
-		synchronized (CyborgBuilder.class) {
-			loaded = true;
-			Processor<Cyborg>[] listeners = ArrayTools.asArray(completionListeners, Processor.class);
-			for (Processor<Cyborg> processor : listeners) {
-				processor.process(this);
+		loaded = true;
+		dispatchModuleEvent(this, "On Application Started", OnApplicationStartedListener.class, new Processor<OnApplicationStartedListener>() {
+			@Override
+			public void process(OnApplicationStartedListener listener) {
+				listener.onApplicationStarted();
 			}
-			completionListeners.clear();
-		}
+		});
 	}
 
 	@Override
