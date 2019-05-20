@@ -184,8 +184,4 @@ public final class CyborgBuilder {
 		instance = new CyborgImpl(configuration.application, configuration.launchConfiguration);
 		instance.init(configuration.modulesPacks);
 	}
-
-	public synchronized static void addCompletionProcessor(Processor<Cyborg> processor) {
-		instance.addCompletionProcessor(processor);
-	}
 }
