@@ -40,7 +40,7 @@ public class AndroidLogger
 	extends LoggerClient<Config_AndroidLogger> {
 
 	public static final Rule Rule_AllToAndroidLogger = new Rule().setLoggerKeys(Config_AndroidLogger.KEY);
-	public static final LoggerConfig LogConfig_AndroidLogger = new Config_JavaLogger().setKey(Config_AndroidLogger.KEY);
+	public static final LoggerConfig LogConfig_AndroidLogger = new Config_AndroidLogger().setKey(Config_AndroidLogger.KEY);
 	public static final BeConfig Config_FastAndroidLogger = new BeConfig().setRules(Rule_AllToAndroidLogger).setLoggersConfig(LogConfig_AndroidLogger);
 
 	private static final String StacktraceIndent = "    ";
