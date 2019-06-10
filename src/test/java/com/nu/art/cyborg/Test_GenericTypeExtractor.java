@@ -18,11 +18,13 @@
 
 package com.nu.art.cyborg;
 
+import com.nu.art.belog.BeConfig;
 import com.nu.art.belog.BeLogged;
-import com.nu.art.belog.DefaultLogClient;
+import com.nu.art.belog.loggers.JavaLogger;
 import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
+import com.nu.art.modular.tests.ModuleManager_TestClass;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +38,7 @@ import static com.nu.art.core.generics.GenericParamExtractor._GenericParamExtrac
  */
 
 public class Test_GenericTypeExtractor
-	extends Logger {
+	extends ModuleManager_TestClass {
 
 	class GenericTestListener<A, B, C> {
 
@@ -81,7 +83,7 @@ public class Test_GenericTypeExtractor
 			return;
 		}
 
-		BeLogged.getInstance().addClient(new DefaultLogClient());
+		BeLogged.getInstance().init(BeConfig.Config_FastJavaLogger);
 		setUpIsDone = true;
 	}
 
