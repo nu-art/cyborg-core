@@ -22,7 +22,7 @@ import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
 import com.nu.art.belog.consts.LogLevel;
 import com.nu.art.core.exceptions.runtime.NotImplementedYetException;
-import com.nu.art.cyborg.core.modules.AndroidLogClient;
+import com.nu.art.cyborg.core.modules.AndroidLogger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class TestBeloggedCyborg
 	extends Logger {
 
 	private static boolean setUpIsDone = false;
-	private AndroidLogClient logClient;
+	private AndroidLogger logClient;
 
 	@Before
 	public void setUp() {
@@ -42,7 +42,7 @@ public class TestBeloggedCyborg
 			return;
 		}
 
-		logClient = new AndroidLogClient();
+		logClient = new AndroidLogger();
 		BeLogged.getInstance().addClient(logClient);
 		setUpIsDone = true;
 	}

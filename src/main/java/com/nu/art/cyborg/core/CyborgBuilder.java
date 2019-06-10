@@ -22,11 +22,11 @@ import android.content.Context;
 import android.os.Looper;
 import android.util.AttributeSet;
 
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
+import com.nu.art.belog.BeConfig;
 import com.nu.art.core.exceptions.runtime.DontCallThisException;
-import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.core.modules.AndroidLogger;
 import com.nu.art.cyborg.core.modules.CyborgBasePack;
 import com.nu.art.cyborg.core.modules.CyborgEditModePack;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
@@ -59,25 +59,17 @@ public final class CyborgBuilder {
 
 		private Context application;
 
+		private BeConfig logConfig = AndroidLogger.Config_FastAndroidLogger;
+
 		private LaunchConfiguration launchConfiguration;
 
 		private Class<? extends ModulesPack>[] modulesPacks;
 
-		public CyborgConfiguration(Context application, Class<? extends ModulesPack>... modulesPacks) {
-			this(application, null, modulesPacks);
-		}
-
-		public CyborgConfiguration(Context application, int firstActivityLayoutId, Class<? extends ModulesPack>... modulesPacks) {
-			this(application, new LaunchConfiguration(firstActivityLayoutId, "First Screen", CyborgActivity.class), modulesPacks);
-		}
-
-		public CyborgConfiguration(Context application, int firstActivityLayoutId, String screenName, Class<? extends ModulesPack>... modulesPacks) {
-			this(application, new LaunchConfiguration(firstActivityLayoutId, screenName, CyborgActivity.class), modulesPacks);
-		}
-
-		public CyborgConfiguration(Context application, LaunchConfiguration launchConfig, Class<? extends ModulesPack>... modulesPacksTypes) {
+		public CyborgConfiguration(Context application) {
 			this.application = application;
-			this.launchConfiguration = launchConfig;
+		}
+
+		public CyborgConfiguration setModulesPacks(Class<? extends ModulesPack>... modulesPacksTypes) {
 			ArrayList<Class<? extends ModulesPack>> modulesPacks = new ArrayList<>();
 			boolean addBasePack = true;
 			for (Class<? extends ModulesPack> modulesPacksType : modulesPacksTypes) {
@@ -90,6 +82,28 @@ public final class CyborgBuilder {
 				modulesPacks.add(0, CyborgBasePack.class);
 
 			this.modulesPacks = (Class<? extends ModulesPack>[]) ArrayTools.asArray(modulesPacks, Class.class);
+			return this;
+		}
+
+		public void setLogConfig(BeConfig logConfig) {
+			this.logConfig = logConfig;
+		}
+
+		public CyborgConfiguration setLaunchConfiguration(int layoutId) {
+			return setLaunchConfiguration(layoutId, "RootLayout");
+		}
+
+		public CyborgConfiguration setLaunchConfiguration(int layoutId, String screenName) {
+			return setLaunchConfiguration(layoutId, screenName, CyborgActivity.class);
+		}
+
+		public CyborgConfiguration setLaunchConfiguration(int layoutId, String screenName, Class<? extends CyborgActivity> activityType) {
+			return setLaunchConfiguration(new LaunchConfiguration(layoutId, screenName, activityType));
+		}
+
+		public CyborgConfiguration setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
+			this.launchConfiguration = launchConfiguration;
+			return this;
 		}
 	}
 
@@ -169,7 +183,7 @@ public final class CyborgBuilder {
 		if (instance != null)
 			return instance;
 		CyborgImpl.inEditMode = true;
-		CyborgBuilder.startCyborg(new CyborgConfiguration(context, CyborgEditModePack.class));
+		CyborgBuilder.startCyborg(new CyborgConfiguration(context).setModulesPacks(CyborgEditModePack.class));
 		return CyborgBuilder.getInstance();
 	}
 

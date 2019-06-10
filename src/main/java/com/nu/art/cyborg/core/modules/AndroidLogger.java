@@ -18,11 +18,17 @@
 
 package com.nu.art.cyborg.core.modules;
 
-import com.nu.art.belog.BeLoggedClient;
+import com.nu.art.belog.BeConfig;
+import com.nu.art.belog.BeConfig.LoggerConfig;
+import com.nu.art.belog.BeConfig.Rule;
+import com.nu.art.belog.LoggerClient;
+import com.nu.art.belog.LoggerValidator;
 import com.nu.art.belog.consts.LogLevel;
+import com.nu.art.belog.loggers.JavaLogger.Config_JavaLogger;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.core.utils.SynchronizedObject;
+import com.nu.art.cyborg.core.modules.AndroidLogger.Config_AndroidLogger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,8 +36,12 @@ import java.util.Set;
 /**
  * Created by TacB0sS on 28-Feb 2017.
  */
-public class AndroidLogClient
-	extends BeLoggedClient {
+public class AndroidLogger
+	extends LoggerClient<Config_AndroidLogger> {
+
+	public static final Rule Rule_AllToAndroidLogger = new Rule().setLoggerKeys(Config_AndroidLogger.KEY);
+	public static final LoggerConfig LogConfig_AndroidLogger = new Config_JavaLogger().setKey(Config_AndroidLogger.KEY);
+	public static final BeConfig Config_FastAndroidLogger = new BeConfig().setRules(Rule_AllToAndroidLogger).setLoggersConfig(LogConfig_AndroidLogger);
 
 	private static final String StacktraceIndent = "    ";
 	private SynchronizedObject<StringBuffer> syncBuffer = new SynchronizedObject<>(new Getter<StringBuffer>() {
@@ -112,6 +122,24 @@ public class AndroidLogClient
 			case Verbose:
 				android.util.Log.v(tagWithThread, message);
 				break;
+		}
+	}
+
+	public static class AndroidLoggerValidator
+		extends LoggerValidator<Config_AndroidLogger, AndroidLogger> {
+
+		public AndroidLoggerValidator() {
+			super(AndroidLogger.class);
+		}
+	}
+
+	public static class Config_AndroidLogger
+		extends LoggerConfig {
+
+		public static final String KEY = AndroidLogger.class.getSimpleName();
+
+		public Config_AndroidLogger() {
+			super(KEY);
 		}
 	}
 }

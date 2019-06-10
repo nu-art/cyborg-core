@@ -43,7 +43,6 @@ import android.widget.Toast;
 
 import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
@@ -55,9 +54,10 @@ import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.interfaces.OnApplicationStartedListener;
-import com.nu.art.cyborg.core.modules.AndroidLogClient;
+import com.nu.art.cyborg.core.modules.AndroidLogger;
+import com.nu.art.cyborg.core.modules.AndroidLogger.AndroidLoggerValidator;
+import com.nu.art.cyborg.core.modules.AndroidLogger.Config_AndroidLogger;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
-import com.nu.art.cyborg.core.modules.crashReport.CrashReportModule.OnApplicationCrashed;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
@@ -70,7 +70,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -148,7 +147,7 @@ final class CyborgImpl
 		activityStackHandler = new ActivityStack(CyborgImpl.this);
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
-		BeLogged.getInstance().addClient(new AndroidLogClient());
+		BeLogged.getInstance().addValidator(Config_AndroidLogger.class, new AndroidLoggerValidator());
 		logVerbose(" Application Created...");
 		moduleManager = new ModuleManager();
 		new CyborgModulesBuilder().setCyborg(this).addModulePacks(modulesPacks).build(moduleManager);
