@@ -98,8 +98,9 @@ public final class CyborgBuilder {
 			return this;
 		}
 
-		public void setLogConfig(BeConfig logConfig) {
+		public CyborgConfiguration setLogConfig(BeConfig logConfig) {
 			this.logConfig = logConfig;
+			return this;
 		}
 
 		public CyborgConfiguration setLaunchConfiguration(int layoutId) {
