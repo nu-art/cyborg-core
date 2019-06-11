@@ -34,39 +34,52 @@ import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+@SuppressWarnings( {
+	                   "WeakerAccess",
+	                   "unchecked",
+	                   "unused"
+                   })
 public final class CyborgBuilder {
 
 	public static final class LaunchConfiguration {
 
-		final int layoutId;
+		int layoutId;
+		String screenName = "";
+		Class<? extends CyborgActivity> activityType = CyborgActivity.class;
 
-		final String screenName;
+		public LaunchConfiguration() {}
 
-		final Class<? extends CyborgActivity> activityType;
-
-		public LaunchConfiguration(int layoutId, String screenName, Class<? extends CyborgActivity> activityType) {
-			super();
+		public LaunchConfiguration setLayoutId(int layoutId) {
 			this.layoutId = layoutId;
-			this.screenName = screenName;
+			return this;
+		}
+
+		public LaunchConfiguration setActivityType(Class<? extends CyborgActivity> activityType) {
 			this.activityType = activityType;
+			return this;
+		}
+
+		public LaunchConfiguration setScreenName(String screenName) {
+			this.screenName = screenName;
+			return this;
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static final class CyborgConfiguration {
 
-		private Context application;
+		final WeakReference<Context> application;
 
-		private BeConfig logConfig = AndroidLogger.Config_FastAndroidLogger;
+		BeConfig logConfig = AndroidLogger.Config_FastAndroidLogger;
 
-		private LaunchConfiguration launchConfiguration;
+		LaunchConfiguration launchConfiguration;
 
-		private Class<? extends ModulesPack>[] modulesPacks;
+		Class<? extends ModulesPack>[] modulesPacks;
 
 		public CyborgConfiguration(Context application) {
-			this.application = application;
+			this.application = new WeakReference<>(application);
 		}
 
 		public CyborgConfiguration setModulesPacks(Class<? extends ModulesPack>... modulesPacksTypes) {
@@ -85,20 +98,17 @@ public final class CyborgBuilder {
 			return this;
 		}
 
-		public void setLogConfig(BeConfig logConfig) {
+		public CyborgConfiguration setLogConfig(BeConfig logConfig) {
 			this.logConfig = logConfig;
+			return this;
 		}
 
 		public CyborgConfiguration setLaunchConfiguration(int layoutId) {
-			return setLaunchConfiguration(layoutId, "RootLayout");
+			return setLaunchConfiguration(new LaunchConfiguration().setLayoutId(layoutId));
 		}
 
-		public CyborgConfiguration setLaunchConfiguration(int layoutId, String screenName) {
-			return setLaunchConfiguration(layoutId, screenName, CyborgActivity.class);
-		}
-
-		public CyborgConfiguration setLaunchConfiguration(int layoutId, String screenName, Class<? extends CyborgActivity> activityType) {
-			return setLaunchConfiguration(new LaunchConfiguration(layoutId, screenName, activityType));
+		public CyborgConfiguration setLaunchConfiguration(Class<? extends CyborgActivity> activityType) {
+			return setLaunchConfiguration(new LaunchConfiguration().setActivityType(activityType));
 		}
 
 		public CyborgConfiguration setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
@@ -195,7 +205,7 @@ public final class CyborgBuilder {
 		if (instance != null)
 			throw ExceptionGenerator.cyborgWasInitializedForTheSecondTime();
 
-		instance = new CyborgImpl(configuration.application, configuration.launchConfiguration);
-		instance.init(configuration.modulesPacks);
+		instance = new CyborgImpl(configuration);
+		instance.init();
 	}
 }

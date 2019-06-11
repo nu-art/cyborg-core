@@ -20,8 +20,6 @@ package com.nu.art.cyborg;
 
 import com.nu.art.belog.BeConfig;
 import com.nu.art.belog.BeLogged;
-import com.nu.art.belog.loggers.JavaLogger;
-import com.nu.art.belog.Logger;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.modular.tests.ModuleManager_TestClass;
@@ -31,6 +29,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 
+import static com.nu.art.belog.loggers.JavaLogger.Config_FastJavaLogger;
 import static com.nu.art.core.generics.GenericParamExtractor._GenericParamExtractor;
 
 /**
@@ -83,7 +82,7 @@ public class Test_GenericTypeExtractor
 			return;
 		}
 
-		BeLogged.getInstance().init(BeConfig.Config_FastJavaLogger);
+		BeLogged.getInstance().setConfig(Config_FastJavaLogger);
 		setUpIsDone = true;
 	}
 

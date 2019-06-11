@@ -51,6 +51,7 @@ import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.common.utils.GenericServiceConnection;
 import com.nu.art.cyborg.common.utils.GenericServiceConnection.ServiceConnectionListenerImpl;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
+import com.nu.art.cyborg.core.CyborgBuilder.CyborgConfiguration;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.interfaces.OnApplicationStartedListener;
@@ -85,9 +86,9 @@ final class CyborgImpl
 
 	private final long CurrentElapsedDelta = SystemClock.elapsedRealtime() - System.currentTimeMillis();
 
-	private final WeakReference<Context> applicationRef;
-
 	private final Handler uiHandler;
+
+	private final CyborgConfiguration configuration;
 
 	private List<String> permissionsInManifest;
 
@@ -101,14 +102,11 @@ final class CyborgImpl
 
 	private boolean loaded;
 
-	private LaunchConfiguration launchConfiguration;
-
 	static boolean inEditMode;
 	private long startupDuration;
 
-	public CyborgImpl(Context application, LaunchConfiguration launchConfiguration) {
-		this.applicationRef = new WeakReference<>(application);
-		this.launchConfiguration = launchConfiguration;
+	public CyborgImpl(CyborgConfiguration configuration) {
+		this.configuration = configuration;
 		this.uiHandler = new Handler();
 	}
 
@@ -124,11 +122,14 @@ final class CyborgImpl
 
 	@Override
 	public LaunchConfiguration getLaunchConfiguration() {
-		return launchConfiguration;
+		return configuration.launchConfiguration;
 	}
 
 	@SuppressWarnings("unchecked")
-	final void init(Class<? extends ModulesPack>... modulesPacks) {
+	final void init() {
+		BeLogged.getInstance().addValidator(Config_AndroidLogger.class, new AndroidLoggerValidator());
+		BeLogged.getInstance().setConfig(configuration.logConfig);
+
 		long startedAt = System.currentTimeMillis();
 
 		if (loaded)
@@ -147,10 +148,9 @@ final class CyborgImpl
 		activityStackHandler = new ActivityStack(CyborgImpl.this);
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
-		BeLogged.getInstance().addValidator(Config_AndroidLogger.class, new AndroidLoggerValidator());
 		logVerbose(" Application Created...");
 		moduleManager = new ModuleManager();
-		new CyborgModulesBuilder().setCyborg(this).addModulePacks(modulesPacks).build(moduleManager);
+		new CyborgModulesBuilder().setCyborg(this).addModulePacks(configuration.modulesPacks).build(moduleManager);
 
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
@@ -388,7 +388,7 @@ final class CyborgImpl
 
 	@Override
 	public final Context getApplicationContext() {
-		return applicationRef.get();
+		return configuration.application.get();
 	}
 
 	@Override
@@ -667,7 +667,7 @@ final class CyborgImpl
 		}
 
 		private void populate() {
-			packageName = applicationRef.get().getPackageName();
+			packageName = getApplicationContext().getPackageName();
 			if (getPackageManager() != null) {
 				PackageInfo packageInfo;
 				ApplicationInfo info;
