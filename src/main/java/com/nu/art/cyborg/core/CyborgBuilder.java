@@ -24,9 +24,10 @@ import android.util.AttributeSet;
 
 import com.nu.art.belog.BeConfig;
 import com.nu.art.core.exceptions.runtime.DontCallThisException;
+import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.modules.AndroidLogger;
+import com.nu.art.cyborg.core.loggers.AndroidLogger;
 import com.nu.art.cyborg.core.modules.CyborgBasePack;
 import com.nu.art.cyborg.core.modules.CyborgEditModePack;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
@@ -72,7 +73,12 @@ public final class CyborgBuilder {
 
 		final WeakReference<Context> application;
 
-		BeConfig logConfig = AndroidLogger.Config_FastAndroidLogger;
+		Getter<BeConfig> logConfig = new Getter<BeConfig>() {
+			@Override
+			public BeConfig get() {
+				return AndroidLogger.Config_FastAndroidLogger;
+			}
+		};
 
 		LaunchConfiguration launchConfiguration;
 
@@ -98,7 +104,7 @@ public final class CyborgBuilder {
 			return this;
 		}
 
-		public CyborgConfiguration setLogConfig(BeConfig logConfig) {
+		public CyborgConfiguration setLogConfig(Getter<BeConfig> logConfig) {
 			this.logConfig = logConfig;
 			return this;
 		}

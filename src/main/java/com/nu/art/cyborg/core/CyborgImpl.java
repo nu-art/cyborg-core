@@ -33,6 +33,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -55,9 +56,10 @@ import com.nu.art.cyborg.core.CyborgBuilder.CyborgConfiguration;
 import com.nu.art.cyborg.core.CyborgBuilder.LaunchConfiguration;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.core.interfaces.OnApplicationStartedListener;
-import com.nu.art.cyborg.core.modules.AndroidLogger;
-import com.nu.art.cyborg.core.modules.AndroidLogger.AndroidLoggerValidator;
-import com.nu.art.cyborg.core.modules.AndroidLogger.Config_AndroidLogger;
+import com.nu.art.cyborg.core.loggers.AndroidLogger.AndroidLoggerDescriptor;
+import com.nu.art.cyborg.core.loggers.AndroidLogger.Config_AndroidLogger;
+import com.nu.art.cyborg.core.loggers.LogcatLogger.Config_LogcatLogger;
+import com.nu.art.cyborg.core.loggers.LogcatLogger.LogcatLoggerDescriptor;
 import com.nu.art.cyborg.core.modules.IAnalyticsModule;
 import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AppDetailsModule;
@@ -65,12 +67,10 @@ import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModuleManager;
 import com.nu.art.modular.core.ModuleManager.ModuleInjector;
-import com.nu.art.modular.core.ModulesPack;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -127,8 +127,14 @@ final class CyborgImpl
 
 	@SuppressWarnings("unchecked")
 	final void init() {
-		BeLogged.getInstance().addValidator(Config_AndroidLogger.class, new AndroidLoggerValidator());
-		BeLogged.getInstance().setConfig(configuration.logConfig);
+		BeLogged beLogged = BeLogged.getInstance();
+		beLogged.registerDescriptor(new AndroidLoggerDescriptor());
+		beLogged.registerDescriptor(new LogcatLoggerDescriptor());
+		beLogged.addConfigParam("sdcard", Environment.getExternalStorageDirectory().getAbsolutePath());
+		beLogged.addConfigParam("downloads", Environment.getExternalStorageDirectory().getAbsolutePath() + "/Downloads");
+		beLogged.addConfigParam("filesDir", getApplicationContext().getFilesDir().getAbsolutePath());
+		beLogged.addConfigParam("cacheDir", getApplicationContext().getCacheDir().getAbsolutePath());
+		beLogged.setConfig(configuration.logConfig.get());
 
 		long startedAt = System.currentTimeMillis();
 

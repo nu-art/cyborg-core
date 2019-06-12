@@ -16,19 +16,18 @@
  * limitations under the License.
  */
 
-package com.nu.art.cyborg.core.modules;
+package com.nu.art.cyborg.core.loggers;
 
 import com.nu.art.belog.BeConfig;
 import com.nu.art.belog.BeConfig.LoggerConfig;
 import com.nu.art.belog.BeConfig.Rule;
 import com.nu.art.belog.LoggerClient;
-import com.nu.art.belog.LoggerValidator;
+import com.nu.art.belog.LoggerDescriptor;
 import com.nu.art.belog.consts.LogLevel;
-import com.nu.art.belog.loggers.JavaLogger.Config_JavaLogger;
 import com.nu.art.core.interfaces.Getter;
 import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.core.utils.SynchronizedObject;
-import com.nu.art.cyborg.core.modules.AndroidLogger.Config_AndroidLogger;
+import com.nu.art.cyborg.core.loggers.AndroidLogger.Config_AndroidLogger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -125,11 +124,11 @@ public class AndroidLogger
 		}
 	}
 
-	public static class AndroidLoggerValidator
-		extends LoggerValidator<Config_AndroidLogger, AndroidLogger> {
+	public static class AndroidLoggerDescriptor
+		extends LoggerDescriptor<Config_AndroidLogger, AndroidLogger> {
 
-		public AndroidLoggerValidator() {
-			super(AndroidLogger.class);
+		public AndroidLoggerDescriptor() {
+			super(Config_AndroidLogger.KEY, Config_AndroidLogger.class, AndroidLogger.class);
 		}
 	}
 
