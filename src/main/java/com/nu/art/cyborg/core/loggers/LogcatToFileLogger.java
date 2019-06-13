@@ -29,7 +29,7 @@ import com.nu.art.belog.LoggerDescriptor;
 import com.nu.art.belog.consts.LogLevel;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.tools.SizeTools;
-import com.nu.art.cyborg.core.loggers.LogcatLogger.Config_LogcatLogger;
+import com.nu.art.cyborg.core.loggers.LogcatToFileLogger.Config_LogcatLogger;
 
 import java.io.File;
 
@@ -38,7 +38,7 @@ import static android.os.Environment.MEDIA_MOUNTED;
 /**
  * Created by TacB0sS on 28-Feb 2017.
  */
-public class LogcatLogger
+public class LogcatToFileLogger
 	extends LoggerClient<Config_LogcatLogger>
 	implements Runnable {
 
@@ -55,7 +55,7 @@ public class LogcatLogger
 	@Override
 	protected void init() {
 		active = true;
-		thread = new Thread(this, "logcat-beacon");
+		thread = new Thread(this, "logcat-to-file");
 		thread.start();
 	}
 
@@ -93,18 +93,22 @@ public class LogcatLogger
 			thread.interrupt();
 	}
 
+	public File[] getAllLogFiles() {
+		return new File(config.folder).listFiles();
+	}
+
 	public static class LogcatLoggerDescriptor
-		extends LoggerDescriptor<Config_LogcatLogger, LogcatLogger> {
+		extends LoggerDescriptor<Config_LogcatLogger, LogcatToFileLogger> {
 
 		public LogcatLoggerDescriptor() {
-			super(Config_LogcatLogger.KEY, Config_LogcatLogger.class, LogcatLogger.class);
+			super(Config_LogcatLogger.KEY, Config_LogcatLogger.class, LogcatToFileLogger.class);
 		}
 	}
 
 	public static class Config_LogcatLogger
 		extends LoggerConfig {
 
-		public static final String KEY = LogcatLogger.class.getSimpleName();
+		public static final String KEY = LogcatToFileLogger.class.getSimpleName();
 
 		String fileName = "logcat.txt";
 		String folder;
