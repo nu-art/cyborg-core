@@ -22,7 +22,7 @@ import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
 import com.nu.art.belog.consts.LogLevel;
 import com.nu.art.core.exceptions.runtime.NotImplementedYetException;
-import com.nu.art.cyborg.core.modules.AndroidLogger;
+import com.nu.art.cyborg.core.loggers.AndroidLogger;
 
 import org.junit.Before;
 import org.junit.Test;
