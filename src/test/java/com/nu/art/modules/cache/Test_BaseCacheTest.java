@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import static com.nu.art.http.consts.HttpMethod.Get;
 
+@SuppressWarnings("WeakerAccess")
 public class Test_BaseCacheTest
 	extends ModuleManager_TestClass {
 
@@ -76,6 +77,7 @@ public class Test_BaseCacheTest
 
 	private static DownloadTransaction dt;
 
+	@SuppressWarnings("unchecked")
 	static class _ModulePack
 		extends ModulesPack {
 
@@ -106,6 +108,12 @@ public class Test_BaseCacheTest
 		dt = new DownloadTransaction();
 	}
 
+	@Before
+	public void cleanUp()
+		throws IOException {
+		FileTools.delete(Folder_Cache);
+	}
+
 	private TestItem<Boolean> cacheUrlWithError(String name, final String suffix, final String url) {
 		return cacheUrl(name, suffix, url, false);
 	}
@@ -125,11 +133,13 @@ public class Test_BaseCacheTest
 					dt.download(url, suffix, new GenericListener<InputStream>() {
 						@Override
 						public void onSuccess(InputStream inputStream) {
+							logInfo("Url cached: " + name);
 							test._set(true);
 						}
 
 						@Override
 						public void onError(Throwable e) {
+							logError("Error caching: " + name);
 							test._set(e);
 						}
 					});
