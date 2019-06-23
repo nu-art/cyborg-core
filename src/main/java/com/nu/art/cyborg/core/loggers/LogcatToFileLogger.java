@@ -29,9 +29,12 @@ import com.nu.art.belog.LoggerDescriptor;
 import com.nu.art.belog.consts.LogLevel;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.tools.SizeTools;
+import com.nu.art.core.tools.StreamTools;
 import com.nu.art.cyborg.core.loggers.LogcatToFileLogger.Config_LogcatLogger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static android.os.Environment.MEDIA_MOUNTED;
 
@@ -77,12 +80,28 @@ public class LogcatToFileLogger
 			File logFile = new File(config.folder, config.fileName);
 			process = Runtime.getRuntime().exec("logcat -f " + logFile + " -r " + config.size + " -n " + config.count);
 			process.waitFor();
-		} catch (Exception e) {
-			Log.e("Logcat", "Error while collecting logs", e);
+		} catch (Throwable e) {
+			System.err.println("Error while collecting logs");
+			e.printStackTrace();
+			if (process != null) {
+				try {
+					InputStream errorStream = process.getErrorStream();
+					if (errorStream != null) {
+						String errorStreamAsString = StreamTools.readFullyAsString(errorStream);
+						System.out.println("logcat to file error stream: " + errorStreamAsString);
+					}
+				} catch (Throwable e1) {
+					e1.printStackTrace();
+				}
+			}
+		} finally {
 			if (process != null)
 				process.destroy();
 		}
 
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException ignore) {}
 		run();
 	}
 
