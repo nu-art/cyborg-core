@@ -479,6 +479,9 @@ public class CyborgMediaPlayer
 				setState(PlayerState.Preparing);
 				mediaPlayer.prepareAsync();
 			} catch (Exception e) {
+				if (e.getMessage().contains("status=0x80000000"))
+					logError("You forgot to add the INTERNET permissions to the manifest");
+
 				logError("Error while preparing the media player, url: " + uri, e);
 				if (listener != null)
 					listener.onError();

@@ -168,15 +168,6 @@ public abstract class CyborgModule
 	}
 
 	@Override
-	protected final <Type extends ModuleItem> Type instantiateModuleItem(Class<Type> moduleItemType) {
-		Type moduleItem = super.instantiateModuleItem(moduleItemType);
-		if (moduleItem instanceof CyborgModuleItem)
-			((CyborgModuleItem) moduleItem).setCyborg(cyborg);
-
-		return moduleItem;
-	}
-
-	@Override
 	protected void printDetails() {
 		printModuleDetails();
 	}

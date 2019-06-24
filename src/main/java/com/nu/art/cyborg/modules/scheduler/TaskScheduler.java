@@ -85,7 +85,7 @@ public class TaskScheduler
 		Task<DataType> task;
 		try {
 			Class<? extends Task<DataType>> taskType = (Class<? extends Task<DataType>>) Class.forName(taskTypeClassName);
-			task = instantiateModuleItem(taskType);
+			task = createModuleItem(taskType);
 		} catch (Exception e1) {
 			throw new BadImplementationException("Cannot find class type: " + taskTypeClassName, e1);
 		}
