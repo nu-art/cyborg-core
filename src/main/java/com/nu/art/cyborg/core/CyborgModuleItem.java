@@ -49,6 +49,11 @@ public abstract class CyborgModuleItem
 	}
 
 	@Override
+	protected void prepare() {
+		this.cyborg = CyborgBuilder.getInstance();
+	}
+
+	@Override
 	public final long elapsedTimeMillis() {
 		return cyborg.elapsedTimeMillis();
 	}
