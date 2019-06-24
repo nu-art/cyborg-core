@@ -158,6 +158,27 @@ public class LogcatToFileLogger
 			return this;
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (this == o)
+				return true;
+			if (o == null || getClass() != o.getClass())
+				return false;
+
+			Config_LogcatLogger that = (Config_LogcatLogger) o;
+
+			if (fileName != null ? !fileName.equals(that.fileName) : that.fileName != null)
+				return false;
+			return folder != null ? folder.equals(that.folder) : that.folder == null;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = fileName != null ? fileName.hashCode() : 0;
+			result = 31 * result + (folder != null ? folder.hashCode() : 0);
+			return result;
+		}
+
 		@SuppressWarnings("MethodDoesntCallSuperMethod")
 		public Config_LogcatLogger clone() {
 			return new Config_LogcatLogger().setFileName(fileName).setFolder(folder).setCount(count).setSize(size);

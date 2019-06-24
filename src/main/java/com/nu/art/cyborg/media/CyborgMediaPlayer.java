@@ -43,6 +43,14 @@ import java.util.HashMap;
 public class CyborgMediaPlayer
 	extends CyborgModuleItem {
 
+	public enum PlayerState {
+		Idle,
+		Preparing,
+		Prepared,
+		Playing,
+		Disposing,
+	}
+
 	public final static int MAX_VOLUME = 100;
 	private static final int ERROR_TIMED_OUT = 100;
 
@@ -62,20 +70,14 @@ public class CyborgMediaPlayer
 	private int duration;
 	private WeakReference<Surface> surfaceView = new WeakReference<>(null);
 
+	private CyborgMediaPlayer() {}
+
 	public MediaBuilder createBuilder() {
 		return new MediaBuilder();
 	}
 
 	public boolean isSameMediaId(Object mediaId) {
 		return builder != null && builder.mediaId.equals(mediaId);
-	}
-
-	public enum PlayerState {
-		Idle,
-		Preparing,
-		Prepared,
-		Playing,
-		Disposing,
 	}
 
 	public void setSurface(Surface surface) {

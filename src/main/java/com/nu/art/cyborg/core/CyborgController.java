@@ -1022,8 +1022,8 @@ public abstract class CyborgController
 	@Override
 	@Deprecated
 	public void onItemSelected(AdapterView<?> parentView, View selectedView, int position, long id) {
-		ItemRenderer renderer = (ItemRenderer) selectedView.getTag();
-		onItemSelected(renderer.getItem(), parentView, selectedView, position, id);
+		Object selectedItem = selectedView == null ? null : ((ItemRenderer) selectedView.getTag()).getItem();
+		onItemSelected(selectedItem, parentView, selectedView, position, id);
 	}
 
 	public void onItemSelected(Object selectedItem, AdapterView<?> parentView, View selectedView, int position, long id) {
