@@ -53,7 +53,7 @@ public class LogcatToFileLogger
 	private Thread thread;
 
 	@Override
-	protected void log(LogLevel level, Thread thread, String tag, String message, Throwable t) {}
+	protected void log(long timestamp, LogLevel level, Thread thread, String tag, String message, Throwable t) {}
 
 	@Override
 	protected void init() {

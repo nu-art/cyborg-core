@@ -318,6 +318,9 @@ public abstract class CyborgController
 			return;
 		}
 
+		if (isState(LifecycleState.OnDestroy))
+			return;
+
 		render.run();
 	}
 
