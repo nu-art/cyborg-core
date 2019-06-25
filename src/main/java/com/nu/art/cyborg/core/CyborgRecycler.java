@@ -27,8 +27,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -37,7 +35,6 @@ import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.Restorable;
 import com.nu.art.cyborg.core.CyborgAdapter.CyborgRecyclerAdapter;
 import com.nu.art.cyborg.core.abs.Cyborg;
-import com.nu.art.cyborg.core.dataModels.ListDataModel;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AttributeModule.AttributesSetter;
 import com.nu.art.reflection.annotations.ReflectiveInitialization;
@@ -118,6 +115,26 @@ public class CyborgRecycler
 		}
 
 		@Override
+		public boolean canScrollHorizontally() {
+			return isHorizontalScrollingEnabled() && super.canScrollHorizontally();
+		}
+
+		@Override
+		public boolean canScrollVertically() {
+			return isVerticalScrollingEnabled() && super.canScrollVertically();
+		}
+
+		@Override
+		public int computeHorizontalScrollRange(State state) {
+			return isHorizontalScrollingEnabled() ? super.computeHorizontalScrollRange(state) : 0;
+		}
+
+		@Override
+		public int computeVerticalScrollRange(State state) {
+			return isVerticalScrollingEnabled() ? super.computeVerticalScrollRange(state) : 0;
+		}
+
+		@Override
 		public boolean supportsPredictiveItemAnimations() {
 			Adapter adapter = getAdapter();
 			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super.supportsPredictiveItemAnimations();
@@ -149,6 +166,10 @@ public class CyborgRecycler
 
 	@Restorable
 	private int scrollInchMs = 25;
+	@Restorable
+	private boolean verticalScrollingEnabled = true;
+	@Restorable
+	private boolean horizontalScrollingEnabled = true;
 
 	public CyborgRecycler(Context context) {
 		this(context, null);
@@ -211,6 +232,14 @@ public class CyborgRecycler
 
 	public int getVerticalSpacing() {
 		return verticalSpacing;
+	}
+
+	public boolean isVerticalScrollingEnabled() {
+		return verticalScrollingEnabled;
+	}
+
+	public boolean isHorizontalScrollingEnabled() {
+		return horizontalScrollingEnabled;
 	}
 
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -294,6 +323,14 @@ public class CyborgRecycler
 		this.layoutOrientation = layoutOrientation;
 	}
 
+	public void setVerticalScrollingEnabled(boolean verticalScrollingEnabled) {
+		this.verticalScrollingEnabled = verticalScrollingEnabled;
+	}
+
+	public void setHorizontalScrollingEnabled(boolean horizontalScrollingEnabled) {
+		this.horizontalScrollingEnabled = horizontalScrollingEnabled;
+	}
+
 	/**
 	 * Setting the xml attributes onto a {@link CyborgRecycler} instance.
 	 */
@@ -344,6 +381,14 @@ public class CyborgRecycler
 			if (attr == R.styleable.Recycler_portraitColumnsCount) {
 				int columnsCount = a.getInt(attr, 1);
 				instance.setPortraitColumnsCount(columnsCount);
+			}
+			if (attr == R.styleable.Recycler_verticalScrollingEnabled) {
+				boolean verticalScrollingEnabled = a.getBoolean(attr, true);
+				instance.setVerticalScrollingEnabled(verticalScrollingEnabled);
+			}
+			if (attr == R.styleable.Recycler_horizontalScrollingEnabled) {
+				boolean horizontalScrollingEnabled = a.getBoolean(attr, true);
+				instance.setHorizontalScrollingEnabled(horizontalScrollingEnabled);
 			}
 		}
 
