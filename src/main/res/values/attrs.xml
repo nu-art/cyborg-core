@@ -51,6 +51,8 @@
         <attr name="landscapeColumnsCount" format="integer"/>
         <attr name="portraitColumnsCount" format="integer"/>
         <attr name="orientation"/>
+        <attr name="verticalScrollingEnabled" format="boolean"/>
+        <attr name="horizontalScrollingEnabled" format="boolean"/>
         <attr name="verticalSpacing" format="dimension"/>
         <attr name="horizontalSpacing" format="dimension"/>
         <attr name="scrollInchMs" format="integer"/>

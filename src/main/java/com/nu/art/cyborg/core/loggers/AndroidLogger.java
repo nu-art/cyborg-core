@@ -57,7 +57,7 @@ public class AndroidLogger
 	});
 
 	@Override
-	protected void log(LogLevel level, Thread thread, String tag, String message, Throwable t) {
+	protected void log(long timestamp, LogLevel level, Thread thread, String tag, String message, Throwable t) {
 		StringBuffer buffer = syncBuffer.get();
 		buffer.setLength(0);
 		buffer.append(thread.getName()).append("/").append(tag);
@@ -139,6 +139,19 @@ public class AndroidLogger
 
 		public Config_AndroidLogger() {
 			super(KEY);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o)
+				return true;
+
+			return o != null && getClass() == o.getClass();
+		}
+
+		@Override
+		public int hashCode() {
+			return KEY.hashCode();
 		}
 	}
 }
