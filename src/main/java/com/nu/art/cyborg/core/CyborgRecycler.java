@@ -344,7 +344,9 @@ public class CyborgRecycler
 			R.styleable.Recycler_verticalSpacing,
 			R.styleable.Recycler_scrollInchMs,
 			R.styleable.Recycler_landscapeColumnsCount,
-			R.styleable.Recycler_portraitColumnsCount
+			R.styleable.Recycler_portraitColumnsCount,
+			R.styleable.Recycler_verticalScrollingEnabled,
+			R.styleable.Recycler_horizontalScrollingEnabled
 		};
 
 		private CyborgRecyclerSetter() {
