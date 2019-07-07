@@ -168,7 +168,6 @@ final class CyborgImpl
 		return moduleManager.getInjector();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void dispatchOnLoadingCompleted() {
 		loaded = true;
 		dispatchModuleEvent(this, "On Application Started", OnApplicationStartedListener.class, new Processor<OnApplicationStartedListener>() {
@@ -213,6 +212,24 @@ final class CyborgImpl
 
 	public long getStartupDuration() {
 		return startupDuration;
+	}
+
+	public boolean isSystemApp(String packageName) {
+		try {
+			PackageManager packageManager = getApplicationContext().getPackageManager();
+			PackageInfo targetPkgInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+			if (targetPkgInfo == null || targetPkgInfo.signatures == null || targetPkgInfo.signatures.length == 0)
+				return false;
+
+			PackageInfo sys = packageManager.getPackageInfo("android", PackageManager.GET_SIGNATURES);
+			return sys.signatures[0].equals(targetPkgInfo.signatures[0]);
+		} catch (PackageManager.NameNotFoundException e) {
+			return false;
+		}
+	}
+
+	public boolean isSystemApp() {
+		return isSystemApp(getPackageName());
 	}
 
 	public final boolean isSuperUser() {
