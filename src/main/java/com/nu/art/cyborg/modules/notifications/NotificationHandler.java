@@ -27,6 +27,7 @@ import android.support.v4.app.NotificationCompat.Builder;
 
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 
 public abstract class NotificationHandler
 	extends CyborgModuleItem
@@ -59,11 +60,19 @@ public abstract class NotificationHandler
 
 	protected final Notification postNotification(Builder builder, short notificationId) {
 		Notification notification = module.postNotification(builder, notificationId);
-		if (VERSION.SDK_INT >= VERSION_CODES.O && (notification.getChannelId() == null || notification.getChannelId()
-		                                                                                              .isEmpty()) && getSystemService(NotificationService).getNotificationChannel(notification.getChannelId()) != null) {
-			throw new IllegalArgumentException("Android API 26+ requires notifications to be inside a NotificationChannel. Please submit a notification channel in the NotificationManager and provide the channel's id in the notification.");
-		}
+		validateNotificationChannel(notification);
 		return notification;
+	}
+
+	private void validateNotificationChannel(Notification notification) {
+		if (VERSION.SDK_INT < VERSION_CODES.O)
+			return;
+
+		if (notification.getChannelId() == null || notification.getChannelId().isEmpty())
+			throw ExceptionGenerator.notificationMissingChannelId(notification);
+
+		if (getSystemService(NotificationService).getNotificationChannel(notification.getChannelId()) == null)
+			throw ExceptionGenerator.notificationChannelDoesNotExist(notification);
 	}
 
 	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {

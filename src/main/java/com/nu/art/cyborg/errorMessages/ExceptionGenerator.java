@@ -18,9 +18,12 @@
 
 package com.nu.art.cyborg.errorMessages;
 
+import android.app.Notification;
 import android.app.Service;
+import android.os.Build.VERSION_CODES;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
@@ -221,5 +224,16 @@ public class ExceptionGenerator {
 
 	public static BadImplementationException stackLayerHasNoControllerType() {
 		return new BadImplementationException("Stack Layer was not configured properly.. no controllerType");
+	}
+
+	@RequiresApi(api = VERSION_CODES.O)
+	public static ImplementationMissingException notificationMissingChannelId(Notification notification) {
+		return new ImplementationMissingException("Notifications must be set with a channel ID. This is a requirement since Android O (api +26). " + notification.toString());
+	}
+
+	@RequiresApi(api = VERSION_CODES.O)
+	public static BadImplementationException notificationChannelDoesNotExist(Notification notification) {
+		return new BadImplementationException("Notification has been set with a NotificationChannelId{" + notification.getChannelId() + "}, but there is no NotificationChannel under that ID in the NotificationManager. Please add a NotificationChannel in the NotificationManager. This is a requirement since Android O (api +26). " + notification
+			.toString());
 	}
 }
