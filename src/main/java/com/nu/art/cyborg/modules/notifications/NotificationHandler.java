@@ -20,6 +20,8 @@ package com.nu.art.cyborg.modules.notifications;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
 
@@ -56,7 +58,12 @@ public abstract class NotificationHandler
 	}
 
 	protected final Notification postNotification(Builder builder, short notificationId) {
-		return module.postNotification(builder, notificationId);
+		Notification notification = module.postNotification(builder, notificationId);
+		if (VERSION.SDK_INT >= VERSION_CODES.O && (notification.getChannelId() == null || notification.getChannelId()
+		                                                                                              .isEmpty()) && getSystemService(NotificationService).getNotificationChannel(notification.getChannelId()) != null) {
+			throw new IllegalArgumentException("Android API 26+ requires notifications to be inside a NotificationChannel. Please submit a notification channel in the NotificationManager and provide the channel's id in the notification.");
+		}
+		return notification;
 	}
 
 	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {
