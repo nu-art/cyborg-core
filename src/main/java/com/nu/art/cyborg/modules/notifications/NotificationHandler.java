@@ -72,7 +72,7 @@ public abstract class NotificationHandler
 			throw ExceptionGenerator.notificationMissingChannelId(notification);
 
 		if (getSystemService(NotificationService).getNotificationChannel(notification.getChannelId()) == null)
-			throw ExceptionGenerator.notificationChannelDoesNotExist(notification);
+			throw ExceptionGenerator.notificationChannelDoesNotExist(notification.getChannelId(), notification);
 	}
 
 	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {

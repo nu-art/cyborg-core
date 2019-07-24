@@ -226,14 +226,12 @@ public class ExceptionGenerator {
 		return new BadImplementationException("Stack Layer was not configured properly.. no controllerType");
 	}
 
-	@RequiresApi(api = VERSION_CODES.O)
 	public static ImplementationMissingException notificationMissingChannelId(Notification notification) {
 		return new ImplementationMissingException("Notifications must be set with a channel ID. This is a requirement since Android O (api +26). " + notification.toString());
 	}
 
-	@RequiresApi(api = VERSION_CODES.O)
-	public static BadImplementationException notificationChannelDoesNotExist(Notification notification) {
-		return new BadImplementationException("Notification has been set with a NotificationChannelId{" + notification.getChannelId() + "}, but there is no NotificationChannel under that ID in the NotificationManager. Please add a NotificationChannel in the NotificationManager. This is a requirement since Android O (api +26). " + notification
+	public static BadImplementationException notificationChannelDoesNotExist(String channelId, Notification notification) {
+		return new BadImplementationException("Notification has been set with a NotificationChannelId{" + channelId + "}, but there is no NotificationChannel under that ID in the NotificationManager. Please add a NotificationChannel in the NotificationManager. This is a requirement since Android O (api +26). " + notification
 			.toString());
 	}
 }
