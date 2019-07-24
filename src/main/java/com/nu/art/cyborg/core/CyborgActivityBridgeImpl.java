@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.core;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -96,7 +97,7 @@ public class CyborgActivityBridgeImpl
 
 	public static final DebugFlag DebugFlag = DebugFlags.createFlag(CyborgActivityBridgeImpl.class);
 
-	private final CyborgActivity activity;
+	private final Context context;
 
 	private final Cyborg cyborg;
 
@@ -122,8 +123,8 @@ public class CyborgActivityBridgeImpl
 
 	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher", paramExtractor).own();
 
-	CyborgActivityBridgeImpl(String screenName, CyborgActivity activity) {
-		this.activity = activity;
+	CyborgActivityBridgeImpl(String screenName, Context context) {
+		this.context = context;
 		this.screenName = screenName;
 		cyborg = CyborgBuilder.getInstance();
 	}
@@ -136,21 +137,21 @@ public class CyborgActivityBridgeImpl
 	public LayoutInflater getDefaultLayoutInflater() {
 		if (layoutInflater != null)
 			return layoutInflater;
-		return layoutInflater = LayoutInflater.from(activity);
+		return layoutInflater = LayoutInflater.from(context);
 	}
 
 	@Override
-	public CyborgActivity getActivity() {
-		return activity;
+	public CyborgActivity getContext() {
+		return (CyborgActivity) context;
 	}
 
 	@Override
 	public Intent getIntent() {
-		return activity.getIntent();
+		return getContext().getIntent();
 	}
 
 	private void createView() {
-		Intent intent = activity.getIntent();
+		Intent intent = getContext().getIntent();
 
 		if (screenName == null)
 			screenName = intent.getStringExtra(ScreenName);
@@ -160,21 +161,21 @@ public class CyborgActivityBridgeImpl
 
 		int theme = intent.getIntExtra(ActivityTheme, -1);
 		if (theme != -1)
-			activity.setTheme(theme);
+			getContext().setTheme(theme);
 
 		int layoutId = intent.getIntExtra(LayoutId, -1);
 		if (layoutId != -1)
-			activity.setContentView(layoutId);
+			getContext().setContentView(layoutId);
 	}
 
 	@Override
 	public final FrameLayout addContentLayer(int layoutId) {
-		return (FrameLayout) activity.findViewById(android.R.id.content);
+		return (FrameLayout) getContext().findViewById(android.R.id.content);
 	}
 
 	@Override
 	public boolean isKeyboardVisible() {
-		View rootView = ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+		View rootView = ((ViewGroup) getContext().findViewById(android.R.id.content)).getChildAt(0);
 		if (rootView == null)
 			return false;
 
@@ -190,8 +191,8 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public final void showKeyboard(View view) {
 		InputMethodManager inputServiceManager = getSystemService(InputMethodService);
-		inputServiceManager.showSoftInput(activity.getCurrentFocus(), InputMethodManager.SHOW_FORCED);
-		inputServiceManager.showSoftInput(activity.getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
+		inputServiceManager.showSoftInput(getContext().getCurrentFocus(), InputMethodManager.SHOW_FORCED);
+		inputServiceManager.showSoftInput(getContext().getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
 	}
 
 	/* ********************************
@@ -200,17 +201,17 @@ public class CyborgActivityBridgeImpl
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		for (ScenarioRecorder scenarioRecorder : cyborg.getModulesAssignableFrom(ScenarioRecorder.class)) {
-			scenarioRecorder.onActivityStarted(activity.getIntent());
+			scenarioRecorder.onActivityStarted(getContext().getIntent());
 		}
 
-		keyboardListener = new KeyboardChangeListener(cyborg, activity);
-		eventDispatcher.addListener(activity);
-		addToStack = activity.getIntent().getBooleanExtra(ShouldAddToStack, true);
+		keyboardListener = new KeyboardChangeListener(cyborg, getContext());
+		eventDispatcher.addListener(context);
+		addToStack = getIntent().getBooleanExtra(ShouldAddToStack, true);
 		dispatchLifecycleEvent(LifecycleState.OnCreate);
 		logLifeCycle(screenName + ": onCreate");
 		createView();
 		if (cyborg.isDebugCertificate())
-			ViewServer.get(activity).addWindow(activity);
+			ViewServer.get(context).addWindow(getContext());
 	}
 
 	interface ControllerProcessor {
@@ -276,7 +277,7 @@ public class CyborgActivityBridgeImpl
 
 		cyborg.sendView(screenName);
 		dispatchLifecycleEvent(LifecycleState.OnResume);
-		ViewServer.get(activity).setFocusedWindow(activity);
+		ViewServer.get(context).setFocusedWindow(getContext());
 	}
 
 	@Override
@@ -306,7 +307,7 @@ public class CyborgActivityBridgeImpl
 	public void onDestroy() {
 		logLifeCycle(screenName + ": onDestroy");
 		dispatchLifecycleEvent(LifecycleState.OnDestroy);
-		ViewServer.get(activity).removeWindow(activity);
+		ViewServer.get(context).removeWindow(getContext());
 		destroyed = true;
 	}
 
@@ -322,7 +323,7 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void finish() {
-		activity.finish();
+		getContext().finish();
 	}
 
 	/* ********************************
@@ -333,7 +334,7 @@ public class CyborgActivityBridgeImpl
 		return processControllersPriority(new ControllerProcessor() {
 			@Override
 			public boolean process(CyborgController controller) {
-				return controller.createMenuOptions(menu, activity.getMenuInflater());
+				return controller.createMenuOptions(menu, getContext().getMenuInflater());
 			}
 		});
 	}
@@ -526,7 +527,6 @@ public class CyborgActivityBridgeImpl
 		getModule(PermissionModule.class).onPermissionsResult(requestCode, permissions, grantResults);
 	}
 
-	@SuppressWarnings("unchecked")
 	public final <ListenerType> void dispatchEvent(ILogger originator,
 	                                               String message,
 	                                               final Class<ListenerType> listenerType,
@@ -535,7 +535,7 @@ public class CyborgActivityBridgeImpl
 			originator.logInfo("Dispatching UI Event: " + message);
 
 		final WhoCalledThis whoCalledThis = new WhoCalledThis("Dispatching UI Event (" + Thread.currentThread().getName() + "): " + message);
-		activity.runOnUiThread(new Runnable() {
+		getContext().runOnUiThread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -553,7 +553,7 @@ public class CyborgActivityBridgeImpl
 	}
 
 	public Window getWindow() {
-		return activity.getWindow();
+		return getContext().getWindow();
 	}
 
 	@Override
@@ -574,17 +574,17 @@ public class CyborgActivityBridgeImpl
 
 	@Override
 	public void startActivityForResult(Intent intent, int requestCode) {
-		activity.startActivityForResult(intent, requestCode);
+		getContext().startActivityForResult(intent, requestCode);
 	}
 
 	@Override
 	public void startActivity(Intent intent) {
-		activity.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	@SuppressWarnings("unchecked")
 	public final <Type> Type getController(@IdRes int viewId) {
-		return (Type) activity.findViewById(viewId).getTag();
+		return (Type) getContext().findViewById(viewId).getTag();
 	}
 
 	@Override

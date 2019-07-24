@@ -70,13 +70,17 @@ public class CyborgView
 	private CyborgActivityBridge activityBridge;
 
 	public CyborgView(Context context) {
-		this(context, null);
+		this(context, (Class<? extends CyborgController>) null);
+	}
+
+	public CyborgView(Context context, Class<? extends CyborgController> controllerType) {
+		super(context);
+		this.controller = instantiateController(controllerType);
+		initController();
 	}
 
 	public CyborgView(CyborgActivity activity, Class<? extends CyborgController> controllerType) {
-		super(activity);
-		this.controller = instantiateController(controllerType);
-		initController();
+		this((Context) activity, controllerType);
 	}
 
 	public CyborgView(Context context, AttributeSet attrs) {
@@ -101,7 +105,11 @@ public class CyborgView
 		// I've been going around this issue for a while... I believe this 'if' is the only real solution
 		if (!isInEditMode()) {
 			// set the context for inflating and custom views
-			activityBridge = ((CyborgActivity) context).getBridge();
+			if (context instanceof CyborgActivity)
+				activityBridge = ((CyborgActivity) context).getBridge();
+			else
+				activityBridge = new CyborgActivityBridgeImpl("Overlay", context);
+
 			controller.setActivityBridge(activityBridge);
 		}
 

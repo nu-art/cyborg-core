@@ -104,7 +104,7 @@ public interface CyborgActivityBridge {
 
 	Intent getIntent();
 
-	CyborgActivity getActivity();
+	CyborgActivity getContext();
 
 	<Type> Type getController(@IdRes int viewId);
 

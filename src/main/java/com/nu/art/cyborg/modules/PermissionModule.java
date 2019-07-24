@@ -100,7 +100,7 @@ public class PermissionModule
 		postActivityAction(new ActivityStackAction() {
 			@Override
 			public void execute(CyborgActivityBridge bridge) {
-				ActivityCompat.requestPermissions(bridge.getActivity(), permissions, requestCode);
+				ActivityCompat.requestPermissions(bridge.getContext(), permissions, requestCode);
 			}
 		});
 	}
