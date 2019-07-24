@@ -564,7 +564,7 @@ public abstract class CyborgController
 	}
 
 	protected final CyborgActivity getActivity() {
-		return activityBridge.getActivity();
+		return activityBridge.getContext();
 	}
 
 	protected final LayoutInflater getLayoutInflater() {
@@ -587,7 +587,7 @@ public abstract class CyborgController
 	 * Hide the soft keyboard
 	 */
 	protected final void hideKeyboard() {
-		View view = activityBridge.getActivity().getCurrentFocus();
+		View view = activityBridge.getContext().getCurrentFocus();
 
 		if (view == null)
 			view = getRootView();
@@ -602,7 +602,7 @@ public abstract class CyborgController
 	 */
 	protected final void showKeyboard(View view) {
 		if (view == null)
-			view = activityBridge.getActivity().getCurrentFocus();
+			view = activityBridge.getContext().getCurrentFocus();
 
 		if (view == null)
 			view = getRootView();

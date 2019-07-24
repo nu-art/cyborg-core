@@ -27,9 +27,11 @@ import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
 import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.AttributeModule;
+import com.nu.art.cyborg.modules.AudioOptionsModule;
 import com.nu.art.cyborg.modules.CacheModule;
 import com.nu.art.cyborg.modules.ImageUtilsModule;
 import com.nu.art.cyborg.modules.PermissionModule;
+import com.nu.art.cyborg.modules.ScreenOptionsModule;
 import com.nu.art.cyborg.modules.VibrationModule;
 import com.nu.art.cyborg.modules.custom.FontTypeSetter;
 import com.nu.art.cyborg.tools.ReverseR_Module;
@@ -58,6 +60,8 @@ public class CyborgBasePack
 		ThreadsModule.class,
 		UtilsModule.class,
 		VibrationModule.class,
+		AudioOptionsModule.class,
+		ScreenOptionsModule.class,
 		AttributeModule.class
 	};
 

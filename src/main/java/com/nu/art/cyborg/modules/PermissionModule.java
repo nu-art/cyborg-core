@@ -21,6 +21,7 @@ package com.nu.art.cyborg.modules;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -99,7 +100,7 @@ public class PermissionModule
 		postActivityAction(new ActivityStackAction() {
 			@Override
 			public void execute(CyborgActivityBridge bridge) {
-				ActivityCompat.requestPermissions(bridge.getActivity(), permissions, requestCode);
+				ActivityCompat.requestPermissions(bridge.getContext(), permissions, requestCode);
 			}
 		});
 	}

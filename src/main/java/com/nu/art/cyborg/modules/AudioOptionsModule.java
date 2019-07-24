@@ -59,7 +59,22 @@ public class AudioOptionsModule
 	@Override
 	protected void init() {
 		audioManager = cyborg.getSystemService(AudioService);
+	}
+
+	public void registerForVolumeChanges() {
 		registerReceiver(AudioSettingsReceiver.class);
+	}
+
+	public void unregisterForVolumeChanges() {
+		unregisterReceiver(AudioSettingsReceiver.class);
+	}
+
+	private int _getStreamVolume(int streamId) {
+		return audioManager.getStreamVolume(streamId);
+	}
+
+	private void _setStreamVolume(int streamId, int volume, int flags) {
+		audioManager.setStreamVolume(streamId, volume, flags);
 	}
 
 	/**
@@ -83,19 +98,34 @@ public class AudioOptionsModule
 		return audioManager.getStreamMaxVolume(streamId);
 	}
 
-	public int getStreamVolume(int streamId) {
-		int volume = audioManager.getStreamVolume(streamId);
-		logInfo("AudioStream Get volume: " + AudioStreamType.getTypeByValue(streamId).name() + " " + volume);
+	public int getStreamVolume(AudioStreamType stream) {
+		int volume = _getStreamVolume(stream.streamId);
+		logInfo("AudioStream Get volume: " + stream.name() + " <= " + volume);
 		return volume;
 	}
 
-	public void setStreamVolume(int streamId, int volume, int flags) {
-		audioManager.setStreamVolume(streamId, volume, flags);
-		logInfo("AudioStream Set volume: " + AudioStreamType.getTypeByValue(streamId).name() + " " + getStreamVolume(streamId));
+	public int getStreamVolume(int streamId) {
+		int volume = audioManager.getStreamVolume(streamId);
+		logInfo("AudioStream Get volume: " + streamId + " <= " + volume);
+		return volume;
 	}
 
 	public void setStreamVolume(int streamId, int volume) {
 		setStreamVolume(streamId, volume, 0);
+	}
+
+	public void setStreamVolume(int streamId, int volume, int flags) {
+		audioManager.setStreamVolume(streamId, volume, flags);
+		logInfo("AudioStream Set volume: " + streamId + " " + _getStreamVolume(streamId));
+	}
+
+	public void setStreamVolume(AudioStreamType stream, int volume) {
+		setStreamVolume(stream, volume, 0);
+	}
+
+	public void setStreamVolume(AudioStreamType stream, int volume, int flags) {
+		audioManager.setStreamVolume(stream.streamId, volume, flags);
+		logInfo("AudioStream Set volume: " + stream + " " + _getStreamVolume(stream.streamId));
 	}
 
 	public void muteStream(int streamId, boolean toMute) {
@@ -129,7 +159,6 @@ public class AudioOptionsModule
 				}
 			});
 		}
-
 	}
 
 	public enum AudioStreamType {
@@ -179,7 +208,6 @@ public class AudioOptionsModule
 				return;
 
 			switch (intent.getAction()) {
-
 				case IntentAction__VOLUME_CHANGED:
 					module.onVolumeChanged();
 					break;
