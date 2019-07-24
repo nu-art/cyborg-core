@@ -20,11 +20,14 @@ package com.nu.art.cyborg.modules.notifications;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
 
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgModuleItem;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 
 public abstract class NotificationHandler
 	extends CyborgModuleItem
@@ -56,7 +59,20 @@ public abstract class NotificationHandler
 	}
 
 	protected final Notification postNotification(Builder builder, short notificationId) {
-		return module.postNotification(builder, notificationId);
+		Notification notification = module.postNotification(builder, notificationId);
+		validateNotificationChannel(notification);
+		return notification;
+	}
+
+	private void validateNotificationChannel(Notification notification) {
+		if (VERSION.SDK_INT < VERSION_CODES.O)
+			return;
+
+		if (notification.getChannelId() == null || notification.getChannelId().isEmpty())
+			throw ExceptionGenerator.notificationMissingChannelId(notification);
+
+		if (getSystemService(NotificationService).getNotificationChannel(notification.getChannelId()) == null)
+			throw ExceptionGenerator.notificationChannelDoesNotExist(notification);
 	}
 
 	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {
