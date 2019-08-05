@@ -18,11 +18,11 @@
 
 package com.nu.art.android.gestures;
 
-import java.util.Vector;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+
+import java.util.Vector;
 
 public final class ZoomGesture
 	implements OnTouchListener, ZoomListener {

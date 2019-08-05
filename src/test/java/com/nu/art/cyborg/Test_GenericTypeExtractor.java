@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg;
 
-import com.nu.art.belog.BeConfig;
 import com.nu.art.belog.BeLogged;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;

@@ -29,9 +29,9 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
 
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
-import com.nu.art.reflection.utils.GenericMap;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.reflection.utils.GenericMap;
 
 @ModuleDescriptor(usesPermissions = {})
 public final class NotificationsModule

@@ -9,7 +9,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.provider.Settings;
 import android.view.Gravity;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.nu.art.cyborg.annotations.ModuleDescriptor;

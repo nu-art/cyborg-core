@@ -20,10 +20,8 @@ package com.nu.art.cyborg.errorMessages;
 
 import android.app.Notification;
 import android.app.Service;
-import android.os.Build.VERSION_CODES;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.view.View;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;

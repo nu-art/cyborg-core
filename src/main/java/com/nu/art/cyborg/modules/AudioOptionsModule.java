@@ -28,7 +28,6 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.CyborgReceiver;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
-import static android.media.AudioManager.FLAG_PLAY_SOUND;
 import static android.media.AudioManager.RINGER_MODE_NORMAL;
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 import static android.media.AudioManager.RINGER_MODE_VIBRATE;

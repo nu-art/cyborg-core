@@ -19,7 +19,6 @@
 package com.nu.art.cyborg.core.more;
 
 import android.os.Bundle;
-import android.os.Debug;
 
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.exceptions.runtime.NotImplementedYetException;

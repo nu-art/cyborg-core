@@ -18,8 +18,6 @@
 
 package com.nu.art.cyborg.common.consts;
 
-import android.os.Build.VERSION_CODES;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;

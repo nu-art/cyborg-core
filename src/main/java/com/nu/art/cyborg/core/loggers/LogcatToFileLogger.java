@@ -19,7 +19,6 @@
 package com.nu.art.cyborg.core.loggers;
 
 import android.os.Environment;
-import android.util.Log;
 
 import com.nu.art.belog.BeConfig;
 import com.nu.art.belog.BeConfig.LoggerConfig;
@@ -33,7 +32,6 @@ import com.nu.art.core.tools.StreamTools;
 import com.nu.art.cyborg.core.loggers.LogcatToFileLogger.Config_LogcatLogger;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import static android.os.Environment.MEDIA_MOUNTED;

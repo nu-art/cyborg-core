@@ -18,7 +18,6 @@
 
 package com.nu.art.cyborg.modules.apps;
 
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.tools.StreamTools;

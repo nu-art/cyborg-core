@@ -25,7 +25,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.nu.art.belog.Logger;
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ClassInstantiationRuntimeException;
 import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.cyborg.core.abs.Cyborg;
