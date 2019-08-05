@@ -90,7 +90,7 @@ public abstract class DataModel<Item> {
 		notifyItemAtPositionChanged(position);
 	}
 
-	public final int getItemsCount() {
+	public int getItemsCount() {
 		int realItemsCount = getRealItemsCount();
 		return cyclic && realItemsCount > 0 ? Integer.MAX_VALUE : realItemsCount;
 	}
