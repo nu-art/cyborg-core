@@ -23,7 +23,6 @@ import android.net.Uri;
 import android.os.Handler;
 
 import com.nu.art.core.GenericListener;
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Function;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;

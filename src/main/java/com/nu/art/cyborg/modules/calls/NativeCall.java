@@ -65,7 +65,8 @@ public final class NativeCall {
 		Ringing(TelephonyManager.CALL_STATE_RINGING, TelephonyManager.EXTRA_STATE_RINGING),
 		Dialing(-1, "Dialing"),
 		InProgress(TelephonyManager.CALL_STATE_OFFHOOK, TelephonyManager.EXTRA_STATE_OFFHOOK),
-		Idle(TelephonyManager.CALL_STATE_IDLE, TelephonyManager.EXTRA_STATE_IDLE),;
+		Idle(TelephonyManager.CALL_STATE_IDLE, TelephonyManager.EXTRA_STATE_IDLE),
+		;
 
 		private int state;
 

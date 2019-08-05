@@ -44,7 +44,8 @@ public class WifiItem_AdapterState
 		Disabled(WifiManager.WIFI_STATE_DISABLED),
 		Enabling(WifiManager.WIFI_STATE_ENABLING),
 		Enabled(WifiManager.WIFI_STATE_ENABLED),
-		Disabling(WifiManager.WIFI_STATE_DISABLING),;
+		Disabling(WifiManager.WIFI_STATE_DISABLING),
+		;
 
 		private final int wifiState;
 

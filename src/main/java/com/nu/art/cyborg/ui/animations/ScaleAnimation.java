@@ -65,10 +65,10 @@ public class ScaleAnimation
 
 	/*/**
 	 * @param unit   one of the {@link android.util.TypedValue} with one of the complex units
-     * @param startX
-     * @param endX
-     * @return
-     */
+	 * @param startX
+	 * @param endX
+	 * @return
+	 */
 	public final ScaleAnimation scaleX(int unit, int startX, int endX) {
 		startX = (int) TypedValue.applyDimension(unit, startX, view.getResources().getDisplayMetrics());
 		endX = (int) TypedValue.applyDimension(unit, endX, view.getResources().getDisplayMetrics());
@@ -80,19 +80,19 @@ public class ScaleAnimation
 
 	/*/**
 	 * @param unit one of the {@link android.util.TypedValue} with one of the complex units
-     * @param endY
-     * @return this.
-     */
+	 * @param endY
+	 * @return this.
+	 */
 	public final ScaleAnimation scaleY(int unit, int endY) {
 		return scaleY(unit, Vertical.Top, startY, endY);
 	}
 
 	/*/**
 	 * @param unit   one of the {@link android.util.TypedValue} with one of the complex units
-     * @param startY
-     * @param endY
-     * @return this.
-     */
+	 * @param startY
+	 * @param endY
+	 * @return this.
+	 */
 	public final ScaleAnimation scaleY(int unit, Vertical vertical, int startY, int endY) {
 		startY = (int) TypedValue.applyDimension(unit, startY, view.getResources().getDisplayMetrics());
 		endY = (int) TypedValue.applyDimension(unit, endY, view.getResources().getDisplayMetrics());

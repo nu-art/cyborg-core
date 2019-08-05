@@ -20,7 +20,6 @@ package com.nu.art.cyborg.core.more;
 
 import android.view.View;
 
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.ViewIdentifier;

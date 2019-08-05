@@ -33,7 +33,6 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
-import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.generics.Function;
@@ -625,6 +624,7 @@ public class CyborgStackController
 	//		activityBridge.addController(this);
 
 	/**
+	 *
 	 */
 	protected void push(final StackLayerBuilder targetLayerToBeAdded) {
 		ThreadsModule.assertMainThread();

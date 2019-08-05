@@ -35,10 +35,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Condition;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.core.tools.FileTools;
-import com.nu.art.core.utils.DebugFlags;
-import com.nu.art.core.utils.DebugFlags.DebugFlag;
 import com.nu.art.cyborg.core.CyborgModule;
-import com.nu.art.cyborg.core.CyborgStackController;
 import com.nu.art.cyborg.core.modules.ThreadsModule;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.reflection.tools.ReflectiveTools;
@@ -106,7 +103,8 @@ public class CyborgAudioRecorder
 		VOICE_RECOGNITION(MediaRecorder.AudioSource.VOICE_RECOGNITION),
 		VOICE_COMMUNICATION(MediaRecorder.AudioSource.VOICE_COMMUNICATION),
 		REMOTE_SUBMIX(MediaRecorder.AudioSource.REMOTE_SUBMIX),
-		UNPROCESSED(MediaRecorder.AudioSource.UNPROCESSED),;
+		UNPROCESSED(MediaRecorder.AudioSource.UNPROCESSED),
+		;
 
 		public final int key;
 

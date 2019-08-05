@@ -35,7 +35,8 @@ public enum DeviceValuesFolder {
 	SW320DP("values-sw320dp"),
 	SW480DP("values-sw480dp"),
 	SW600DP("values-sw600dp"),
-	SW720DP("values-sw720dp"),;
+	SW720DP("values-sw720dp"),
+	;
 
 	private final String folderName;
 

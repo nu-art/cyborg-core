@@ -54,7 +54,7 @@ public final class DeviceDetailsModule
 
 	private DeviceValuesFolder deviceValues;
 
-//	private String androidId;
+	//	private String androidId;
 
 	private Point screenResolution = new Point();
 
@@ -75,7 +75,7 @@ public final class DeviceDetailsModule
 		} catch (Exception e) {
 			deviceValues = DeviceValuesFolder.UNKNOWN;
 		}
-//		androidId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+		//		androidId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 	}
 
 	public Point getScreenResolution() {
@@ -87,7 +87,7 @@ public final class DeviceDetailsModule
 	protected void printModuleDetails() {
 		String currentTime = new SimpleDateFormat("HH:mm dd-MM-yyyy").format(new Date());
 
-//		logInfo("    Android Device Id: " + androidId);
+		//		logInfo("    Android Device Id: " + androidId);
 		logInfo("    Device timestamp: " + currentTime);
 		logInfo("    Device values folder: " + deviceValues.getFolderName());
 		logInfo("    Screen Density: " + screenDensity.name());
@@ -100,13 +100,13 @@ public final class DeviceDetailsModule
 		return pathToSuperUserFile.exists();
 	}
 
-//	public final String getAndroidDeviceId() {
-//		return androidId;
-//	}
+	//	public final String getAndroidDeviceId() {
+	//		return androidId;
+	//	}
 
 	@Override
 	public void collectModuleState(HashMap<String, Object> moduleCrashData) {
-//		moduleCrashData.put("androidId", androidId);
+		//		moduleCrashData.put("androidId", androidId);
 		moduleCrashData.put("ScreenDpi", screenDensity.name());
 		moduleCrashData.put("ScreenSize", screenSize.name());
 		moduleCrashData.put("isRooted", isSuperUser());

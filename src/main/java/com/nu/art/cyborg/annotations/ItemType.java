@@ -18,15 +18,10 @@
 
 package com.nu.art.cyborg.annotations;
 
-import android.view.View;
-
-import com.nu.art.cyborg.common.consts.ViewListener;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.TYPE;
 
 /**

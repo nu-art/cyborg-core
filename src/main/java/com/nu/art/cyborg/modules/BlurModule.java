@@ -193,9 +193,7 @@ public class BlurModule
 		int divsum = (div + 1) >> 1;
 		divsum *= divsum;
 		int dv[] = new int[256 * divsum];
-		for (i = 0; i < 256 * divsum; i++)
-
-		{
+		for (i = 0; i < 256 * divsum; i++) {
 			dv[i] = (i / divsum);
 		}
 
@@ -210,9 +208,7 @@ public class BlurModule
 		int routsum, goutsum, boutsum;
 		int rinsum, ginsum, binsum;
 
-		for (y = 0; y < h; y++)
-
-		{
+		for (y = 0; y < h; y++) {
 			rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
 			for (i = -radius; i <= radius; i++) {
 				p = pix[yi + Math.min(wm, Math.max(i, 0))];
@@ -286,9 +282,7 @@ public class BlurModule
 			yw += w;
 		}
 
-		for (x = 0; x < w; x++)
-
-		{
+		for (x = 0; x < w; x++) {
 			rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
 			yp = -radius * w;
 			for (i = -radius; i <= radius; i++) {

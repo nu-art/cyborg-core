@@ -31,10 +31,10 @@ import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.common.utils.BootStarterReceiver.OnBootCompletedListener;
 import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.core.modules.crashReport.ModuleStateCollector;
-import com.nu.art.storage.PreferencesModule;
-import com.nu.art.storage.StringPreference;
 import com.nu.art.cyborg.tools.CryptoTools;
 import com.nu.art.reflection.tools.ReflectiveTools;
+import com.nu.art.storage.PreferencesModule;
+import com.nu.art.storage.StringPreference;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateFactory;
