@@ -102,7 +102,8 @@ public class CyborgAudioRecorder
 		VOICE_RECOGNITION(MediaRecorder.AudioSource.VOICE_RECOGNITION),
 		VOICE_COMMUNICATION(MediaRecorder.AudioSource.VOICE_COMMUNICATION),
 		REMOTE_SUBMIX(MediaRecorder.AudioSource.REMOTE_SUBMIX),
-		UNPROCESSED(MediaRecorder.AudioSource.UNPROCESSED),;
+		UNPROCESSED(MediaRecorder.AudioSource.UNPROCESSED),
+		;
 
 		public final int key;
 

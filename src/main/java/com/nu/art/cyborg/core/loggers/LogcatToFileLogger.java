@@ -60,7 +60,6 @@ public class LogcatToFileLogger
 		thread.start();
 	}
 
-
 	@Override
 	public void run() {
 		if (!active) {

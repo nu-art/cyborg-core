@@ -17,5 +17,6 @@ public class Transition_CubeHorizontal
 		view.setTranslationX(parentWidth * progress);
 		view.setPivotX((!in ? 0 : 1) * view.getWidth());
 		view.setPivotY(view.getHeight() * 0.5f);
-		view.setRotationY(90f * progress);	}
+		view.setRotationY(90f * progress);
+	}
 }

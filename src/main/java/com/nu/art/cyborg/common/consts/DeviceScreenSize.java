@@ -32,7 +32,8 @@ public enum DeviceScreenSize {
 	Normal(Configuration.SCREENLAYOUT_SIZE_NORMAL),
 	Large(Configuration.SCREENLAYOUT_SIZE_LARGE),
 	XLarge(4),
-	TV(-1),;
+	TV(-1),
+	;
 
 	private int value;
 

@@ -52,7 +52,8 @@ public class LocaleModule
 		Portuguese("Portuguese", "pt_BR"),
 		Korean("Korean", "ko"),
 		Russian("Russian", "ru"),
-		Chinese_PRC("Chinese_PRC", "zh_CN"),;
+		Chinese_PRC("Chinese_PRC", "zh_CN"),
+		;
 
 		public final String name;
 

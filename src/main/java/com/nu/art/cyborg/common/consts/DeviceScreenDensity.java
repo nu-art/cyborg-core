@@ -31,7 +31,8 @@ public enum DeviceScreenDensity {
 	HDPI("HDPI"),
 	XHDPI("XHDPI"),
 	XXHDPI("XXHDPI"),
-	XXXHDPI("XXXHDPI"),;
+	XXXHDPI("XXXHDPI"),
+	;
 
 	private String density;
 

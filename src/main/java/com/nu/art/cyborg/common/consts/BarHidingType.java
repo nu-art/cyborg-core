@@ -24,7 +24,8 @@ public enum BarHidingType {
 	LowProfile(1, 11),
 	Hide(2, 14),
 	FullScreen(4, 16),
-	UNDOCUMENTED(8, 16),;
+	UNDOCUMENTED(8, 16),
+	;
 
 	private int value;
 
