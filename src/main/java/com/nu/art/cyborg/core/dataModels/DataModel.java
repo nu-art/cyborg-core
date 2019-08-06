@@ -29,6 +29,11 @@ public abstract class DataModel<Item> {
 	private CyborgAdapter adapter;
 	private boolean cyclic;
 	protected boolean autoNotifyChanges = true;
+	/**
+	 * Determines the max number of items for 'cyclic' usage.
+	 * The cyclic datamodel will cycle items until it reaches this max limit.
+	 */
+	private int defaultMaxItems = Integer.MAX_VALUE;
 
 	public DataModel(Class<? extends Item>[] itemTypes) {
 		this.itemTypes = itemTypes;
@@ -42,8 +47,16 @@ public abstract class DataModel<Item> {
 		this.autoNotifyChanges = autoNotifyChanges;
 	}
 
+	protected void setDefaultMaxItems(int defaultMaxItems) {
+		this.defaultMaxItems = defaultMaxItems;
+	}
+
 	public final void setAdapter(CyborgAdapter<?> adapter) {
 		this.adapter = adapter;
+	}
+
+	protected int getDefaultMaxItems() {
+		return defaultMaxItems;
 	}
 
 	public final int getItemTypesCount() {
@@ -90,9 +103,9 @@ public abstract class DataModel<Item> {
 		notifyItemAtPositionChanged(position);
 	}
 
-	public int getItemsCount() {
+	public final int getItemsCount() {
 		int realItemsCount = getRealItemsCount();
-		return cyclic && realItemsCount > 0 ? Integer.MAX_VALUE : realItemsCount;
+		return cyclic && realItemsCount > 0 ? defaultMaxItems : realItemsCount;
 	}
 
 	// ----------- NOTIFIERS --------------
