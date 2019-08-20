@@ -82,7 +82,7 @@ public final class CyborgBuilder {
 
 		LaunchConfiguration launchConfiguration;
 
-		Class<? extends ModulesPack>[] modulesPacks;
+		Class<? extends ModulesPack>[] modulesPacks = new Class[]{};
 
 		public CyborgConfiguration(Context application) {
 			this.application = new WeakReference<>(application);
