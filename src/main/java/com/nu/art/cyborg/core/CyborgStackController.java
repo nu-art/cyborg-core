@@ -139,7 +139,7 @@ public class CyborgStackController
 			return;
 
 		processedRoot = true;
-		rootLayerBuilder.build();
+		rootLayerBuilder.push();
 	}
 
 	@Override
@@ -209,7 +209,7 @@ public class CyborgStackController
 			if (!visibleLayers.contains(layer)) {
 				stackLayerBuilder.append();
 			} else {
-				stackLayerBuilder.build();
+				stackLayerBuilder.push();
 			}
 		}
 	}
@@ -438,13 +438,21 @@ public class CyborgStackController
 			addStackLayer(this);
 		}
 
+		/**
+		 * Use {@link #push()} instead
+		 */
+		@Deprecated
 		public final void build() {
+			push();
+		}
+
+		public final void push() {
 			long started = System.currentTimeMillis();
 
 			if (getStateTag() == null)
 				throw new ImplementationMissingException("MUST specify a stateTag when using a layoutId");
 
-			push(this);
+			CyborgStackController.this.push(this);
 
 			if (Debug_Performance.isEnabled())
 				logDebug("Open Controller (" + controllerType + "): " + (System.currentTimeMillis() - started) + "ms");
@@ -581,7 +589,8 @@ public class CyborgStackController
 
 	private StackLayerBuilder getTopLayer(int offset, boolean remove) {
 		int size = layersStack.size() - offset;
-		int index = size == (hasRoot() && remove ? 1 : 0) ? -1 : size - 1;
+		int i = hasRoot() && remove ? 1 : 0;
+		int index = size == i ? -1 : size - 1;
 		if (index == -1)
 			return null;
 
@@ -881,10 +890,30 @@ public class CyborgStackController
 	}
 
 	public void clear() {
+		if (!hasRoot())
+			clearWithoutRoot();
+		else
+			clearWithRoot();
+	}
+
+	private void clearWithRoot() {
+		if (layersStack.size() == 1)
+			return;
+
+		for (StackLayerBuilder layerBuilder : layersStack) {
+			layerBuilder.setKeepInStack(false);
+		}
+
+		rootLayerBuilder.setKeepInStack(true);
+		rootLayerBuilder.push();
+	}
+
+	private void clearWithoutRoot() {
 		StackLayerBuilder topLayer;
 		while ((topLayer = getTopLayer(true)) != null) {
 			topLayer.detachView();
 		}
+
 		layersStack.clear();
 	}
 

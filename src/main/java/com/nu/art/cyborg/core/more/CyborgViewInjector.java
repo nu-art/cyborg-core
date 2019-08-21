@@ -84,7 +84,6 @@ public final class CyborgViewInjector
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	protected Object getValueFromAnnotationAndField(Object fieldValue, ViewIdentifier annotation, Field viewField) {
 		Class<?> fieldType = viewField.getType();
 		ViewIdentifier viewIdentifier = viewField.getAnnotation(ViewIdentifier.class);

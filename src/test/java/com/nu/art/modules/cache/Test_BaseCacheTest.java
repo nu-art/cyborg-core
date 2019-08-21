@@ -35,7 +35,7 @@ public class Test_BaseCacheTest
 	public static final String URL_musicIconCategoryOpera = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_opera.png";
 	public static final String URL_musicIconCategoryBroadway = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_broadway.png";
 	public static final String URL_musicIconCategoryInternational = "https://storage.googleapis.com/elliq-env-dev.appspot.com/resources/1-18/music_plan/music_category_icons/music_icon_category_ces_international.png";
-	private static final File Folder_Cache = new File("build/test/cache");
+	private static final File Folder_Cache = new File("push/test/cache");
 
 	public static class DownloadTransaction
 		extends BaseTransaction {
@@ -90,7 +90,7 @@ public class Test_BaseCacheTest
 			super.init();
 			getModule(CacheModule.class).DebugFlag.enable();
 			getModule(CacheModule.class).setCacheDir(Folder_Cache);
-			getModule(CacheModule.class).setPersistentDir(new File("build/test/persist"));
+			getModule(CacheModule.class).setPersistentDir(new File("push/test/persist"));
 		}
 	}
 
