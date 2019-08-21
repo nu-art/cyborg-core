@@ -151,13 +151,13 @@ public final class CyborgViewInjector
 		}
 
 		if (CyborgController.class.isAssignableFrom(fieldType)) {
-			return setupController(view, viewField, viewIdentifier.forDev());
+			return setupController(view, viewField, viewIdentifier.forDev(), viewIdentifier.listeners());
 		}
 
 		throw ExceptionGenerator.developerSetViewIdentifierAnnotationToMemberWithUnsupportedType(viewField);
 	}
 
-	private CyborgController setupController(View view, Field viewField, boolean forDev) {
+	private CyborgController setupController(View view, Field viewField, boolean forDev, ViewListener[] listeners) {
 		if (!(view instanceof CyborgView))
 			throw ExceptionGenerator.developerSetViewIdOfIncompatibleViewForController(viewField);
 
@@ -165,6 +165,7 @@ public final class CyborgViewInjector
 		if (controller.getVisibility() != View.GONE)
 			controller.setVisibility(forDev ? View.GONE : View.VISIBLE);
 
+		setupListenersToView(viewField, view, listeners);
 		return controller;
 	}
 
@@ -172,6 +173,15 @@ public final class CyborgViewInjector
 		if (modelDelegator == null)
 			throw ExceptionGenerator.tryingToInjectViewWithoutModelDelgator();
 
+		setupListenersToView(viewField, view, listeners);
+
+		if (forDev && !debuggable)
+			view.setVisibility(View.GONE);
+
+		return view;
+	}
+
+	private void setupListenersToView(Field viewField, View view, ViewListener[] listeners) {
 		for (ViewListener listener : listeners) {
 			if (!listener.getMethodOwnerType().isAssignableFrom(view.getClass()))
 				throw ExceptionGenerator.wrongListenerToViewAssignment(viewField, view, listener);
@@ -182,11 +192,6 @@ public final class CyborgViewInjector
 				throw ExceptionGenerator.errorWhileAssigningListenerToView(e);
 			}
 		}
-
-		if (forDev && !debuggable)
-			view.setVisibility(View.GONE);
-
-		return view;
 	}
 
 	@Override
