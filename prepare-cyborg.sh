@@ -4,7 +4,7 @@ echo "--------------- Prepare for Cyborg ----------------"
 echo
 
 gradleSettingsFile="settings.gradle"
-gradleBuildFile="build.gradle"
+gradleBuildFile="push.gradle"
 
 if ! ([ -e ${gradleBuildFile} ] && [ -e ${gradleSettingsFile} ]); then
     _pwd=`pwd`

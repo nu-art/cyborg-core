@@ -125,7 +125,7 @@ public final class AttributeModule
 
 	public void setAttributes(Context context, AttributeSet attrs, Object instance) {
 		if (attrs == null)
-			throw new BadImplementationException("Cannot build rootView without reference to a controller type!");
+			throw new BadImplementationException("Cannot push rootView without reference to a controller type!");
 
 		Class<?> type = instance.getClass();
 		while (type != Object.class) {
