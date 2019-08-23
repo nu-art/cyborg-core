@@ -57,6 +57,7 @@ import com.nu.art.storage.PreferencesModule.JsonSerializer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnPause;
@@ -614,15 +615,6 @@ public class CyborgStackController
 		return new StackLayerBuilder();
 	}
 
-	public final void popLast() {
-		ThreadsModule.assertMainThread();
-		onBackPressed();
-	}
-
-	public void popUntil(String refKey) {
-		ThreadsModule.assertMainThread();
-	}
-
 	public void setFocused(boolean focused) {
 		this.focused = focused;
 	}
@@ -635,6 +627,77 @@ public class CyborgStackController
 	/**
 	 *
 	 */
+
+	public void clear() {
+		ThreadsModule.assertMainThread();
+		if (!hasRoot())
+			clearWithoutRoot();
+		else
+			clearWithRoot();
+	}
+
+	private void clearWithRoot() {
+		if (layersStack.size() == 1)
+			return;
+
+		for (StackLayerBuilder layerBuilder : layersStack) {
+			layerBuilder.setKeepInStack(false);
+		}
+
+		rootLayerBuilder.setKeepInStack(true);
+		rootLayerBuilder.push();
+	}
+
+	private void clearWithoutRoot() {
+		StackLayerBuilder topLayer;
+		while ((topLayer = getTopLayer(true)) != null) {
+			topLayer.detachView();
+		}
+
+		layersStack.clear();
+	}
+
+	public final void popLast() {
+		ThreadsModule.assertMainThread();
+		onBackPressed();
+	}
+
+	public void popUntil(Class<? extends CyborgController> controllerType) {
+		popUntil(controllerType.getSimpleName());
+	}
+
+	public void popUntil(String tag) {
+		ThreadsModule.assertMainThread();
+
+		ArrayList<StackLayerBuilder> topLayers = new ArrayList<>();
+		for (int i = layersStack.size() - 1; i >= 0; i--) {
+			StackLayerBuilder layer = layersStack.get(i);
+			if (layer.getStateTag().equals(tag))
+				break;
+
+			topLayers.add(layer);
+		}
+
+		for (int i = 0; i < topLayers.size(); i++) {
+			StackLayerBuilder topLayer = topLayers.get(i);
+			if (!topLayer.isKeepBackground())
+				break;
+
+			topLayers.remove(topLayer);
+			i--;
+		}
+
+		List<StackLayerBuilder> visibleLayers = Arrays.asList(getVisibleLayers());
+		for (StackLayerBuilder topLayer : topLayers) {
+			if (visibleLayers.contains(topLayer))
+				continue;
+
+			layersStack.remove(topLayer);
+		}
+
+		popLast();
+	}
+
 	protected void push(final StackLayerBuilder targetLayerToBeAdded) {
 		ThreadsModule.assertMainThread();
 		final StackLayerBuilder[] visibleLayers = getVisibleLayers();
@@ -887,34 +950,6 @@ public class CyborgStackController
 			layerToBeDisposed.saveState();
 
 		layerToBeDisposed.detachView();
-	}
-
-	public void clear() {
-		if (!hasRoot())
-			clearWithoutRoot();
-		else
-			clearWithRoot();
-	}
-
-	private void clearWithRoot() {
-		if (layersStack.size() == 1)
-			return;
-
-		for (StackLayerBuilder layerBuilder : layersStack) {
-			layerBuilder.setKeepInStack(false);
-		}
-
-		rootLayerBuilder.setKeepInStack(true);
-		rootLayerBuilder.push();
-	}
-
-	private void clearWithoutRoot() {
-		StackLayerBuilder topLayer;
-		while ((topLayer = getTopLayer(true)) != null) {
-			topLayer.detachView();
-		}
-
-		layersStack.clear();
 	}
 
 	@Override
