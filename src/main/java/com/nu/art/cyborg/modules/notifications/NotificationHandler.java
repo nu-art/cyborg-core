@@ -19,7 +19,10 @@
 package com.nu.art.cyborg.modules.notifications;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -73,6 +76,26 @@ public abstract class NotificationHandler
 
 		if (getSystemService(NotificationService).getNotificationChannel(notification.getChannelId()) == null)
 			throw ExceptionGenerator.notificationChannelDoesNotExist(notification.getChannelId(), notification);
+	}
+
+	/**
+	 * Creates the channel if it does not exist.
+	 * Avoids creating a notification channel if below Android 8 Oreo, or if the channel already exists.
+	 */
+	protected void createNotificationChannel(String notificationChannelID,
+	                                         String notificationChannelName,
+	                                         String notificationChannelDescription,
+	                                         int channelImportance) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+			return;
+
+		NotificationManager notificationManager = getSystemService(NotificationService);
+		if (notificationManager.getNotificationChannel(notificationChannelID) != null)
+			return;
+
+		NotificationChannel channel = new NotificationChannel(notificationChannelID, notificationChannelName, channelImportance);
+		channel.setDescription(notificationChannelDescription);
+		notificationManager.createNotificationChannel(channel); // Register the channel with the system; you can't change the importance or other notification behaviors after this
 	}
 
 	protected void addActionButton(Builder builder, short notificationId, String action, int iconResId, String label) {
