@@ -20,6 +20,7 @@ package com.nu.art.cyborg.errorMessages;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -231,5 +232,18 @@ public class ExceptionGenerator {
 	public static BadImplementationException notificationChannelDoesNotExist(String channelId, Notification notification) {
 		return new BadImplementationException("Notification has been set with a NotificationChannelId{" + channelId + "}, but there is no NotificationChannel under that ID in the NotificationManager. Please add a NotificationChannel in the NotificationManager. This is a requirement since Android O (api +26). " + notification
 			.toString());
+	}
+
+	public static ImplementationMissingException receiverWasFoundButIsDisabled(Class<? extends BroadcastReceiver> receiverType) {
+		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was found in the final manifest but it is disabled.. you should enable it:\n" +
+			                                          "      <receiver\n" +
+			                                          "          android:name=\"" + receiverType.getName() + "\"\n" +
+			                                          "          android:enabled=\"true\"\n" +
+			                                          "          tools:replace=\"android:enabled\"\n" +
+			                                          "      />");
+	}
+
+	public static ImplementationMissingException receiverWasNotInManifest(Class<? extends BroadcastReceiver> receiverType) {
+		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was NOT found in you final manifest.. you should need add it");
 	}
 }

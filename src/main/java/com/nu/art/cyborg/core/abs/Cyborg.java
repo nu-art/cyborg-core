@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core.abs;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +62,13 @@ public interface Cyborg
 	 * @param actions      The list of actions the receiver will respond to.
 	 */
 	void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String... actions);
+
+	/**
+	 * Makes sure that you didn't forget to add the BroadcastReceiver to the manifest.
+	 *
+	 * @param receiverType The class type of the receiver.
+	 */
+	void enforceBroadcastReceiverInManifest(Class<? extends BroadcastReceiver> receiverType);
 
 	/**
 	 * Unregister the receiver of the specified class type.
