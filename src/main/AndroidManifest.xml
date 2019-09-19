@@ -57,5 +57,30 @@
 
         <service android:name="com.nu.art.cyborg.core.ApplicationService"/>
 
+        <receiver
+            android:name="com.nu.art.cyborg.modules.apps.AppsStatusReceiver"
+            android:enabled="false"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.PACKAGE_DATA_CLEARED"/>
+                <action android:name="android.intent.action.PACKAGE_FIRST_LAUNCH"/>
+                <action android:name="android.intent.action.PACKAGE_RESTARTED"/>
+
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.PACKAGE_CHANGED"/>
+                <action android:name="android.intent.action.PACKAGES_SUSPENDED"/>
+                <action android:name="android.intent.action.PACKAGES_UNSUSPENDED"/>
+
+                <action android:name="android.intent.action.PACKAGE_NEEDS_VERIFICATION"/>
+                <action android:name="android.intent.action.PACKAGE_VERIFIED"/>
+
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 </manifest>

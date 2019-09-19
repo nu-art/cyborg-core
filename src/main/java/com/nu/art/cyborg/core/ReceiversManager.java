@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.core;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -26,8 +27,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.ClassInstantiationRuntimeException;
+import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
 import com.nu.art.core.exceptions.runtime.WhoCalledThis;
 import com.nu.art.cyborg.core.abs.Cyborg;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 import java.util.HashMap;
@@ -87,10 +90,23 @@ final class ReceiversManager
 		cyborg.getApplicationContext().registerReceiver(receiver, intentFilter);
 	}
 
+	public final void enforceBroadcastReceiverInManifest(Class<? extends BroadcastReceiver> receiverType) {
+		PackageManager pm = cyborg.getPackageManager();
+		try {
+			ActivityInfo info = pm.getReceiverInfo(new ComponentName(cyborg.getApplicationContext(), receiverType), PackageManager.GET_DISABLED_COMPONENTS);
+			if (info.enabled)
+				return;
+
+			throw ExceptionGenerator.receiverWasFoundButIsDisabled(receiverType);
+		} catch (NameNotFoundException e) {
+			throw ExceptionGenerator.receiverWasNotInManifest(receiverType);
+		}
+	}
+
 	private <Receiver extends CyborgReceiver<?>> boolean checkIfBroadcastReceiverIsRegisteredInManifest(Class<Receiver> receiverType) {
 		PackageManager pm = cyborg.getPackageManager();
 		try {
-			ActivityInfo info = pm.getReceiverInfo(new ComponentName(cyborg.getApplicationContext(), receiverType), PackageManager.GET_RECEIVERS);
+			ActivityInfo info = pm.getReceiverInfo(new ComponentName(cyborg.getApplicationContext(), receiverType), 0);
 			return info.enabled;
 		} catch (NameNotFoundException e) {
 			return false;

@@ -20,6 +20,7 @@ package com.nu.art.cyborg.core;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -433,6 +434,11 @@ final class CyborgImpl
 	@Override
 	public final void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String... actions) {
 		receiversManager.registerReceiver(receiverType, actions);
+	}
+
+	@Override
+	public void enforceBroadcastReceiverInManifest(Class<? extends BroadcastReceiver> receiverType) {
+		receiversManager.enforceBroadcastReceiverInManifest(receiverType);
 	}
 
 	@Override

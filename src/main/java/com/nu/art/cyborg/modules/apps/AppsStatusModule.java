@@ -20,8 +20,10 @@ package com.nu.art.cyborg.modules.apps;
 
 import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
+import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.core.tools.StreamTools;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.modular.core.ValidationResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +31,6 @@ import java.io.IOException;
 /**
  * Created by TacB0sS on 14/05/2018.
  */
-
 public class AppsStatusModule
 	extends CyborgModule {
 
@@ -47,6 +48,16 @@ public class AppsStatusModule
 	}
 
 	private String[] toBeUpdated = {};
+
+	@Override
+	protected void validateModule(ValidationResult result) {
+		super.validateModule(result);
+		try {
+			cyborg.enforceBroadcastReceiverInManifest(AppsStatusReceiver.class);
+		} catch (Exception e) {
+			result.addEntry(this, ExceptionTools.getStackTrace(e));
+		}
+	}
 
 	@Override
 	protected void init() {

@@ -153,11 +153,7 @@ public class WifiItem_Scanner
 				scannedWifis.put(result.SSID, scannedWifi = new ScannedWifiInfo());
 			}
 
-			WifiStrength strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
-			if (scannedWifi.strength != null && scannedWifi.strength.ordinal() > strength.ordinal())
-				continue;
-
-			scannedWifi.strength = strength;
+			scannedWifi.strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
 			scannedWifi.scanResult = result;
 		}
 
