@@ -20,6 +20,7 @@ package com.nu.art.cyborg.errorMessages;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.view.View;
 
 import androidx.annotation.IdRes;
