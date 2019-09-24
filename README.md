@@ -2,7 +2,7 @@
 
 Cyborg is a framework layer over Android, one that will save you at least 50% of development time, code and Android bugs that you are used to while developing "pure" Android.
 
-If you are an Android developer then you know the pain of an Android Application birth, the logs, the screens, the lists, view pagers, recyclers, adapters, activities, fragments, services, intents and just the thought about all this code you need to write(or copy) AGAIN, is simply depressing! (Boiler plate anyone)
+If you are an Android developer then you know the pain of an Android Application birth, the logs, the screens, the lists, view pagers, recyclers, adapters, activities, fragments, services, intents and just the thought about all this code you need to write(or copy) AGAIN, is simply depressing! (Boilerplate anyone)
 
 The amount of code required to use Cyborg in comparison to Android, or other Android frameworks is infinitesimal, it encapsulate actions, callbacks, dispatching events, large repetitive common logical flows and enforces proper Java architecture, while giving you the freedom to write any logic you like. 
 
