@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.modules.wifi;
 
+import android.Manifest.permission;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -28,6 +29,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,6 +107,9 @@ public class WifiItem_Scanner
 	private void startScan() {
 		try {
 			wifiManager.startScan();
+		} catch (SecurityException e) {
+			throw ExceptionGenerator.missingPermissionsToPerformAction("Start Wifi Network scan", permission.CHANGE_WIFI_STATE, e);
+
 		} catch (Exception e) {
 			logError("Low level Android error when trying to start scanning for wifi... will not SCAN", e);
 		}
@@ -144,14 +149,11 @@ public class WifiItem_Scanner
 
 		WifiStrength[] values = WifiStrength.values();
 		for (ScanResult result : results) {
-			ScannedWifiInfo scannedWifi = scannedWifis.get(result.SSID);
 			if (result.SSID.trim().length() == 0)
 				continue;
 
-			if (scannedWifi == null) {
-				logVerbose("Found Wifi: " + result.SSID);
-				scannedWifis.put(result.SSID, scannedWifi = new ScannedWifiInfo());
-			}
+			ScannedWifiInfo scannedWifi;
+			scannedWifis.put(result.SSID + normalizeFrequency(result), scannedWifi = new ScannedWifiInfo());
 
 			scannedWifi.strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
 			scannedWifi.scanResult = result;
@@ -179,8 +181,19 @@ public class WifiItem_Scanner
 		});
 	}
 
+	private String normalizeFrequency(ScanResult result) {
+		if (result.frequency > 4900)
+			return "-5G";
+
+		return "";
+	}
+
 	public ScannedWifiInfo[] getScanResults() {
 		return ArrayTools.asArray(scanResults, ScannedWifiInfo.class);
+	}
+
+	public boolean isScanning() {
+		return scanning;
 	}
 
 	void enable(boolean enable) {

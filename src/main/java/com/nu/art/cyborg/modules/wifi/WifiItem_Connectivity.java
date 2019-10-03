@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.modules.wifi;
 
+import android.Manifest.permission;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -36,6 +37,7 @@ import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.generics.Processor;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
 
 import java.util.HashSet;
@@ -99,7 +101,11 @@ public class WifiItem_Connectivity
 		if (wifiNetworkInfo == null || !wifiNetworkInfo.isConnected())
 			return false;
 
-		return checkIfReallyConnected(wifiManager.getConnectionInfo());
+		try {
+			return checkIfReallyConnected(wifiManager.getConnectionInfo());
+		} catch (SecurityException e) {
+			throw ExceptionGenerator.missingPermissionsToPerformAction("Check wifi connectivity", permission.ACCESS_WIFI_STATE, e);
+		}
 	}
 
 	final void removeWifi(String name) {
@@ -242,12 +248,16 @@ public class WifiItem_Connectivity
 		return wifiConfiguration;
 	}
 
-	final String getMyIpAddress() {
+	final WifiInfo getWifiConnectionInfo() {
 		if (!isConnectedToWifi()) {
 			throw new BadImplementationException("Not connected wifi!!");
 		}
 
-		WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+		return wifiManager.getConnectionInfo();
+	}
+
+	final String getMyIpAddress() {
+		WifiInfo connectionInfo = getWifiConnectionInfo();
 		return Formatter.formatIpAddress(connectionInfo.getIpAddress());
 	}
 
