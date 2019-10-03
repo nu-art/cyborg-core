@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.modules.wifi;
 
+import android.Manifest.permission;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 
@@ -25,6 +26,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.Condition;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.reflection.tools.ReflectiveTools;
 
 /**
@@ -80,7 +82,15 @@ public class WifiItem_AdapterState
 
 	public void enableAdapter() {
 		logDebug("Enable WIFI Adapter");
-		wifiManager.setWifiEnabled(true);
+		changeWifiAdapterState(true);
+	}
+
+	private void changeWifiAdapterState(boolean enable) {
+		try {
+			wifiManager.setWifiEnabled(enable);
+		} catch (SecurityException e) {
+			throw ExceptionGenerator.missingPermissionsToPerformAction("Changing Wifi adapter", permission.CHANGE_WIFI_STATE, e);
+		}
 	}
 
 	public boolean isAdapterEnabled() {
@@ -89,7 +99,7 @@ public class WifiItem_AdapterState
 
 	public void disableAdapter() {
 		logDebug("Disable WIFI Adapter");
-		wifiManager.setWifiEnabled(false);
+		changeWifiAdapterState(false);
 	}
 
 	void enable(boolean enable) {

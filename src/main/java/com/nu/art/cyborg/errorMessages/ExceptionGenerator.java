@@ -246,4 +246,9 @@ public class ExceptionGenerator {
 	public static ImplementationMissingException receiverWasNotInManifest(Class<? extends BroadcastReceiver> receiverType) {
 		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was NOT found in you final manifest.. you should need add it");
 	}
+
+	public static ImplementationMissingException missingPermissionsToPerformAction(String action, String permission, SecurityException e) {
+		return new ImplementationMissingException("Cannot perform action: '" + action + "' Permission is missing in manifest, please add the following:\n" +
+			                                          "    <uses-permission android:name=\"" + permission + "\"/>\n", e);
+	}
 }

@@ -72,6 +72,10 @@ public class WifiModule
 		WifiNetworkScanner.enable(enable);
 	}
 
+	public boolean isListenForWifiNetworks() {
+		return WifiNetworkScanner.isScanning();
+	}
+
 	public void listenForWifiConnectivity(boolean enable) {
 		WifiConnectivity.enable(enable);
 	}
@@ -94,6 +98,10 @@ public class WifiModule
 
 	public boolean isConnectedToWifi() {
 		return WifiConnectivity.isConnectedToWifi();
+	}
+
+	public final WifiInfo getWifiConnectionInfo() {
+		return WifiConnectivity.getWifiConnectionInfo();
 	}
 
 	public void connectToWifi(String wifiName, String password, WifiSecurityMode securityMode) {

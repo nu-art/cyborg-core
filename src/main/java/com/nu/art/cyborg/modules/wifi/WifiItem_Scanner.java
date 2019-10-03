@@ -18,6 +18,7 @@
 
 package com.nu.art.cyborg.modules.wifi;
 
+import android.Manifest.permission;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
@@ -27,6 +28,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 import com.nu.art.cyborg.core.CyborgReceiver;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,6 +106,9 @@ public class WifiItem_Scanner
 	private void startScan() {
 		try {
 			wifiManager.startScan();
+		} catch (SecurityException e) {
+			throw ExceptionGenerator.missingPermissionsToPerformAction("Start Wifi Network scan", permission.CHANGE_WIFI_STATE, e);
+
 		} catch (Exception e) {
 			logError("Low level Android error when trying to start scanning for wifi... will not SCAN", e);
 		}
@@ -184,6 +189,10 @@ public class WifiItem_Scanner
 
 	public ScannedWifiInfo[] getScanResults() {
 		return ArrayTools.asArray(scanResults, ScannedWifiInfo.class);
+	}
+
+	public boolean isScanning() {
+		return scanning;
 	}
 
 	void enable(boolean enable) {
