@@ -143,14 +143,11 @@ public class WifiItem_Scanner
 
 		WifiStrength[] values = WifiStrength.values();
 		for (ScanResult result : results) {
-			ScannedWifiInfo scannedWifi = scannedWifis.get(result.SSID);
 			if (result.SSID.trim().length() == 0)
 				continue;
 
-			if (scannedWifi == null) {
-				logVerbose("Found Wifi: " + result.SSID);
-				scannedWifis.put(result.SSID, scannedWifi = new ScannedWifiInfo());
-			}
+			ScannedWifiInfo scannedWifi;
+			scannedWifis.put(result.SSID + normalizeFrequency(result), scannedWifi = new ScannedWifiInfo());
 
 			scannedWifi.strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
 			scannedWifi.scanResult = result;
@@ -176,6 +173,13 @@ public class WifiItem_Scanner
 				listener.onScanCompleted();
 			}
 		});
+	}
+
+	private String normalizeFrequency(ScanResult result) {
+		if (result.frequency > 4900)
+			return "-5G";
+
+		return "";
 	}
 
 	public ScannedWifiInfo[] getScanResults() {
