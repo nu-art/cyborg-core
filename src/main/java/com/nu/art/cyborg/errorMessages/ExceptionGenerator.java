@@ -235,7 +235,7 @@ public class ExceptionGenerator {
 	}
 
 	public static ImplementationMissingException receiverWasFoundButIsDisabled(Class<? extends BroadcastReceiver> receiverType) {
-		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was found in the final manifest but it is disabled.. you should enable it:\n" +
+		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was found in the final manifest but it is disabled.. you need to enable it:\n" +
 			                                          "      <receiver\n" +
 			                                          "          android:name=\"" + receiverType.getName() + "\"\n" +
 			                                          "          android:enabled=\"true\"\n" +
@@ -244,6 +244,6 @@ public class ExceptionGenerator {
 	}
 
 	public static ImplementationMissingException receiverWasNotInManifest(Class<? extends BroadcastReceiver> receiverType) {
-		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was NOT found in you final manifest.. you should need add it");
+		return new ImplementationMissingException("Broadcast Receiver of type: '" + receiverType.getName() + "' was NOT found in your final manifest.. you need to add it");
 	}
 }

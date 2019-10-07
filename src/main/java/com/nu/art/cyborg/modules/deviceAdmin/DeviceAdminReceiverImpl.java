@@ -4,8 +4,9 @@ import android.app.admin.DeviceAdminReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import android.widget.Toast;
+
+import com.nu.art.cyborg.core.CyborgBuilder;
+import com.nu.art.cyborg.core.CyborgModule;
 
 public class DeviceAdminReceiverImpl
 	extends DeviceAdminReceiver {
@@ -16,30 +17,32 @@ public class DeviceAdminReceiverImpl
 		return new ComponentName(context, DeviceAdminReceiverImpl.class);
 	}
 
+	private <ModuleClass extends CyborgModule> ModuleClass getModule(Class<ModuleClass> moduleClass) {
+		return CyborgBuilder.getInstance().getModule(moduleClass);
+	}
+
 	@Override
 	public void onLockTaskModeEntering(Context context, Intent intent, String pkg) {
-		super.onLockTaskModeEntering(context, intent, pkg);
-		Log.d(TAG, "onLockTaskModeEntering");
+		getModule(DeviceAdminModule.class).onLockTaskModeEntering(intent, pkg);
 	}
 
 	@Override
 	public void onLockTaskModeExiting(Context context, Intent intent) {
-		super.onLockTaskModeExiting(context, intent);
-		Log.d(TAG, "onLockTaskModeExiting");
+		getModule(DeviceAdminModule.class).onLockTaskModeExiting(intent);
 	}
 
 	@Override
 	public void onEnabled(Context context, Intent intent) {
-		Toast.makeText(context, "DeviceAdmin ENABLED", Toast.LENGTH_SHORT).show();
-	}
-
-	@Override
-	public CharSequence onDisableRequested(Context context, Intent intent) {
-		return "You are about to remove the DeviceAdmin title from Kaspero.";
+		getModule(DeviceAdminModule.class).onEnabled(intent);
 	}
 
 	@Override
 	public void onDisabled(Context context, Intent intent) {
-		Toast.makeText(context,"DeviceAdmin DISABLED", Toast.LENGTH_SHORT).show();
+		getModule(DeviceAdminModule.class).onDisabled(intent);
+	}
+
+	@Override
+	public CharSequence onDisableRequested(Context context, Intent intent) {
+		return getModule(DeviceAdminModule.class).getOnDisableRequestWarningMessage(intent);
 	}
 }
