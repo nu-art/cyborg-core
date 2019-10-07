@@ -67,6 +67,10 @@ public abstract class CyborgModule
 		return (short) UtilsRandom.nextInt(Short.MAX_VALUE);
 	}
 
+	public static short getPositiveShortHashCode(Object obj) {
+		return (short) Math.abs((short) obj.hashCode());
+	}
+
 	private final String TAG = getClass().getSimpleName();
 
 	protected Cyborg cyborg;
