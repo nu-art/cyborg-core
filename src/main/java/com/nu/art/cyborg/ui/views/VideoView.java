@@ -119,7 +119,8 @@ public class VideoView
 	@Override
 	protected void onDetachedFromWindow() {
 		super.onDetachedFromWindow();
-		mediaPlayer.dispose();
+		if (mediaPlayer != null)
+			mediaPlayer.dispose();
 		surface.release();
 	}
 
