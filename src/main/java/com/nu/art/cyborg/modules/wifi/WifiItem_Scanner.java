@@ -77,15 +77,26 @@ public class WifiItem_Scanner
 		;
 	}
 
+	public enum Frequency {
+		_5GHZ,
+		_2_4GHZ,
+		//
+		;
+	}
+
 	public static class ScannedWifiInfo {
 
 		public WifiStrength strength;
 
 		public ScanResult scanResult;
 
+		public Frequency frequency;
+
 		public final String getName() {
 			return scanResult.SSID;
 		}
+
+		public final String getBssid() { return scanResult.BSSID; }
 
 		public WifiSecurityMode getSecurity() {
 			return WifiSecurityMode.getSecurityMode(scanResult.capabilities);
@@ -108,7 +119,6 @@ public class WifiItem_Scanner
 			wifiManager.startScan();
 		} catch (SecurityException e) {
 			throw ExceptionGenerator.missingPermissionsToPerformAction("Start Wifi Network scan", permission.CHANGE_WIFI_STATE, e);
-
 		} catch (Exception e) {
 			logError("Low level Android error when trying to start scanning for wifi... will not SCAN", e);
 		}
@@ -118,17 +128,26 @@ public class WifiItem_Scanner
 		return getAccessPoint(wifiName) != null;
 	}
 
-	ScannedWifiInfo getAccessPoint(String wifiName) {
+	ScannedWifiInfo getAccessPoint(String wifiName, Frequency frequency) {
+		logDebug("getAccessPoint for "+wifiName+" frequency "+frequency);
+		ScannedWifiInfo resultNotMatchingFrequency = null;
 		synchronized (scanResults) {
 			for (ScannedWifiInfo scanResult : scanResults) {
-				if (!scanResult.getName().equals(wifiName))
-					continue;
-
-				return scanResult;
+				if (scanResult.getName().equals(wifiName)) {
+					resultNotMatchingFrequency = scanResult;
+					if (frequency == null) {
+						return resultNotMatchingFrequency;
+					} else if (scanResult.frequency == frequency) {
+						return scanResult;
+					}
+				}
 			}
 		}
+		return resultNotMatchingFrequency;
+	}
 
-		return null;
+	ScannedWifiInfo getAccessPoint(String wifiName) {
+		return getAccessPoint(wifiName, null);
 	}
 
 	@Nullable
@@ -151,11 +170,11 @@ public class WifiItem_Scanner
 			if (result.SSID.trim().length() == 0)
 				continue;
 
-			ScannedWifiInfo scannedWifi;
-			scannedWifis.put(result.SSID + normalizeFrequency(result), scannedWifi = new ScannedWifiInfo());
-
+			ScannedWifiInfo scannedWifi = new ScannedWifiInfo();
+			scannedWifi.frequency = getFrequency(result);
 			scannedWifi.strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
 			scannedWifi.scanResult = result;
+			scannedWifis.put(result.SSID + "_"+ scannedWifi.frequency.name(), scannedWifi);
 		}
 
 		synchronized (scanResults) {
@@ -180,11 +199,11 @@ public class WifiItem_Scanner
 		});
 	}
 
-	private String normalizeFrequency(ScanResult result) {
+	private Frequency getFrequency(ScanResult result) {
 		if (result.frequency > 4900)
-			return "-5G";
+			return Frequency._5GHZ;
 
-		return "";
+		return Frequency._2_4GHZ;
 	}
 
 	public ScannedWifiInfo[] getScanResults() {

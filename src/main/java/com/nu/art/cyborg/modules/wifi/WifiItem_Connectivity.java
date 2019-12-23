@@ -161,23 +161,32 @@ public class WifiItem_Connectivity
 		wifiManager.disconnect();
 	}
 
-	final void connectToWifi(String wifiName, String password, WifiSecurityMode securityMode) {
+	final void connectToWifi(String wifiName, String bssid, String password, WifiSecurityMode securityMode) {
 		if (wifiName == null)
 			throw new BadImplementationException("MUST provide wifiName");
-
+		logDebug("##### connectToWifi called with wifiName:"+wifiName+", bssid: " + bssid);
 		int netId = -1;
 		boolean saved = true;
 		List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
-		if (configuredNetworks != null)
+		if (configuredNetworks != null) {
 			for (WifiConfiguration configuration : configuredNetworks) {
-				if (configuration.SSID.equals("\"" + wifiName + "\""))
+				if (bssid != null) {
+					if (bssid.equals(configuration.BSSID)) {
+						logDebug("##### connectToWifi found configuration for access point with bssid: " + bssid);
+						netId = configuration.networkId;
+					}
+				} else if (configuration.SSID != null && configuration.SSID.equals("\"" + wifiName + "\"")) {
+					logDebug("##### connectToWifi found configuration for wifi name = " + wifiName);
 					netId = configuration.networkId;
+				}
 			}
+		}
+		logDebug("##### connectToWifi configuredNetworks "+configuredNetworks+", bssid: "+bssid+", found netID = "+netId);
 
 		if (netId == -1) {
 			removeWifi(wifiName);
 
-			final WifiConfiguration wifiConfig = createWifiConfiguration(wifiName, password, securityMode);
+			final WifiConfiguration wifiConfig = createWifiConfiguration(wifiName, bssid, password, securityMode);
 			netId = wifiManager.addNetwork(wifiConfig);
 			saved = wifiManager.saveConfiguration();
 		}
@@ -195,13 +204,14 @@ public class WifiItem_Connectivity
 		disconnectFromWifi();
 		wifiManager.enableNetwork(netId, true);
 		wifiManager.reconnect();
-		logInfo("Connecting to Wifi: " + wifiName);
+		logInfo("Connecting to Wifi: " + wifiName+", bssid "+bssid);
 	}
 
-	private WifiConfiguration createWifiConfiguration(String wifiName, String password, WifiSecurityMode securityMode) {
+	private WifiConfiguration createWifiConfiguration(String wifiName, String bssid, String password, WifiSecurityMode securityMode) {
 		WifiConfiguration wifiConfiguration = new WifiConfiguration();
 
 		wifiConfiguration.SSID = "\"" + wifiName + "\"";
+		wifiConfiguration.BSSID = bssid;
 		switch (securityMode) {
 			case WEP:
 				wifiConfiguration.allowedKeyManagement.set(KeyMgmt.NONE);
