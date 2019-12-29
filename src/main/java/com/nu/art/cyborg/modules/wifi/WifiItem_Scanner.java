@@ -130,20 +130,21 @@ public class WifiItem_Scanner
 
 	ScannedWifiInfo getAccessPoint(String wifiName, Frequency frequency) {
 		logDebug("getAccessPoint for "+wifiName+" frequency "+frequency);
-		ScannedWifiInfo resultNotMatchingFrequency = null;
+		ScannedWifiInfo result = null;
 		synchronized (scanResults) {
 			for (ScannedWifiInfo scanResult : scanResults) {
 				if (scanResult.getName().equals(wifiName)) {
-					resultNotMatchingFrequency = scanResult;
+					result = scanResult;
 					if (frequency == null) {
-						return resultNotMatchingFrequency;
-					} else if (scanResult.frequency == frequency) {
-						return scanResult;
+						return result;
+					}
+					if (scanResult.frequency == frequency) {
+						return result;
 					}
 				}
 			}
 		}
-		return resultNotMatchingFrequency;
+		return result;
 	}
 
 	ScannedWifiInfo getAccessPoint(String wifiName) {
@@ -174,7 +175,7 @@ public class WifiItem_Scanner
 			scannedWifi.frequency = getFrequency(result);
 			scannedWifi.strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
 			scannedWifi.scanResult = result;
-			scannedWifis.put(result.SSID + "_"+ scannedWifi.frequency.name(), scannedWifi);
+			scannedWifis.put(result.SSID + normalizeFrequency(scannedWifi.frequency), scannedWifi);
 		}
 
 		synchronized (scanResults) {
@@ -204,6 +205,13 @@ public class WifiItem_Scanner
 			return Frequency._5GHZ;
 
 		return Frequency._2_4GHZ;
+	}
+
+	private String normalizeFrequency(Frequency frequency) {
+		if (frequency == Frequency._5GHZ)
+			return "-5G";
+
+		return "";
 	}
 
 	public ScannedWifiInfo[] getScanResults() {

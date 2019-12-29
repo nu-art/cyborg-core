@@ -22,6 +22,7 @@ import android.Manifest.permission;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.AuthAlgorithm;
 import android.net.wifi.WifiConfiguration.GroupCipher;
@@ -165,24 +166,13 @@ public class WifiItem_Connectivity
 		if (wifiName == null)
 			throw new BadImplementationException("MUST provide wifiName");
 		logDebug("##### connectToWifi called with wifiName:"+wifiName+", bssid: " + bssid);
-		int netId = -1;
-		boolean saved = true;
-		List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
-		if (configuredNetworks != null) {
-			for (WifiConfiguration configuration : configuredNetworks) {
-				if (bssid != null) {
-					if (bssid.equals(configuration.BSSID)) {
-						logDebug("##### connectToWifi found configuration for access point with bssid: " + bssid);
-						netId = configuration.networkId;
-					}
-				} else if (configuration.SSID != null && configuration.SSID.equals("\"" + wifiName + "\"")) {
-					logDebug("##### connectToWifi found configuration for wifi name = " + wifiName);
-					netId = configuration.networkId;
-				}
-			}
-		}
-		logDebug("##### connectToWifi configuredNetworks "+configuredNetworks+", bssid: "+bssid+", found netID = "+netId);
+		int netId = getNetId(wifiName, bssid);
 
+		List<ScanResult> scanResults = wifiManager.getScanResults();
+		int scanResultLen = scanResults != null ? scanResults.size(): 0;
+		logDebug("##### connectToWifi scanResults:"+scanResults+", num of results:"+scanResultLen);
+
+		boolean saved = true;
 		if (netId == -1) {
 			removeWifi(wifiName);
 
@@ -205,6 +195,26 @@ public class WifiItem_Connectivity
 		wifiManager.enableNetwork(netId, true);
 		wifiManager.reconnect();
 		logInfo("Connecting to Wifi: " + wifiName+", bssid "+bssid);
+	}
+
+	private int getNetId(String wifiName, String bssid) {
+		int netId = -1;
+		List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
+		if (configuredNetworks != null) {
+			for (WifiConfiguration configuration : configuredNetworks) {
+				if (bssid != null) {
+					if (bssid.equals(configuration.BSSID)) {
+						logDebug("##### connectToWifi found configur Fation for access point with bssid: " + bssid);
+						netId = configuration.networkId;
+					}
+				} else if (configuration.SSID != null && configuration.SSID.equals("\"" + wifiName + "\"")) {
+					logDebug("##### connectToWifi found configuration for wifi name = " + wifiName);
+					netId = configuration.networkId;
+				}
+			}
+		}
+		logDebug("##### connectToWifi configuredNetworks "+configuredNetworks+", bssid: "+bssid+", found netID = "+netId);
+		return netId;
 	}
 
 	private WifiConfiguration createWifiConfiguration(String wifiName, String bssid, String password, WifiSecurityMode securityMode) {
