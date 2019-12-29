@@ -162,16 +162,24 @@ public class WifiItem_Connectivity
 		wifiManager.disconnect();
 	}
 
-	final void connectToWifi(String wifiName, String bssid, String password, WifiSecurityMode securityMode) {
+	final void connectToWifi(String wifiName, String password, WifiSecurityMode securityMode) {
 		if (wifiName == null)
 			throw new BadImplementationException("MUST provide wifiName");
-		logDebug("##### connectToWifi called with wifiName:"+wifiName+", bssid: " + bssid);
-		int netId = getNetId(wifiName, bssid);
-
+		logDebug("##### connectToWifi called with wifiName:"+wifiName);
 		List<ScanResult> scanResults = wifiManager.getScanResults();
 		int scanResultLen = scanResults != null ? scanResults.size(): 0;
-		logDebug("##### connectToWifi scanResults:"+scanResults+", num of results:"+scanResultLen);
 
+		String bssid = null;
+		logDebug("##### connectToWifi scanResults:"+scanResults+", num of results:"+scanResultLen);
+		for (ScanResult result: scanResults) {
+			logDebug("##### connectToWifi res SSID:"+result.SSID+", BSSID:"+result.BSSID+", frequency: "+result.frequency);
+			if (result.SSID.equals(wifiName)) {
+				bssid = result.BSSID;
+				logDebug("##### connectToWifi FOUND BSSID:"+bssid);
+			}
+		}
+
+		int netId = getNetId(wifiName, bssid);
 		boolean saved = true;
 		if (netId == -1) {
 			removeWifi(wifiName);

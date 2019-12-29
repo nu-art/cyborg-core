@@ -30,7 +30,6 @@ import com.nu.art.cyborg.core.CyborgModule;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.ScannedWifiInfo;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiSecurityMode;
 import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.WifiStrength;
-import com.nu.art.cyborg.modules.wifi.WifiItem_Scanner.Frequency;
 
 import java.net.NetworkInterface;
 import java.util.Collections;
@@ -105,9 +104,8 @@ public class WifiModule
 		return WifiConnectivity.getWifiConnectionInfo();
 	}
 
-	public void connectToWifi(String wifiName, String bssid, String password, WifiSecurityMode securityMode) {
-		logInfo("#### WifiModule connectToWifi:"+ wifiName+", bssid "+bssid);
-		WifiConnectivity.connectToWifi(wifiName, bssid, password, securityMode);
+	public void connectToWifi(String wifiName, String password, WifiSecurityMode securityMode) {
+		WifiConnectivity.connectToWifi(wifiName, password, securityMode);
 	}
 
 	public void disconnectFromWifi() {
@@ -144,10 +142,6 @@ public class WifiModule
 
 	public boolean hasAccessPoint(String wifiName) {
 		return WifiNetworkScanner.hasAccessPoint(wifiName);
-	}
-
-	public ScannedWifiInfo getAccessPoint(String wifiName, Frequency frequency) {
-		return WifiNetworkScanner.getAccessPoint(wifiName, frequency);
 	}
 
 	public ScannedWifiInfo getAccessPoint(String wifiName) {
