@@ -19,8 +19,10 @@
 package com.nu.art.cyborg.modules;
 
 import com.nu.art.core.GenericListener;
+import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.tools.FileTools;
 import com.nu.art.core.tools.StreamTools;
+import com.nu.art.core.tools.StringTools;
 import com.nu.art.core.utils.RunnableQueue;
 import com.nu.art.cyborg.tools.CryptoTools;
 import com.nu.art.modular.core.Module;
@@ -122,6 +124,9 @@ public class CacheModule
 		 * @return Whether or not this item is cached.
 		 */
 		public boolean isCached() {
+			if (StringTools.isEmpty(key))
+				throw new BadImplementationException("Cacheable's KEY is NULL or EMPTY!");
+
 			return CacheModule.this.isCached(this);
 		}
 
