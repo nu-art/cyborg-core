@@ -31,6 +31,7 @@ import android.view.animation.Interpolator;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.tools.DateTimeTools;
+import com.nu.art.core.tools.StringTools;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 
@@ -478,7 +479,7 @@ public class CyborgMediaPlayer
 				setState(PlayerState.Preparing);
 				mediaPlayer.prepareAsync();
 			} catch (Exception e) {
-				if (e.getMessage().contains("status=0x80000000"))
+				if (!StringTools.isEmpty(e.getMessage()) && e.getMessage().contains("status=0x80000000"))
 					logError("You forgot to add the INTERNET permissions to the manifest");
 
 				logError("Error while preparing the media player, url: " + uri, e);
