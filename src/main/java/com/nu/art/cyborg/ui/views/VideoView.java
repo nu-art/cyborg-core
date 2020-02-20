@@ -28,6 +28,7 @@ import android.view.TextureView.SurfaceTextureListener;
 
 import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.media.CyborgMediaPlayer;
 
@@ -39,6 +40,7 @@ public class VideoView
 
 	private CyborgMediaPlayer mediaPlayer;
 	private Surface surface;
+	private boolean hasReadySurface = false;
 
 	public VideoView(Context context) {
 		super(context);
@@ -91,10 +93,22 @@ public class VideoView
 		setTransform(matrix);
 	}
 
+	private Processor<Surface> onSurfaceReadyListener;
+
+	public void setOnSurfaceReadyListener(Processor<Surface> onSurfaceReadyListener) {
+		this.onSurfaceReadyListener = onSurfaceReadyListener;
+		if (this.surface != null && onSurfaceReadyListener != null)
+			onSurfaceReadyListener.process(this.surface);
+	}
+
 	@Override
 	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
 		this.surface = new Surface(surface);
+		logInfo("onSurfaceTextureAvailable");
+		if (onSurfaceReadyListener != null)
+			onSurfaceReadyListener.process(this.surface);
 
+		hasReadySurface = true;
 		if (mediaPlayer != null)
 			mediaPlayer.setSurface(this.surface);
 	}
@@ -105,7 +119,10 @@ public class VideoView
 
 	@Override
 	public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-		return false;
+		logInfo("onSurfaceTextureDestroyed");
+		if (mediaPlayer != null)
+			mediaPlayer.setSurface(null);
+		return hasReadySurface = false;
 	}
 
 	@Override
@@ -122,6 +139,10 @@ public class VideoView
 		if (mediaPlayer != null)
 			mediaPlayer.dispose();
 		surface.release();
+	}
+
+	public boolean hasReadySurface() {
+		return hasReadySurface;
 	}
 
 	@Override
