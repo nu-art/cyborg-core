@@ -40,7 +40,7 @@ public class VideoView
 
 	private CyborgMediaPlayer mediaPlayer;
 	private Surface surface;
-	private boolean hasReadySurface = false;
+	private Processor<Surface> onSurfaceReadyListener;
 
 	public VideoView(Context context) {
 		super(context);
@@ -93,8 +93,6 @@ public class VideoView
 		setTransform(matrix);
 	}
 
-	private Processor<Surface> onSurfaceReadyListener;
-
 	public void setOnSurfaceReadyListener(Processor<Surface> onSurfaceReadyListener) {
 		this.onSurfaceReadyListener = onSurfaceReadyListener;
 		if (this.surface != null && onSurfaceReadyListener != null)
@@ -108,7 +106,6 @@ public class VideoView
 		if (onSurfaceReadyListener != null)
 			onSurfaceReadyListener.process(this.surface);
 
-		hasReadySurface = true;
 		if (mediaPlayer != null)
 			mediaPlayer.setSurface(this.surface);
 	}
@@ -122,7 +119,7 @@ public class VideoView
 		logInfo("onSurfaceTextureDestroyed");
 		if (mediaPlayer != null)
 			mediaPlayer.setSurface(null);
-		return hasReadySurface = false;
+		return false;
 	}
 
 	@Override
@@ -139,10 +136,6 @@ public class VideoView
 		if (mediaPlayer != null)
 			mediaPlayer.dispose();
 		surface.release();
-	}
-
-	public boolean hasReadySurface() {
-		return hasReadySurface;
 	}
 
 	@Override
