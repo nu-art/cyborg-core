@@ -28,6 +28,7 @@ import android.view.TextureView.SurfaceTextureListener;
 
 import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;
+import com.nu.art.core.generics.Processor;
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.media.CyborgMediaPlayer;
 
@@ -39,6 +40,7 @@ public class VideoView
 
 	private CyborgMediaPlayer mediaPlayer;
 	private Surface surface;
+	private Processor<Surface> onSurfaceReadyListener;
 
 	public VideoView(Context context) {
 		super(context);
@@ -91,9 +93,18 @@ public class VideoView
 		setTransform(matrix);
 	}
 
+	public void setOnSurfaceReadyListener(Processor<Surface> onSurfaceReadyListener) {
+		this.onSurfaceReadyListener = onSurfaceReadyListener;
+		if (this.surface != null && onSurfaceReadyListener != null)
+			onSurfaceReadyListener.process(this.surface);
+	}
+
 	@Override
 	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
 		this.surface = new Surface(surface);
+		logInfo("onSurfaceTextureAvailable");
+		if (onSurfaceReadyListener != null)
+			onSurfaceReadyListener.process(this.surface);
 
 		if (mediaPlayer != null)
 			mediaPlayer.setSurface(this.surface);
@@ -105,6 +116,9 @@ public class VideoView
 
 	@Override
 	public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+		logInfo("onSurfaceTextureDestroyed");
+		if (mediaPlayer != null)
+			mediaPlayer.setSurface(null);
 		return false;
 	}
 

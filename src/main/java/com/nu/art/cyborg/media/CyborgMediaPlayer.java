@@ -32,6 +32,7 @@ import androidx.annotation.IdRes;
 
 import com.nu.art.core.exceptions.runtime.BadImplementationException;
 import com.nu.art.core.tools.DateTimeTools;
+import com.nu.art.core.tools.StringTools;
 import com.nu.art.cyborg.common.utils.Interpolators;
 import com.nu.art.cyborg.core.CyborgModuleItem;
 
@@ -259,9 +260,6 @@ public class CyborgMediaPlayer
 		mediaPlayer = new MediaPlayer();
 		setState(PlayerState.Idle);
 
-		Surface surface = surfaceView.get();
-		if (surface != null)
-			mediaPlayer.setSurface(surface);
 		mediaPlayer.setOnErrorListener(_listener);
 		mediaPlayer.setOnBufferingUpdateListener(_listener);
 		mediaPlayer.setOnCompletionListener(_listener);
@@ -277,7 +275,6 @@ public class CyborgMediaPlayer
 	public synchronized void play() {
 		assertThread();
 		setState(PlayerState.Playing);
-
 		mediaPlayer.seekTo(builder.positionMs);
 		mediaPlayer.start();
 		startProgressNotifier();
@@ -316,6 +313,7 @@ public class CyborgMediaPlayer
 		pause();
 
 		logInfo("disposing");
+		mediaPlayer.reset();
 		mediaPlayer.release();
 		duration = 0;
 
@@ -477,9 +475,12 @@ public class CyborgMediaPlayer
 
 				scheduleTimeout(timeout);
 				setState(PlayerState.Preparing);
+				Surface surface = surfaceView.get();
+				if (surface != null)
+					mediaPlayer.setSurface(surface);
 				mediaPlayer.prepareAsync();
 			} catch (Exception e) {
-				if (e.getMessage().contains("status=0x80000000"))
+				if (!StringTools.isEmpty(e.getMessage()) && e.getMessage().contains("status=0x80000000"))
 					logError("You forgot to add the INTERNET permissions to the manifest");
 
 				logError("Error while preparing the media player, url: " + uri, e);
