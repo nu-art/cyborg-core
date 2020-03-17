@@ -101,6 +101,7 @@ public class InternetConnectivityModule
 						logWarning("Will retry ping in " + RETRY_DELAY + " ms. Retry count=" + retryCount);
 						retryCount++;
 						handler.postDelayed(this, RETRY_DELAY);
+						return;
 					}
 					else {
 						logError("connectivity: not connected to internet - Reached maximum retries: " + retryCount, e);
