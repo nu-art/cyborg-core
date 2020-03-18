@@ -46,12 +46,12 @@ public class InternetConnectivityModule
 		void onInternetConnectivityChanged();
 	}
 
-
 	private static final int MAX_RETRIES = 5;
 	private static final int RETRY_DELAY = 1500;
 	private int timeout = 5000;
 	private Handler handler;
 	private volatile Boolean isConnected;
+	private ConnectivityCheckRunnable connectivityCheckRunnable = new ConnectivityCheckRunnable();
 
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
@@ -74,11 +74,22 @@ public class InternetConnectivityModule
 
 	private void checkInternetConnectionAsync() {
 		logVerbose("checkInternetConnectionAsync");
-		handler.post(new ConnectivityCheckRunnable());
+		handler.removeCallbacks(connectivityCheckRunnable);
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				connectivityCheckRunnable.reset();
+			}
+		});
+		handler.post(connectivityCheckRunnable);
 	}
 
 	private class ConnectivityCheckRunnable implements Runnable {
-		private int retryCount = 0;
+		private int retryCount;
+
+		public void reset(){
+			retryCount = 0;
+		}
 
 		@Override
 		public void run() {
