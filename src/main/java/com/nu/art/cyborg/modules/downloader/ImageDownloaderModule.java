@@ -78,6 +78,8 @@ public class ImageDownloaderModule
 
 		ImageDownloaderBuilder setInBitmap(Bitmap bitmap);
 
+		ImageDownloaderBuilder setBitmapConverter(Converter_Bitmap converter);
+
 		ImageDownloaderBuilder setCacheable(String cacheToFolder, String suffix, boolean isMust);
 
 		ImageDownloaderBuilder onSuccess(Processor<Bitmap> onSuccess);
@@ -132,6 +134,12 @@ public class ImageDownloaderModule
 
 		public ImageDownloaderBuilder setInBitmap(Bitmap bitmap) {
 			this.converter = new Converter_WithReusableBitmap(bitmap);
+			return this;
+		}
+
+		@Override
+		public ImageDownloaderBuilder setBitmapConverter(Converter_Bitmap converter) {
+			this.converter = converter;
 			return this;
 		}
 
