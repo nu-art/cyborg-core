@@ -35,6 +35,8 @@ import com.nu.art.cyborg.modules.CacheModule.Cacheable;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.Downloader;
 import com.nu.art.cyborg.modules.downloader.GenericDownloaderModule.DownloaderBuilder;
 import com.nu.art.cyborg.modules.downloader.converters.Converter_Bitmap;
+import com.nu.art.cyborg.modules.downloader.converters.Converter_ImmutableBitmap;
+import com.nu.art.cyborg.modules.downloader.converters.Converter_WithReusableBitmap;
 
 import java.lang.ref.WeakReference;
 
@@ -73,6 +75,8 @@ public class ImageDownloaderModule
 		ImageDownloaderBuilder setPostDownloading(Function<Bitmap, Bitmap> postDownloading);
 
 		ImageDownloaderBuilder setCacheable(Cacheable cacheable);
+
+		ImageDownloaderBuilder setInBitmap(Bitmap bitmap);
 
 		ImageDownloaderBuilder setCacheable(String cacheToFolder, String suffix, boolean isMust);
 
@@ -120,9 +124,15 @@ public class ImageDownloaderModule
 		private Processor<Bitmap> onSuccess;
 		private Runnable onAfter;
 		private Processor<Throwable> onError;
+		private Converter_Bitmap converter = Converter_ImmutableBitmap.converter;
 
 		private void setTarget(ImageView target) {
 			this.target = new WeakReference<>(target);
+		}
+
+		public ImageDownloaderBuilder setInBitmap(Bitmap bitmap) {
+			this.converter = new Converter_WithReusableBitmap(bitmap);
+			return this;
 		}
 
 		private void setUrl(String url) {
@@ -229,7 +239,7 @@ public class ImageDownloaderModule
 			downloaderBuilder.onBefore(onBefore);
 			downloaderBuilder.onAfter(onAfter);
 			downloaderBuilder.setDownloader(downloader);
-			downloaderBuilder.onSuccess(Converter_Bitmap.converter, new Processor<Bitmap>() {
+			downloaderBuilder.onSuccess(converter, new Processor<Bitmap>() {
 
 				@Override
 				public void process(Bitmap bitmap) {
