@@ -19,8 +19,9 @@
 package com.nu.art.cyborg.modules.downloader.converters;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
-import com.nu.art.core.generics.Function;
+import com.nu.art.core.exceptions.runtime.ThisShouldNotHappenException;
 
 import java.io.InputStream;
 
@@ -29,7 +30,17 @@ import java.io.InputStream;
  */
 
 @SuppressWarnings("unused")
-public interface  Converter_Bitmap
-	extends Function<InputStream, Bitmap> {
+public class Converter_ImmutableBitmap
+	implements Converter_Bitmap {
 
+	public static final Converter_ImmutableBitmap converter = new Converter_ImmutableBitmap();
+
+	@Override
+	public Bitmap map(InputStream inputStream) {
+		Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+		if (bitmap == null)
+			throw new ThisShouldNotHappenException("Could not create bitmap from input stream");
+
+		return bitmap;
+	}
 }
