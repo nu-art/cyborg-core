@@ -30,6 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.Restorable;
@@ -139,6 +140,38 @@ public class CyborgRecycler
 			Adapter adapter = getAdapter();
 			return (adapter != null && adapter instanceof CyborgRecyclerAdapter && ((CyborgRecyclerAdapter) adapter).isAutoAnimate()) || super.supportsPredictiveItemAnimations();
 		}
+
+		@Override
+		public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+			return evenlySpannedItems ? spanLayoutSize(super.generateDefaultLayoutParams()) : super.generateDefaultLayoutParams();
+		}
+
+		@Override
+		public RecyclerView.LayoutParams generateLayoutParams(Context c, AttributeSet attrs) {
+			return evenlySpannedItems ? spanLayoutSize(super.generateLayoutParams(c, attrs)) : super.generateLayoutParams(c, attrs);
+		}
+
+		@Override
+		public RecyclerView.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+			return evenlySpannedItems ? spanLayoutSize(super.generateLayoutParams(lp)) : super.generateLayoutParams(lp);
+		}
+
+		private RecyclerView.LayoutParams spanLayoutSize(RecyclerView.LayoutParams layoutParams) {
+			if (getOrientation() == HORIZONTAL) {
+				layoutParams.width = (int) Math.round(getHorizontalSpace() / (double) getItemCount());
+			} else if (getOrientation() == VERTICAL) {
+				layoutParams.height = (int) Math.round(getVerticalSpace() / (double) getItemCount());
+			}
+			return layoutParams;
+		}
+
+		private int getHorizontalSpace() {
+			return getWidth() - getPaddingRight() - getPaddingLeft();
+		}
+
+		private int getVerticalSpace() {
+			return getHeight() - getPaddingBottom() - getPaddingTop();
+		}
 	}
 
 	private CyborgGridLayoutManager layoutManager;
@@ -166,10 +199,15 @@ public class CyborgRecycler
 
 	@Restorable
 	private int scrollInchMs = 25;
+
 	@Restorable
 	private boolean verticalScrollingEnabled = true;
+
 	@Restorable
 	private boolean horizontalScrollingEnabled = true;
+
+	@Restorable
+	private boolean evenlySpannedItems = false;
 
 	public CyborgRecycler(Context context) {
 		this(context, null);
@@ -331,6 +369,10 @@ public class CyborgRecycler
 		this.horizontalScrollingEnabled = horizontalScrollingEnabled;
 	}
 
+	public void setEvenlySpannedItems(boolean evenlySpannedItems) {
+		this.evenlySpannedItems = evenlySpannedItems;
+	}
+
 	/**
 	 * Setting the xml attributes onto a {@link CyborgRecycler} instance.
 	 */
@@ -346,7 +388,8 @@ public class CyborgRecycler
 			R.styleable.Recycler_landscapeColumnsCount,
 			R.styleable.Recycler_portraitColumnsCount,
 			R.styleable.Recycler_verticalScrollingEnabled,
-			R.styleable.Recycler_horizontalScrollingEnabled
+			R.styleable.Recycler_horizontalScrollingEnabled,
+			R.styleable.Recycler_evenlySpannedItems
 		};
 
 		private CyborgRecyclerSetter() {
@@ -391,6 +434,10 @@ public class CyborgRecycler
 			if (attr == R.styleable.Recycler_horizontalScrollingEnabled) {
 				boolean horizontalScrollingEnabled = a.getBoolean(attr, true);
 				instance.setHorizontalScrollingEnabled(horizontalScrollingEnabled);
+			}
+			if (attr == R.styleable.Recycler_evenlySpannedItems) {
+				boolean evenlySpannedItems = a.getBoolean(attr, false);
+				instance.setEvenlySpannedItems(evenlySpannedItems);
 			}
 		}
 

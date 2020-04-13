@@ -56,6 +56,7 @@
         <attr name="verticalSpacing" format="dimension"/>
         <attr name="horizontalSpacing" format="dimension"/>
         <attr name="scrollInchMs" format="integer"/>
+        <attr name="evenlySpannedItems" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="RoundedImageView">
