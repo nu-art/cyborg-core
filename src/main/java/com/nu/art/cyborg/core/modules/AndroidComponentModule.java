@@ -52,6 +52,10 @@ public final class AndroidComponentModule
 		this.packageManager = cyborg.getPackageManager();
 	}
 
+	public AndroidComponentBuilder createComponentBuilder() {
+		return new AndroidComponentBuilder();
+	}
+
 	public class AndroidComponentBuilder {
 
 		private ComponentType type;
