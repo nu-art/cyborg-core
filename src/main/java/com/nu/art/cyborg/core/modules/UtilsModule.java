@@ -31,13 +31,10 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.provider.MediaStore;
 
-import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
 import com.nu.art.core.tools.ExceptionTools;
 import com.nu.art.cyborg.R;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
-import com.nu.art.cyborg.common.beans.FullComponentName;
 import com.nu.art.cyborg.common.consts.AnalyticsConstants;
-import com.nu.art.cyborg.common.consts.ComponentType;
 import com.nu.art.cyborg.common.interfaces.StringResourceResolver;
 import com.nu.art.cyborg.common.utils.DynamicStringsResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
@@ -47,7 +44,6 @@ import com.nu.art.cyborg.core.CyborgModule;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @ModuleDescriptor(usesPermissions = {})
@@ -57,17 +53,13 @@ public final class UtilsModule
 
 	private static final String SCHEME = "package";
 
-	private static final String APP_PKG_NAME_21 = "com.android.settings.ApplicationPkgName";
-
-	private static final String APP_PKG_NAME_22 = "pkg";
+	private static final String APP_PKG_NAME = "com.android.settings.ApplicationPkgName";
 
 	private static final String APP_DETAILS_PACKAGE_NAME = "com.android.settings";
 
 	private static final String APP_DETAILS_CLASS_NAME = "com.android.settings.InstalledAppDetails";
 
 	private static final String ANDROID_SETTINGS_APPLICATION_DETAILS_SETTINGS = "android.settings.APPLICATION_DETAILS_SETTINGS";
-
-	private final String AppPackageNameKey = (Build.VERSION.SDK_INT == 8 ? APP_PKG_NAME_22 : APP_PKG_NAME_21);
 
 	public static final StringResourceResolver CompleteActionWithTitle = new DynamicStringsResolver(R.string.UtilsModule_IntentResolverDefaultTitle);
 
@@ -193,7 +185,7 @@ public final class UtilsModule
 		} else { // below 2.3
 			intent.setAction(Intent.ACTION_VIEW);
 			intent.setClassName(APP_DETAILS_PACKAGE_NAME, APP_DETAILS_CLASS_NAME);
-			intent.putExtra(AppPackageNameKey, appPackageName);
+			intent.putExtra(APP_PKG_NAME, appPackageName);
 		}
 		if (context == null)
 			context = cyborg.getApplicationContext();
@@ -202,114 +194,6 @@ public final class UtilsModule
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		}
 		context.startActivity(intent);
-	}
-
-	/**
-	 * Check if any default activity is set to fulfill the supplied intent.<br>
-	 * NOTE: That there is also a system activity that fulfill this intent, the application chooser activity, which is not included in the check, e.g. if the
-	 * Application Chooser activity is set, this method would return null.
-	 *
-	 * @param intent The intent to check.
-	 *
-	 * @return Whether or not a default activity is set for this sort of intent.
-	 */
-	public final ComponentName getDefaultComponentForIntent(ComponentType type, Intent intent, IntentFilter... intentFilter) {
-		PackageManager packageManager = cyborg.getPackageManager();
-
-		List<ComponentName> activities = new ArrayList<>();
-		List<IntentFilter> filters = new ArrayList<>(Arrays.asList(intentFilter));
-
-		/**
-		 * Returns all the default activities in the system!
-		 */
-		packageManager.getPreferredActivities(filters, activities, null);
-		List<ResolveInfo> fulfillingComponents;
-		switch (type) {
-
-			case Activity:
-				fulfillingComponents = packageManager.queryIntentActivities(intent, 0);
-				break;
-			case BroadcastReceiver:
-				fulfillingComponents = packageManager.queryBroadcastReceivers(intent, 0);
-				break;
-			case Service:
-				fulfillingComponents = packageManager.queryIntentServices(intent, 0);
-				break;
-			default:
-				throw new MUST_NeverHappenException("Unknown component type...  MUST be a hack!!");
-		}
-
-		String name = "";
-		for (ComponentName componentName : activities) {
-			for (ResolveInfo resolveInfo : fulfillingComponents) {
-				switch (type) {
-					case Activity:
-						name = resolveInfo.activityInfo.name;
-						break;
-					case BroadcastReceiver:
-						name = resolveInfo.activityInfo.name;
-						break;
-					case Service:
-						name = resolveInfo.serviceInfo.name;
-						break;
-				}
-
-				if (name.equals(componentName.getClassName())) {
-					logInfo("Found default Activity: " + componentName.getPackageName() + ":" + componentName.getClassName());
-					return componentName;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * @param intent The intent to check.
-	 *
-	 * @return The actual activity that would be invoked by the supplied intent.
-	 */
-	public final ComponentName getFinalActivityForIntent(Intent intent) {
-		PackageManager packageManager = cyborg.getPackageManager();
-		ResolveInfo finalActivity = packageManager.resolveActivity(intent, 0);
-		return new ComponentName(finalActivity.activityInfo.packageName, finalActivity.activityInfo.name);
-	}
-
-	// /**
-	// * @param intent The intent to check.
-	// * @param activityType The default activity in question.
-	// * @return Whether or not the supplied activity is set for this sort of intent.
-	// */
-	// public final boolean isActivitySetAsDefaultForIntent(Intent intent, Class<? extends Activity> activityType) {
-	// ResolveInfo defaults = getDefaultActivityForIntent(intent);
-	// return defaults.activityInfo.name.equals(activityType.getName());
-	// }
-	//
-	// public final ResolveInfo getDefaultActivityForIntent(Intent intent) {
-	// PackageManager packageManager = application.getPackageManager();
-	// return packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
-	// }
-
-	public final boolean isComponentActive(FullComponentName fullComponent) {
-		Intent intent = new Intent();
-		intent.setComponent(fullComponent.getComponentName());
-		ComponentName result = getFinalActivityForIntent(intent);
-		return fullComponent.equals(result);
-	}
-
-	public final void enableComponent(FullComponentName fullComponent) {
-		PackageManager pm = cyborg.getPackageManager();
-		pm.setComponentEnabledSetting(fullComponent.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-	}
-
-	public final void returnComponentToDefaultState(FullComponentName fullComponent) {
-		PackageManager pm = cyborg.getPackageManager();
-		pm.setComponentEnabledSetting(fullComponent.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
-	}
-
-	public final void disableComponent(FullComponentName fullComponent) {
-		PackageManager pm = cyborg.getPackageManager();
-		pm.setComponentEnabledSetting(fullComponent.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 	}
 
 	public final void openApplicationInPlayStore(final String packageName) {
