@@ -297,9 +297,16 @@ public class CacheModule
 				}
 			}
 		} catch (final Throwable e) {
+			try {
+				FileTools.delete(cacheable.getLocalCacheFile());
+			} catch (IOException ex) {
+				logWarning("Error deleting partial cache file" + cacheable.getLocalCacheFile(), ex);
+			}
+
 			synchronized (currentlyCaching) {
 				if (DebugFlag.isEnabled())
 					logDebug("Firing Cacheable Error: " + cacheable.getLocalCacheFile().getAbsolutePath());
+
 				ArrayList<CacheListener> listeners = currentlyCaching.get(absolutePath);
 				for (CacheListener cacheListener : listeners) {
 					cacheListener.onItemCacheError(cacheable, e);
