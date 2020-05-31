@@ -68,6 +68,7 @@ public class WifiItem_Scanner
 	}
 
 	public enum WifiStrength {
+		NoSignal,
 		VeryWeak,
 		Weak,
 		Medium,
@@ -83,7 +84,7 @@ public class WifiItem_Scanner
 
 		public ScanResult scanResult;
 
-		public final String getName() {
+		public String getName() {
 			return scanResult.SSID;
 		}
 
