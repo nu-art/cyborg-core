@@ -81,6 +81,10 @@ public class WifiModule
 		WifiConnectivity.enable(enable);
 	}
 
+	public boolean isListenForWifiConnectivity() {
+		return WifiConnectivity.isEnabled();
+	}
+
 	public void listenForWifiAdapterState(boolean enable) {
 		WifiAdapter.enable(enable);
 	}

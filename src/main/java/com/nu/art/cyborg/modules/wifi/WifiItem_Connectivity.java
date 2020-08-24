@@ -85,6 +85,10 @@ public class WifiItem_Connectivity
 		monitor.init();
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
 	final void setConnectivityTimeout(long connectivityTimeout) {
 		this.connectivityTimeout = connectivityTimeout;
 	}
