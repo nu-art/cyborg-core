@@ -89,6 +89,10 @@ public class WifiModule
 		WifiAdapter.enable(enable);
 	}
 
+	public boolean isListenForAdapterState() {
+		return WifiAdapter.isEnabled();
+	}
+
 	public void disableAdapter() {
 		WifiAdapter.disableAdapter();
 	}

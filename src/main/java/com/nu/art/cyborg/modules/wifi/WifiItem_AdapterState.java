@@ -69,6 +69,8 @@ public class WifiItem_AdapterState
 
 	private WifiAdapterStateMonitor monitor;
 
+	private boolean enable;
+
 	@Override
 	protected void init() {
 		monitor = new WifiAdapterStateMonitor();
@@ -102,11 +104,17 @@ public class WifiItem_AdapterState
 		changeWifiAdapterState(false);
 	}
 
+	public final boolean isEnabled() {
+		return enable;
+	}
+
 	void enable(boolean enable) {
 		if (enable)
 			cyborg.registerReceiver(WifiAdapterStateReceiver.class, WifiManager.WIFI_STATE_CHANGED_ACTION);
 		else
 			cyborg.unregisterReceiver(WifiAdapterStateReceiver.class);
+
+		this.enable = enable;
 	}
 
 	public static class WifiAdapterStateReceiver
