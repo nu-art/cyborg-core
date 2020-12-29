@@ -121,7 +121,7 @@ public class CyborgStackController
 		return containerLayout;
 	}
 
-	private StackLayerBuilder getRootLayerBuilder() {
+	protected StackLayerBuilder getRootLayerBuilder() {
 		if (rootLayerBuilder == null)
 			rootLayerBuilder = createLayerBuilder();
 
