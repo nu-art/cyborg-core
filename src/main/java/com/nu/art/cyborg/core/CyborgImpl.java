@@ -154,7 +154,7 @@ final class CyborgImpl
 		activityStackHandler = new ActivityStack(CyborgImpl.this);
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
-		logVerbose(" Application Created1111...");
+		logVerbose(" Application Created...");
 		builder
 			.setCyborg(this)
 			.addModulePacks(configuration.modulesPacks)
