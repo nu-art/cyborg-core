@@ -155,7 +155,11 @@ final class CyborgImpl
 
 		logVerbose(" Application Created...");
 		moduleManager = new ModuleManager();
-		new CyborgModulesBuilder().setCyborg(this).addModulePacks(configuration.modulesPacks).build(moduleManager);
+		moduleManager = new CyborgModulesBuilder()
+			.setCyborg(this)
+			.addModulePacks(configuration.modulesPacks)
+			.setOnApplicationStartingListener(configuration.onApplicationStartedListener)
+			.build();
 
 		if (!inEditMode) {
 			dispatchOnLoadingCompleted();
