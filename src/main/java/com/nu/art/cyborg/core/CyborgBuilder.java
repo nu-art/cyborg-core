@@ -34,6 +34,7 @@ import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.modular.core.Module;
 import com.nu.art.modular.core.ModulesPack;
+import com.nu.art.modular.interfaces.OnApplicationStartingListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -84,6 +85,8 @@ public final class CyborgBuilder {
 
 		Class<? extends ModulesPack>[] modulesPacks = new Class[]{CyborgBasePack.class};
 
+		OnApplicationStartingListener onApplicationStartedListener;
+
 		public CyborgConfiguration(Context application) {
 			this.application = new WeakReference<>(application);
 		}
@@ -119,6 +122,11 @@ public final class CyborgBuilder {
 
 		public CyborgConfiguration setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
 			this.launchConfiguration = launchConfiguration;
+			return this;
+		}
+
+		public CyborgConfiguration setOnApplicationStartedListener(OnApplicationStartingListener onApplicationStartedListener) {
+			this.onApplicationStartedListener = onApplicationStartedListener;
 			return this;
 		}
 	}
