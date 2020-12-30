@@ -154,7 +154,6 @@ final class CyborgImpl
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
 		logVerbose(" Application Created...");
-		moduleManager = new ModuleManager();
 		moduleManager = new CyborgModulesBuilder()
 			.setCyborg(this)
 			.addModulePacks(configuration.modulesPacks)
