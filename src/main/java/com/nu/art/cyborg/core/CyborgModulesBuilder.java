@@ -24,6 +24,7 @@ import com.nu.art.cyborg.common.consts.AnalyticsConstants;
 import com.nu.art.cyborg.core.abs.Cyborg;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.modular.core.Module;
+import com.nu.art.modular.core.ModuleManager;
 import com.nu.art.modular.core.ModuleManager.ModuleCreatedListener;
 import com.nu.art.modular.core.ModuleManagerBuilder;
 
@@ -64,5 +65,9 @@ final class CyborgModulesBuilder
 			return;
 
 		((CyborgModule) module).setCyborg(cyborg);
+	}
+
+	public final ModuleManager getModuleManager() {
+		return manager;
 	}
 }

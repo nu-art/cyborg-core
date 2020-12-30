@@ -93,7 +93,8 @@ final class CyborgImpl
 
 	private ActivityStack activityStackHandler;
 
-	private ModuleManager moduleManager;
+	private final CyborgModulesBuilder builder = new CyborgModulesBuilder();
+	private final ModuleManager moduleManager = builder.getModuleManager();
 
 	private AppMeta meta;
 
@@ -153,8 +154,8 @@ final class CyborgImpl
 		activityStackHandler = new ActivityStack(CyborgImpl.this);
 		receiversManager = new ReceiversManager(CyborgImpl.this);
 
-		logVerbose(" Application Created...");
-		moduleManager = new CyborgModulesBuilder()
+		logVerbose(" Application Created1111...");
+		builder
 			.setCyborg(this)
 			.addModulePacks(configuration.modulesPacks)
 			.setOnApplicationStartingListener(configuration.onApplicationStartedListener)
