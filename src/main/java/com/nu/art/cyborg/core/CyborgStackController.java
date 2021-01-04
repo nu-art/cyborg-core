@@ -636,6 +636,33 @@ public class CyborgStackController
 			clearWithRoot();
 	}
 
+	public void removeAllLowerLayers() {
+		if (layersStack.size() == 1 && getRootViewImpl().getChildCount() == 0)
+			return;
+		while (layersStack.size() > 1) {
+			StackLayerBuilder stackLayerBuilder = layersStack.get(0);
+			logError("Removing controller: " + (stackLayerBuilder.controller != null ? stackLayerBuilder.controller.getClass() : null));
+			stackLayerBuilder.setKeepInStack(false);
+			stackLayerBuilder.setToBeDisposed(true);
+			disposeLayer(stackLayerBuilder, false);
+			stackLayerBuilder.detachView();
+			layersStack.remove(0);
+		}
+		int childCount = getRootViewImpl().getChildCount();
+		for (int i = 0; i < childCount; i++) {
+			View childAt = getRootViewImpl().getChildAt(i);
+			if (childAt == null)
+				continue;
+			CyborgController controller = (CyborgController) childAt.getTag();
+			if (controller == null)
+				continue;
+			for (StackLayerBuilder builder : layersStack)
+				if (builder.controller != null && builder.controller != controller) {
+					getRootViewImpl().removeView(childAt);
+				}
+		}
+	}
+
 	private void clearWithRoot() {
 		if (layersStack.size() == 1)
 			return;
