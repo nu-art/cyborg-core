@@ -289,7 +289,7 @@ public class CyborgStackController
 		private transient Class<? extends CyborgController> controllerType;
 
 		private transient boolean toBeDisposed;
-		private transient boolean keepInStack = true;
+		private transient boolean keepInStack = CyborgStackSetter.Default_KeepInStack;
 		private transient CyborgController controller;
 		private LayerData serializableData;
 
@@ -395,9 +395,6 @@ public class CyborgStackController
 		}
 
 		protected void create() {
-			if (DebugFlag.isEnabled())
-				logWarning("Create: " + this);
-
 			if (controllerType == null)
 				throw ExceptionGenerator.stackLayerHasNoControllerType();
 
@@ -409,6 +406,9 @@ public class CyborgStackController
 
 			controller.setStateTag(getStateTag());
 			controller._createView(inflater, getRootViewImpl(), false);
+
+			if (DebugFlag.isEnabled())
+				logWarning("Create: " + logController(this));
 
 			// Always add it as the lowest item to avoid animation hiccups, where the popping a layer actually places its view on top instead of under... is this correct? the logic sure seems reliable, but are there any other cases this might not work?
 			getRootViewImpl().addView(controller.getRootView());
@@ -468,10 +468,10 @@ public class CyborgStackController
 
 		void detachView() {
 			if (DebugFlag.isEnabled())
-				logWarning("detachView: " + this);
+				logWarning("detachView: " + logController(this));
 
 			if (controller == null) {
-				logWarning("cannot detach view... no controller for layer: " + this);
+				logWarning("cannot detach view... no controller for layer: " + logController(this));
 				return;
 			}
 
@@ -543,7 +543,7 @@ public class CyborgStackController
 			View childAt = getRootViewImpl().getChildAt(i);
 			CyborgController controller = (CyborgController) childAt.getTag();
 			if (controller != null)
-				viewsTags[i] = controller.getStateTag();
+				viewsTags[i] = logController(controller);
 			else
 				viewsTags[i] = childAt.getId() + "-" + childAt.getClass().getSimpleName();
 		}
@@ -555,7 +555,7 @@ public class CyborgStackController
 
 			@Override
 			public String map(StackLayerBuilder stackLayerBuilder) {
-				return stackLayerBuilder.getStateTag();
+				return logController(stackLayerBuilder);
 			}
 		}, ArrayTools.asArray(layersStack, StackLayerBuilder.class));
 	}
@@ -730,7 +730,7 @@ public class CyborgStackController
 		targetLayerToBeAdded.create();
 
 		if (DebugFlag.isEnabled())
-			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + targetLayerToBeAdded);
+			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + logController(targetLayerToBeAdded));
 
 		animate(true, true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
 	}
@@ -779,7 +779,7 @@ public class CyborgStackController
 		final StackLayerBuilder animatingLayer = (in ? toLayer : fromLayer);
 
 		if (animatingTransition && DebugFlag.isEnabled())
-			logInfo("TRANSITION ANIMATION IN PROGRESS!!!");
+			logInfo("TRANSITION ANIMATION IN PROGRESS!!! " + logController(fromLayer) + " => " + logController(toLayer));
 
 		Transition[] transitions = animatingLayer.transitions;
 		final Transition[] transitionAnimators = transitions == null || transitions.length == 0 ? config.transitions : transitions;
@@ -805,13 +805,13 @@ public class CyborgStackController
 				setInAnimationState(true);
 				if (toView != null)
 					toView.setVisibility(previousVisibility);
-
+				final CyborgController controllerToLog = fromLayer == null ? null : fromLayer.controller;
 				AnimatorListenerImpl listener = new AnimatorListenerImpl() {
 					@Override
 					public void onAnimationEnd(Animator animator) {
 						super.onAnimationEnd(animator);
 						if (_listener != null && _listener.fromLayer != null && DebugFlag.isEnabled())
-							logInfo("disposing: " + _listener.fromLayer);
+							logInfo("disposing: " + logController(controllerToLog));
 
 						if (previousListener == _listener)
 							previousListener = null;
@@ -942,7 +942,7 @@ public class CyborgStackController
 		 * the layer we pop will be disposed when the onAnimationEnd of the last push would be called
 		 */
 		if (getTopLayer() == layerToBeDisposed) {
-			logError("Will not dispose: " + layerToBeDisposed);
+			logError("Will not dispose: " + logController(layerToBeDisposed));
 			return;
 		}
 
@@ -980,6 +980,8 @@ public class CyborgStackController
 	@ReflectiveInitialization
 	public static class CyborgStackSetter
 		extends AttributesSetter<CyborgStackController> {
+
+		private static final boolean Default_KeepInStack = true;
 
 		private static int[] ids = {
 			R.styleable.StackController_transition,
@@ -1036,13 +1038,17 @@ public class CyborgStackController
 			}
 
 			if (attr == R.styleable.StackController_rootKeep) {
-				boolean keepRoot = a.getBoolean(attr, true);
+				boolean keepRoot = a.getBoolean(attr, Default_KeepInStack);
+				if (keepRoot == Default_KeepInStack)
+					return;
 				instance.getRootLayerBuilder().setKeepInStack(keepRoot);
 				return;
 			}
 
 			if (attr == R.styleable.StackController_rootTag) {
 				String rootTag = a.getString(attr);
+				if (rootTag == null)
+					return;
 				instance.getRootLayerBuilder().setStateTag(rootTag);
 				return;
 			}
@@ -1066,5 +1072,17 @@ public class CyborgStackController
 		void setPopOnBackPress(boolean popOnBackPress) {
 			this.popOnBackPress = popOnBackPress;
 		}
+	}
+
+	protected String logController(StackLayerBuilder stackLayerBuilder) {
+		if (stackLayerBuilder == null)
+			return null;
+		return logController(stackLayerBuilder.controller);
+	}
+
+	protected String logController(CyborgController controller) {
+		if (controller == null)
+			return null;
+		return controller.getStateTag() + "[" + controller.hashCode() + "]";
 	}
 }
