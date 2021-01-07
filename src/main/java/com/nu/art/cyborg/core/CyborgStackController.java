@@ -59,6 +59,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.nu.art.core.tools.ArrayTools.join;
+import static com.nu.art.core.tools.ArrayTools.map;
 import static com.nu.art.cyborg.core.abs._DebugFlags.Debug_Performance;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnPause;
 import static com.nu.art.cyborg.core.consts.LifecycleState.OnResume;
@@ -123,13 +125,13 @@ public class CyborgStackController
 
 	protected StackLayerBuilder getRootLayerBuilder() {
 		if (rootLayerBuilder == null)
-			rootLayerBuilder = createLayerBuilder();
+			rootLayerBuilder = createLayerBuilder().setAsRoot(true);
 
 		return rootLayerBuilder;
 	}
 
 	private boolean hasRoot() {
-		return rootLayerBuilder != null && rootLayerBuilder.controllerType != null;
+		return layersStack.size() > 0 && layersStack.get(0).root;
 	}
 
 	private void assignRootController() {
@@ -167,7 +169,7 @@ public class CyborgStackController
 			visibleLayer.saveState();
 		}
 
-		LayerData[] layers = ArrayTools.map(LayerData.class, new Function<StackLayerBuilder, LayerData>() {
+		LayerData[] layers = map(LayerData.class, new Function<StackLayerBuilder, LayerData>() {
 			@Override
 			public LayerData map(StackLayerBuilder stackLayerBuilders) {
 				return stackLayerBuilders.serializableData;
@@ -288,6 +290,7 @@ public class CyborgStackController
 		private transient Interpolator interpolator;
 		private transient Class<? extends CyborgController> controllerType;
 
+		private transient boolean root;
 		private transient boolean toBeDisposed;
 		private transient boolean keepInStack = CyborgStackSetter.Default_KeepInStack;
 		private transient CyborgController controller;
@@ -338,6 +341,11 @@ public class CyborgStackController
 
 		public final StackLayerBuilder setKeepInStack(boolean keepInStack) {
 			this.keepInStack = keepInStack;
+			return this;
+		}
+
+		public final StackLayerBuilder setAsRoot(boolean root) {
+			this.root = root;
 			return this;
 		}
 
@@ -551,7 +559,7 @@ public class CyborgStackController
 	}
 
 	public final String[] getStackLayersTags() {
-		return ArrayTools.map(String.class, new Function<StackLayerBuilder, String>() {
+		return map(String.class, new Function<StackLayerBuilder, String>() {
 
 			@Override
 			public String map(StackLayerBuilder stackLayerBuilder) {
@@ -644,7 +652,7 @@ public class CyborgStackController
 			layerBuilder.setKeepInStack(false);
 		}
 
-		rootLayerBuilder.setKeepInStack(true);
+		rootLayerBuilder.setKeepInStack(true); // ?
 		rootLayerBuilder.push();
 	}
 
@@ -712,8 +720,14 @@ public class CyborgStackController
 		final Runnable animationEnded = new Runnable() {
 			@Override
 			public void run() {
+				if (DebugFlag.isEnabled())
+					logInfo("Push animation ended: " + logController(targetLayerToBeAdded));
+
 				if (!targetLayerToBeAdded.isKeepBackground()) {
 					for (StackLayerBuilder layer : visibleLayers) {
+						if (DebugFlag.isEnabled())
+							logInfo("Flag toDispose: " + logController(layer));
+
 						// remove the layer from the stack if at the end of this transition it should not be there.
 						layer.toBeDisposed = true;
 					}
@@ -730,7 +744,7 @@ public class CyborgStackController
 		targetLayerToBeAdded.create();
 
 		if (DebugFlag.isEnabled())
-			logInfo("push: " + Arrays.toString(visibleLayers) + " => " + logController(targetLayerToBeAdded));
+			logInfo("push: [" + join(",", map(String.class, this::logController, visibleLayers)) + "] => " + logController(targetLayerToBeAdded));
 
 		animate(true, true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
 	}
@@ -933,6 +947,9 @@ public class CyborgStackController
 	}
 
 	private void disposeLayer(StackLayerBuilder layerToBeDisposed, boolean saveState) {
+		if (DebugFlag.isEnabled())
+			logInfo("Disposing: " + logController(layerToBeDisposed));
+
 		if (layerToBeDisposed == null) {
 			logError("Will not dispose - layer is null");
 			return;
