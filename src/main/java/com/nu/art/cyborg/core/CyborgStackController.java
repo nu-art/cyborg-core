@@ -131,7 +131,7 @@ public class CyborgStackController
 	}
 
 	private boolean hasRoot() {
-		return layersStack.size() > 0 && layersStack.get(0).root;
+		return rootLayerBuilder != null && rootLayerBuilder.controllerType != null;
 	}
 
 	private void assignRootController() {
@@ -744,7 +744,13 @@ public class CyborgStackController
 		targetLayerToBeAdded.create();
 
 		if (DebugFlag.isEnabled())
-			logInfo("push: [" + join(",", map(String.class, this::logController, visibleLayers)) + "] => " + logController(targetLayerToBeAdded));
+			logInfo("push: [" + join(",", map(String.class, new Function<StackLayerBuilder, String>() {
+				@Override
+				public String map(StackLayerBuilder stackLayerBuilder) {
+					String log = logController(stackLayerBuilder);
+					return log != null ? log : "";
+				}
+			}, visibleLayers)) + "] => " + logController(targetLayerToBeAdded));
 
 		animate(true, true, originLayerToBeDisposed, targetLayerToBeAdded, animationEnded);
 	}
