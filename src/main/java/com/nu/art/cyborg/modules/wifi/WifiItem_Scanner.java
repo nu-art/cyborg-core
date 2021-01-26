@@ -93,7 +93,7 @@ public class WifiItem_Scanner
 		}
 	}
 
-	private final ArrayList<ScannedWifiInfo> scanResults = new ArrayList<>();
+	private final List<ScannedWifiInfo> scanResults = new ArrayList<>();
 
 	private boolean scanning;
 
@@ -146,31 +146,39 @@ public class WifiItem_Scanner
 
 		List<ScanResult> results = wifiManager.getScanResults();
 		HashMap<String, ScannedWifiInfo> scannedWifis = new HashMap<>();
-
 		WifiStrength[] values = WifiStrength.values();
+
 		for (ScanResult result : results) {
 			if (result.SSID.trim().length() == 0)
 				continue;
 
-			ScannedWifiInfo scannedWifi;
-			scannedWifis.put(result.SSID + normalizeFrequency(result), scannedWifi = new ScannedWifiInfo());
+			String key = result.SSID + normalizeFrequency(result);
+			ScannedWifiInfo existing = scannedWifis.get(key);
+			if(existing!=null && existing.scanResult.level>result.level)
+				continue;
 
+			ScannedWifiInfo scannedWifi = new ScannedWifiInfo();
 			scannedWifi.strength = values[WifiManager.calculateSignalLevel(result.level, values.length)];
 			scannedWifi.scanResult = result;
+			scannedWifis.put(key, scannedWifi);
 		}
 
 		synchronized (scanResults) {
-			scanResults.clear();
-			scanResults.addAll(scannedWifis.values());
-			Collections.sort(scanResults, new Comparator<ScannedWifiInfo>() {
+			List<ScannedWifiInfo> list = new ArrayList<>(scannedWifis.values());
+			Collections.sort(list, new Comparator<ScannedWifiInfo>() {
 				@Override
 				public int compare(ScannedWifiInfo o1, ScannedWifiInfo o2) {
-					if (o1.strength.ordinal() == o2.strength.ordinal())
-						return 0;
-
-					return o1.strength.ordinal() < o2.strength.ordinal() ? 1 : -1;
+					return o1.getName().compareTo(o2.getName());
 				}
 			});
+			Collections.sort(list, new Comparator<ScannedWifiInfo>() {
+				@Override
+				public int compare(ScannedWifiInfo o1, ScannedWifiInfo o2) {
+					return o2.strength.ordinal() - o1.strength.ordinal();
+				}
+			});
+			scanResults.clear();
+			scanResults.addAll(list);
 		}
 
 		dispatchGlobalEvent("Wifi Scan Completed", OnWifiUIListener.class, new Processor<OnWifiUIListener>() {
