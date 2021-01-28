@@ -32,6 +32,8 @@ import com.nu.art.storage.IntegerPreference;
 public class UpgradeModule
 	extends CyborgModule {
 
+	public static final String StorageGroup = "apk-properties";
+
 	public interface OnAppUpgradedListener {
 
 		void onApplicationUpgraded(int previousVersion, int newVersion);
@@ -39,7 +41,7 @@ public class UpgradeModule
 
 	@Override
 	protected void init() {
-		IntegerPreference appVersionCode = new IntegerPreference("appVersionCode", 0);
+		IntegerPreference appVersionCode = new IntegerPreference("appVersionCode", 0).setStorageGroup(StorageGroup);
 		int versionCode = cyborg.getVersionCode();
 		int previousVersionCode = appVersionCode.get();
 
