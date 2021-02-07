@@ -559,13 +559,7 @@ public class CyborgStackController
 	}
 
 	public final String[] getStackLayersTags() {
-		return map(String.class, new Function<StackLayerBuilder, String>() {
-
-			@Override
-			public String map(StackLayerBuilder stackLayerBuilder) {
-				return logController(stackLayerBuilder);
-			}
-		}, ArrayTools.asArray(layersStack, StackLayerBuilder.class));
+		return map(String.class, this::logController, ArrayTools.asArray(layersStack, StackLayerBuilder.class));
 	}
 
 	private StackLayerBuilder getTopLayer() {
@@ -1100,12 +1094,21 @@ public class CyborgStackController
 	protected String logController(StackLayerBuilder stackLayerBuilder) {
 		if (stackLayerBuilder == null)
 			return null;
-		return logController(stackLayerBuilder.controller);
+
+		if (stackLayerBuilder.controller != null)
+			return logController(stackLayerBuilder.controller);
+
+		return logController(stackLayerBuilder.controllerType, stackLayerBuilder.getStateTag());
 	}
 
 	protected String logController(CyborgController controller) {
-		if (controller == null)
-			return null;
 		return controller.getStateTag() + "[" + controller.hashCode() + "]";
+	}
+
+	protected String logController(Class<? extends CyborgController> controllerType, String tag) {
+		if (controllerType == null)
+			return null;
+
+		return tag + "[" + controllerType.getSimpleName() + "]";
 	}
 }
