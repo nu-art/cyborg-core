@@ -1,135 +1,184 @@
 ///*
-// * Copyright (c) 2015 to Adam van der Kruk (Zehavi) AKA TacB0sS - Nu-Art Software
-// * Restricted usage under Binpress license
+// * cyborg-core is an extendable  module based framework for Android.
 // *
-// * For more details go to: http://cyborg.binpress.com/product/cyborg/2052
+// * Copyright (C) 2017  Adam van der Kruk aka TacB0sS
+// *
+// * Licensed under the Apache License, Version 2.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.apache.org/licenses/LICENSE-2.0
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
 // */
 //
 //package com.nu.art.cyborg.ui.animations.viewBasedAnimations;
 //
-//import android.R;
-//import android.app.Activity;
+//import android.animation.Animator;
+//import android.animation.AnimatorSet;
+//import android.animation.IntEvaluator;
+//import android.animation.ObjectAnimator;
+//import android.animation.ValueAnimator;
+//import android.content.Context;
+//import android.graphics.Bitmap;
 //import android.graphics.Rect;
-//import android.support.annotation.NonNull;
 //import android.view.View;
-//import android.view.ViewTreeObserver;
-//import android.view.ViewTreeObserver.OnPreDrawListener;
+//import android.view.ViewGroup;
+//import android.view.animation.Animation.AnimationListener;
 //import android.widget.FrameLayout;
+//import android.widget.ImageView;
 //import android.widget.RelativeLayout;
 //
-//import com.nu.art.cyborg.core.CyborgController;
-//import com.nu.art.cyborg.ui.animations.animationTransition.StackLayerAnimator;
-//
-///// need to think, if I want to reimplement this where the animation is not connected to the animation transition.
-///// it is a separate animation over the two controllers transition.
+//import com.nu.art.core.generics.Function;
+//import com.nu.art.cyborg.common.implementors.AnimatorListenerImpl;
+//import com.nu.art.cyborg.common.utils.Tools;
+//import com.nu.art.cyborg.core.CyborgStackController.StackLayerBuilder;
+//import com.nu.art.cyborg.core.stackTransitions.Transition;
 //
 ///**
-// * Created by TacB0sS on 14-Jul 2015.
+// * Created by TacB0sS on 30-Apr 2016.
 // */
-//public class LeadingViewAnimationBuilder<ViewType extends View>
-//		extends StackLayerAnimator {
+//public class FloatingViewTransitionAnimator
+//	implements Transition {
 //
-//	public interface ViewResolver<ViewType extends View, OriginController extends CyborgController, TargetController extends CyborgController> {
+//	private final Function<StackLayerBuilder, View> getOriginView;
 //
-//		/**
-//		 * @return The rootView that is in the origin Controller to prepare from.
-//		 */
-//		ViewType resolveOriginView(OriginController originController);
+//	private final Function<StackLayerBuilder, View> getTargetView;
 //
-//		/**
-//		 * @return The rootView that is in the target Controller to prepare to.
-//		 */
-//		ViewType resolveTargetView(TargetController targetController);
-//	}
-//
-//	public interface ViewGenerator<ViewType> {
-//
-//		ViewType generate(ViewType origin, ViewType target);
-//	}
-//
-//	private class LeadingViewAnimation {
-//
-//		private final FrameLayout rootFrameLayout;
-//
-//		private final RelativeLayout overlay;
-//
-//		private final Rect origin;
-//
-//		private final Rect target;
-//
-//		private final ViewType transitionView;
-//
-//		LeadingViewAnimation(ViewType transitionView, Rect origin, Rect target) {
-//			rootFrameLayout = (FrameLayout) activity.findViewById(R.id.content);
-//			overlay = new RelativeLayout(activity);
-//			this.transitionView = transitionView;
-//			overlay.addView(transitionView);
-//			this.origin = origin;
-//			this.target = target;
-//		}
-//
-//		public void dispose() {
-//			rootFrameLayout.removeView(overlay);
-//		}
-//
-//		public void addView(ViewType tempView) {
-//			overlay.addView(tempView);
-//		}
-//	}
-//
-//	private final Activity activity;
-//
-//	private ViewResolver<ViewType, ?, ?> viewResolver;
-//
-//	private ViewGenerator<ViewType> viewGenerator;
-//
-//	private LeadingViewAnimation overlay;
-//
-//	public LeadingViewAnimationBuilder(Activity activity) {
-//		this.activity = activity;
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	public <Origin extends CyborgController, Target extends CyborgController> void start(Origin originController, Target targetController) {
-//		ViewResolver<ViewType, Origin, Target> viewResolver = (ViewResolver<ViewType, Origin, Target>) LeadingViewAnimationBuilder.this.viewResolver;
-//		final ViewType originView = viewResolver.resolveOriginView(originController);
-//		final ViewType targetView = viewResolver.resolveTargetView(targetController);
-//		ViewTreeObserver observer = targetView.getViewTreeObserver();
-//		observer.addOnPreDrawListener(new OnPreDrawListener() {
-//			public boolean onPreDraw() {
-//				targetView.getViewTreeObserver().removeOnPreDrawListener(this);
-//				int[] screenLocation = new int[2];
-//
-//				Rect origin = getViewRect(screenLocation, originView);
-//				Rect target = getViewRect(screenLocation, targetView);
-//
-//				overlay = new LeadingViewAnimation(viewGenerator.generate(originView, targetView), origin, target);
-//				return true;
+//	public FloatingViewTransitionAnimator(final int originViewId, final int targetViewId) {
+//		this.getOriginView = new Function<StackLayerBuilder, View>() {
+//			@Override
+//			public View map(StackLayerBuilder StackLayerBuilder) {
+//				return StackLayerBuilder.getRootView().findViewById(originViewId);
 //			}
-//		});
-//
-//		//		ViewType tempView = viewGenerator.process(viewResolver.resolveOriginView());
-//		//		overlay.addView(tempView);
+//		};
+//		this.getTargetView = new Function<StackLayerBuilder, View>() {
+//			@Override
+//			public View map(StackLayerBuilder StackLayerBuilder) {
+//				return StackLayerBuilder.getRootView().findViewById(targetViewId);
+//			}
+//		};
 //	}
 //
-//	@NonNull
-//	private Rect getViewRect(int[] screenLocation, ViewType originView) {
-//		originView.getLocationOnScreen(screenLocation);
-//		return new Rect(screenLocation[0], screenLocation[1], originView.getMeasuredWidth(), originView.getMeasuredHeight());
+//	public FloatingViewTransitionAnimator(Function<StackLayerBuilder, View> getOriginView, Function<StackLayerBuilder, View> getTargetView) {
+//		this.getOriginView = getOriginView;
+//		this.getTargetView = getTargetView;
 //	}
 //
-//	/**
-//	 * @param viewResolver To resolve the source and target rootView of a forward and backward transition animation.
-//	 */
-//	public void setViewResolver(ViewResolver<ViewType, ?, ?> viewResolver) {
-//		this.viewResolver = viewResolver;
+//	private class WidthEvaluator
+//		extends IntEvaluator {
+//
+//		private View v;
+//
+//		public WidthEvaluator(View v) {
+//			this.v = v;
+//		}
+//
+//		@Override
+//		public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+//			int num = super.evaluate(fraction, startValue, endValue);
+//			ViewGroup.LayoutParams params = v.getLayoutParams();
+//			params.width = num;
+//			v.setLayoutParams(params);
+//			return num;
+//		}
 //	}
 //
-//	public void setViewGenerator(ViewGenerator<ViewType> viewGenerator) {
-//		this.viewGenerator = viewGenerator;
+//	private class HeightEvaluator
+//		extends IntEvaluator {
+//
+//		private View v;
+//
+//		public HeightEvaluator(View v) {
+//			this.v = v;
+//		}
+//
+//		@Override
+//		public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+//			int num = super.evaluate(fraction, startValue, endValue);
+//			ViewGroup.LayoutParams params = v.getLayoutParams();
+//			params.height = num;
+//			v.setLayoutParams(params);
+//			return num;
+//		}
 //	}
 //
-//	private void dispose() {
-//		overlay.dispose();
+//	@Override
+//	public void animate(StackLayerBuilder layer, float progress, boolean in) {
+//
+//	}
+//
+//	public void animateIn(StackLayerBuilder originLayer, StackLayerBuilder targetLayer, int duration, AnimationListener listener) {
+//
+//		// prepare data for animation
+//		final View originViewToAnimate = getOriginView.map(originLayer);
+//		final View targetViewToAnimate = getTargetView.map(targetLayer);
+//
+//		final Bitmap toAnimate = getCroppedViewImage(originLayer.getRootView(), originViewToAnimate);
+//
+//		renderFromTo(originLayer.getRootView(), originViewToAnimate, targetViewToAnimate, toAnimate, duration, listener);
+//	}
+//
+//	public void animateOut(StackLayerBuilder originLayer, StackLayerBuilder targetLayer, int duration, final AnimationListener listener) {
+//		// prepare data for animation
+//		final View originViewToAnimate = getOriginView.map(originLayer);
+//		final View targetViewToAnimate = getTargetView.map(targetLayer);
+//		final Bitmap toAnimate = getCroppedViewImage(originLayer.getRootView(), originViewToAnimate);
+//
+//		renderFromTo(originLayer.getRootView(), targetViewToAnimate, originViewToAnimate, toAnimate, duration, listener);
+//	}
+//
+//	private void renderFromTo(View fromParent,
+//	                          final View viewToAnimateFrom,
+//	                          final View viewToAnimateTo,
+//	                          Bitmap imageToAnimate,
+//	                          int duration,
+//	                          final AnimationListener listener) {
+//		final FrameLayout rootView = (FrameLayout) fromParent.getRootView().findViewById(android.R.id.content);
+//		Context context = rootView.getContext();
+//
+//		final RelativeLayout renderingLayer = new RelativeLayout(context);
+//		renderingLayer.setClipChildren(false);
+//		rootView.addView(renderingLayer);
+//
+//		final ImageView imageView = new ImageView(context);
+//		imageView.setImageBitmap(imageToAnimate);
+//		renderingLayer.addView(imageView);
+//
+//		// extract the view real area's on screen
+//		Rect originRect = Tools.getViewRealRect(viewToAnimateFrom);
+//		Rect targetRect = Tools.getViewRealRect(viewToAnimateTo);
+//
+//		imageView.setTranslationX(originRect.left);
+//		imageView.setTranslationY(originRect.top);
+//		Animator translateX = ObjectAnimator.ofFloat(imageView, "translationX", targetRect.left);
+//		Animator translateY = ObjectAnimator.ofFloat(imageView, "translationY", targetRect.top);
+//
+//		Animator animateW = ValueAnimator.ofObject(new WidthEvaluator(imageView), originRect.width(), targetRect.width());
+//		Animator animateH = ValueAnimator.ofObject(new HeightEvaluator(imageView), originRect.height(), targetRect.height());
+//
+//		animationSet.setDuration(duration);
+//		animationSet.playTogether(translateX, translateY, animateW, animateH);
+//		animationSet.start();
+//	}
+//
+//	private Bitmap getCroppedViewImage(View origin, View viewToCrop) {
+//		boolean drawingEnabled = origin.isDrawingCacheEnabled();
+//		if (!drawingEnabled)
+//			origin.setDrawingCacheEnabled(true);
+//
+//		Bitmap fullImage = origin.getDrawingCache();
+//		int width = viewToCrop.getRight() - viewToCrop.getLeft();
+//		int height = viewToCrop.getBottom() - viewToCrop.getTop();
+//		Bitmap croppedImage = Bitmap.createBitmap(fullImage, viewToCrop.getLeft(), viewToCrop.getTop(), width, height);
+//
+//		if (!drawingEnabled)
+//			origin.setDrawingCacheEnabled(false);
+//
+//		return croppedImage;
 //	}
 //}
