@@ -1102,6 +1102,8 @@ public class CyborgStackController
 	}
 
 	protected String logController(CyborgController controller) {
+		if (controller == null)
+			return null;
 		return controller.getStateTag() + "[" + controller.hashCode() + "]";
 	}
 
