@@ -825,7 +825,11 @@ public class CyborgStackController
 					public void onAnimationEnd(Animator animator) {
 						super.onAnimationEnd(animator);
 						if (_listener != null && _listener.fromLayer != null && DebugFlag.isEnabled())
-							logInfo("disposing: " + logController(controllerToLog));
+							if (controllerToLog != null && fromLayer.controller != controllerToLog) {
+								logInfo("disposing: " + logController(controllerToLog));
+								logWarning("IMPORTANT: Controller instance to dispose is not the same one as the layer has!!");
+							} else
+								logInfo("disposing: " + logController(fromLayer));
 
 						if (previousListener == _listener)
 							previousListener = null;
