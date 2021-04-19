@@ -41,6 +41,10 @@ public class VideoView
 	private CyborgMediaPlayer mediaPlayer;
 	private Surface surface;
 	private Processor<Surface> onSurfaceReadyListener;
+	private int videoWidth;
+	private int videoHeight;
+	private int viewWidth;
+	private int viewHeight;
 
 	public VideoView(Context context) {
 		super(context);
@@ -65,12 +69,25 @@ public class VideoView
 		}
 	}
 
-	public void adjustAspectRatio(int videoWidth, int videoHeight) {
-		if (videoWidth == 0 || videoHeight == 0)
+	public void adjustAspectRatio() {
+		if (mediaPlayer == null)
 			return;
+
+		int videoWidth = mediaPlayer.getVideoWidth();
+		int videoHeight = mediaPlayer.getVideoHeight();
 
 		int viewWidth = getWidth();
 		int viewHeight = getHeight();
+
+		if (videoWidth == 0 ||
+			videoHeight == 0 ||
+			(videoWidth == this.videoWidth && videoHeight == this.videoHeight && viewWidth == this.viewWidth && viewHeight == this.viewHeight))
+			return;
+
+		this.videoWidth = videoWidth;
+		this.videoHeight = videoHeight;
+		this.viewWidth = viewWidth;
+		this.viewHeight = viewHeight;
 		double aspectRatio = (double) videoHeight / videoWidth;
 
 		int newWidth, newHeight;
@@ -112,6 +129,8 @@ public class VideoView
 
 	@Override
 	public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+		logInfo("onSurfaceTextureSizeChanged width: " + width + ", height: " + height);
+		adjustAspectRatio();
 	}
 
 	@Override
@@ -124,6 +143,8 @@ public class VideoView
 
 	@Override
 	public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+		//		logInfo("onSurfaceTextureUpdated");
+		adjustAspectRatio();
 	}
 
 	public Surface getSurface() {
