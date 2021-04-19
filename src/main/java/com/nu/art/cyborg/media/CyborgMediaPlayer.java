@@ -90,6 +90,14 @@ public class CyborgMediaPlayer
 		createMediaPlayer();
 	}
 
+	public int getVideoWidth() {
+		return mediaPlayer.getVideoWidth();
+	}
+
+	public int getVideoHeight() {
+		return mediaPlayer.getVideoHeight();
+	}
+
 	public void setMaxVolume(int maxVolume) {
 		logInfo("Max volume is now: " + maxVolume);
 		this.maxVolume = maxVolume;
