@@ -1,7 +1,6 @@
 package com.nu.art.cyborg.modules.deviceAdmin;
 
 import android.app.admin.DeviceAdminReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
@@ -10,12 +9,6 @@ import com.nu.art.cyborg.core.CyborgModule;
 
 public class DeviceAdminReceiverImpl
 	extends DeviceAdminReceiver {
-
-	private String TAG = DeviceAdminReceiverImpl.class.getSimpleName();
-
-	public static ComponentName getComponentName(Context context) {
-		return new ComponentName(context, DeviceAdminReceiverImpl.class);
-	}
 
 	private <ModuleClass extends CyborgModule> ModuleClass getModule(Class<ModuleClass> moduleClass) {
 		return CyborgBuilder.getInstance().getModule(moduleClass);
