@@ -42,5 +42,3 @@ public class Test_CacheModule
 			.execute();
 	}
 }
-
-b31e74b3710f31f9d2e9311639b544b6469c75d6b97e612be9a948c20c27d0ea
