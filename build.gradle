@@ -1,3 +1,4 @@
+project.ext.namespace = 'com.nu.art.cyborg'
 /*
  * cyborg-core is an extendable  module based framework for Android.
  *
@@ -26,15 +27,17 @@ dependencies {
     api(resolveDependency('nu-art-core', 'com.nu-art-software', "${NU_ART_VERSION}"))
     implementation "com.google.code.gson:gson:${GSON_VERSION}"
 
-//    api "com.android.support:support-v4:${ANDROID_SUPPORT_VERSION}"
-//    api "com.android.support:recyclerview-v7:${ANDROID_SUPPORT_VERSION}"
-    api "androidx.appcompat:appcompat:${ANDROIDX_VERSION}"
-    api "com.google.android.material:material:${MATERIAL_VERSION}"
+    api "androidx.appcompat:appcompat:1.6.1"
+    api "androidx.recyclerview:recyclerview:1.3.2"
+    api "androidx.viewpager:viewpager:1.0.0"
+    api "com.google.android.material:material:1.11.0"
+    api "androidx.activity:activity:1.8.2"
 
     testImplementation 'junit:junit:4.12'
     testImplementation(resolveDependency('http-module', 'com.nu-art-software', "${NU_ART_VERSION}"))
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation "androidx.test:runner:1.5.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
     androidTestImplementation(resolveDependency('belog', 'com.nu-art-software', "${NU_ART_VERSION}"))
 }
 

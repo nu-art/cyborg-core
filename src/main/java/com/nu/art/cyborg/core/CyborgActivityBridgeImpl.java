@@ -26,6 +26,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.support.ViewServer;
 import android.view.KeyEvent;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -123,6 +126,12 @@ public class CyborgActivityBridgeImpl
 
 	private EventDispatcher eventDispatcher = new EventDispatcher("CyborgUI-Dispatcher", paramExtractor).own();
 
+	private ActivityResultLauncher<Intent> startActivityForResultLauncher;
+	private ActivityResultLauncher<String[]> requestPermissionsLauncher;
+	private int pendingActivityResultRequestCode;
+	private int pendingPermissionsRequestCode;
+	private String[] pendingPermissions;
+
 	CyborgActivityBridgeImpl(String screenName, Context context) {
 		this.context = context;
 		this.screenName = screenName;
@@ -200,6 +209,8 @@ public class CyborgActivityBridgeImpl
 		 **********************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		registerActivityResultLaunchers();
+
 		for (ScenarioRecorder scenarioRecorder : cyborg.getModulesAssignableFrom(ScenarioRecorder.class)) {
 			scenarioRecorder.onActivityStarted(getContext().getIntent());
 		}
@@ -572,9 +583,38 @@ public class CyborgActivityBridgeImpl
 		});
 	}
 
+	private void registerActivityResultLaunchers() {
+		if (startActivityForResultLauncher != null)
+			return;
+		startActivityForResultLauncher = getContext().registerForActivityResult(
+			new ActivityResultContracts.StartActivityForResult(),
+			result -> onActivityResult(pendingActivityResultRequestCode, result.getResultCode(), result.getData())
+		);
+		requestPermissionsLauncher = getContext().registerForActivityResult(
+			new ActivityResultContracts.RequestMultiplePermissions(),
+			result -> {
+				String[] perms = pendingPermissions;
+				int[] grantResults = new int[perms != null ? perms.length : 0];
+				if (perms != null) {
+					for (int i = 0; i < perms.length; i++)
+						grantResults[i] = Boolean.TRUE.equals(result.get(perms[i])) ? android.content.pm.PackageManager.PERMISSION_GRANTED : android.content.pm.PackageManager.PERMISSION_DENIED;
+				}
+				onRequestPermissionsResult(pendingPermissionsRequestCode, perms != null ? perms : new String[0], grantResults);
+			}
+		);
+	}
+
 	@Override
 	public void startActivityForResult(Intent intent, int requestCode) {
-		getContext().startActivityForResult(intent, requestCode);
+		pendingActivityResultRequestCode = requestCode;
+		startActivityForResultLauncher.launch(intent);
+	}
+
+	@Override
+	public void requestPermissions(String[] permissions, int requestCode) {
+		pendingPermissionsRequestCode = requestCode;
+		pendingPermissions = permissions;
+		requestPermissionsLauncher.launch(permissions);
 	}
 
 	@Override

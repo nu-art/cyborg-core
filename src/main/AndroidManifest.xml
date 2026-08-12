@@ -17,16 +17,13 @@
   ~ limitations under the License.
   -->
 
-<manifest
-    package="com.nu.art.cyborg"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
         <activity
             android:name="com.nu.art.cyborg.ui.ApplicationLauncher"
             android:theme="@style/Theme_ApplicationLauncher"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -46,8 +43,7 @@
         <receiver
             android:name="com.nu.art.cyborg.common.utils.BootStarterReceiver"
             android:enabled="false"
-            >
-
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
@@ -60,7 +56,7 @@
         <receiver
             android:name="com.nu.art.cyborg.modules.apps.AppsStatusReceiver"
             android:enabled="false"
-            >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED"/>
                 <action android:name="android.intent.action.PACKAGE_REMOVED"/>
@@ -86,7 +82,7 @@
             android:name="com.nu.art.cyborg.modules.deviceAdmin.DeviceAdminReceiverImpl"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
             android:enabled="false"
-            >
+            android:exported="false">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin_policy"

@@ -366,15 +366,6 @@ public class CyborgWebView
 			}
 
 			@Override
-			public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
-				if (DEBUG)
-					logInfo("DEBUG-LOG: onRequestFocus...");
-				if (pageDetailsHandler == null)
-					return;
-				CyborgWebView.this.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
-			}
-
-			@Override
 			public void onGeolocationPermissionsShowPrompt(final String origin, final Callback callback) {
 				if (DEBUG)
 					logInfo("DEBUG-LOG: onGeolocationPermissionsShowPrompt (origin: " + origin + ", callback: " + callback + ")");

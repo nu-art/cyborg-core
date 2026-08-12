@@ -194,17 +194,7 @@ public class CyborgActivity
 		super.onDestroy();
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		bridge.onActivityResult(requestCode, resultCode, data);
-	}
-
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		bridge.onRequestPermissionsResult(requestCode, permissions, grantResults);
-	}
+	// Activity Result API: results are delivered via launcher callbacks in the bridge
 
 	@SuppressWarnings( {
 		                   "rawtypes",

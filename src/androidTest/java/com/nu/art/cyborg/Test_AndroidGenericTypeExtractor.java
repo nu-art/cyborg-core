@@ -18,7 +18,7 @@
 
 package com.nu.art.cyborg;
 
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.nu.art.belog.BeLogged;
 import com.nu.art.belog.Logger;

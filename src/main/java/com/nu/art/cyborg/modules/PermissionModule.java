@@ -22,7 +22,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.nu.art.core.exceptions.runtime.MUST_NeverHappenException;
@@ -99,7 +98,7 @@ public class PermissionModule
 		postActivityAction(new ActivityStackAction() {
 			@Override
 			public void execute(CyborgActivityBridge bridge) {
-				ActivityCompat.requestPermissions(bridge.getContext(), permissions, requestCode);
+				bridge.requestPermissions(permissions, requestCode);
 			}
 		});
 	}

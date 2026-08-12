@@ -98,6 +98,8 @@ public interface CyborgActivityBridge {
 
 	void startActivityForResult(Intent intent, int requestCode);
 
+	void requestPermissions(String[] permissions, int requestCode);
+
 	void startActivity(Intent intent);
 
 	LayoutInflater getDefaultLayoutInflater();
