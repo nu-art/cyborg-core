@@ -25,6 +25,7 @@ import com.nu.art.cyborg.core.CyborgRecycler.CyborgRecyclerSetter;
 import com.nu.art.cyborg.core.CyborgStackController.CyborgStackSetter;
 import com.nu.art.cyborg.core.CyborgView.CyborgViewSetter;
 import com.nu.art.cyborg.core.CyborgViewPager.CyborgViewPagerSetter;
+import com.nu.art.cyborg.core.jobs.CyborgJobsModule;
 import com.nu.art.cyborg.modules.AppDetailsModule;
 import com.nu.art.cyborg.modules.AttributeModule;
 import com.nu.art.cyborg.modules.AudioOptionsModule;
@@ -62,7 +63,8 @@ public class CyborgBasePack
 		VibrationModule.class,
 		AudioOptionsModule.class,
 		ScreenOptionsModule.class,
-		AttributeModule.class
+		AttributeModule.class,
+		CyborgJobsModule.class
 	};
 
 	protected CyborgBasePack() {

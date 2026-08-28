@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import android.app.Notification;
+
 import com.nu.art.core.interfaces.ILogger;
 import com.nu.art.cyborg.core.abs.Cyborg;
 
@@ -82,6 +84,14 @@ public abstract class CyborgServiceBase
 	}
 
 	protected void onBindImpl(Intent intent) {}
+
+	protected final void startForegroundServiceNotification(int id, Notification notification) {
+		ForegroundServiceStart.start(this, id, notification);
+	}
+
+	protected final void startForegroundServiceNotification(int id, Notification notification, int foregroundServiceType) {
+		ForegroundServiceStart.start(this, id, notification, foregroundServiceType);
+	}
 
 	/*
 	 * /* Interfaces .....

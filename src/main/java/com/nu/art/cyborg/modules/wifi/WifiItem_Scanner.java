@@ -208,7 +208,7 @@ public class WifiItem_Scanner
 	void enable(boolean enable) {
 		if (scanning != enable) {
 			if (enable) {
-				cyborg.registerReceiver(WifiNetworksReceiver.class, WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+				cyborg.registerReceiver(WifiNetworksReceiver.class, true, WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 			} else
 				cyborg.unregisterReceiver(WifiNetworksReceiver.class);
 

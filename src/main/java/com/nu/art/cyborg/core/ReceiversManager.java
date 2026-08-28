@@ -25,6 +25,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import androidx.core.content.ContextCompat;
+
 import com.nu.art.belog.Logger;
 import com.nu.art.core.exceptions.runtime.ClassInstantiationRuntimeException;
 import com.nu.art.core.exceptions.runtime.ImplementationMissingException;
@@ -54,6 +56,11 @@ final class ReceiversManager
 	 */
 	@SuppressWarnings("unchecked")
 	final <Receiver extends CyborgReceiver<?>> void registerReceiver(Class<Receiver> receiverType, String... actions) {
+		registerReceiver(receiverType, false, actions);
+	}
+
+	@SuppressWarnings("unchecked")
+	final <Receiver extends CyborgReceiver<?>> void registerReceiver(Class<Receiver> receiverType, boolean exported, String... actions) {
 		Boolean isInManifest = receiversInManifest.get(receiverType);
 		if (isInManifest == null) {
 			isInManifest = checkIfBroadcastReceiverIsRegisteredInManifest(receiverType);
@@ -85,9 +92,9 @@ final class ReceiversManager
 		for (String action : actions) {
 			intentFilter.addAction(action);
 		}
-		logInfo("+++-+ Registering Receiver: '" + receiverType.getName() + "'");
+		logInfo("+++-+ Registering Receiver: '" + receiverType.getName() + "' exported=" + exported);
 		registeredReceivers.put(receiverType, receiver);
-		cyborg.getApplicationContext().registerReceiver(receiver, intentFilter);
+		ContextCompat.registerReceiver(cyborg.getApplicationContext(), receiver, intentFilter, ReceiverRegistration.flags(exported));
 	}
 
 	public final void enforceBroadcastReceiverInManifest(Class<? extends BroadcastReceiver> receiverType) {

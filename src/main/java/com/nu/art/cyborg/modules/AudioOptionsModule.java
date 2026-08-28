@@ -61,7 +61,7 @@ public class AudioOptionsModule
 	}
 
 	public void registerForVolumeChanges() {
-		registerReceiver(AudioSettingsReceiver.class);
+		registerSystemReceiver(AudioSettingsReceiver.class);
 	}
 
 	public void unregisterForVolumeChanges() {

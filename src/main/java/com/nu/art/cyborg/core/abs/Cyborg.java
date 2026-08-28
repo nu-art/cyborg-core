@@ -64,6 +64,15 @@ public interface Cyborg
 	void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, String... actions);
 
 	/**
+	 * Register a receiver if not already present in the manifest.
+	 *
+	 * @param receiverType The class type of the receiver.
+	 * @param exported     true only when another app must be able to send this broadcast.
+	 * @param actions      The list of actions the receiver will respond to.
+	 */
+	void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, boolean exported, String... actions);
+
+	/**
 	 * Makes sure that you didn't forget to add the BroadcastReceiver to the manifest.
 	 *
 	 * @param receiverType The class type of the receiver.

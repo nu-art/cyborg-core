@@ -441,6 +441,11 @@ final class CyborgImpl
 	}
 
 	@Override
+	public final void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, boolean exported, String... actions) {
+		receiversManager.registerReceiver(receiverType, exported, actions);
+	}
+
+	@Override
 	public void enforceBroadcastReceiverInManifest(Class<? extends BroadcastReceiver> receiverType) {
 		receiversManager.enforceBroadcastReceiverInManifest(receiverType);
 	}
@@ -497,7 +502,7 @@ final class CyborgImpl
 			@Override
 			public void onServiceConnected(_ServiceType service) {
 				startService(cls);
-				service.startForeground(id, notification);
+				ForegroundServiceStart.start(service, id, notification);
 			}
 
 			@Override

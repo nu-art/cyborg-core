@@ -129,7 +129,7 @@ public class PowerModule
 	protected void init() {}
 
 	public void initPower_IndicatorReceiver() {
-		registerReceiver(Power_IndicatorReceiver.class);
+		registerSystemReceiver(Power_IndicatorReceiver.class);
 	}
 
 	@SuppressWarnings("ConstantConditions")

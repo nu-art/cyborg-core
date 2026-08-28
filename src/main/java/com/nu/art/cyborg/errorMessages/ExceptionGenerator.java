@@ -252,4 +252,8 @@ public class ExceptionGenerator {
 		return new ImplementationMissingException("Cannot perform action: '" + action + "' Permission is missing in manifest, please add the following:\n" +
 			                                          "    <uses-permission android:name=\"" + permission + "\"/>\n", e);
 	}
+
+	public static BadImplementationException activityResultLauncherNotReady() {
+		return new BadImplementationException("Activity result launcher is not registered — startActivityForResult/requestPermissions must run after Activity onCreate");
+	}
 }

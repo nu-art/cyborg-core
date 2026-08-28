@@ -25,7 +25,8 @@ import android.content.Intent;
  * process up and running.<br>
  * Any action you would like to perform can be simply and even preferably be a <b>Runnable</b> executed on a thread pool, and NOT in a service! why so you can
  * perform that action independently(of what... everything including services)<br>
- * So use this service to keep your application alive, and do yourself a favor and create a module to handle any action you want to perform.
+ * Unbounded sticky keep-alive is no longer legal. Use a typed foreground service for user-visible work, or {@link com.nu.art.cyborg.core.jobs.CyborgJobsModule}
+ * for work that must survive process death.
  */
 public final class ApplicationService
 	extends CyborgServiceBase {
@@ -45,7 +46,7 @@ public final class ApplicationService
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
-		return START_STICKY;
+		return START_NOT_STICKY;
 	}
 
 	@Override

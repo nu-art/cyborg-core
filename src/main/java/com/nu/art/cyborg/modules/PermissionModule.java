@@ -104,22 +104,16 @@ public class PermissionModule
 	}
 
 	public void onPermissionsResult(final int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		final ArrayList<String> rejected = new ArrayList<>();
+		final PermissionGrantResult grantResult = PermissionGrantResult.from(requestCode, permissions, grantResults);
 
-		for (int i = 0; i < grantResults.length; i++) {
-			if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-				rejected.add(permissions[i]);
-			}
-		}
-
-		String message = "Permissions request: " + (grantResults.length - rejected.size()) + "/" + grantResults.length + " Granted";
+		String message = "Permissions request: " + (permissions.length - grantResult.rejected.length) + "/" + permissions.length + " Granted";
 		dispatchGlobalEvent(message, PermissionResultListener.class, new Processor<PermissionResultListener>() {
 			@Override
 			public void process(PermissionResultListener listener) {
-				if (rejected.size() > 0)
-					listener.onPermissionsRejected(requestCode, ArrayTools.asArray(rejected, String.class));
-				else
+				if (grantResult.allGranted())
 					listener.onAllPermissionsGranted(requestCode);
+				else
+					listener.onPermissionsRejected(requestCode, grantResult.rejected);
 			}
 		});
 	}

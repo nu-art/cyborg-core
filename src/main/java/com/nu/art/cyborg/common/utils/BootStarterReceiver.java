@@ -26,6 +26,10 @@ import com.nu.art.cyborg.modules.AppDetailsModule;
 public final class BootStarterReceiver
 	extends CyborgReceiver<AppDetailsModule> {
 
+	/**
+	 * Fired in-process after BOOT_COMPLETED. Do not start a data-sync foreground service from here —
+	 * enqueue {@link com.nu.art.cyborg.core.jobs.CyborgJobsModule} work instead.
+	 */
 	public interface OnBootCompletedListener {
 
 		void onBootCompleted();

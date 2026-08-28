@@ -34,6 +34,10 @@ import com.nu.art.cyborg.core.modules.ThreadsModule;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * In-process connectivity. {@link ConnectivityManager#CONNECTIVITY_ACTION} does not wake a dead process —
+ * enqueue {@link com.nu.art.cyborg.core.jobs.CyborgJobsModule} with {@link com.nu.art.cyborg.core.jobs.CyborgJobSpec#requireNetwork()} for work-while-dead.
+ */
 @ModuleDescriptor(usesPermissions = {
 	permission.INTERNET,
 	permission.ACCESS_NETWORK_STATE
@@ -60,7 +64,7 @@ public class InternetConnectivityModule
 	@Override
 	protected void init() {
 		handler = getModule(ThreadsModule.class).getDefaultHandler("Internet Check");
-		registerReceiver(ConnectivityCheckReceiver.class);
+		registerSystemReceiver(ConnectivityCheckReceiver.class);
 		checkInternetConnectionAsync();
 	}
 

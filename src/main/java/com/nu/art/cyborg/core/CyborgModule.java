@@ -83,6 +83,14 @@ public abstract class CyborgModule
 		cyborg.registerReceiver(receiverType, actions);
 	}
 
+	protected final void registerReceiver(Class<? extends CyborgReceiver<?>> receiverType, boolean exported, String... actions) {
+		cyborg.registerReceiver(receiverType, exported, actions);
+	}
+
+	protected final void registerSystemReceiver(Class<? extends CyborgReceiver<?>> receiverType, String... actions) {
+		cyborg.registerReceiver(receiverType, true, actions);
+	}
+
 	protected final void unregisterReceiver(Class<? extends CyborgReceiver<?>> receiverType) {
 		cyborg.unregisterReceiver(receiverType);
 	}

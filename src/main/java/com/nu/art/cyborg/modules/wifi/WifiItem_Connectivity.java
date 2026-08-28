@@ -304,7 +304,7 @@ public class WifiItem_Connectivity
 
 	void enable(boolean enable) {
 		if (enable && !this.enabled) {
-			cyborg.registerReceiver(WifiConnectivityReceiver.class, WifiManager.NETWORK_STATE_CHANGED_ACTION);
+			cyborg.registerReceiver(WifiConnectivityReceiver.class, true, WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		}
 
 		if (!enable && this.enabled) {

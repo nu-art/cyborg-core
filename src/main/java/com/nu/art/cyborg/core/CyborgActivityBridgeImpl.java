@@ -56,6 +56,8 @@ import com.nu.art.cyborg.core.abs._SystemServices;
 import com.nu.art.cyborg.core.consts.IntentKeys;
 import com.nu.art.cyborg.core.consts.LifecycleState;
 import com.nu.art.cyborg.core.interfaces.LifecycleListener;
+import com.nu.art.cyborg.errorMessages.ExceptionGenerator;
+import com.nu.art.cyborg.modules.PermissionGrantResult;
 import com.nu.art.cyborg.modules.PermissionModule;
 import com.nu.art.modular.core.EventDispatcher;
 
@@ -593,25 +595,29 @@ public class CyborgActivityBridgeImpl
 		requestPermissionsLauncher = getContext().registerForActivityResult(
 			new ActivityResultContracts.RequestMultiplePermissions(),
 			result -> {
-				String[] perms = pendingPermissions;
-				int[] grantResults = new int[perms != null ? perms.length : 0];
-				if (perms != null) {
-					for (int i = 0; i < perms.length; i++)
-						grantResults[i] = Boolean.TRUE.equals(result.get(perms[i])) ? android.content.pm.PackageManager.PERMISSION_GRANTED : android.content.pm.PackageManager.PERMISSION_DENIED;
-				}
-				onRequestPermissionsResult(pendingPermissionsRequestCode, perms != null ? perms : new String[0], grantResults);
+				if (pendingPermissions == null)
+					throw new BadImplementationException("permission launcher result with no pending request");
+
+				int[] grantResults = PermissionGrantResult.grantResultsFromMap(pendingPermissions, result);
+				onRequestPermissionsResult(pendingPermissionsRequestCode, pendingPermissions, grantResults);
 			}
 		);
 	}
 
 	@Override
 	public void startActivityForResult(Intent intent, int requestCode) {
+		if (startActivityForResultLauncher == null)
+			throw ExceptionGenerator.activityResultLauncherNotReady();
+
 		pendingActivityResultRequestCode = requestCode;
 		startActivityForResultLauncher.launch(intent);
 	}
 
 	@Override
 	public void requestPermissions(String[] permissions, int requestCode) {
+		if (requestPermissionsLauncher == null)
+			throw ExceptionGenerator.activityResultLauncherNotReady();
+
 		pendingPermissionsRequestCode = requestCode;
 		pendingPermissions = permissions;
 		requestPermissionsLauncher.launch(permissions);

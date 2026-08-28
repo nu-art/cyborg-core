@@ -29,6 +29,7 @@ import com.nu.art.core.generics.Processor;
 import com.nu.art.core.tools.ArrayTools;
 import com.nu.art.cyborg.annotations.ModuleDescriptor;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.ReceiverRegistration;
 import com.nu.art.cyborg.modules.calls.NativeCall.CallDirection;
 import com.nu.art.cyborg.modules.calls.NativeCall.CallState;
 
@@ -71,7 +72,7 @@ public final class NativeCallsModule
 			return;
 
 		enabled = true;
-		registerReceiver(NativeCallsReceiver.class);
+		registerSystemReceiver(NativeCallsReceiver.class);
 	}
 
 	public final void disable() {
@@ -88,7 +89,7 @@ public final class NativeCallsModule
 
 	public final void testCallsState() {
 		IntentFilter callsStateFilter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-		Intent callsState = getApplicationContext().registerReceiver(null, callsStateFilter);
+		Intent callsState = ReceiverRegistration.peekStickyBroadcast(getApplicationContext(), callsStateFilter);
 		if (callsState == null)
 			return;
 

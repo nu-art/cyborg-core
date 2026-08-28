@@ -40,6 +40,7 @@ import com.nu.art.cyborg.common.utils.DynamicStringsResolver;
 import com.nu.art.cyborg.core.ActivityStack.ActivityStackAction;
 import com.nu.art.cyborg.core.CyborgActivityBridge;
 import com.nu.art.cyborg.core.CyborgModule;
+import com.nu.art.cyborg.core.ReceiverRegistration;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -254,7 +255,7 @@ public final class UtilsModule
 	 * @return The system battery level between 0.0f - 1.0f
 	 */
 	public final float calculateBattery() {
-		Intent intent = cyborg.getApplicationContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		Intent intent = ReceiverRegistration.peekStickyBroadcast(cyborg.getApplicationContext(), new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		float level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 		int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
 		float percent = (level * 100) / scale;

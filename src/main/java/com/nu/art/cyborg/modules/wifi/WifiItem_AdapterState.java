@@ -110,7 +110,7 @@ public class WifiItem_AdapterState
 
 	void enable(boolean enable) {
 		if (enable)
-			cyborg.registerReceiver(WifiAdapterStateReceiver.class, WifiManager.WIFI_STATE_CHANGED_ACTION);
+			cyborg.registerReceiver(WifiAdapterStateReceiver.class, true, WifiManager.WIFI_STATE_CHANGED_ACTION);
 		else
 			cyborg.unregisterReceiver(WifiAdapterStateReceiver.class);
 
